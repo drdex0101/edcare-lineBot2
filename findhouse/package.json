@@ -1,0 +1,51 @@
+{
+  "name": "findhouse",
+  "version": "1.6.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@coreui/icons": "^3.0.1",
+    "@faker-js/faker": "^7.6.0",
+    "@nextui-org/react": "^2.2.10",
+    "@popperjs/core": "2.11.7",
+    "@reduxjs/toolkit": "^1.8.6",
+    "@vercel/blob": "^0.13.0",
+    "@vercel/postgres": "^0.5.1",
+    "axios": "^1.6.0",
+    "bootstrap": "^5.2.1",
+    "chart.js": "^4.0.1",
+    "express": "^4.18.2",
+    "formidable": "^3.5.1",
+    "multer": "^1.4.5-lts.1",
+    "next": "^13.5.6",
+    "next-auth": "^5.0.0-beta.16",
+    "pg": "^8.11.3",
+    "photoswipe": "^5.4.2",
+    "prop-types": "^15.8.1",
+    "react": "18.2.0",
+    "react-chartjs-2": "^5.0.1",
+    "react-dom": "18.2.0",
+    "react-input-range": "^1.3.0",
+    "react-modal": "^3.16.1",
+    "react-modal-video": "^2.0.1",
+    "react-photoswipe-gallery": "2.2.7",
+    "react-pro-sidebar": "^0.7.1",
+    "react-redux": "^8.0.4",
+    "react-slick": "^0.29.0",
+    "sass": "^1.69.3",
+    "slick-carousel": "^1.8.1",
+    "uuid": "^9.0.0",
+    "vercel": "^32.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "20.8.4",
+    "eslint": "8.23.0",
+    "eslint-config-next": "13.2.3",
+    "typescript": "5.2.2"
+  }
+}
