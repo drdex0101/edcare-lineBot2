@@ -4,7 +4,7 @@ import Image from "next/image";
 
 export default function Home() {
   const handleLoginWithLine = () => {
-    // 將用戶重定向到 LINE Login 授權 URL
+    // 將用戶重定向到 LINE Login 授權 UR
     window.location.href = '/api/login';
   };
 
