@@ -1,10 +1,11 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-const ApplicationPage = () => {
+
+const Header = () => {
   const router = useRouter();
 
   const handleNextClick = () => {
-    router.push('/parent/finish'); // 替换 '/next-page' 为你想要跳转的路径
+    router.push('/parent/apply'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   return (
@@ -14,19 +15,7 @@ const ApplicationPage = () => {
               申請成為家長
             </span>
             <button>
-              <img src="./publoc/IconMask.svg" alt="描述" />
-            </button>
-        </div>
-        <div style={styles.contentLayout}>
-            <div style={styles.rollerLayout}>
-              <div style={styles.roller}></div>
-              <div style={styles.roller}></div>
-              <div style={styles.roller}></div>
-              <div style={styles.rollerActive}></div>
-            </div>
-            <span style={styles.subTitle}>身分驗證中</span>
-            <button style={styles.nextBtn} onClick={handleNextClick}>
-              確認送出
+             <img src="/IconMask.svg" alt="描述" />
             </button>
         </div>
     </div>
@@ -34,56 +23,16 @@ const ApplicationPage = () => {
 };
 
 const styles = {
-  imgLayout: {
-    maxWidth:'320px',
-    height: '180px',
-    alignSelf: 'stretch',
-    boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.25)',
-    background:'#FFF'
-  },
-  mainCode : {
-    color: 'var(---Surface-Black-25, #252525)',
-    fontFamily: "LINE Seed JP_TTF",
-    fontSize: '16px',
-    fontStyle: 'normal',
-    fontWeight: '700',
-    lineHeight: 'normal'
-  },
-  subCode : {
-    color: 'var(---Surface-Black-25, #252525)',
-    fontFamily: "LINE Seed JP_TTF",
-    fontSize: '12px',
-    fontStyle: 'normal',
-    fontWeight: '700',
-    lineHeight: 'normal',
-    gap:'12px'
-  },
-  uplaodLayput: {
-    display:'flex',
-    flexDirection:'column'
-  },
-  inputField: {
-    display: 'flex',
-    padding: '0px 16px',
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    gap: '12px',
-    alignSelf: 'stretch',
-    borderRadius: '8px',
-    border: '1px solid var(---OutLine-OutLine, #78726D)',
-    background: 'var(---SurfaceContainer-Lowest, #FFF)'
-  },
   nextBtn : {
     display: 'flex',
-    padding:'8px 12px',
+    padding: '8px 12px',
     flexDirection: 'column',
     alignItems: 'center',
     gap: '8px',
-    alignItems: 'flex-start',
     borderRadius: '6px',
-    background: 'var(---Primary-Primary, #E3838E)',
-    border:'none',
-    maxWidth:'90px'
+    background: 'var(---Surface-LT, #F2F2F2)',
+    height: '40px',
+    border:'none'
   },
   lawLayout: {
     display: 'flex',
@@ -95,7 +44,6 @@ const styles = {
     borderRadius: '20px',
     border: '2px solid var(---Button-01, #FBDBD6)',
     background: '#FFF',
-    gap:'20px'
   },
   subTitle: {
     color: '#E3838E',
@@ -110,8 +58,7 @@ const styles = {
     flexDirection: 'column',
     justifyContent:'center',
     alignItem:'center' ,
-    height:'100%',
-    height:'100vh', 
+    height:'100%'
   },
   header: {
     backgroundColor: '#FFF',
@@ -134,7 +81,6 @@ const styles = {
     alignItem:'center',
     justifyContent:'center',
     width:'100%',
-    height:'100vh', 
     flex:1
   },
   rollerLayout: {
@@ -161,4 +107,4 @@ const styles = {
   }
 };
 
-export default ApplicationPage;
+export default Header;

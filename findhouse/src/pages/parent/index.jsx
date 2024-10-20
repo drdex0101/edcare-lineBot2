@@ -1,6 +1,5 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-
 const ApplicationPage = () => {
   const router = useRouter();
 
@@ -9,93 +8,117 @@ const ApplicationPage = () => {
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        <h2>申請成為家長</h2>
-        <button style={styles.closeButton}>X</button>
-      </div>
-      <div style={styles.content}>
-        <div style={styles.subHeader}>
-          <h3>托育平台合約</h3>
+    <div style={styles.main}>  
+        <div style={styles.header}> 
+            <span style={styles.headerFont}>
+              申請成為家長
+            </span>
+            <button>
+              <img src="./publoc/IconMask.svg" alt="描述" />
+            </button>
         </div>
-        <div style={styles.textContent}>
-          {/* 模拟的内容 */}
-          <p style={styles.line}></p>
-          <p style={styles.line}></p>
-          <p style={styles.line}></p>
-          <p style={styles.line}></p>
-          <p style={styles.line}></p>
+        <div style={styles.contentLayout}>
+            <div style={styles.rollerLayout}>
+              <div style={styles.rollerActive}></div>
+              <div style={styles.roller}></div>
+              <div style={styles.roller}></div>
+              <div style={styles.roller}></div>
+            </div>
+            <span style={styles.subTitle}>會員同意書</span>
+            <div style={styles.lawLayout}>
+              123
+            </div>
+            <button style={styles.nextBtn} onClick={handleNextClick}>
+              下一步
+            </button>
         </div>
-        <div style={styles.checkboxContainer}>
-          <input type="checkbox" id="agree" />
-          <label htmlFor="agree">我已閱讀並同意上述內容</label>
-        </div>
-        <button style={styles.nextButton} onClick={handleNextClick}>
-          下一步
-        </button>
-      </div>
     </div>
   );
 };
 
 const styles = {
-  container: {
-    width: '375px',
-    backgroundColor: '#fff4e6',
-    borderRadius: '10px',
-    padding: '16px',
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-    fontFamily: 'Arial, sans-serif',
-    margin: 'auto',
-    position: 'relative',
+  nextBtn : {
+    display: 'flex',
+    padding: '8px 12px',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '8px',
+    borderRadius: '6px',
+    background: 'var(---Surface-LT, #F2F2F2)',
+    height: '40px',
+    border:'none'
+  },
+  lawLayout: {
+    display: 'flex',
+    width: '320px',
+    padding: '18.5px 18px 19.5px 17px',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: '20px',
+    border: '2px solid var(---Button-01, #FBDBD6)',
+    background: '#FFF',
+  },
+  subTitle: {
+    color: '#E3838E',
+    textAlign: 'center',
+    fontSize: '16px',
+    fontStyle: 'normal',
+    fontWeight: 700,
+    lineHeight: 'normal',
+  },
+  main: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent:'center',
+    alignItem:'center' ,
+    height:'100%'
   },
   header: {
+    backgroundColor: '#FFF',
     display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '16px',
+    justifyContent:'space-between',
+    alignItem:'center'
   },
-  closeButton: {
-    backgroundColor: 'transparent',
-    border: 'none',
-    fontSize: '16px',
-    cursor: 'pointer',
+  headerFont: {
+    color: '#E3838E',
+    textAlign: 'center',
+    fontSize: '24px',
+    fontStyle: 'normal',
+    fontWeight: '700',
+    lineHeight: 'normal',
   },
-  content: {
-    backgroundColor: '#ffffff',
-    borderRadius: '8px',
-    padding: '16px',
-  },
-  subHeader: {
-    borderBottom: '2px solid #81c784',
-    marginBottom: '16px',
-  },
-  textContent: {
-    maxHeight: '200px',
-    overflowY: 'auto',
-    marginBottom: '16px',
-  },
-  line: {
-    backgroundColor: '#e0e0e0',
-    height: '10px',
-    marginBottom: '8px',
-    borderRadius: '4px',
-  },
-  checkboxContainer: {
+  contentLayout : {
     display: 'flex',
+    flexDirection: 'column',
+    backgroundColor:'#F8ECEC',
+    alignItem:'center',
+    justifyContent:'center',
+    width:'100%',
+    flex:1
+  },
+  rollerLayout: {
+    display: 'flex',
+    width: '390px',
+    height: '52px',
+    padding: '21px 24px',
+    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: '16px',
+    gap: '10px',
+    flexShrink: '0'
   },
-  nextButton: {
-    backgroundColor: '#ffad42',
-    border: 'none',
-    padding: '10px 20px',
-    borderRadius: '5px',
-    color: 'white',
-    cursor: 'pointer',
-    display: 'block',
-    marginLeft: 'auto',
+  rollerActive: {
+    width: '42px',
+    height: '6px',
+    borderRadius: '2px',
+    background: '#E3838E'
   },
+  roller: {
+    width: '42px',
+    height: '6px',
+    borderRadius: '2px',
+    background: '#FFF'
+  }
 };
 
 export default ApplicationPage;

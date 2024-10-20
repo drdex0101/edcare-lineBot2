@@ -173,8 +173,8 @@ const CaregiverFormPage = () => {
 
 const styles = {
   container: {
-    width: '375px',
-    backgroundColor: '#fff4e6',
+    maxWidth: '600px',
+    backgroundColor: '#FCF7F7',
     borderRadius: '10px',
     padding: '16px',
     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
@@ -184,9 +184,10 @@ const styles = {
   },
   header: {
     display: 'flex',
+    maxWidth: '600px',
+    padding: '21px 24px',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: '16px',
   },
   closeButton: {
     backgroundColor: 'transparent',

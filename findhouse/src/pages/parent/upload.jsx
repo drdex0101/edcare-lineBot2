@@ -1,235 +1,178 @@
 import React from 'react';
-import { useRouter } from 'next/router';  // Import useRouter
-export default function FormPage() {
-  const router = useRouter(); 
-  const handleSubmit = (e) => {
-    e.preventDefault();  
-    router.push('/parent/longTern');
+import { useRouter } from 'next/router';
+const ApplicationPage = () => {
+  const router = useRouter();
+
+  const handleNextClick = () => {
+    router.push('/parent/finish'); // 替换 '/next-page' 为你想要跳转的路径
   };
+
   return (
-    <div className="container">
-      <div className="header">
-        <div className="titleBar">
-          <h2>申請成為家長</h2>
+    <div style={styles.main}>  
+        <div style={styles.header}> 
+            <span style={styles.headerFont}>
+              申請成為家長
+            </span>
+            <button>
+              <img src="./publoc/IconMask.svg" alt="描述" />
+            </button>
         </div>
-        <div className="progress">
-          <div className="progressBar"></div>
+        <div style={styles.contentLayout}>
+            <div style={styles.rollerLayout}>
+              <div style={styles.roller}></div>
+              <div style={styles.roller}></div>
+              <div style={styles.rollerActive}></div>
+              <div style={styles.roller}></div>
+            </div>
+            <span style={styles.subTitle}>身分驗證</span>
+            <div style={styles.lawLayout}>
+              <input style={styles.inputField} />
+              <input style={styles.inputField} />
+              <input style={styles.inputField} />
+              <input style={styles.inputField} />
+              <input style={styles.inputField} />
+              <input style={styles.inputField} />
+            </div>
+            <div style={styles.uplaodLayput}>
+              <span style={styles.mainCode}>上傳身分證正反面</span>
+              <span style={styles.subCode}>僅供通托育平台身分驗證使用，請提供清晰正見正反照。</span>
+            </div>
+            <span style={styles.mainCode}>證件照正面</span>
+            <div style={styles.imgLayout}></div>
+            <span style={styles.mainCode}>證件照反面</span>
+            <div style={styles.imgLayout}></div>
+            <button style={styles.nextBtn} onClick={handleNextClick}>
+              確認送出
+            </button>
         </div>
-      </div>
-
-      <div className="formSection" onSubmit={handleSubmit}>
-        <h3 className="formTitle">身份驗證</h3>
-
-        <form className="form">
-          {/* Existing fields */}
-          <div className="formGroup">
-            <label htmlFor="name">真實姓名</label>
-            <input id="name" type="text" placeholder="王美麗" />
-          </div>
-
-          <div className="formGroup">
-            <label htmlFor="id">身份字號</label>
-            <input id="id" type="text" placeholder="A123456789" />
-          </div>
-
-          <div className="formGroup">
-            <label htmlFor="gender">性 別</label>
-            <select id="gender">
-              <option value="male">男</option>
-              <option value="female">女</option>
-            </select>
-          </div>
-
-          <div className="formGroup">
-            <label htmlFor="dob">出生日期</label>
-            <input id="dob" type="date" />
-          </div>
-
-          <div className="formGroup">
-            <label htmlFor="address">戶籍地址</label>
-            <input id="address" type="text" placeholder="請輸入您的戶籍地址" />
-          </div>
-
-          <div className="formGroup">
-            <label htmlFor="contactAddress">聯絡地址</label>
-            <input id="contactAddress" type="text" placeholder="請輸入您的聯絡地址" />
-          </div>
-
-          {/* File upload section */}
-          <div className="fileUploadSection">
-            <label className="fileLabel">上傳您的證件正反面照片</label>
-            <p>請上傳以下格式的圖片：JPG, PNG, 最大 2 MB</p>
-
-            <div className="fileUploadWrapper">
-              {/* 示意圖? */}
-              <button type="button" className="uploadButton">上傳照片</button>
-              <input type="file" id="file" className="fileInput" />
-            </div>
-
-          </div>
-
-          <div className="fileUploadSection">
-            <label className="fileLabel">上傳其他資料</label>
-            <div className="fileUploadWrapper">
-              <button type="button" className="uploadButton">上傳檔案</button>
-              <input type="file" className="fileInput" />
-            </div>
-          </div>
-
-          <button type="submit" className="submitButton">確認送出</button>
-        </form>
-      </div>
-
-      <style jsx>{`
-        .container {
-          background-color: #fceff1;
-          padding: 20px;
-          height: 100vh;
-          display: flex;
-          flex-direction: column;
-        }
-
-        .header {
-          text-align: center;
-          background-color: #fff;
-        }
-
-        .titleBar h2 {
-          color: #d65b78;
-          margin-bottom: 10px;
-        }
-
-        .progress {
-          width: 100%;
-          height: 4px;
-          background-color: #ffd1e1;
-          margin-bottom: 20px;
-        }
-
-        .progressBar {
-          width: 75%; /* Adjusted to reflect further progress */
-          height: 100%;
-          background-color: #d65b78;
-        }
-
-        .formSection {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-        }
-
-        .formTitle {
-          color: #d65b78;
-          margin-bottom: 20px;
-        }
-
-        .form {
-          width: 100%;
-        }
-
-        .formGroup {
-          margin-bottom: 20px;
-        }
-
-        .formGroup label {
-          display: block;
-          font-size: 14px;
-          margin-bottom: 5px;
-        }
-
-        .formGroup input,
-        .formGroup select {
-          width: 100%;
-          padding: 10px;
-          border: 1px solid #e1e1e1;
-          border-radius: 5px;
-        }
-
-        .fileUploadSection {
-          margin-bottom: 20px;
-        }
-
-        .fileLabel {
-          font-size: 14px;
-          margin-bottom: 5px;
-        }
-
-        .fileUploadWrapper {
-          display: flex;
-          align-items: center;
-        }
-
-        .filePlaceholder img {
-          width: 100px;
-          height: 100px;
-          object-fit: cover;
-          border: 1px solid #e1e1e1;
-          border-radius: 5px;
-          margin-right: 10px;
-        }
-
-        .uploadButton {
-          padding: 10px 15px;
-          background-color: #d65b78;
-          color: white;
-          border: none;
-          border-radius: 5px;
-          cursor: pointer;
-        }
-
-        .uploadButton:hover {
-          background-color: #c04f6b;
-        }
-
-        .fileInput {
-          display: none;
-        }
-
-        .uploadedFile {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          margin-top: 10px;
-        }
-
-        .deleteButton {
-          background-color: transparent;
-          color: #d65b78;
-          border: none;
-          cursor: pointer;
-        }
-
-        .submitButton {
-          width: 100%;
-          padding: 15px;
-          background-color: #d65b78;
-          color: white;
-          border: none;
-          border-radius: 5px;
-          font-size: 16px;
-          cursor: pointer;
-        }
-
-        .submitButton:hover {
-          background-color: #c04f6b;
-        }
-
-        @media (max-width: 600px) {
-          .container {
-            padding: 10px;
-          }
-
-          .formGroup input,
-          .formGroup select {
-            font-size: 14px;
-          }
-
-          .submitButton {
-            font-size: 14px;
-          }
-        }
-      `}</style>
     </div>
   );
-}
+};
+
+const styles = {
+  imgLayout: {
+    maxWidth:'320px',
+    height: '180px',
+    alignSelf: 'stretch',
+    boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.25)',
+    background:'#FFF'
+  },
+  mainCode : {
+    color: 'var(---Surface-Black-25, #252525)',
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: '16px',
+    fontStyle: 'normal',
+    fontWeight: '700',
+    lineHeight: 'normal'
+  },
+  subCode : {
+    color: 'var(---Surface-Black-25, #252525)',
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: '12px',
+    fontStyle: 'normal',
+    fontWeight: '700',
+    lineHeight: 'normal',
+    gap:'12px'
+  },
+  uplaodLayput: {
+    display:'flex',
+    flexDirection:'column'
+  },
+  inputField: {
+    display: 'flex',
+    padding: '0px 16px',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    gap: '12px',
+    alignSelf: 'stretch',
+    borderRadius: '8px',
+    border: '1px solid var(---OutLine-OutLine, #78726D)',
+    background: 'var(---SurfaceContainer-Lowest, #FFF)'
+  },
+  nextBtn : {
+    display: 'flex',
+    padding:'8px 12px',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '8px',
+    alignItems: 'flex-start',
+    borderRadius: '6px',
+    background: 'var(---Primary-Primary, #E3838E)',
+    border:'none',
+    maxWidth:'90px'
+  },
+  lawLayout: {
+    display: 'flex',
+    width: '320px',
+    padding: '18.5px 18px 19.5px 17px',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: '20px',
+    border: '2px solid var(---Button-01, #FBDBD6)',
+    background: '#FFF',
+    gap:'20px'
+  },
+  subTitle: {
+    color: '#E3838E',
+    textAlign: 'center',
+    fontSize: '16px',
+    fontStyle: 'normal',
+    fontWeight: 700,
+    lineHeight: 'normal',
+  },
+  main: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent:'center',
+    alignItem:'center' ,
+    height:'100%'
+  },
+  header: {
+    backgroundColor: '#FFF',
+    display: 'flex',
+    justifyContent:'space-between',
+    alignItem:'center'
+  },
+  headerFont: {
+    color: '#E3838E',
+    textAlign: 'center',
+    fontSize: '24px',
+    fontStyle: 'normal',
+    fontWeight: '700',
+    lineHeight: 'normal',
+  },
+  contentLayout : {
+    display: 'flex',
+    flexDirection: 'column',
+    backgroundColor:'#F8ECEC',
+    alignItem:'center',
+    justifyContent:'center',
+    width:'100%',
+    flex:1
+  },
+  rollerLayout: {
+    display: 'flex',
+    width: '390px',
+    height: '52px',
+    padding: '21px 24px',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: '10px',
+    flexShrink: '0'
+  },
+  rollerActive: {
+    width: '42px',
+    height: '6px',
+    borderRadius: '2px',
+    background: '#E3838E'
+  },
+  roller: {
+    width: '42px',
+    height: '6px',
+    borderRadius: '2px',
+    background: '#FFF'
+  }
+};
+
+export default ApplicationPage;

@@ -1,216 +1,143 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useRouter } from 'next/router';
-
-const PhoneVerificationPage = () => {
+const ApplicationPage = () => {
   const router = useRouter();
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [verificationCode, setVerificationCode] = useState(new Array(6).fill(''));
-  const [timeLeft, setTimeLeft] = useState(120);
-  const [isCodeSent, setIsCodeSent] = useState(false);
-
-  const handlePhoneChange = (e) => {
-    setPhoneNumber(e.target.value);
-  };
-
-  const handleCodeChange = (e, index) => {
-    const newCode = [...verificationCode];
-    newCode[index] = e.target.value;
-    setVerificationCode(newCode);
-
-    // 自动焦点移动到下一个输入框
-    if (e.target.value && index < 5) {
-      document.getElementById(`code-${index + 1}`).focus();
-    }
-  };
-
-  const handleSendCode = () => {
-    setIsCodeSent(true);
-    setTimeLeft(120);
-
-    // 模拟发送验证码，开始倒计时
-    const interval = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(interval);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-  };
-
-  const handleResendCode = () => {
-    handleSendCode();
-  };
 
   const handleNextClick = () => {
-    // 这里可以添加验证码验证逻辑
-    router.push('/nanny/finish'); // 替换为实际的下一步路径
+    router.push('/parent/upload'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        <h2>申請成為保母</h2>
-        <button style={styles.closeButton}>X</button>
-      </div>
-      <div style={styles.content}>
-        <div style={styles.subHeader}>
-          <h3>手機認證</h3>
+    <div style={styles.main}>  
+        <div style={styles.header}> 
+            <span style={styles.headerFont}>
+              申請成為家長
+            </span>
+            <button>
+              <img src="./publoc/IconMask.svg" alt="描述" />
+            </button>
         </div>
-        <div style={styles.instructions}>
-          請輸入常用手機進行認證
-        </div>
-        <input
-          type="tel"
-          placeholder="請輸入手機號碼"
-          value={phoneNumber}
-          onChange={handlePhoneChange}
-          style={styles.input}
-          disabled={isCodeSent}
-        />
-        {isCodeSent && (
-          <div>
-            <div style={styles.instructions}>請輸入6位驗證碼</div>
-            <div style={styles.codeInputContainer}>
-              {verificationCode.map((digit, index) => (
-                <input
-                  key={index}
-                  type="text"
-                  maxLength="1"
-                  id={`code-${index}`}
-                  value={digit}
-                  onChange={(e) => handleCodeChange(e, index)}
-                  style={styles.codeInput}
-                />
-              ))}
+        <div style={styles.contentLayout}>
+            <div style={styles.rollerLayout}>
+              <div style={styles.roller}></div>
+              <div style={styles.roller}></div>
+              <div style={styles.rollerActive}></div>
+              <div style={styles.roller}></div>
             </div>
-            <div style={styles.timer}>
-              等待{timeLeft}秒重新寄送
+            <span style={styles.subTitle}>身分驗證</span>
+            <div style={styles.lawLayout}>
+              <div style={styles.imgLayout}>
+
+              </div>
             </div>
-            {timeLeft === 0 && (
-              <button style={styles.resendButton} onClick={handleResendCode}>
-                重新寄送
+            <div style={styles.buttonLayout}>
+              <button style={styles.nextBtn} onClick={handleNextClick}>
+                進行身分認證
               </button>
-            )}
-          </div>
-        )}
-        {!isCodeSent && (
-          <button style={styles.sendButton} onClick={handleSendCode}>
-            發送驗證碼
-          </button>
-        )}
-        <div style={styles.buttonGroup}>
-          <button style={styles.backButton} onClick={() => router.back()}>
-            上一步
-          </button>
-          <button style={styles.nextButton} onClick={handleNextClick}>
-            下一步
-          </button>
+              <button style={styles.nextBtn} onClick={handleNextClick}>
+                稍後再驗證
+              </button>
+            </div>
         </div>
-      </div>
     </div>
   );
 };
 
 const styles = {
-  container: {
-    width: '375px',
-    backgroundColor: '#fff4e6',
-    borderRadius: '10px',
-    padding: '16px',
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-    fontFamily: 'Arial, sans-serif',
-    margin: 'auto',
-    position: 'relative',
+  buttonLayout: {
+    display:'flex',
+    flexDirection:'column',
+    gap:'10px'
+  },
+  imgLayout: {
+    height: '180px',
+    alignSelf: 'stretch',
+    boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.25)'
+  },
+  nextBtn : {
+    display: 'flex',
+    padding:'8px 12px',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '8px',
+    alignItems: 'flex-start',
+    borderRadius: '6px',
+    background: 'var(---Primary-Primary, #E3838E)',
+    border:'none',
+    maxWidth:'120px'
+  },
+  lawLayout: {
+    display: 'flex',
+    width: '320px',
+    padding: '18.5px 18px 19.5px 17px',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: '20px',
+    border: '2px solid var(---Button-01, #FBDBD6)',
+    background: '#FFF',
+    gap:'20px'
+  },
+  subTitle: {
+    color: '#E3838E',
+    textAlign: 'center',
+    fontSize: '16px',
+    fontStyle: 'normal',
+    fontWeight: 700,
+    lineHeight: 'normal',
+  },
+  main: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent:'center',
+    alignItem:'center' ,
+    height:'100%'
   },
   header: {
+    backgroundColor: '#FFF',
     display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '16px',
+    justifyContent:'space-between',
+    alignItem:'center'
   },
-  closeButton: {
-    backgroundColor: 'transparent',
-    border: 'none',
-    fontSize: '16px',
-    cursor: 'pointer',
-  },
-  content: {
-    backgroundColor: '#ffffff',
-    borderRadius: '8px',
-    padding: '16px',
-  },
-  subHeader: {
-    borderBottom: '2px solid #81c784',
-    marginBottom: '16px',
-  },
-  instructions: {
-    fontSize: '14px',
-    marginBottom: '8px',
-  },
-  input: {
-    padding: '8px',
-    border: '1px solid #ccc',
-    borderRadius: '5px',
-    marginBottom: '16px',
-    width: '100%',
-  },
-  codeInputContainer: {
-    display: 'flex',
-    gap: '8px',
-    marginBottom: '16px',
-  },
-  codeInput: {
-    width: '40px',
-    padding: '8px',
-    border: '1px solid #ccc',
-    borderRadius: '5px',
+  headerFont: {
+    color: '#E3838E',
     textAlign: 'center',
-    fontSize: '18px',
+    fontSize: '24px',
+    fontStyle: 'normal',
+    fontWeight: '700',
+    lineHeight: 'normal',
   },
-  timer: {
-    fontSize: '12px',
-    color: '#888',
-    marginBottom: '8px',
-  },
-  resendButton: {
-    backgroundColor: '#ffad42',
-    border: 'none',
-    padding: '8px 16px',
-    borderRadius: '5px',
-    color: 'white',
-    cursor: 'pointer',
-    marginBottom: '16px',
-  },
-  sendButton: {
-    backgroundColor: '#ffad42',
-    border: 'none',
-    padding: '10px 20px',
-    borderRadius: '5px',
-    color: 'white',
-    cursor: 'pointer',
-    marginBottom: '16px',
-  },
-  buttonGroup: {
+  contentLayout : {
     display: 'flex',
-    justifyContent: 'space-between',
+    flexDirection: 'column',
+    backgroundColor:'#F8ECEC',
+    alignItem:'center',
+    justifyContent:'center',
+    width:'100%',
+    flex:1
   },
-  backButton: {
-    backgroundColor: '#ccc',
-    border: 'none',
-    padding: '10px 20px',
-    borderRadius: '5px',
-    cursor: 'pointer',
+  rollerLayout: {
+    display: 'flex',
+    width: '390px',
+    height: '52px',
+    padding: '21px 24px',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: '10px',
+    flexShrink: '0'
   },
-  nextButton: {
-    backgroundColor: '#ffad42',
-    border: 'none',
-    padding: '10px 20px',
-    borderRadius: '5px',
-    color: 'white',
-    cursor: 'pointer',
+  rollerActive: {
+    width: '42px',
+    height: '6px',
+    borderRadius: '2px',
+    background: '#E3838E'
   },
+  roller: {
+    width: '42px',
+    height: '6px',
+    borderRadius: '2px',
+    background: '#FFF'
+  }
 };
 
-export default PhoneVerificationPage;
+export default ApplicationPage;
