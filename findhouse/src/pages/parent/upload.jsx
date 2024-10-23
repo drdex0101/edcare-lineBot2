@@ -78,6 +78,17 @@ const styles = {
     display:'flex',
     flexDirection:'column'
   },
+  buttonLayout: {
+    display:'flex',
+    flexDirection:'column',
+    gap:'10px',
+    marginTop:'35px'
+  },
+  imgLayout: {
+    height: '180px',
+    alignSelf: 'stretch',
+    boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.25)'
+  },
   inputField: {
     display: 'flex',
     padding: '0px 16px',
@@ -89,17 +100,69 @@ const styles = {
     border: '1px solid var(---OutLine-OutLine, #78726D)',
     background: 'var(---SurfaceContainer-Lowest, #FFF)'
   },
-  nextBtn : {
+  lastButton: {
+    border:'none',
+    backgroundColor:'#FFF'
+  },
+  subTitleLayout:{
+    width:'100%',
+    display:'flex',
+    justifyContent:'flex-start',
+    backgroundColor: '#FBDBD6',
+  },
+  main: {
     display: 'flex',
-    padding:'8px 12px',
     flexDirection: 'column',
     alignItems: 'center',
-    gap: '8px',
-    alignItems: 'flex-start',
-    borderRadius: '6px',
-    background: 'var(---Primary-Primary, #E3838E)',
-    border:'none',
-    maxWidth:'90px'
+    height: '100vh', // 占满整个视口高度
+    backgroundColor: '#FBDBD6',
+  },
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    maxWidth: '600px',
+    marginBottom: '20px',
+    padding: '10px',
+    backgroundColor: '#fff',
+  },
+  headerFont: {
+    fontSize: '24px',
+    fontWeight: 'bold',
+    color:'#E3838E'
+  },
+  contentLayout: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    width: '100%',
+    maxWidth: '600px',
+    backgroundColor: '#FBDBD6',
+  },
+  rollerLayout: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginBottom: '10px',
+  },
+  roller: {
+    width: '42px',
+    height: '6px',
+    borderRadius: '2px',
+    backgroundColor: '#FFF',
+    margin: '0 5px',
+  },
+  rollerActive: {
+    width: '42px',
+    height: '6px',
+    borderRadius: '2px',
+    backgroundColor: 'var(---Primary-Primary, #E3838E)',
+    margin: '0 5px',
+  },
+  subTitle: {
+    fontSize: '18px',
+    marginBottom: '10px',
+    color:'#E3838E'
   },
   lawLayout: {
     display: 'flex',
@@ -113,66 +176,15 @@ const styles = {
     background: '#FFF',
     gap:'20px'
   },
-  subTitle: {
-    color: '#E3838E',
-    textAlign: 'center',
-    fontSize: '16px',
-    fontStyle: 'normal',
-    fontWeight: 700,
-    lineHeight: 'normal',
+  nextBtn: {
+    padding: '10px 20px',
+    backgroundColor: 'var(---Primary-Primary, #E3838E)',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+    marginTop:'20px'
   },
-  main: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent:'center',
-    alignItem:'center' ,
-    height:'100%'
-  },
-  header: {
-    backgroundColor: '#FFF',
-    display: 'flex',
-    justifyContent:'space-between',
-    alignItem:'center'
-  },
-  headerFont: {
-    color: '#E3838E',
-    textAlign: 'center',
-    fontSize: '24px',
-    fontStyle: 'normal',
-    fontWeight: '700',
-    lineHeight: 'normal',
-  },
-  contentLayout : {
-    display: 'flex',
-    flexDirection: 'column',
-    backgroundColor:'#F8ECEC',
-    alignItem:'center',
-    justifyContent:'center',
-    width:'100%',
-    flex:1
-  },
-  rollerLayout: {
-    display: 'flex',
-    width: '390px',
-    height: '52px',
-    padding: '21px 24px',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: '10px',
-    flexShrink: '0'
-  },
-  rollerActive: {
-    width: '42px',
-    height: '6px',
-    borderRadius: '2px',
-    background: '#E3838E'
-  },
-  roller: {
-    width: '42px',
-    height: '6px',
-    borderRadius: '2px',
-    background: '#FFF'
-  }
 };
 
 export default ApplicationPage;
