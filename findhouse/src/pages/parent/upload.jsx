@@ -37,10 +37,12 @@ const ApplicationPage = () => {
               <span style={styles.mainCode}>上傳身分證正反面</span>
               <span style={styles.subCode}>僅供通托育平台身分驗證使用，請提供清晰正見正反照。</span>
             </div>
-            <span style={styles.mainCode}>證件照正面</span>
-            <div style={styles.imgLayout}></div>
-            <span style={styles.mainCode}>證件照反面</span>
-            <div style={styles.imgLayout}></div>
+            <div style={styles.uploadimgLayout}>
+                <span style={styles.mainCode}>證件照正面</span>
+                <div style={styles.imgLayout}></div>
+                <span style={styles.mainCode}>證件照反面</span>
+                <div style={styles.imgLayout}></div>
+            </div>
             <button style={styles.nextBtn} onClick={handleNextClick}>
               確認送出
             </button>
@@ -50,12 +52,19 @@ const ApplicationPage = () => {
 };
 
 const styles = {
+  uploadimgLayout:{
+    display:'flex',
+    flexDirection:'column',
+    alignItems:'center',
+    width:'100%',
+    justifyContent:'center',
+    padding:'20px'
+  },
   imgLayout: {
-    maxWidth:'320px',
     height: '180px',
     alignSelf: 'stretch',
     boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.25)',
-    background:'#FFF'
+    background:'#FFF',
   },
   mainCode : {
     color: 'var(---Surface-Black-25, #252525)',
@@ -83,11 +92,6 @@ const styles = {
     flexDirection:'column',
     gap:'10px',
     marginTop:'35px'
-  },
-  imgLayout: {
-    height: '180px',
-    alignSelf: 'stretch',
-    boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.25)'
   },
   inputField: {
     display: 'flex',
@@ -173,7 +177,6 @@ const styles = {
     alignItems: 'center',
     borderRadius: '20px',
     border: '2px solid var(---Button-01, #FBDBD6)',
-    background: '#FFF',
     gap:'20px'
   },
   nextBtn: {

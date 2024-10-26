@@ -56,7 +56,8 @@ const styles = {
   imgLayout: {
     height: '180px',
     alignSelf: 'stretch',
-    boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.25)'
+    boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.25)',
+    backgroundColor:'#FFF'
   },
   inputField: {
     display: 'flex',
@@ -142,7 +143,6 @@ const styles = {
     alignItems: 'center',
     borderRadius: '20px',
     border: '2px solid var(---Button-01, #FBDBD6)',
-    background: '#FFF',
     gap:'20px'
   },
   nextBtn: {

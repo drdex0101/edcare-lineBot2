@@ -143,7 +143,6 @@ const styles = {
     alignItems: 'center',
     borderRadius: '20px',
     border: '2px solid var(---Button-01, #FBDBD6)',
-    background: '#FFF',
     gap:'20px'
   },
   nextBtn: {

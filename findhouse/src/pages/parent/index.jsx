@@ -28,7 +28,32 @@ const ApplicationPage = () => {
             <span style={styles.subTitle}>會員同意書</span>
             </div>
             <div style={styles.lawLayout}>
-              123
+              <div style={styles.topTitle}>我是標題</div>
+              <div style={styles.mainContent}>
+                我是文字我是文字我是文字我是文字我是文字我是文字
+                我是文字我是文字我是文字我是文字我是文字我是文字
+                我是文字我是文字我是文字我是文字我是文字我是文字
+                我是文字我是文字我是文字我是文字我是文字我是文字
+                我是文字我是文字我是文字我是文字我是文字我是文字
+                我是文字我是文字我是文字我是文字我是文字我是文字
+                我是文字我是文字我是文字我是文字我是文字我是文字
+                我是文字我是文字我是文字我是文字我是文字我是文字
+                我是文字我是文字我是文字我是文字我是文字我是文字
+                我是文字我是文字我是文字我是文字我是文字我是文字
+                我是文字我是文字我是文字我是文字我是文字我是文字
+                我是文字我是文字我是文字我是文字我是文字我是文字
+                我是文字我是文字我是文字我是文字我是文字我是文字
+                我是文字我是文字我是文字我是文字我是文字我是文字
+                我是文字我是文字我是文字我是文字我是文字我是文字
+                我是文字我是文字我是文字我是文字我是文字我是文字
+                我是文字我是文字我是文字我是文字我是文字我是文字
+                我是文字我是文字我是文字我是文字我是文字我是文字
+                我是文字我是文字
+              </div>
+              <div style={styles.checkBox}>
+                <input type='checkbox'></input>
+                <span style={styles.inputFont}>我上述之合約內容</span>
+              </div>
             </div>
             <div style={styles.buttonLayout}>
               <button style={styles.nextBtn} onClick={handleNextClick}>
@@ -41,6 +66,36 @@ const ApplicationPage = () => {
 };
 
 const styles = {
+  inputFont:{
+    color: 'var(---Surface-Black-25, #252525)',
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: '14px',
+    fontStyle: 'normal',
+    fontWeight: '700',
+    lineHeight: 'normal',
+  },
+  checkBox: {
+    display:'flex',
+    gap:'4px',
+    justifyContent:'flex-start',
+    width:'100%'
+  },
+  mainContent: {
+    color: 'var(---Surface-Black-25, #252525)',
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: '11px',
+    fontStyle: 'normal',
+    fontWeight: '400',
+    lineHeight: 'normal',
+  },
+  topTitle:{
+    color: 'var(---Surface-Black-25, #252525)',
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: '14px',
+    fontStyle: 'normal',
+    fontWeight: '700',
+    lineHeight: 'normal',
+  },
   inputField: {
     display: 'flex',
     padding: '0px 16px',
@@ -59,7 +114,8 @@ const styles = {
   buttonLayout:{
     width:'100%',
     display:'flex',
-    justifyContent:'flex-end'
+    justifyContent:'flex-end',
+    marginTop:'12px'
   },
   subTitleLayout:{
     width:'100%',
@@ -73,6 +129,7 @@ const styles = {
     alignItems: 'center',
     height: '100vh', // 占满整个视口高度
     backgroundColor: '#FBDBD6',
+    width:'100%'
   },
   header: {
     display: 'flex',
@@ -123,7 +180,8 @@ const styles = {
   },
   lawLayout: {
     display: 'flex',
-    width: '320px',
+    maxWidth: '320px',
+    minWidth:'300px',
     padding: '18.5px 18px 19.5px 17px',
     flexDirection: 'column',
     justifyContent: 'center',
