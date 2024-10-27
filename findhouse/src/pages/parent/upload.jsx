@@ -8,7 +8,11 @@ const ApplicationPage = () => {
   const router = useRouter();
 
   const handleNextClick = () => {
-    router.push('/parent/finish'); // 替换 '/next-page' 为你想要跳转的路径
+    router.push('/parent/create'); // 替换 '/next-page' 为你想要跳转的路径
+  };
+
+  const handleLastClick = () => {
+    router.push('/verify/'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   return (
@@ -17,8 +21,17 @@ const ApplicationPage = () => {
             <span style={styles.headerFont}>
               申請成為家長
             </span>
-            <button>
-              <img src="./publoc/IconMask.svg" alt="描述" />
+            <button onClick={handleLastClick} style={styles.lastButton}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <g clip-path="url(#clip0_45_10396)">
+                  <path d="M7.77223 12.9916L18.7822 12.9916C19.3322 12.9916 19.7822 12.5416 19.7822 11.9916C19.7822 11.4416 19.3322 10.9916 18.7822 10.9916L7.77223 10.9916L7.77223 9.20162C7.77223 8.75162 7.23223 8.53162 6.92223 8.85162L4.14223 11.6416C3.95223 11.8416 3.95223 12.1516 4.14223 12.3516L6.92223 15.1416C7.23223 15.4616 7.77223 15.2316 7.77223 14.7916L7.77223 12.9916V12.9916Z" fill="#074C5F"/>
+                </g>
+                <defs>
+                  <clipPath id="clip0_45_10396">
+                    <rect width="24" height="24" fill="white"/>
+                  </clipPath>
+                </defs>
+              </svg>
             </button>
         </div>
         <div style={styles.contentLayout}>
@@ -26,6 +39,8 @@ const ApplicationPage = () => {
               <div style={styles.roller}></div>
               <div style={styles.roller}></div>
               <div style={styles.rollerActive}></div>
+              <div style={styles.roller}></div>
+              <div style={styles.roller}></div>
               <div style={styles.roller}></div>
             </div>
             <span style={styles.subTitle}>身分驗證</span>
@@ -72,8 +87,6 @@ const ApplicationPage = () => {
                     },
                   }}
                 />
-
-                <InputLabel id="gender-label">性別</InputLabel>
                   <Select
                       labelId="gender-label"
                       id="gender"
@@ -100,6 +113,7 @@ const ApplicationPage = () => {
                                   borderColor: '#E3838E',
                               },
                           },
+                          backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)',
                       }}
                   >
                       <MenuItem value="male">男</MenuItem>
@@ -358,6 +372,7 @@ const styles = {
     width: '100%',
     maxWidth: '600px',
     backgroundColor: '#FBDBD6',
+    padding:'20px'
   },
   rollerLayout: {
     display: 'flex',
