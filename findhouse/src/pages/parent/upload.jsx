@@ -1,5 +1,9 @@
 import React from 'react';
 import { useRouter } from 'next/router';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import Select from '@mui/material/Select';
+import { MenuItem, InputLabel } from '@mui/material';
 const ApplicationPage = () => {
   const router = useRouter();
 
@@ -25,14 +29,225 @@ const ApplicationPage = () => {
               <div style={styles.roller}></div>
             </div>
             <span style={styles.subTitle}>身分驗證</span>
-            <div style={styles.lawLayout}>
-              <input style={styles.inputField} />
-              <input style={styles.inputField} />
-              <input style={styles.inputField} />
-              <input style={styles.inputField} />
-              <input style={styles.inputField} />
-              <input style={styles.inputField} />
-            </div>
+            <Box
+                component="form"
+                sx={{
+                  display: 'flex',
+                  width: '320px',
+                  padding: '18.5px 18px 19.5px 17px',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderRadius: '20px',
+                  border: '2px solid #FBDBD6',
+                  gap: '20px'
+                }}
+                noValidate
+                autoComplete="off"
+              >
+                <TextField
+                  id="account-name"
+                  label="真實姓名"
+                  variant="outlined"
+                  InputProps={{
+                    sx: {
+                      padding: '0px 16px',
+                      borderRadius: '8px',
+                      backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
+                    },
+                  }}
+                  sx={{
+                    alignSelf: 'stretch',
+                    borderRadius: '8px',
+                    '& .MuiOutlinedInput-root': {
+                      '& fieldset': {
+                        borderColor: 'var(--OutLine-OutLine, #78726D)',
+                      },
+                      '&:hover fieldset': {
+                        borderColor: '#E3838E',
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderColor: '#E3838E',
+                      },
+                    },
+                  }}
+                />
+
+                <InputLabel id="gender-label">性別</InputLabel>
+                  <Select
+                      labelId="gender-label"
+                      id="gender"
+                      label="性別"
+                      defaultValue=""
+                      InputProps={{
+                        sx: {
+                          padding: '0px 16px',
+                          borderRadius: '8px',
+                          backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
+                        },
+                      }}
+                      sx={{
+                          alignSelf: 'stretch',
+                          borderRadius: '8px',
+                          '& .MuiOutlinedInput-root': {
+                              '& fieldset': {
+                                  borderColor: 'var(--OutLine-OutLine, #78726D)',
+                              },
+                              '&:hover fieldset': {
+                                  borderColor: '#E3838E',
+                              },
+                              '&.Mui-focused fieldset': {
+                                  borderColor: '#E3838E',
+                              },
+                          },
+                      }}
+                  >
+                      <MenuItem value="male">男</MenuItem>
+                      <MenuItem value="female">女</MenuItem>
+                  </Select>
+
+                <TextField
+                  id="phone-number"
+                  label="身分證字號"
+                  variant="outlined"
+                  InputProps={{
+                    sx: {
+                      padding: '0px 16px',
+                      borderRadius: '8px',
+                      backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
+                    },
+                  }}
+                  sx={{
+                    alignSelf: 'stretch',
+                    borderRadius: '8px',
+                    '& .MuiOutlinedInput-root': {
+                      '& fieldset': {
+                        borderColor: 'var(--OutLine-OutLine, #78726D)',
+                      },
+                      '&:hover fieldset': {
+                        borderColor: '#E3838E',
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderColor: '#E3838E',
+                      },
+                    },
+                  }}
+                />
+
+
+                <TextField
+                  id="phone-number"
+                  label="出生日期"
+                  variant="outlined"
+                  InputProps={{
+                    sx: {
+                      padding: '0px 16px',
+                      borderRadius: '8px',
+                      backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
+                    },
+                  }}
+                  sx={{
+                    alignSelf: 'stretch',
+                    borderRadius: '8px',
+                    '& .MuiOutlinedInput-root': {
+                      '& fieldset': {
+                        borderColor: 'var(--OutLine-OutLine, #78726D)',
+                      },
+                      '&:hover fieldset': {
+                        borderColor: '#E3838E',
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderColor: '#E3838E',
+                      },
+                    },
+                  }}
+                />
+
+                <TextField
+                  id="phone-number"
+                  label="出生日期"
+                  variant="outlined"
+                  InputProps={{
+                    sx: {
+                      padding: '0px 16px',
+                      borderRadius: '8px',
+                      backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
+                    },
+                  }}
+                  sx={{
+                    alignSelf: 'stretch',
+                    borderRadius: '8px',
+                    '& .MuiOutlinedInput-root': {
+                      '& fieldset': {
+                        borderColor: 'var(--OutLine-OutLine, #78726D)',
+                      },
+                      '&:hover fieldset': {
+                        borderColor: '#E3838E',
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderColor: '#E3838E',
+                      },
+                    },
+                  }}
+                />
+
+                <TextField
+                  id="phone-number"
+                  label="戶籍地址"
+                  variant="outlined"
+                  InputProps={{
+                    sx: {
+                      padding: '0px 16px',
+                      borderRadius: '8px',
+                      backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
+                    },
+                  }}
+                  sx={{
+                    alignSelf: 'stretch',
+                    borderRadius: '8px',
+                    '& .MuiOutlinedInput-root': {
+                      '& fieldset': {
+                        borderColor: 'var(--OutLine-OutLine, #78726D)',
+                      },
+                      '&:hover fieldset': {
+                        borderColor: '#E3838E',
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderColor: '#E3838E',
+                      },
+                    },
+                  }}
+                />
+
+                <TextField
+                  id="phone-number"
+                  label="通訊地址"
+                  variant="outlined"
+                  InputProps={{
+                    sx: {
+                      padding: '0px 16px',
+                      borderRadius: '8px',
+                      backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
+                    },
+                  }}
+                  sx={{
+                    alignSelf: 'stretch',
+                    borderRadius: '8px',
+                    '& .MuiOutlinedInput-root': {
+                      '& fieldset': {
+                        borderColor: 'var(--OutLine-OutLine, #78726D)',
+                      },
+                      '&:hover fieldset': {
+                        borderColor: '#E3838E',
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderColor: '#E3838E',
+                      },
+                    },
+                  }}
+                />
+
+              </Box>
             <div style={styles.uplaodLayput}>
               <span style={styles.mainCode}>上傳身分證正反面</span>
               <span style={styles.subCode}>僅供通托育平台身分驗證使用，請提供清晰正見正反照。</span>

@@ -1,5 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/router';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
 const ApplicationPage = () => {
   const router = useRouter();
 
@@ -27,12 +29,135 @@ const ApplicationPage = () => {
             <div style={styles.subTitleLayout}>
               <span style={styles.subTitle}>會員資料填寫</span>
             </div>
-            <div style={styles.lawLayout}>
-              <input style={styles.inputField} />
-              <input style={styles.inputField} />
-              <input style={styles.inputField} />
-              <input style={styles.inputField} />
-            </div>
+            <Box
+                component="form"
+                sx={{
+                  display: 'flex',
+                  width: '320px',
+                  padding: '18.5px 18px 19.5px 17px',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderRadius: '20px',
+                  border: '2px solid #FBDBD6',
+                  gap: '20px'
+                }}
+                noValidate
+                autoComplete="off"
+              >
+                <TextField
+                  id="account-name"
+                  label="帳號名稱"
+                  variant="outlined"
+                  InputProps={{
+                    sx: {
+                      padding: '0px 16px',
+                      borderRadius: '8px',
+                      backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
+                    },
+                  }}
+                  sx={{
+                    alignSelf: 'stretch',
+                    borderRadius: '8px',
+                    '& .MuiOutlinedInput-root': {
+                      '& fieldset': {
+                        borderColor: 'var(--OutLine-OutLine, #78726D)',
+                      },
+                      '&:hover fieldset': {
+                        borderColor: '#E3838E',
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderColor: '#E3838E',
+                      },
+                    },
+                  }}
+                />
+
+                <TextField
+                  id="phone-number"
+                  label="常用電話"
+                  variant="outlined"
+                  InputProps={{
+                    sx: {
+                      padding: '0px 16px',
+                      borderRadius: '8px',
+                      backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
+                    },
+                  }}
+                  sx={{
+                    alignSelf: 'stretch',
+                    borderRadius: '8px',
+                    '& .MuiOutlinedInput-root': {
+                      '& fieldset': {
+                        borderColor: 'var(--OutLine-OutLine, #78726D)',
+                      },
+                      '&:hover fieldset': {
+                        borderColor: '#E3838E',
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderColor: '#E3838E',
+                      },
+                    },
+                  }}
+                />
+
+                <TextField
+                  id="phone-number"
+                  label="職業"
+                  variant="outlined"
+                  InputProps={{
+                    sx: {
+                      padding: '0px 16px',
+                      borderRadius: '8px',
+                      backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
+                    },
+                  }}
+                  sx={{
+                    alignSelf: 'stretch',
+                    borderRadius: '8px',
+                    '& .MuiOutlinedInput-root': {
+                      '& fieldset': {
+                        borderColor: 'var(--OutLine-OutLine, #78726D)',
+                      },
+                      '&:hover fieldset': {
+                        borderColor: '#E3838E',
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderColor: '#E3838E',
+                      },
+                    },
+                  }}
+                />
+
+                <TextField
+                  id="phone-number"
+                  label="聯絡信箱"
+                  variant="outlined"
+                  InputProps={{
+                    sx: {
+                      padding: '0px 16px',
+                      borderRadius: '8px',
+                      backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
+                    },
+                  }}
+                  sx={{
+                    alignSelf: 'stretch',
+                    borderRadius: '8px',
+                    '& .MuiOutlinedInput-root': {
+                      '& fieldset': {
+                        borderColor: 'var(--OutLine-OutLine, #78726D)',
+                      },
+                      '&:hover fieldset': {
+                        borderColor: '#E3838E',
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderColor: '#E3838E',
+                      },
+                    },
+                  }}
+                />
+              </Box>
+
             <div style={styles.buttonLayout}>
               <button style={styles.nextBtn} onClick={handleNextClick}>
                 下一步

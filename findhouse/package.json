@@ -10,7 +10,10 @@
   },
   "dependencies": {
     "@coreui/icons": "^3.0.1",
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
     "@faker-js/faker": "^7.6.0",
+    "@mui/material": "^6.1.5",
     "@nextui-org/react": "^2.2.10",
     "@popperjs/core": "2.11.7",
     "@reduxjs/toolkit": "^1.8.6",

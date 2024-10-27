@@ -3,7 +3,13 @@ import { useRouter } from 'next/router';
 const ApplicationPage = () => {
   const router = useRouter();
 
+  const [isChecked, setIsChecked] = React.useState(false); // 新增状态来跟踪复选框状态
+
   const handleNextClick = () => {
+    if (!isChecked) { // 检查复选框是否被勾选
+      alert('請勾選同意才能進行下一步'); // 提示用户
+      return; // 如果没有勾选，阻止跳转
+    }
     router.push('/parent/apply'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
@@ -51,7 +57,11 @@ const ApplicationPage = () => {
                 我是文字我是文字
               </div>
               <div style={styles.checkBox}>
-                <input type='checkbox'></input>
+                <input 
+                  type='checkbox' 
+                  checked={isChecked} 
+                  onChange={() => setIsChecked(!isChecked)} // 更新复选框状态
+                ></input>
                 <span style={styles.inputFont}>我上述之合約內容</span>
               </div>
             </div>
