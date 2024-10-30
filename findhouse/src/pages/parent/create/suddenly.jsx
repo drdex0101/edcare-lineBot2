@@ -1,10 +1,14 @@
 import React from 'react';
 import { useRouter } from 'next/router';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import Select from '@mui/material/Select';
+import { MenuItem, InputLabel } from '@mui/material';
 const ApplicationPage = () => {
   const router = useRouter();
 
   const handleNextClick = () => {
-    router.push('/parent/create/suddenly'); // 替换 '/next-page' 为你想要跳转的路径
+    router.push('/parent/create/babyInfo'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   const handleLastClick = () => {
@@ -41,14 +45,81 @@ const ApplicationPage = () => {
             </div>
             <div style={styles.titleLayout}>
               <span style={styles.subTitle}>托育資料填寫</span>
-              <span style={styles.smallTitle}>選擇托育方式</span>
+              <span style={styles.smallTitle}>臨時托育</span>
             </div>
             <div style={styles.buttonLayout}>
-              <button style={styles.suddenlyBtn} onClick={handleNextClick}>
-                <span style={styles.typeFont}>臨時托育</span>
-              </button>
-              <button style={styles.longBtn} onClick={handleNextClick}>
-                <span style={styles.typeFont}>長期托育</span>
+                <input type="date" id="datepicker" name="date"
+                    min="2023-01-01" max="2024-12-31" style={styles.inputField}/>
+                <input type="date" id="datepicker" name="date"
+                    min="2023-01-01" max="2024-12-31" style={styles.inputField}/>
+                <Select
+                      labelId="gender-label"
+                      id="gender"
+                      label="性別"
+                      defaultValue=""
+                      InputProps={{
+                        sx: {
+                          padding: '0px 16px',
+                          borderRadius: '8px',
+                          backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
+                        },
+                      }}
+                      sx={{
+                          alignSelf: 'stretch',
+                          borderRadius: '8px',
+                          '& .MuiOutlinedInput-root': {
+                              '& fieldset': {
+                                  borderColor: 'var(--OutLine-OutLine, #78726D)',
+                              },
+                              '&:hover fieldset': {
+                                  borderColor: '#E3838E',
+                              },
+                              '&.Mui-focused fieldset': {
+                                  borderColor: '#E3838E',
+                              },
+                          },
+                          backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)',
+                      }}
+                  >
+                      <MenuItem value="male">定點托育</MenuItem>
+                      <MenuItem value="female">居家托育</MenuItem>
+                  </Select>
+                  <Select
+                      labelId="gender-label"
+                      id="gender"
+                      label="性別"
+                      defaultValue=""
+                      InputProps={{
+                        sx: {
+                          padding: '0px 16px',
+                          borderRadius: '8px',
+                          backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
+                        },
+                      }}
+                      sx={{
+                          alignSelf: 'stretch',
+                          borderRadius: '8px',
+                          '& .MuiOutlinedInput-root': {
+                              '& fieldset': {
+                                  borderColor: 'var(--OutLine-OutLine, #78726D)',
+                              },
+                              '&:hover fieldset': {
+                                  borderColor: '#E3838E',
+                              },
+                              '&.Mui-focused fieldset': {
+                                  borderColor: '#E3838E',
+                              },
+                          },
+                          backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)',
+                      }}
+                  >
+                      <MenuItem value="male">男</MenuItem>
+                      <MenuItem value="female">女</MenuItem>
+                  </Select>
+            </div>
+            <div style={styles.buttonLayout}>
+              <button style={styles.nextBtn} onClick={handleNextClick}>
+                      下一步
               </button>
             </div>
         </div>
@@ -57,21 +128,28 @@ const ApplicationPage = () => {
 };
 
 const styles = {
-  titleLayout:{
-    display:'flex',
-    flexDirection:'column',
-    alignItems:'flex-start',
-    width:'100%',
-    marginLeft:'30px'
-  },
-      smallTitle:{
-        color: 'var(---Primary-OnContainer, #6F2E2A)',
-        fontFamily: "LINE Seed JP_TTF",
-        fontSize: '16px',
-        fontStyle: 'normal',
-        fontWeight: '700',
-        lineHeight: 'normal'
-    },
+    nextBtn: {
+        padding: '10px 20px',
+        backgroundColor: 'var(---Primary-Primary, #E3838E)',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '5px',
+        cursor: 'pointer',
+      },
+    titleLayout:{
+        display:'flex',
+        flexDirection:'column',
+        alignItems:'flex-start',
+        width:'100%',
+      },
+          smallTitle:{
+            color: 'var(---Primary-OnContainer, #6F2E2A)',
+            fontFamily: "LINE Seed JP_TTF",
+            fontSize: '16px',
+            fontStyle: 'normal',
+            fontWeight: '700',
+            lineHeight: 'normal'
+        },
     typeFont:{
         color: 'var(---SurfaceContainer-Lowest, #FFF)',
         /* Line/bold/24pt */
@@ -85,7 +163,9 @@ const styles = {
     display:'flex',
     flexDirection:'column',
     gap:'10px',
-    marginTop:'35px'
+    marginTop:'35px',
+    gap:'24px',
+    width:'100%'
   },
   imgLayout: {
     height: '180px',
@@ -102,7 +182,8 @@ const styles = {
     alignSelf: 'stretch',
     borderRadius: '8px',
     border: '1px solid var(---OutLine-OutLine, #78726D)',
-    background: 'var(---SurfaceContainer-Lowest, #FFF)'
+    background: 'var(---SurfaceContainer-Lowest, #FFF)',
+    width:'100%'
   },
   lastButton: {
     border:'none',
@@ -143,6 +224,8 @@ const styles = {
     width: '100%',
     maxWidth: '600px',
     backgroundColor: '#FBDBD6',
+    paddingLeft:'35px',
+    paddingRight:'35px'
   },
   rollerLayout: {
     display: 'flex',
