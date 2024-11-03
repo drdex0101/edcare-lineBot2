@@ -11,6 +11,10 @@ const ApplicationPage = () => {
     router.push('/parent/create/'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
+  const handleLongClick = () => {
+    router.push('/parent/longTern'); // 替换 '/next-page' 为你想要跳转的路径
+  };
+
   return (
     <div style={styles.main}>  
         <div style={styles.header}> 
@@ -30,27 +34,29 @@ const ApplicationPage = () => {
               </svg>
             </button>
         </div>
-        <div style={styles.contentLayout}>
-            <div style={styles.rollerLayout}>
-              <div style={styles.roller}></div>
-              <div style={styles.roller}></div>
-              <div style={styles.roller}></div>
-              <div style={styles.roller}></div>
-              <div style={styles.roller}></div>
-              <div style={styles.rollerActive}></div>
-            </div>
-            <div style={styles.titleLayout}>
-              <span style={styles.subTitle}>托育資料填寫</span>
-              <span style={styles.smallTitle}>選擇托育方式</span>
-            </div>
-            <div style={styles.buttonLayout}>
-              <button style={styles.suddenlyBtn} onClick={handleNextClick}>
-                <span style={styles.typeFont}>臨時托育</span>
-              </button>
-              <button style={styles.longBtn} onClick={handleNextClick}>
-                <span style={styles.typeFont}>長期托育</span>
-              </button>
-            </div>
+        <div style={{ backgroundColor: 'white', width: '100%' }}>
+          <div style={styles.contentLayout}>
+              <div style={styles.rollerLayout}>
+                <div style={styles.roller}></div>
+                <div style={styles.roller}></div>
+                <div style={styles.roller}></div>
+                <div style={styles.roller}></div>
+                <div style={styles.roller}></div>
+                <div style={styles.rollerActive}></div>
+              </div>
+              <div style={styles.titleLayout}>
+                <span style={styles.subTitle}>托育資料填寫</span>
+                <span style={styles.smallTitle}>選擇托育方式</span>
+              </div>
+              <div style={styles.buttonLayout}>
+                <button style={styles.suddenlyBtn} onClick={handleNextClick}>
+                  <span style={styles.typeFont}>臨時托育</span>
+                </button>
+                <button style={styles.longBtn} onClick={handleLongClick}>
+                  <span style={styles.typeFont}>長期托育</span>
+                </button>
+              </div>
+          </div>
         </div>
     </div>
   );
@@ -119,7 +125,8 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     height: '100vh', // 占满整个视口高度
-    backgroundColor: '#FBDBD6',
+    backgroundColor: '#f8ecec',
+    marginBottom:'28px'
   },
   header: {
     display: 'flex',
@@ -127,14 +134,15 @@ const styles = {
     alignItems: 'center',
     width: '100%',
     maxWidth: '600px',
-    marginBottom: '20px',
+    // marginBottom: '20px',
     padding: '10px',
     backgroundColor: '#fff',
+    borderRadius: '0px 0px 40px 0px', // 左上、右上、右下、左下的圓角
   },
   headerFont: {
     fontSize: '24px',
     fontWeight: 'bold',
-    color:'#E3838E'
+    color:'#E3838E',
   },
   contentLayout: {
     display: 'flex',
@@ -142,7 +150,11 @@ const styles = {
     alignItems: 'center',
     width: '100%',
     maxWidth: '600px',
-    backgroundColor: '#FBDBD6',
+    backgroundColor: '#f8ecec',
+    paddingLeft:'35px',
+    paddingRight:'35px',
+    paddingTop: '20px',
+    borderRadius: '40px 0px 0px 0px', // 左上、右上、右下、左下的圓角
   },
   rollerLayout: {
     display: 'flex',

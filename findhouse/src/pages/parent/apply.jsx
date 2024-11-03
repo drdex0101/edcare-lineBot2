@@ -32,151 +32,152 @@ const ApplicationPage = () => {
               </svg>
             </button>
         </div>
-        <div style={styles.contentLayout}>
-            <div style={styles.rollerLayout}>
-              <div style={styles.roller}></div>
-              <div style={styles.rollerActive}></div>
-              <div style={styles.roller}></div>
-              <div style={styles.roller}></div>
-              <div style={styles.roller}></div>
-              <div style={styles.roller}></div>
-            </div>
-            <div style={styles.subTitleLayout}>
-              <span style={styles.subTitle}>會員資料填寫</span>
-            </div>
-            <Box
-                component="form"
-                sx={{
-                  display: 'flex',
-                  width: '320px',
-                  padding: '18.5px 18px 19.5px 17px',
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  borderRadius: '20px',
-                  border: '2px solid #FBDBD6',
-                  gap: '20px'
-                }}
-                noValidate
-                autoComplete="off"
-              >
-                <TextField
-                  id="account-name"
-                  label="帳號名稱"
-                  variant="outlined"
-                  InputProps={{
-                    sx: {
-                      padding: '0px 16px',
-                      borderRadius: '8px',
-                      backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
-                    },
-                  }}
+        <div style={{ backgroundColor: 'white', width: '100%' }}>
+          <div style={styles.contentLayout}>
+              <div style={styles.rollerLayout}>
+                <div style={styles.roller}></div>
+                <div style={styles.rollerActive}></div>
+                <div style={styles.roller}></div>
+                <div style={styles.roller}></div>
+                <div style={styles.roller}></div>
+                <div style={styles.roller}></div>
+              </div>
+              <div style={styles.subTitleLayout}>
+                <span style={styles.subTitle}>會員資料填寫</span>
+              </div>
+              <Box
+                  component="form"
                   sx={{
-                    alignSelf: 'stretch',
-                    borderRadius: '8px',
-                    '& .MuiOutlinedInput-root': {
-                      '& fieldset': {
-                        borderColor: 'var(--OutLine-OutLine, #78726D)',
-                      },
-                      '&:hover fieldset': {
-                        borderColor: '#E3838E',
-                      },
-                      '&.Mui-focused fieldset': {
-                        borderColor: '#E3838E',
-                      },
-                    },
+                    display: 'flex',
+                    width: '320px',
+                    padding: '18.5px 18px 19.5px 17px',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    borderRadius: '20px',
+                    gap: '20px'
                   }}
-                />
-
-                <TextField
-                  id="phone-number"
-                  label="常用電話"
-                  variant="outlined"
-                  InputProps={{
-                    sx: {
-                      padding: '0px 16px',
+                  noValidate
+                  autoComplete="off"
+                >
+                  <TextField
+                    id="account-name"
+                    label="帳號名稱"
+                    variant="outlined"
+                    InputProps={{
+                      sx: {
+                        padding: '0px 16px',
+                        borderRadius: '8px',
+                        backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
+                      },
+                    }}
+                    sx={{
+                      alignSelf: 'stretch',
                       borderRadius: '8px',
-                      backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
-                    },
-                  }}
-                  sx={{
-                    alignSelf: 'stretch',
-                    borderRadius: '8px',
-                    '& .MuiOutlinedInput-root': {
-                      '& fieldset': {
-                        borderColor: 'var(--OutLine-OutLine, #78726D)',
+                      '& .MuiOutlinedInput-root': {
+                        '& fieldset': {
+                          borderColor: 'var(--OutLine-OutLine, #78726D)',
+                        },
+                        '&:hover fieldset': {
+                          borderColor: '#E3838E',
+                        },
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#E3838E',
+                        },
                       },
-                      '&:hover fieldset': {
-                        borderColor: '#E3838E',
-                      },
-                      '&.Mui-focused fieldset': {
-                        borderColor: '#E3838E',
-                      },
-                    },
-                  }}
-                />
+                    }}
+                  />
 
-                <TextField
-                  id="phone-number"
-                  label="職業"
-                  variant="outlined"
-                  InputProps={{
-                    sx: {
-                      padding: '0px 16px',
+                  <TextField
+                    id="phone-number"
+                    label="常用電話"
+                    variant="outlined"
+                    InputProps={{
+                      sx: {
+                        padding: '0px 16px',
+                        borderRadius: '8px',
+                        backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
+                      },
+                    }}
+                    sx={{
+                      alignSelf: 'stretch',
                       borderRadius: '8px',
-                      backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
-                    },
-                  }}
-                  sx={{
-                    alignSelf: 'stretch',
-                    borderRadius: '8px',
-                    '& .MuiOutlinedInput-root': {
-                      '& fieldset': {
-                        borderColor: 'var(--OutLine-OutLine, #78726D)',
+                      '& .MuiOutlinedInput-root': {
+                        '& fieldset': {
+                          borderColor: 'var(--OutLine-OutLine, #78726D)',
+                        },
+                        '&:hover fieldset': {
+                          borderColor: '#E3838E',
+                        },
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#E3838E',
+                        },
                       },
-                      '&:hover fieldset': {
-                        borderColor: '#E3838E',
-                      },
-                      '&.Mui-focused fieldset': {
-                        borderColor: '#E3838E',
-                      },
-                    },
-                  }}
-                />
+                    }}
+                  />
 
-                <TextField
-                  id="phone-number"
-                  label="聯絡信箱"
-                  variant="outlined"
-                  InputProps={{
-                    sx: {
-                      padding: '0px 16px',
+                  <TextField
+                    id="phone-number"
+                    label="職業"
+                    variant="outlined"
+                    InputProps={{
+                      sx: {
+                        padding: '0px 16px',
+                        borderRadius: '8px',
+                        backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
+                      },
+                    }}
+                    sx={{
+                      alignSelf: 'stretch',
                       borderRadius: '8px',
-                      backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
-                    },
-                  }}
-                  sx={{
-                    alignSelf: 'stretch',
-                    borderRadius: '8px',
-                    '& .MuiOutlinedInput-root': {
-                      '& fieldset': {
-                        borderColor: 'var(--OutLine-OutLine, #78726D)',
+                      '& .MuiOutlinedInput-root': {
+                        '& fieldset': {
+                          borderColor: 'var(--OutLine-OutLine, #78726D)',
+                        },
+                        '&:hover fieldset': {
+                          borderColor: '#E3838E',
+                        },
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#E3838E',
+                        },
                       },
-                      '&:hover fieldset': {
-                        borderColor: '#E3838E',
-                      },
-                      '&.Mui-focused fieldset': {
-                        borderColor: '#E3838E',
-                      },
-                    },
-                  }}
-                />
-              </Box>
+                    }}
+                  />
 
-            <div style={styles.buttonLayout}>
-              <button style={styles.nextBtn} onClick={handleNextClick}>
-                下一步
-              </button>
+                  <TextField
+                    id="phone-number"
+                    label="聯絡信箱"
+                    variant="outlined"
+                    InputProps={{
+                      sx: {
+                        padding: '0px 16px',
+                        borderRadius: '8px',
+                        backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
+                      },
+                    }}
+                    sx={{
+                      alignSelf: 'stretch',
+                      borderRadius: '8px',
+                      '& .MuiOutlinedInput-root': {
+                        '& fieldset': {
+                          borderColor: 'var(--OutLine-OutLine, #78726D)',
+                        },
+                        '&:hover fieldset': {
+                          borderColor: '#E3838E',
+                        },
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#E3838E',
+                        },
+                      },
+                    }}
+                  />
+                </Box>
+
+              <div style={styles.buttonLayout}>
+                <button style={styles.nextBtn} onClick={handleNextClick}>
+                  下一步
+                </button>
+              </div>
             </div>
         </div>
     </div>
@@ -212,20 +213,22 @@ const styles = {
   buttonLayout:{
     width:'100%',
     display:'flex',
-    justifyContent:'flex-end'
+    justifyContent:'flex-end',
+    marginTop:'12px'
   },
   subTitleLayout:{
     width:'100%',
     display:'flex',
     justifyContent:'flex-start',
-    backgroundColor: '#FBDBD6',
+    backgroundColor: '#f8ecec',
   },
   main: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     height: '100vh', // 占满整个视口高度
-    backgroundColor: '#FBDBD6',
+    backgroundColor: '#f8ecec',
+    marginBottom:'28px'
   },
   header: {
     display: 'flex',
@@ -233,14 +236,15 @@ const styles = {
     alignItems: 'center',
     width: '100%',
     maxWidth: '600px',
-    marginBottom: '20px',
+    // marginBottom: '20px',
     padding: '10px',
     backgroundColor: '#fff',
+    borderRadius: '0px 0px 40px 0px', // 左上、右上、右下、左下的圓角
   },
   headerFont: {
     fontSize: '24px',
     fontWeight: 'bold',
-    color:'#E3838E'
+    color:'#E3838E',
   },
   contentLayout: {
     display: 'flex',
@@ -248,8 +252,11 @@ const styles = {
     alignItems: 'center',
     width: '100%',
     maxWidth: '600px',
-    backgroundColor: '#FBDBD6',
-    padding:'20px'
+    backgroundColor: '#f8ecec',
+    paddingLeft:'35px',
+    paddingRight:'35px',
+    paddingTop: '20px',
+    borderRadius: '40px 0px 0px 0px', // 左上、右上、右下、左下的圓角
   },
   rollerLayout: {
     display: 'flex',
@@ -272,8 +279,10 @@ const styles = {
   },
   subTitle: {
     fontSize: '18px',
-    marginBottom: '10px',
-    color:'#E3838E'
+    fontWeight: 'bold',
+    marginTop: '15px',
+    marginBottom: '15px',
+    color:'#E3838E',
   },
   lawLayout: {
     display: 'flex',

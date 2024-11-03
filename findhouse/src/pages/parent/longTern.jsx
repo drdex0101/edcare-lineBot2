@@ -1,262 +1,411 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useRouter } from 'next/router';
+import { styled } from '@mui/material/styles';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
+import TextField from '@mui/material/TextField';
+import Select from '@mui/material/Select';
 
-export default function LongTermCarePage() {
+
+import { MenuItem, InputLabel, FormControl } from '@mui/material';
+const ApplicationPage = () => {
   const router = useRouter();
-  const [selectedDays, setSelectedDays] = useState({
-    monday: false,
-    tuesday: false,
-    wednesday: false,
-    thursday: false,
-    friday: false,
-    saturday: false,
-    sunday: false,
-  });
-  const [date, setDate] = useState('');
-  const [careType, setCareType] = useState('到宅托育');
 
-  // Handle toggling the selected days
-  const toggleDay = (day) => {
-    setSelectedDays((prevState) => ({
-      ...prevState,
-      [day]: !prevState[day],
-    }));
+  const handleNextClick = () => {
+    router.push('/parent/create/babyInfo'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
-  // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Navigate to the next step
-    router.push('/parent/longTernStep2');
+  const handleLastClick = () => {
+    router.push('/parent/create/'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   return (
-    <div className="container">
-      <div className="header">
-        <div className="titleBar">
-          <h2>申請成為家長</h2>
-        </div>
-        <div className="progress">
-          <div className="progressBar"></div>
-        </div>
+    <div style={styles.main}>  
+      <div style={styles.header}> 
+        <span style={styles.headerFont}>
+          申請成為家長
+        </span>
+        <button onClick={handleLastClick} style={styles.lastButton}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <g clip-path="url(#clip0_45_10396)">
+              <path d="M7.77223 12.9916L18.7822 12.9916C19.3322 12.9916 19.7822 12.5416 19.7822 11.9916C19.7822 11.4416 19.3322 10.9916 18.7822 10.9916L7.77223 10.9916L7.77223 9.20162C7.77223 8.75162 7.23223 8.53162 6.92223 8.85162L4.14223 11.6416C3.95223 11.8416 3.95223 12.1516 4.14223 12.3516L6.92223 15.1416C7.23223 15.4616 7.77223 15.2316 7.77223 14.7916L7.77223 12.9916V12.9916Z" fill="#074C5F"/>
+            </g>
+            <defs>
+              <clipPath id="clip0_45_10396">
+                <rect width="24" height="24" fill="white"/>
+              </clipPath>
+            </defs>
+          </svg>
+        </button>
       </div>
-
-      <div className="formSection">
-        <h3 className="formTitle">托育資料填寫</h3>
-        <h4>長期托育</h4>
-
-        <form onSubmit={handleSubmit}>
-          {/* Day Selection Switches */}
-          <div className="daySelection">
-            <label>選擇日期:</label>
-            <div className="dayToggles">
-              {Object.keys(selectedDays).map((day, index) => (
-                <div key={index} className="dayToggle">
-                  <span>{day === 'monday' ? '星期一' : 
-                          day === 'tuesday' ? '星期二' : 
-                          day === 'wednesday' ? '星期三' : 
-                          day === 'thursday' ? '星期四' : 
-                          day === 'friday' ? '星期五' : 
-                          day === 'saturday' ? '星期六' : '星期日'}</span>
-                  <label className="switch">
-                    <input
-                      type="checkbox"
-                      checked={selectedDays[day]}
-                      onChange={() => toggleDay(day)}
-                    />
-                    <span className="slider"></span>
-                  </label>
-                </div>
-              ))}
+      <div style={{ backgroundColor: 'white', width: '100%' }}>
+        <div style={styles.contentLayout}>
+          <div style={styles.rollerLayout}>
+            <div style={styles.roller}></div>
+            <div style={styles.roller}></div>
+            <div style={styles.roller}></div>
+            <div style={styles.roller}></div>
+            <div style={styles.roller}></div>
+            <div style={styles.rollerActive}></div>
+          </div>
+          <div style={styles.titleLayout}>
+            <span style={styles.subTitle}>托育資料填寫</span>
+            <span style={styles.smallTitle}>長期托育</span>
+          </div>
+          <div style={styles.buttonLayout}>
+            <div style={styles.hopeLayout}>
+              <div style={styles.componentLayout}>
+                <span>星期一</span>
+                <FormGroup>
+                  <FormControlLabel
+                    control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
+                    style={{ marginRight: '0px' }}
+                  />
+                </FormGroup>
+              </div>
+              <div style={styles.componentLayout}>
+                <span>星期二</span>
+                <FormGroup>
+                  <FormControlLabel
+                    control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
+                    style={{ marginRight: '0px' }}
+                  />
+                </FormGroup>
+              </div>
+              <div style={styles.componentLayout}>
+                <span>星期三</span>
+                <FormGroup>
+                  <FormControlLabel
+                    control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
+                    style={{ marginRight: '0px' }}
+                  />
+                </FormGroup>
+              </div>
+              <div style={styles.componentLayout}>
+                <span>星期四</span>
+                <FormGroup>
+                  <FormControlLabel
+                    control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
+                    style={{ marginRight: '0px' }}
+                  />
+                </FormGroup>
+              </div>
+              <div style={styles.componentLayout}>
+                <span>星期五</span>
+                <FormGroup>
+                  <FormControlLabel
+                    control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
+                    style={{ marginRight: '0px' }}
+                  />
+                </FormGroup>
+              </div>
+              <div style={{...styles.componentLayout, borderBottom: "none"}}>
+                <span>星期六</span>
+                <FormGroup>
+                  <FormControlLabel
+                    control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
+                    style={{ marginRight: '0px' }}
+                  />
+                </FormGroup>
+              </div>
+              <div style={{...styles.componentLayout, borderBottom: "none"}}>
+                <span>星期日</span>
+                <FormGroup>
+                  <FormControlLabel
+                    control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
+                    style={{ marginRight: '0px' }}
+                  />
+                </FormGroup>
+              </div>
             </div>
+            <FormControl>
+              <InputLabel id="gender-label">選擇情境</InputLabel>
+              <Select
+                required
+                labelId="gender-label"
+                id="gender"
+                label="性別"
+                InputProps={{
+                  sx: {
+                    padding: '0px 16px',
+                    borderRadius: '8px',
+                    backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
+                  },
+                }}
+                sx={{
+                  alignSelf: 'stretch',
+                  borderRadius: '8px',
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': {
+                      borderColor: 'var(--OutLine-OutLine, #78726D)',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: '#E3838E',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#E3838E',
+                    },
+                  },
+                  backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)',
+                }}
+              >
+                  <MenuItem value="home">居家托育</MenuItem>
+              </Select>
+            </FormControl>
           </div>
-
-          {/* Date Picker */}
-          <div className="formGroup">
-            <label htmlFor="date">選擇月份</label>
-            <input
-              type="month"
-              id="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-            />
+          <div style={styles.buttonLayout}>
+            <button style={styles.nextBtn} onClick={handleNextClick}>
+              下一步
+            </button>
           </div>
-
-          {/* Care Type Dropdown */}
-          <div className="formGroup">
-            <label htmlFor="careType">選擇托育類型</label>
-            <select
-              id="careType"
-              value={careType}
-              onChange={(e) => setCareType(e.target.value)}
-            >
-              <option value="到宅托育">到宅托育</option>
-              <option value="定點托育">定點托育</option>
-            </select>
-          </div>
-
-
-          {/* Submit Button */}
-          <button type="submit" className="submitButton">
-            下一步 →
-          </button>
-        </form>
+        </div>
       </div>
-
-      <style jsx>{`
-        .container {
-          background-color: #fceff1;
-          padding: 20px;
-          height: 100vh;
-          display: flex;
-          flex-direction: column;
-        }
-
-        .header {
-          text-align: center;
-          background-color: #fff;
-        }
-
-        .titleBar h2 {
-          color: #d65b78;
-          margin-bottom: 10px;
-        }
-
-        .progress {
-          width: 100%;
-          height: 4px;
-          background-color: #ffd1e1;
-          margin-bottom: 20px;
-        }
-
-        .progressBar {
-          width: 90%; /* Adjusted to reflect the next stage */
-          height: 100%;
-          background-color: #d65b78;
-        }
-
-        .formSection {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-        }
-
-        .formTitle {
-          color: #d65b78;
-          margin-bottom: 20px;
-        }
-
-        .formGroup {
-          margin-bottom: 20px;
-          width: 100%;
-        }
-
-        .formGroup label {
-          display: block;
-          font-size: 14px;
-          margin-bottom: 5px;
-        }
-
-        .formGroup input,
-        .formGroup select {
-          width: 100%;
-          padding: 10px;
-          border: 1px solid #e1e1e1;
-          border-radius: 5px;
-        }
-
-        .daySelection {
-          margin-bottom: 20px;
-        }
-
-        .dayToggles {
-          display: flex;
-          flex-direction: column;
-        }
-
-        .dayToggle {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 10px;
-        }
-
-        .switch {
-          position: relative;
-          display: inline-block;
-          width: 34px;
-          height: 20px;
-        }
-
-        .switch input {
-          opacity: 0;
-          width: 0;
-          height: 0;
-        }
-
-        .slider {
-          position: absolute;
-          cursor: pointer;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background-color: #ccc;
-          transition: 0.4s;
-          border-radius: 34px;
-        }
-
-        .slider:before {
-          position: absolute;
-          content: "";
-          height: 12px;
-          width: 12px;
-          left: 4px;
-          bottom: 4px;
-          background-color: white;
-          transition: 0.4s;
-          border-radius: 50%;
-        }
-
-        input:checked + .slider {
-          background-color: #d65b78;
-        }
-
-        input:checked + .slider:before {
-          transform: translateX(14px);
-        }
-
-        .submitButton {
-          width: 100%;
-          padding: 15px;
-          background-color: #d65b78;
-          color: white;
-          border: none;
-          border-radius: 5px;
-          font-size: 16px;
-          cursor: pointer;
-        }
-
-        .submitButton:hover {
-          background-color: #c04f6b;
-        }
-
-        @media (max-width: 600px) {
-          .container {
-            padding: 10px;
-          }
-
-          .formGroup input,
-          .formGroup select {
-            font-size: 14px;
-          }
-
-          .submitButton {
-            font-size: 14px;
-          }
-        }
-      `}</style>
     </div>
   );
-}
+};
+
+const styles = {
+  nextBtn: {
+    padding: '10px 20px',
+    backgroundColor: 'var(---Primary-Primary, #E3838E)',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+  },
+  componentLayout:{
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    borderBottom: '1px solid #f4f4f4',   
+  },
+  hopeLayout: {
+    width: '100%',
+    display: 'flex',
+    padding: '5px 10px',
+    flexDirection: 'column',
+    alignItems: 'center',
+    alignSelf: 'stretch',
+    borderRadius: '8px',
+    border: '1px solid var(---OutLine-OutLine, #78726D)',
+    background: 'var(---SurfaceContainer-Lowest, #FFF)',
+  },
+  titleLayout:{
+    display:'flex',
+    flexDirection:'column',
+    alignItems:'flex-start',
+    width:'100%',
+  },
+  smallTitle: {
+    color: 'var(---Primary-OnContainer, #6F2E2A)',
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: '16px',
+    fontWeight: '800',
+    lineHeight: 'normal',
+    marginBottom: '15px',
+  },
+  typeFont:{
+    color: 'var(---SurfaceContainer-Lowest, #FFF)',
+    /* Line/bold/24pt */
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: '24px',
+    fontStyle: 'normal',
+    fontWeight: '700',
+    linHeight: 'normal'
+  },
+  buttonLayout: {
+    display:'flex',
+    flexDirection:'column',
+    gap:'10px',
+    gap:'24px',
+    width:'100%',
+    marginBottom:'28px'
+  },
+  imgLayout: {
+    height: '180px',
+    alignSelf: 'stretch',
+    boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.25)',
+    backgroundColor:'#FFF'
+  },
+  inputField: {
+    padding: '16.5px 14px',
+    borderRadius: '8px',
+    border: '1px solid #E3838E',
+    background: 'var(---SurfaceContainer-Lowest, #FFF)',
+    color: 'gray',
+  },
+  lastButton: {
+    border:'none',
+    backgroundColor:'#FFF'
+  },
+  subTitleLayout:{
+    width:'100%',
+    display:'flex',
+    justifyContent:'flex-start',
+    backgroundColor: '#FBDBD6',
+  },
+  main: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    height: '100vh', // 占满整个视口高度
+    backgroundColor: '#f8ecec',
+    marginBottom:'28px'
+  },
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    maxWidth: '600px',
+    // marginBottom: '20px',
+    padding: '10px',
+    backgroundColor: '#fff',
+    borderRadius: '0px 0px 40px 0px', // 左上、右上、右下、左下的圓角
+  },
+  headerFont: {
+    fontSize: '24px',
+    fontWeight: 'bold',
+    color:'#E3838E',
+  },
+  contentLayout: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    width: '100%',
+    maxWidth: '600px',
+    backgroundColor: '#f8ecec',
+    paddingLeft:'35px',
+    paddingRight:'35px',
+    paddingTop: '20px',
+    borderRadius: '40px 0px 0px 0px', // 左上、右上、右下、左下的圓角
+  },
+  rollerLayout: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginBottom: '10px',
+  },
+  roller: {
+    width: '42px',
+    height: '6px',
+    borderRadius: '2px',
+    backgroundColor: '#FFF',
+    margin: '0 5px',
+  },
+  rollerActive: {
+    width: '42px',
+    height: '6px',
+    borderRadius: '2px',
+    backgroundColor: 'var(---Primary-Primary, #E3838E)',
+    margin: '0 5px',
+  },
+  subTitle: {
+    fontSize: '18px',
+    fontWeight: 'bold',
+    marginTop: '15px',
+    marginBottom: '15px',
+    color:'#E3838E',
+  },
+
+  lawLayout: {
+    display: 'flex',
+    width: '320px',
+    padding: '18.5px 18px 19.5px 17px',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: '20px',
+    border: '2px solid var(---Button-01, #FBDBD6)',
+    gap:'20px'
+  },
+  suddenlyBtn: {
+    display: 'flex',
+    width: '320px',
+    height: '130px',
+    padding: '16px 12px',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: '8px',
+    background:'var(---Primary-Primary, #E3838E)',
+    border:'none',
+    borderRadius:'12px'
+  },
+  longBtn: {
+    display: 'flex',
+    width: '320px',
+    height: '130px',
+    padding: '16px 12px',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: '8px',
+    background:'var(---Primary-Primary, #F3CCD4)',
+    border:'none',
+    borderRadius:'12px'
+  },
+};
+
+const IOSSwitch = styled((props) => (
+  <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
+))(({ theme }) => ({
+  width: 42,
+  height: 26,
+  padding: 0,
+  '& .MuiSwitch-switchBase': {
+    padding: 0,
+    margin: 2,
+    transitionDuration: '300ms',
+    '&.Mui-checked': {
+      transform: 'translateX(16px)',
+      color: '#e3838e',
+      '& + .MuiSwitch-track': {
+        backgroundColor: '#f5e5e5',
+        opacity: 1,
+        border: 0,
+        ...theme.applyStyles('dark', {
+          backgroundColor: '#2ECA45',
+        }),
+      },
+      '&.Mui-disabled + .MuiSwitch-track': {
+        opacity: 0.5,
+      },
+    },
+    '&.Mui-focusVisible .MuiSwitch-thumb': {
+      color: '#33cf4d',
+      border: '6px solid #fff',
+    },
+    '&.Mui-disabled .MuiSwitch-thumb': {
+      color: theme.palette.grey[100],
+      ...theme.applyStyles('dark', {
+        color: theme.palette.grey[600],
+      }),
+    },
+    '&.Mui-disabled + .MuiSwitch-track': {
+      opacity: 0.7,
+      ...theme.applyStyles('dark', {
+        opacity: 0.3,
+      }),
+    },
+  },
+  '& .MuiSwitch-thumb': {
+    boxSizing: 'border-box',
+    width: 22,
+    height: 22,
+  },
+  '& .MuiSwitch-track': {
+    borderRadius: 26 / 2,
+    backgroundColor: '#fcf7f7',
+    opacity: 1,
+    transition: theme.transitions.create(['background-color'], {
+      duration: 500,
+    }),
+    ...theme.applyStyles('dark', {
+      backgroundColor: '#39393D',
+    }),
+  },
+}));
+
+export default ApplicationPage;

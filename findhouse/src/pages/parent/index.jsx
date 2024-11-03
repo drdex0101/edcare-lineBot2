@@ -32,55 +32,57 @@ const ApplicationPage = () => {
             </svg>
             </button>
         </div>
-        <div style={styles.contentLayout}>
-            <div style={styles.rollerLayout}>
-              <div style={styles.rollerActive}></div>
-              <div style={styles.roller}></div>
-              <div style={styles.roller}></div>
-              <div style={styles.roller}></div>
-              <div style={styles.roller}></div>
-              <div style={styles.roller}></div>
-            </div>
-            <div style={styles.subTitleLayout}>
-            <span style={styles.subTitle}>會員同意書</span>
-            </div>
-            <div style={styles.lawLayout}>
-              <div style={styles.topTitle}>我是標題</div>
-              <div style={styles.mainContent}>
-                我是文字我是文字我是文字我是文字我是文字我是文字
-                我是文字我是文字我是文字我是文字我是文字我是文字
-                我是文字我是文字我是文字我是文字我是文字我是文字
-                我是文字我是文字我是文字我是文字我是文字我是文字
-                我是文字我是文字我是文字我是文字我是文字我是文字
-                我是文字我是文字我是文字我是文字我是文字我是文字
-                我是文字我是文字我是文字我是文字我是文字我是文字
-                我是文字我是文字我是文字我是文字我是文字我是文字
-                我是文字我是文字我是文字我是文字我是文字我是文字
-                我是文字我是文字我是文字我是文字我是文字我是文字
-                我是文字我是文字我是文字我是文字我是文字我是文字
-                我是文字我是文字我是文字我是文字我是文字我是文字
-                我是文字我是文字我是文字我是文字我是文字我是文字
-                我是文字我是文字我是文字我是文字我是文字我是文字
-                我是文字我是文字我是文字我是文字我是文字我是文字
-                我是文字我是文字我是文字我是文字我是文字我是文字
-                我是文字我是文字我是文字我是文字我是文字我是文字
-                我是文字我是文字我是文字我是文字我是文字我是文字
-                我是文字我是文字
+        <div style={{ backgroundColor: 'white', width: '100%' }}>
+          <div style={styles.contentLayout}>
+              <div style={styles.rollerLayout}>
+                <div style={styles.rollerActive}></div>
+                <div style={styles.roller}></div>
+                <div style={styles.roller}></div>
+                <div style={styles.roller}></div>
+                <div style={styles.roller}></div>
+                <div style={styles.roller}></div>
               </div>
-              <div style={styles.checkBox}>
-                <input 
-                  type='checkbox' 
-                  checked={isChecked} 
-                  onChange={() => setIsChecked(!isChecked)} // 更新复选框状态
-                ></input>
-                <span style={styles.inputFont}>我上述之合約內容</span>
+              <div style={styles.subTitleLayout}>
+              <span style={styles.subTitle}>會員同意書</span>
               </div>
-            </div>
-            <div style={styles.buttonLayout}>
-              <button style={styles.nextBtn} onClick={handleNextClick}>
-                下一步
-              </button>
-            </div>
+              <div style={styles.lawLayout}>
+                <div style={styles.topTitle}>我是標題</div>
+                <div style={styles.mainContent}>
+                  我是文字我是文字我是文字我是文字我是文字我是文字
+                  我是文字我是文字我是文字我是文字我是文字我是文字
+                  我是文字我是文字我是文字我是文字我是文字我是文字
+                  我是文字我是文字我是文字我是文字我是文字我是文字
+                  我是文字我是文字我是文字我是文字我是文字我是文字
+                  我是文字我是文字我是文字我是文字我是文字我是文字
+                  我是文字我是文字我是文字我是文字我是文字我是文字
+                  我是文字我是文字我是文字我是文字我是文字我是文字
+                  我是文字我是文字我是文字我是文字我是文字我是文字
+                  我是文字我是文字我是文字我是文字我是文字我是文字
+                  我是文字我是文字我是文字我是文字我是文字我是文字
+                  我是文字我是文字我是文字我是文字我是文字我是文字
+                  我是文字我是文字我是文字我是文字我是文字我是文字
+                  我是文字我是文字我是文字我是文字我是文字我是文字
+                  我是文字我是文字我是文字我是文字我是文字我是文字
+                  我是文字我是文字我是文字我是文字我是文字我是文字
+                  我是文字我是文字我是文字我是文字我是文字我是文字
+                  我是文字我是文字我是文字我是文字我是文字我是文字
+                  我是文字我是文字
+                </div>
+                <div style={styles.checkBox}>
+                  <input 
+                    type='checkbox' 
+                    checked={isChecked} 
+                    onChange={() => setIsChecked(!isChecked)} // 更新复选框状态
+                  ></input>
+                  <span style={styles.inputFont}>我上述之合約內容</span>
+                </div>
+              </div>
+              <div style={styles.buttonLayout}>
+                <button style={styles.nextBtn} onClick={handleNextClick}>
+                  下一步
+                </button>
+              </div>
+          </div>
         </div>
     </div>
   );
@@ -142,15 +144,15 @@ const styles = {
     width:'100%',
     display:'flex',
     justifyContent:'flex-start',
-    backgroundColor: '#FBDBD6',
+    backgroundColor: '#f8ecec',
   },
   main: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     height: '100vh', // 占满整个视口高度
-    backgroundColor: '#FBDBD6',
-    width:'100%'
+    backgroundColor: '#f8ecec',
+    marginBottom:'28px'
   },
   header: {
     display: 'flex',
@@ -158,14 +160,15 @@ const styles = {
     alignItems: 'center',
     width: '100%',
     maxWidth: '600px',
-    marginBottom: '20px',
+    // marginBottom: '20px',
     padding: '10px',
     backgroundColor: '#fff',
+    borderRadius: '0px 0px 40px 0px', // 左上、右上、右下、左下的圓角
   },
   headerFont: {
     fontSize: '24px',
     fontWeight: 'bold',
-    color:'#E3838E'
+    color:'#E3838E',
   },
   contentLayout: {
     display: 'flex',
@@ -173,8 +176,11 @@ const styles = {
     alignItems: 'center',
     width: '100%',
     maxWidth: '600px',
-    backgroundColor: '#FBDBD6',
-    padding:'20px'
+    backgroundColor: '#f8ecec',
+    paddingLeft:'35px',
+    paddingRight:'35px',
+    paddingTop: '20px',
+    borderRadius: '40px 0px 0px 0px', // 左上、右上、右下、左下的圓角
   },
   rollerLayout: {
     display: 'flex',
@@ -197,8 +203,10 @@ const styles = {
   },
   subTitle: {
     fontSize: '18px',
-    marginBottom: '10px',
-    color:'#E3838E'
+    fontWeight: 'bold',
+    marginTop: '15px',
+    marginBottom: '15px',
+    color:'#E3838E',
   },
   lawLayout: {
     display: 'flex',
