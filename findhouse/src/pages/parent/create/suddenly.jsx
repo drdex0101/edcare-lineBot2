@@ -7,8 +7,8 @@ import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
 import Select from '@mui/material/Select';
 
-
 import { MenuItem, InputLabel, FormControl } from '@mui/material';
+
 const ApplicationPage = () => {
   const router = useRouter();
 
@@ -54,12 +54,18 @@ const ApplicationPage = () => {
             <span style={styles.smallTitle}>臨時托育</span>
           </div>
           <div style={styles.buttonLayout}>
-            <input type="date" id="datepicker" name="date"
-              min="2023-01-01" max="2024-12-31" style={styles.inputField}
-            />
-            <input type="date" id="datepicker" name="date"
-              min="2023-01-01" max="2024-12-31" style={styles.inputField}
-            />
+            
+            <div style={styles.inputField} onClick={() => document.getElementById('datepicker1').showPicker()}>
+              <input type="date" id="datepicker1" name="date"
+                min="2023-01-01" max="2024-12-31" style={styles.dateInput}
+              />
+            </div>
+
+            <div style={styles.inputField} onClick={() => document.getElementById('datepicker2').showPicker()}>
+              <input type="date" id="datepicker2" name="date"
+                min="2023-01-01" max="2024-12-31" style={styles.dateInput}
+              />
+            </div>
             <FormControl>
               <InputLabel id="gender-label">選擇情境</InputLabel>
               <Select
@@ -207,11 +213,28 @@ const styles = {
     backgroundColor:'#FFF'
   },
   inputField: {
-    padding: '16.5px 14px',
+    padding: '25px 14px',
     borderRadius: '8px',
     border: '1px solid #E3838E',
     background: 'var(---SurfaceContainer-Lowest, #FFF)',
     color: 'gray',
+    width:'100%',
+    position: 'relative',
+    cursor: 'pointer',
+  },
+  dateInput: {
+    opacity: 1,
+    cursor: 'pointer',
+    position: 'absolute',
+    width:'100%',
+    height: '100%',
+    top: 0,
+    left: 0,
+    border: 'none',
+    zIndex: 999,
+    outline:'none',
+    background:'transparent',
+    padding:'10px',
   },
   lastButton: {
     border:'none',
