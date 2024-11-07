@@ -413,7 +413,7 @@ const styles = {
   },
   uplaodLayput: {
     display:'flex',
-    flexDirection:'column'
+    flexDirection:'column',
   },
   buttonLayout: {
     display:'flex',

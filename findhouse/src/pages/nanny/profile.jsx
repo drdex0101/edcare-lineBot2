@@ -33,11 +33,13 @@ export default function ProfilePage() {
 
       {/* Profile Section */}
       <div className="profileSection">
+        
         <img className="profilePic" src="/assets/images/resource/error.png" alt="Profile" /> {/* 頭貼圓形 */}
         <h2 className="profileName">王美麗</h2>
         <div className="rating">
           ⭐⭐⭐⭐⭐
         </div>
+
         <div className='profile-section'>
             <div className='part'>
                 <span className='part-title'>經驗</span>
@@ -52,77 +54,124 @@ export default function ProfilePage() {
                 <span className='part-subTitle'>2位</span>
             </div>
         </div>
-      </div>
 
-      {/* Tabs */}
-      <div className="tabs">
-        <button className="tab active">
-            <span className='tab-tile'>
-                托育方式
-            </span>
-            <span className='tab-subTitle'>
-                長期托育
-            </span>
-        </button>
-        <div className='mid-border'></div>
-        <button className="tab">
-            <span className='tab-tile'>
-                托育情境
-            </span>
-            <span className='tab-subTitle'>
-                在宅托育
-            </span>
-        </button>
-      </div>
-
-      {/* 圖片輪播區域 */}
-      <div className="imageSection">
-        <h3>托育環境</h3>
-        <div className="carousel">
-          <button className="prevButton" onClick={handlePrevImage}>
-            ←
+          {/* Tabs */}
+        <div className="tabs">
+          <button className="tab active">
+              <span className='tab-tile'>
+                  托育方式
+              </span>
+              <span className='tab-subTitle'>
+                  長期托育
+              </span>
           </button>
-          <img
-            src={images[currentImageIndex]}
-            alt={`圖片 ${currentImageIndex + 1}`}
-            className="carouselImage"
-          />
-          <button className="nextButton" onClick={handleNextImage}>
-            →
+          <div className='mid-border'></div>
+          <button className="tab">
+              <span className='tab-tile'>
+                  托育情境
+              </span>
+              <span className='tab-subTitle'>
+                  在宅托育
+              </span>
           </button>
         </div>
 
-        {/* 圓點指示器 */}
-        <div className="dotsContainer">
-          {images.map((_, index) => (
-            <span
-              key={index}
-              className={`dot ${index === currentImageIndex ? 'active' : ''}`}
-              onClick={() => handleDotClick(index)}
-            ></span>
-          ))}
+          {/* 圖片輪播區域 */}
+        <div className="imageSection">
+          <span className='imgFont'>托育環境</span>
+          <div className="carousel">
+            <img
+              src={images[currentImageIndex]}
+              alt={`圖片 ${currentImageIndex + 1}`}
+              className="carouselImage"
+            />
+          </div>
+          {/* 圓點指示器 */}
+          <div className="dotsContainer">
+            {images.map((_, index) => (
+              <span
+                key={index}
+                className={`dot ${index === currentImageIndex ? 'active' : ''}`}
+                onClick={() => handleDotClick(index)}
+              ></span>
+            ))}
+          </div>
         </div>
+
+          {/* 圖片輪播區域 */}
+        <div className="imageSection">
+          <span className='imgFont'>托育環境</span>
+          <div className="carousel">
+            <img
+              src={images[currentImageIndex]}
+              alt={`圖片 ${currentImageIndex + 1}`}
+              className="carouselImage"
+            />
+          </div>
+          {/* 圓點指示器 */}
+          <div className="dotsContainer">
+            {images.map((_, index) => (
+              <span
+                key={index}
+                className={`dot ${index === currentImageIndex ? 'active' : ''}`}
+                onClick={() => handleDotClick(index)}
+              ></span>
+            ))}
+          </div>
+        </div>
+
+            {/* Icon Navigation */}
+        <div className="iconNav">
+          <button>
+            <div className='iconStyle'>🏠</div>
+            <span className='fontSpan'>123</span>
+          </button>
+          <button>
+            <div className='iconStyle'>🏠</div>
+            <span className='fontSpan'>123</span>
+          </button>
+          <button>
+            <div className='iconStyle'>🏠</div>
+            <span className='fontSpan'>123</span>
+          </button>
+          <button>
+            <div className='iconStyle'>🏠</div>
+            <span className='fontSpan'>123</span>
+          </button>
+          <button>
+            <div className='iconStyle'>🏠</div>
+            <span className='fontSpan'>123</span>
+          </button>
+          <button>
+            <div className='iconStyle'>🏠</div>
+            <span className='fontSpan'>123</span>
+          </button>
+        </div>
+
+        <div className="introSection">
+          <div className="notesSection">
+            <span className='imgFont'>保母自介</span>
+          </div>
+        </div>
+
+        <div className='buttonLayout'>
+          <button className="submitButton">+ 馬上預約</button>
+        </div>
+
       </div>
-
-
-      {/* Icon Navigation */}
-      <div className="iconNav">
-        <button>🏠</button>
-        <button>📷</button>
-        <button>📊</button>
-        <button>📱</button>
-        <button>📅</button>
-      </div>
-
-      {/* Notes Section */}
-      <div className="notesSection">
-        <textarea placeholder="輸入備註"></textarea>
-      </div>
-
-      {/* Submit Button */}
-      <button className="submitButton">+ 上傳</button>
 
       <style jsx>{`
+          .introSection {
+            display: flex;
+            height: 454px;
+            padding: 37px 40px;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+            align-self: stretch;
+            background-color:#F3CCD4
+          }
         .container {
           background-color: #fceff1;
           padding: 20px;
@@ -133,9 +182,23 @@ export default function ProfilePage() {
         }
 
         .imageSection {
+          display: flex;
+          padding: 10px 40px;
+          flex-direction: column;
+          justify-content: flex-start;
+          align-items: center;
+          gap: 6px;
+          align-self: stretch;
           width: 100%;
-          margin-bottom: 20px;
-          text-align: center;
+        }
+
+        .imgFont {
+          color: var(---Primary-Primary, #E3838E);
+          font-family: "LINE Seed JP_TTF";
+          font-size: 14px;
+          font-style: normal;
+          font-weight: 700;
+          line-height: normal;
         }
 
         .carousel {
@@ -143,6 +206,7 @@ export default function ProfilePage() {
           width: 100%;
           max-width: 300px;
           margin: 0 auto;
+          height:170px
         }
 
         .carouselImage {
@@ -293,13 +357,18 @@ export default function ProfilePage() {
 
         .profile-section {
             display: flex ;
-
+            gap:30px;
+            width:100%;
+            justify-content:center;
         }
 
         .profileSection {
           text-align: center;
-          margin-bottom: 20px;
-          gap:20px
+          gap:20px;
+          display:'flex;
+          flex-direction:column;
+          justify-content:center;
+          align-item:center;
         }
 
         .part {
@@ -342,14 +411,15 @@ export default function ProfilePage() {
         }
 
         .tabs {
-            width: 260px;
+            width: 100%;
             height: 77px;
             padding: 6px 14px 6px 14px;
             gap: 21px;
-            border-radius: 8px 0px 0px 0px;
+            border-radius: 8px;
             opacity: 0px;
             display:flex;
             background: linear-gradient(80.64deg, #FBDBD6 10.58%, #D9DFF0 75.92%);
+            justify-content:center;
         }
         
         .mid-border {
@@ -367,7 +437,8 @@ export default function ProfilePage() {
             flex-direction:column;
             border-radius:8px;
             background:transparent;
-            border:none
+            border:none;
+            align-item:center
         }
 
         .tab-tile {
@@ -404,22 +475,62 @@ export default function ProfilePage() {
 
         .iconNav {
           display: flex;
+          height: 108px;
+          padding: 18px 26px 0px 26px;
+          align-items: center;
+          gap: 10px;
+          flex-shrink: 0;
+          align-self: stretch;
+          width:100%;
           justify-content: space-around;
-          width: 100%;
-          margin-bottom: 20px;
         }
 
         .iconNav button {
-          background-color: transparent;
-          border: none;
-          font-size: 24px;
-          color: #d65b78;
-          cursor: pointer;
+          display: flex;
+          width: 48px;
+          height: 76px;
+          flex-direction: column;
+          align-items: center;
+          gap: 12px;
+          background-color:transparent;
+          border:none
+        }
+
+        .iconStyle{
+          display: flex;
+          height: 37px;
+          padding: 7px 12px 6px 12px;
+          justify-content: center;
+          align-items: center;
+          flex-shrink: 0;
+          align-self: stretch;
+          border-radius: 16px;
+          background: #FFF;
+          flex-direction:column;
+        }
+
+        .fontSpan {
+          color: var(---Primary-Primary, #E3838E);
+          text-align: center;
+          /* Line/medium/8pt */
+          font-family: "LINE Seed JP_TTF";
+          font-size: 8px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: normal;
         }
 
         .notesSection {
-          width: 100%;
-          margin-bottom: 20px;
+          display: flex;
+          width: 310px;
+          height: 402px;
+          padding: 23px 22px 356px 23px;
+          flex-direction: column;
+          align-items: flex-start;
+          border-radius: 38px;
+          border: 10px solid var(---Button-01, #FBDBD6);
+          background: var(---SurfaceContainer-Lowest, #FFF);
+          box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
         }
 
         .notesSection textarea {
@@ -431,15 +542,27 @@ export default function ProfilePage() {
           font-size: 14px;
         }
 
+        .buttonLayout {
+          display: flex;
+          width: 390px;
+          padding: 20px 48px;
+          flex-direction: column;
+          align-items: center;
+          gap: 10px;
+        }
+
         .submitButton {
-          width: 100%;
-          padding: 15px;
-          background-color: #d65b78;
-          color: white;
-          border: none;
-          border-radius: 5px;
-          font-size: 16px;
-          cursor: pointer;
+          display: flex;
+          padding: 8px 12px;
+          flex-direction: column;
+          align-items: center;
+          gap: 8px;
+          align-self: stretch;
+          border-radius: 6px;
+          background: var(---Primary-Primary, #E3838E);
+          box-shadow: -1px 6px 12px -6px rgba(186, 186, 186, 0.25), 0px 8px 24px -4px rgba(186, 186, 186, 0.25);
+          border:none;
+          width:100%
         }
 
         .submitButton:hover {
