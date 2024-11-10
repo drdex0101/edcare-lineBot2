@@ -179,6 +179,10 @@ export default function ProfilePage() {
           display: flex;
           flex-direction: column;
           align-items: center;
+          background-image: url('/background.png'); // Added background image
+          background-repeat: no-repeat; // 防止重疊
+          background-size: cover; // 使背景圖像覆蓋整個容器
+          border: none;
         }
 
         .imageSection {
@@ -364,11 +368,12 @@ export default function ProfilePage() {
 
         .profileSection {
           text-align: center;
-          gap:20px;
-          display:'flex;
-          flex-direction:column;
-          justify-content:center;
-          align-item:center;
+          gap: 20px;
+          display: flex; // Fixed typo from 'flex' to flex
+          flex-direction: column;
+          justify-content: center;
+          align-items: center; // Fixed typo from align-item to align-items
+          background-size: cover; // Optional: to cover the entire section;
         }
 
         .part {
@@ -398,6 +403,7 @@ export default function ProfilePage() {
           height: 80px;
           border-radius: 50%;
           margin-bottom: 10px;
+          margin-top:50px
         }
 
         .profileName {
@@ -411,9 +417,8 @@ export default function ProfilePage() {
         }
 
         .tabs {
-            width: 100%;
             height: 77px;
-            padding: 6px 14px 6px 14px;
+            padding: 4px 66px 4px 66px;
             gap: 21px;
             border-radius: 8px;
             opacity: 0px;
@@ -428,7 +433,6 @@ export default function ProfilePage() {
         }
 
         .tab {
-            width: 105px;
             height: 65px;
             padding: 7px 0px 7px 0px;
             gap: 4px;
@@ -543,12 +547,14 @@ export default function ProfilePage() {
         }
 
         .buttonLayout {
-          display: flex;
-          width: 390px;
+          position: fixed; /* Make the button layout fixed */
+          bottom: 20px; /* Distance from the bottom */
+          left: 50%; /* Center horizontally */
+          transform: translateX(-50%); /* Adjust for centering */
+          width: 100%; /* Adjust width as needed */
+          max-width:390px;
+          z-index: 1000; /* Ensure it appears above other content */
           padding: 20px 48px;
-          flex-direction: column;
-          align-items: center;
-          gap: 10px;
         }
 
         .submitButton {
