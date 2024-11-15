@@ -1,251 +1,279 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useRouter } from 'next/router';
-
-const CaregiverFormPage = () => {
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+const ApplicationPage = () => {
   const router = useRouter();
-  const [formData, setFormData] = useState({
-    fullName: '',
-    idNumber: '',
-    gender: '',
-    birthDate: '',
-    address: '',
-    contactAddress: '',
-    phone: '',
-    email: '',
-    idUpload: null,
-  });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  const handleFileChange = (e) => {
-    setFormData({
-      ...formData,
-      idUpload: e.target.files[0],
-    });
-  };
 
   const handleNextClick = () => {
-    // 这里可以添加表单验证逻辑
-    router.push('/nanny/upload'); // 替换为实际的下一步路径
+    router.push('/nanny/upload'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
-  const handleBackClick = () => {
-    router.back(); // 返回到上一页
+  const handleLastClick = () => {
+    router.push('/nanny/'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        <h2>申請成為保母</h2>
-        <button style={styles.closeButton}>X</button>
-      </div>
-      <div style={styles.content}>
-        <div style={styles.subHeader}>
-          <h3>保母資料填寫</h3>
+    <div style={styles.main}>  
+        <div style={styles.header}> 
+            <span style={styles.headerFont}>
+              申請成為保母
+            </span>
+            <button onClick={handleLastClick} style={styles.lastButton}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <g clip-path="url(#clip0_45_10396)">
+                  <path d="M7.77223 12.9916L18.7822 12.9916C19.3322 12.9916 19.7822 12.5416 19.7822 11.9916C19.7822 11.4416 19.3322 10.9916 18.7822 10.9916L7.77223 10.9916L7.77223 9.20162C7.77223 8.75162 7.23223 8.53162 6.92223 8.85162L4.14223 11.6416C3.95223 11.8416 3.95223 12.1516 4.14223 12.3516L6.92223 15.1416C7.23223 15.4616 7.77223 15.2316 7.77223 14.7916L7.77223 12.9916V12.9916Z" fill="#074C5F"/>
+                </g>
+                <defs>
+                  <clipPath id="clip0_45_10396">
+                    <rect width="24" height="24" fill="white"/>
+                  </clipPath>
+                </defs>
+              </svg>
+            </button>
         </div>
-        <form style={styles.form}>
-          <label style={styles.label}>
-            * 真實姓名
-            <input
-              type="text"
-              name="fullName"
-              value={formData.fullName}
-              onChange={handleChange}
-              placeholder="請輸入真實姓名"
-              style={styles.input}
-            />
-          </label>
-          <label style={styles.label}>
-            * 身分字號
-            <input
-              type="text"
-              name="idNumber"
-              value={formData.idNumber}
-              onChange={handleChange}
-              placeholder="身分證字號"
-              style={styles.input}
-            />
-          </label>
-          <div style={styles.radioGroup}>
-            <span>* 性別</span>
-            <label>
-              <input
-                type="radio"
-                name="gender"
-                value="男"
-                onChange={handleChange}
-                checked={formData.gender === '男'}
-              />
-              男
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="gender"
-                value="女"
-                onChange={handleChange}
-                checked={formData.gender === '女'}
-              />
-              女
-            </label>
-          </div>
-          <label style={styles.label}>
-            * 出生日期
-            <input
-              type="date"
-              name="birthDate"
-              value={formData.birthDate}
-              onChange={handleChange}
-              style={styles.input}
-            />
-          </label>
-          <label style={styles.label}>
-            * 戶籍地址
-            <input
-              type="text"
-              name="address"
-              value={formData.address}
-              onChange={handleChange}
-              placeholder="戶籍地址"
-              style={styles.input}
-            />
-          </label>
-          <label style={styles.label}>
-            * 通訊地址
-            <input
-              type="text"
-              name="contactAddress"
-              value={formData.contactAddress}
-              onChange={handleChange}
-              placeholder="通訊地址"
-              style={styles.input}
-            />
-          </label>
-          <label style={styles.label}>
-            * 聯繫電話
-            <input
-              type="tel"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              placeholder="聯繫電話或手機號碼"
-              style={styles.input}
-            />
-          </label>
-          <label style={styles.label}>
-            * 聯絡信箱
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="電子信箱"
-              style={styles.input}
-            />
-          </label>
-          <label style={styles.label}>
-            * 上傳身分證正反面
-            <input
-              type="file"
-              onChange={handleFileChange}
-              style={styles.input}
-            />
-          </label>
-        </form>
-        <div style={styles.buttonGroup}>
-          <button style={styles.backButton} onClick={handleBackClick}>
-            上一步
-          </button>
-          <button style={styles.nextButton} onClick={handleNextClick}>
-            下一步
-          </button>
+        <div style={{ backgroundColor: 'white', width: '100%' }}>
+          <div style={styles.contentLayout}>
+              <div style={styles.rollerLayout}>
+                <div style={styles.roller}></div>
+                <div style={styles.rollerActive}></div>
+                <div style={styles.roller}></div>
+                <div style={styles.roller}></div>
+                <div style={styles.roller}></div>
+              </div>
+              <div style={styles.subTitleLayout}>
+                <span style={styles.subTitle}>會員資料填寫</span>
+              </div>
+              <Box
+                  component="form"
+                  sx={{
+                    display: 'flex',
+                    width: '320px',
+                    padding: '18.5px 18px 19.5px 17px',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    borderRadius: '20px',
+                    gap: '20px'
+                  }}
+                  noValidate
+                  autoComplete="off"
+                >
+                  <TextField
+                    id="account-name"
+                    label="帳號名稱"
+                    variant="outlined"
+                    InputProps={{
+                      sx: {
+                        padding: '0px 16px',
+                        borderRadius: '8px',
+                        backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
+                      },
+                    }}
+                    sx={{
+                      alignSelf: 'stretch',
+                      borderRadius: '8px',
+                      '& .MuiOutlinedInput-root': {
+                        '& fieldset': {
+                          borderColor: 'var(--OutLine-OutLine, #78726D)',
+                        },
+                        '&:hover fieldset': {
+                          borderColor: '#E3838E',
+                        },
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#E3838E',
+                        },
+                      },
+                    }}
+                  />
+
+                  <TextField
+                    id="phone-number"
+                    label="常用電話"
+                    variant="outlined"
+                    InputProps={{
+                      sx: {
+                        padding: '0px 16px',
+                        borderRadius: '8px',
+                        backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
+                      },
+                    }}
+                    sx={{
+                      alignSelf: 'stretch',
+                      borderRadius: '8px',
+                      '& .MuiOutlinedInput-root': {
+                        '& fieldset': {
+                          borderColor: 'var(--OutLine-OutLine, #78726D)',
+                        },
+                        '&:hover fieldset': {
+                          borderColor: '#E3838E',
+                        },
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#E3838E',
+                        },
+                      },
+                    }}
+                  />
+
+                  <TextField
+                    id="phone-number"
+                    label="聯絡信箱"
+                    variant="outlined"
+                    InputProps={{
+                      sx: {
+                        padding: '0px 16px',
+                        borderRadius: '8px',
+                        backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
+                      },
+                    }}
+                    sx={{
+                      alignSelf: 'stretch',
+                      borderRadius: '8px',
+                      '& .MuiOutlinedInput-root': {
+                        '& fieldset': {
+                          borderColor: 'var(--OutLine-OutLine, #78726D)',
+                        },
+                        '&:hover fieldset': {
+                          borderColor: '#E3838E',
+                        },
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#E3838E',
+                        },
+                      },
+                    }}
+                  />
+                </Box>
+
+              <div style={styles.buttonLayout}>
+                <button style={styles.nextBtn} onClick={handleNextClick}>
+                  下一步
+                </button>
+              </div>
+            </div>
         </div>
-      </div>
     </div>
   );
 };
 
 const styles = {
-  container: {
-    maxWidth: '600px',
-    backgroundColor: '#FCF7F7',
-    borderRadius: '10px',
-    padding: '16px',
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-    fontFamily: 'Arial, sans-serif',
-    margin: 'auto',
-    position: 'relative',
+  buttonLayout: {
+    display:'flex',
+    flexDirection:'column',
+    gap:'10px'
+  },
+  imgLayout: {
+    height: '180px',
+    alignSelf: 'stretch',
+    boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.25)'
+  },
+  inputField: {
+    display: 'flex',
+    padding: '0px 16px',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    gap: '12px',
+    alignSelf: 'stretch',
+    borderRadius: '8px',
+    border: '1px solid var(---OutLine-OutLine, #78726D)',
+    background: 'var(---SurfaceContainer-Lowest, #FFF)'
+  },
+  lastButton: {
+    border:'none',
+    backgroundColor:'#FFF'
+  },
+  buttonLayout:{
+    width:'100%',
+    display:'flex',
+    justifyContent:'flex-end',
+    marginTop:'12px'
+  },
+  subTitleLayout:{
+    width:'100%',
+    display:'flex',
+    justifyContent:'flex-start',
+    backgroundColor: '#f8ecec',
+  },
+  main: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    height: '100vh', // 占满整个视口高度
+    backgroundColor: '#f8ecec',
+    marginBottom:'28px'
   },
   header: {
     display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
     maxWidth: '600px',
-    padding: '21px 24px',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    // marginBottom: '20px',
+    padding: '10px',
+    backgroundColor: '#fff',
+    borderRadius: '0px 0px 40px 0px', // 左上、右上、右下、左下的圓角
   },
-  closeButton: {
-    backgroundColor: 'transparent',
-    border: 'none',
-    fontSize: '16px',
-    cursor: 'pointer',
+  headerFont: {
+    fontSize: '24px',
+    fontWeight: 'bold',
+    color:'#E3838E',
   },
-  content: {
-    backgroundColor: '#ffffff',
-    borderRadius: '8px',
-    padding: '16px',
-  },
-  subHeader: {
-    borderBottom: '2px solid #81c784',
-    marginBottom: '16px',
-  },
-  form: {
+  contentLayout: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '12px',
-    marginBottom: '16px',
-  },
-  label: {
-    display: 'flex',
-    flexDirection: 'column',
-    fontSize: '14px',
-    color: '#333',
-  },
-  input: {
-    padding: '8px',
-    border: '1px solid #ccc',
-    borderRadius: '5px',
-    marginTop: '4px',
-  },
-  radioGroup: {
-    display: 'flex',
-    gap: '16px',
     alignItems: 'center',
+    width: '100%',
+    maxWidth: '600px',
+    backgroundColor: '#f8ecec',
+    paddingLeft:'35px',
+    paddingRight:'35px',
+    paddingTop: '20px',
+    borderRadius: '40px 0px 0px 0px', // 左上、右上、右下、左下的圓角
   },
-  buttonGroup: {
+  rollerLayout: {
     display: 'flex',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
+    marginBottom: '20px',
   },
-  backButton: {
-    backgroundColor: '#ccc',
-    border: 'none',
-    padding: '10px 20px',
-    borderRadius: '5px',
-    cursor: 'pointer',
+  roller: {
+    width: '42px',
+    height: '6px',
+    borderRadius: '2px',
+    backgroundColor: '#FFF',
+    margin: '0 5px',
   },
-  nextButton: {
-    backgroundColor: '#ffad42',
-    border: 'none',
+  rollerActive: {
+    width: '42px',
+    height: '6px',
+    borderRadius: '2px',
+    backgroundColor: 'var(---Primary-Primary, #E3838E)',
+    margin: '0 5px',
+  },
+  subTitle: {
+    fontSize: '18px',
+    fontWeight: 'bold',
+    marginTop: '15px',
+    marginBottom: '15px',
+    color:'#E3838E',
+  },
+  lawLayout: {
+    display: 'flex',
+    width: '320px',
+    padding: '18.5px 18px 19.5px 17px',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: '20px',
+    border: '2px solid var(---Button-01, #FBDBD6)',
+    gap:'20px'
+  },
+  nextBtn: {
     padding: '10px 20px',
+    backgroundColor: 'var(---Primary-Primary, #E3838E)',
+    color: '#fff',
+    border: 'none',
     borderRadius: '5px',
-    color: 'white',
     cursor: 'pointer',
   },
 };
 
-export default CaregiverFormPage;
+export default ApplicationPage;
