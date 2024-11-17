@@ -37,7 +37,7 @@ const ApplicationPage = () => {
             </div>
         </div>
       </div>
-      <div style={{ backgroundColor: 'white', width: '100%',display:'flex',alignItems:'center' }}>
+      <div style={{ backgroundColor: 'white', width: '100%',display:'flex',alignItems:'center',flexDirection:'column' }}>
         <div style={styles.contentLayout}>
           <div style={styles.rollerLayout}>
             <div style={styles.searchInput}>
@@ -52,7 +52,9 @@ const ApplicationPage = () => {
           </div>
           <div style={styles.titleLayout}>
           </div>
-          <div style={styles.buttonLayout}>
+        </div>
+        <div style={{ backgroundColor: '#f8ecec', width: '100%',display:'flex',alignItems:'center',flexDirection:'column' }}>
+        <div style={styles.nannyItemLayout}>
             <div style={styles.nannyItem}  onClick={() => router.push('/nanny/profile')}>
                 <div style={styles.rightPart}>
                     <div>
@@ -125,8 +127,6 @@ const ApplicationPage = () => {
                     </svg>
                 </div>
             </div>
-          </div>
-          <div style={styles.buttonLayout}>
             <Pagination></Pagination>
           </div>
         </div>
@@ -239,6 +239,20 @@ profilePic: {
     background: 'var(---SurfaceContainer-Lowest, #FFF)',
     cursor:'pointer'
   },
+  nannyItemLayout: {
+    display:'flex',
+    flexDirection:'column',
+    gap:'10px',
+    gap:'24px',
+    width:'100%',
+    marginBottom:'28px',
+    justifyContent:'space-between',
+    backgroundColor: '#F3CCD4',
+    paddingLeft:'35px',
+    paddingRight:'35px',
+    paddingTop: '20px',
+    borderRadius: '40px 0px 0px 0px', // 左上、右上、右下、左下的圓角
+  },
   buttonLayout: {
     display:'flex',
     flexDirection:'column',
@@ -292,9 +306,9 @@ profilePic: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    height: '100vh', // 占满整个视口高度
+    marginBottom:'28px',
     backgroundColor: '#f8ecec',
-    marginBottom:'28px'
+    height:'100vh'
   },
   scoreLayout:{
     display:'flex',
@@ -348,9 +362,6 @@ profilePic: {
     width: '100%',
     maxWidth: '600px',
     backgroundColor: '#f8ecec',
-    paddingLeft:'35px',
-    paddingRight:'35px',
-    paddingTop: '20px',
     borderRadius: '40px 0px 0px 0px', // 左上、右上、右下、左下的圓角
   },
   searchInput:{

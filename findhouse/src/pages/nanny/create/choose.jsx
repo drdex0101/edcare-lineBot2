@@ -4,15 +4,15 @@ const ApplicationPage = () => {
   const router = useRouter();
 
   const handleNextClick = () => {
-    router.push('/parent/create/suddenly'); // 替换 '/next-page' 为你想要跳转的路径
+    router.push('/nanny/create/suddenly'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   const handleLastClick = () => {
-    router.push('/parent/create/'); // 替换 '/next-page' 为你想要跳转的路径
+    router.push('/nanny/create/'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   const handleLongClick = () => {
-    router.push('/parent/longTern'); // 替换 '/next-page' 为你想要跳转的路径
+    router.push('/nanny/longTern'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   return (
@@ -37,7 +37,6 @@ const ApplicationPage = () => {
         <div style={{ backgroundColor: 'white', width: '100%' }}>
           <div style={styles.contentLayout}>
               <div style={styles.rollerLayout}>
-                <div style={styles.roller}></div>
                 <div style={styles.roller}></div>
                 <div style={styles.roller}></div>
                 <div style={styles.roller}></div>

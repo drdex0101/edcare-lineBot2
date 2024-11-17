@@ -24,9 +24,6 @@ export default function CareListPage() {
     <div className="container">
       {/* 標題和建立按鈕 */}
       <h1>托育資料填寫</h1>
-
-      
-
       <style jsx>{`
         .container {
           background-color: #fceff1;
