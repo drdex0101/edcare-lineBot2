@@ -1,0 +1,22 @@
+CREATE TABLE "order" (
+    id BIGSERIAL PRIMARY KEY,                  -- 流水號 (主鍵，自動遞增)
+    parentId BIGINT NOT NULL,                  -- 家長 ID (只有家長可建立訂單)
+    nannyId BIGINT,                            -- 保母 ID (可為 NULL)
+    status VARCHAR(20) NOT NULL,               -- 訂單狀態
+    created_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 建立時間
+    update_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 更新時間
+    chooseType VARCHAR(10) NOT NULL,           -- 托育型別
+    orderStatus VARCHAR(10) NOT NULL,          -- 上架狀態
+    careTypeId BIGINT NOT NULL,                -- 托育型別 ID (對應長期或臨時托育)
+    nickName VARCHAR(100),                     -- 暱稱
+    gender VARCHAR(10),                        -- 性別
+    birthday DATE,                             -- 生日
+    rank VARCHAR(50),                          -- 胎別
+    hope TEXT[],                               -- 期望 (使用陣列型態存放多個值)
+    intro TEXT,                                -- 托育理念
+    orderId VARCHAR(50) UNIQUE NOT NULL,       -- 訂單 ID (唯一且不可為 NULL)
+    isShow BOOLEAN DEFAULT TRUE,               -- 是否公開 (預設為公開)
+    CONSTRAINT chk_status CHECK (status IN ('已成立', '已取消', '已完成')), -- 訂單狀態限制
+    CONSTRAINT chk_chooseType CHECK (chooseType IN ('長期', '臨時')),       -- 托育型別限制
+    CONSTRAINT chk_orderStatus CHECK (orderStatus IN ('上架', '下架'))     -- 上架狀態限制
+);

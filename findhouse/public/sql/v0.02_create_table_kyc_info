@@ -1,0 +1,16 @@
+CREATE TABLE kyc_info (
+    id BIGSERIAL PRIMARY KEY,                  -- 流水號 (主鍵，自動遞增)
+    address VARCHAR(255),                      -- 戶籍地址
+    communicateAddress VARCHAR(255),           -- 通訊地址
+    identityFrontUploadId BIGINT NOT NULL,     -- 身分證正面上傳ID
+    identityBackUploadId BIGINT NOT NULL,      -- 身分證背面上傳ID
+    job VARCHAR(100),                          -- 職業 (保母時帶入保母)
+    birthday DATE,                             -- 生日
+    name VARCHAR(255) NOT NULL,                -- 姓名
+    gender VARCHAR(10),                        -- 性別
+    welfareCertNo VARCHAR(50),                 -- 居福證字號
+    status VARCHAR(20) CHECK (status IN ('通過', '不通過')), -- 審核狀態 (限制為指定值)
+    identityCard VARCHAR(20) ,           -- 身分證號碼 (需唯一)
+    created_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 建立時間
+    update_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- 更新時間
+);

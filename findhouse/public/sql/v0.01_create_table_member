@@ -1,0 +1,14 @@
+CREATE TABLE member (
+    id BIGSERIAL , -- 會員ID (主鍵，自動遞增)
+    lineId VARCHAR,        -- 會員UUID
+    account VARCHAR,       -- 帳號
+    cellphone VARCHAR,      -- 手機
+    email VARCHAR,         -- 電子郵件
+    kycId VARCHAR,                  -- KYC ID (身份驗證ID)
+    identityType VARCHAR,   -- 身分別 (家長/保母)
+    created_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 建立時間
+    update_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 更新時間
+    UNIQUE (lineId),                 -- 確保 lineId 唯一
+    UNIQUE (account),                -- 確保帳號唯一
+    UNIQUE (email)                   -- 確保電子郵件唯一
+);

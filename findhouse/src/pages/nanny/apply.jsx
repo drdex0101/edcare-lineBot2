@@ -2,16 +2,31 @@ import React from 'react';
 import { useRouter } from 'next/router';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
+import axios from 'axios';
 const ApplicationPage = () => {
   const router = useRouter();
-
-  const handleNextClick = () => {
-    router.push('/nanny/upload'); // 替换 '/next-page' 为你想要跳转的路径
-  };
 
   const handleLastClick = () => {
     router.push('/nanny/'); // 替换 '/next-page' 为你想要跳转的路径
   };
+
+
+  const handleNextClick = async () => {
+    const memberData = {
+      accountName: document.getElementById('account-name').value,
+      phoneNumber: document.getElementById('phone-number').value,
+      email: document.getElementById('email').value,
+    };
+    console.log(0);
+    try {
+      const response = await axios.post('/api/member/createMember', memberData);
+      console.log('Member created:', response.data);
+      router.push('/nanny/upload');
+    } catch (error) {
+      console.error('Error creating member:', error);
+    }
+  };
+
 
   return (
     <div style={styles.main}>  
@@ -60,7 +75,7 @@ const ApplicationPage = () => {
                   autoComplete="off"
                 >
                   <TextField
-                    id="account-name"
+                    id="account"
                     label="帳號名稱"
                     variant="outlined"
                     InputProps={{
@@ -116,7 +131,7 @@ const ApplicationPage = () => {
                   />
 
                   <TextField
-                    id="phone-number"
+                    id="email"
                     label="聯絡信箱"
                     variant="outlined"
                     InputProps={{

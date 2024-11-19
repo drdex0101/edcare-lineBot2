@@ -5,9 +5,11 @@ import TextField from '@mui/material/TextField';
 import Select from '@mui/material/Select';
 import { MenuItem, InputLabel } from '@mui/material';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
+
 const ApplicationPage = () => {
   const router = useRouter();
-
+  const memberId = useSelector((state) => state.member.memberId);
   const [file, setFile] = useState(null);
   const [fileBack, setFileBack] = useState(null);
   const [message, setMessage] = useState('');
@@ -66,7 +68,7 @@ const ApplicationPage = () => {
   };
 
   return (
-    <div style={styles.main}>  
+    <div style={styles.main}>
         <div style={styles.header}> 
             <span style={styles.headerFont}>
               申請成為保母

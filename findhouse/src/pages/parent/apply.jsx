@@ -2,11 +2,31 @@ import React from 'react';
 import { useRouter } from 'next/router';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
+import { useDispatch } from 'react-redux';
+import { setMemberId } from '../../features/member/memberSlice';
+import axios from 'axios';
 const ApplicationPage = () => {
   const router = useRouter();
+  const dispatch = useDispatch(); // Redux 的 dispatch 函数
 
-  const handleNextClick = () => {
-    router.push('/parent/verify'); // 替换 '/next-page' 为你想要跳转的路径
+  const handleNextClick = async () => {
+    const memberData = {
+      accountName: document.getElementById('account').value,
+      phoneNumber: document.getElementById('cellphone').value,
+      email: document.getElementById('email').value,
+      job: document.getElementById('job').value,
+    };
+    console.log(memberData);
+    try {
+      const response = await axios.post('/api/member/createMember', memberData);
+      console.log('Member created:', response.data);
+      const memberId = response.data.member.id; // 獲取返回的 memberId
+      console.log('member',memberId);
+      dispatch(setMemberId(memberId)); // 保存到 Redux Store
+      router.push('/parent/verify');
+    } catch (error) {
+      console.error('Error creating member:', error);
+    }
   };
 
   const handleLastClick = () => {
@@ -61,7 +81,7 @@ const ApplicationPage = () => {
                   autoComplete="off"
                 >
                   <TextField
-                    id="account-name"
+                    id="account"
                     label="帳號名稱"
                     variant="outlined"
                     InputProps={{
@@ -89,7 +109,7 @@ const ApplicationPage = () => {
                   />
 
                   <TextField
-                    id="phone-number"
+                    id="cellphone"
                     label="常用電話"
                     variant="outlined"
                     InputProps={{
@@ -117,7 +137,7 @@ const ApplicationPage = () => {
                   />
 
                   <TextField
-                    id="phone-number"
+                    id="job"
                     label="職業"
                     variant="outlined"
                     InputProps={{
@@ -145,7 +165,7 @@ const ApplicationPage = () => {
                   />
 
                   <TextField
-                    id="phone-number"
+                    id="email"
                     label="聯絡信箱"
                     variant="outlined"
                     InputProps={{
