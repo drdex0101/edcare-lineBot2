@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "local-abbey-440508-h9",
+  "private_key_id": "260ffb20396f3659042d4e0bb395e976c412fc81",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCYlraWndDT29oQ\nBrYMmf4Om7qad/QTP8RQ1HaHFZq5W+NSO3GTWN7UurxjF08m9IYQXpfjl2qQiiH1\n4UfsJW0d/ORx4b3XUOql9W4zrFnPCCH25SYLjj5DY76R4QIFxAzlrn7ka2uFYsdb\n6rDSMMKKfOrDnobNYkYPkFNbcWtCnVMUNh8lb0q3oM0ZS75aUBKBOJrDrWgJt3H0\nYsp6o5a+UWzgOthtMTp7Pax9TIFDxzLVlldzGuGNEIRkfeF5gC3ZP8MOAi4nk+eh\n9q2Jx3YKwbX3WqAA/ezKFk+hQg8CmpOt++sRwnTLOjXhVpbpupvd1+dUoY/IlxDE\nXw7x44RBAgMBAAECggEAAtjiFpCijEd4i87CQB0x/EYL3vTAy0in8j2qqgXdTZrh\nNKA7E+2nN8c1u3AciBytMTpAoYyqXoDTViYSXF3M6c+1mAnnK9C81iSsnh53zQkI\n8DVRpsrMTt/aNxjgm6ivOGxvffXiq1oe3/BSxRNHmAOxcj2/pG6yYbk20viccKFd\nQTC5zIlr4lU4YEpIS2PnjH9lOPXjysjYxQtr+ZRxYoY4MTBHrIxx5ypyG7QY5ixg\nGKM47ru3znDaxgzr0gaagPpaEbb7c4YeXjO31x0N27U93BvQ8J/UH4qHcgGBuRL2\nhvI7saF+WhiNYQcGWJBE+sn5qjuhQlKAPmfU+HfBiQKBgQDNjSPFD66EfhJknVhP\nsjLvWiD/x3o/NkOony07LayfL0XpM/3VTqXzNkW4cgWEpQ4MAtgAk5EqHPANGMsW\n7D669rj0M6IzRkzjGSi7C9VV25Rh6THIvCX+OOR1G/rnc9sTlvO5E9Zvu/XA5MSQ\np1FKBMYc9UsWt5qZDt/JEpbmqQKBgQC+Ceo9JAVMXDul2HkvPfYo9M8t19RGOnIt\nyasaBBq+8DyWCSPXYFuBjFVyKwCFf+sngDjQ+0vzv28bmOe0Fa8+KnCbmjoN4GY0\nzJ0OjZBeW0ZvbpqA+tZB9xYrvP/TTnDe96eUmDh8XcPLgcjsx5ThUGDNBiyvPmlW\nkunhZ0xn2QKBgCU7fpIwX/0x1OUSty9gaOeAHOAX4uXWT3UYuBmzEUSYTIKMX1sm\n7tpaJ1DcnnFDcILudO/NywqkyTqmFgtl6Yr2K9RYEfZVspGkOgN/hjoSFxORKOpi\nYkNlTMSFt/H6w2EOA8GvfTUqB77T8WL+W7Qbn0MZj2tjAIbe8dw7GMhZAoGAZf0k\nPRPr1ANb77Gxt+zlAy3/UncWcWpEhNZKgXfacsazfUICfkA0W95YrSDu8raoGVbz\nJxT2uiXvFzyEfV1140MblCa9KV1Y/NUjJQBMjpclwf/142q7OkPFHkwcb+cVJFR9\nF35qMjSQM9O/ZXPnLtTYXrAFozc3iULnShUKKGECgYEAw0nGbvhRYHpxiYZaz1RL\nJBIP+TkWHJwdVUtqUE857lL/HAYqM+L7D26LUyIqFMJnwW5ejBNXfGqu5CGdph19\n9lc6+7bS27P9UGn0jzakbgPrFsE2Mj4/xetBZESxwcOJsGvhZsN/DFLCf9E3Md6T\nXr2WswO9/LXH22x71pCsT+I=\n-----END PRIVATE KEY-----\n",
+  "client_email": "edcareaccount@local-abbey-440508-h9.iam.gserviceaccount.com",
+  "client_id": "109823601844454716054",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/edcareaccount%40local-abbey-440508-h9.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
