@@ -32,7 +32,7 @@ const ApplicationPage = () => {
             </svg>
             </button>
         </div>
-        <div style={{ backgroundColor: 'white', width: '100%' }}>
+        <div style={{ backgroundColor: 'white', width: '100%',display: 'flex',justifyContent:'center', alignItems: 'center',width: '100%',}}>
           <div style={styles.contentLayout}>
               <div style={styles.rollerLayout}>
                 <div style={styles.rollerActive}></div>

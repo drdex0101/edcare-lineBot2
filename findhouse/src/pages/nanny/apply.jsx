@@ -3,8 +3,11 @@ import { useRouter } from 'next/router';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { setMemberId } from '../../features/member/memberSlice';
 const ApplicationPage = () => {
   const router = useRouter();
+  const dispatch = useDispatch(); // Redux 的 dispatch 函数
 
   const handleLastClick = () => {
     router.push('/nanny/'); // 替换 '/next-page' 为你想要跳转的路径
@@ -13,14 +16,16 @@ const ApplicationPage = () => {
 
   const handleNextClick = async () => {
     const memberData = {
-      accountName: document.getElementById('account-name').value,
-      phoneNumber: document.getElementById('phone-number').value,
+      accountName: document.getElementById('account').value,
+      phoneNumber: document.getElementById('cellphone').value,
       email: document.getElementById('email').value,
+      job: document.getElementById('job').value
     };
-    console.log(0);
     try {
       const response = await axios.post('/api/member/createMember', memberData);
       console.log('Member created:', response.data);
+      const memberId = response.data.member.id; // 獲取返回的 memberId
+      dispatch(setMemberId(memberId)); // 保存到 Redux Store
       router.push('/nanny/upload');
     } catch (error) {
       console.error('Error creating member:', error);
@@ -47,7 +52,7 @@ const ApplicationPage = () => {
               </svg>
             </button>
         </div>
-        <div style={{ backgroundColor: 'white', width: '100%' }}>
+        <div style={{ backgroundColor: 'white', width: '100%',display: 'flex',justifyContent:'center', alignItems: 'center' }}>
           <div style={styles.contentLayout}>
               <div style={styles.rollerLayout}>
                 <div style={styles.roller}></div>
@@ -103,7 +108,7 @@ const ApplicationPage = () => {
                   />
 
                   <TextField
-                    id="phone-number"
+                    id="cellphone"
                     label="常用電話"
                     variant="outlined"
                     InputProps={{
@@ -133,6 +138,34 @@ const ApplicationPage = () => {
                   <TextField
                     id="email"
                     label="聯絡信箱"
+                    variant="outlined"
+                    InputProps={{
+                      sx: {
+                        padding: '0px 16px',
+                        borderRadius: '8px',
+                        backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
+                      },
+                    }}
+                    sx={{
+                      alignSelf: 'stretch',
+                      borderRadius: '8px',
+                      '& .MuiOutlinedInput-root': {
+                        '& fieldset': {
+                          borderColor: 'var(--OutLine-OutLine, #78726D)',
+                        },
+                        '&:hover fieldset': {
+                          borderColor: '#E3838E',
+                        },
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#E3838E',
+                        },
+                      },
+                    }}
+                  />
+
+                  <TextField
+                    id="job"
+                    label="職業"
                     variant="outlined"
                     InputProps={{
                       sx: {

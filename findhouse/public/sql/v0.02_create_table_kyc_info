@@ -4,7 +4,6 @@ CREATE TABLE kyc_info (
     communicateAddress VARCHAR(255),           -- 通訊地址
     identityFrontUploadId BIGINT NOT NULL,     -- 身分證正面上傳ID
     identityBackUploadId BIGINT NOT NULL,      -- 身分證背面上傳ID
-    job VARCHAR(100),                          -- 職業 (保母時帶入保母)
     birthday DATE,                             -- 生日
     name VARCHAR(255) NOT NULL,                -- 姓名
     gender VARCHAR(10),                        -- 性別

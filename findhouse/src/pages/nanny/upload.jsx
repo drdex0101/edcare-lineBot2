@@ -3,15 +3,16 @@ import { useRouter } from 'next/router';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Select from '@mui/material/Select';
-import { MenuItem, InputLabel } from '@mui/material';
+import { MenuItem, InputLabel,FormControl } from '@mui/material';
 import { useState } from 'react';
+
 const ApplicationPage = () => {
   const router = useRouter();
-
   const [file, setFile] = useState(null);
   const [fileBack, setFileBack] = useState(null);
   const [message, setMessage] = useState('');
-
+  const [imageList, setImageList] = useState([]);
+  
   const handleNextClick = () => {
     router.push('/nanny/create/choose'); // 替换 '/next-page' 为你想要跳转的路径
   };
@@ -23,47 +24,56 @@ const ApplicationPage = () => {
     router.push('/nanny/verify/'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0]); // 設置檔案
-    setFileName(e.target.files[0] ? e.target.files[0].name : ''); // 更新檔案名稱
-    handleUpload(); // 新增：在文件选择后触发上传
-  };
-
-  const handleUpload = async () => {
+  const handleUpload = async (file, type) => {
     if (!file) return;
 
     const formData = new FormData();
     formData.append('file', file);
 
-    const res = await fetch('/api/upload', {
-      method: 'POST',
-      body: formData,
-    });
+    try {
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
 
-    const result = await res.json();
-    setMessage(result.message || result.error);
+      const result = await res.json();
+
+      if (result.uploadId) {
+        setImageList((prevList) => [
+          ...prevList,
+          { type, uploadId: result.uploadId },
+        ]);
+        setMessage(`Upload successful: ${type}`);
+      } else {
+        setMessage(result.error || 'Upload failed.');
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      setMessage('Upload failed.');
+    }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setFile(file);
+    setFileName(file?.name || '');
+    handleUpload(file, 'ID Front'); // 指定文件类型
   };
 
   const handleFileChangeBack = (e) => {
-    setFileBack(e.target.files[0]); // 設置反面檔案
-    setFileNameBack(e.target.files[0] ? e.target.files[0].name : ''); // 更新反面檔案名稱
-    handleUploadBack();
+    const file = e.target.files[0];
+    setFile(file);
+    setFileName(file?.name || '');
+    handleUpload(file, 'ID Back'); // 指定文件类型
   };
 
-  const handleUploadBack = async () => {
-    if (!fileBack) return;
-
-    const formData = new FormData();
-    formData.append('file', fileBack);
-
-    const res = await fetch('/api/upload', {
-      method: 'POST',
-      body: formData,
-    });
-
-    const result = await res.json();
-    setMessage(result.message || result.error);
+  const handleHeadIconChange = (e) => {
+    const file = e.target.files[0];
+    setFile(file);
+    setFileName(file?.name || '');
+    handleUpload(file, 'Head Icon'); // 指定文件类型
   };
+
 
   return (
     <div style={styles.main}>  
@@ -84,7 +94,7 @@ const ApplicationPage = () => {
               </svg>
             </button>
         </div>
-        <div style={{ backgroundColor: 'white', width: '100%' }}>
+        <div style={{ backgroundColor: 'white', width: '100%',display: 'flex',justifyContent:'center', alignItems: 'center' }}>
           <div style={styles.contentLayout}>
               <div style={styles.rollerLayout}>
                 <div style={styles.roller}></div>
@@ -164,38 +174,30 @@ const ApplicationPage = () => {
                     }}
                   />
 
-                  <Select
-                        labelId="gender-label"
-                        id="gender"
-                        label="性別"
-                        defaultValue=""
-                        InputProps={{
-                          sx: {
-                            padding: '0px 16px',
-                            borderRadius: '8px',
-                            backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
-                          },
-                        }}
-                        sx={{
-                            alignSelf: 'stretch',
-                            borderRadius: '8px',
-                            '& .MuiOutlinedInput-root': {
-                                '& fieldset': {
-                                    borderColor: 'var(--OutLine-OutLine, #78726D)',
-                                },
-                                '&:hover fieldset': {
-                                    borderColor: '#E3838E',
-                                },
-                                '&.Mui-focused fieldset': {
-                                    borderColor: '#E3838E',
-                                },
-                            },
-                            backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)',
-                        }}
+                  <FormControl fullWidth sx={{ alignSelf: 'stretch' }}>
+                    <InputLabel id="gender-label">性別</InputLabel>
+                    <Select
+                      labelId="gender-label"
+                      id="gender"
+                      label="性別"
+                      sx={{
+                        backgroundColor:'#FFF',
+                        borderRadius: '8px',
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          borderColor: 'var(--OutLine-OutLine, #78726D)',
+                        },
+                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#E3838E',
+                        },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#E3838E',
+                        },
+                      }}
                     >
-                        <MenuItem value="male">男</MenuItem>
-                        <MenuItem value="female">女</MenuItem>
+                      <MenuItem value="male">男</MenuItem>
+                      <MenuItem value="female">女</MenuItem>
                     </Select>
+                  </FormControl>
 
 
 
@@ -312,32 +314,34 @@ const ApplicationPage = () => {
                   />
                 </Box>
               <div style={styles.imgStyle}>
-                <div style={styles.uploadimgLayout}>
+                <div style={styles.uploadIconLayout}>
                   <span style={styles.mainCode}>上傳大頭貼</span>
-                  <input type="file" onChange={handleFileChange} style={{ display: 'none' }} id="file-upload" />
-                  <div style={styles.headIconLayout} onClick={() => document.getElementById('file-upload').click()}>
-                    <img src="/headIcon.png" alt="Description of image F"/>
-                  </div>
-                  <div style={styles.imgBtnLayout}>
-                      <button style={styles.uploadBtn} onClick={handleUpload}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
-                          <g clip-path="url(#clip0_52_6150)">
-                            <path d="M12.9 6.71708C12.4467 4.41708 10.4267 2.69041 8 2.69041C6.07333 2.69041 4.4 3.78374 3.56667 5.38374C1.56 5.59708 0 7.29708 0 9.35708C0 11.5637 1.79333 13.3571 4 13.3571H12.6667C14.5067 13.3571 16 11.8637 16 10.0237C16 8.26374 14.6333 6.83708 12.9 6.71708ZM9.33333 8.69041V11.3571H6.66667V8.69041H4.66667L7.76667 5.59041C7.9 5.45708 8.10667 5.45708 8.24 5.59041L11.3333 8.69041H9.33333Z" fill="white"/>
-                          </g>
-                          <defs>
-                            <clipPath id="clip0_52_6150">
-                              <rect width="16" height="16" fill="white" transform="translate(0 0.0237427)"/>
-                            </clipPath>
-                          </defs>
-                        </svg>
-                        上傳照片
-                      </button>
-                      <button style={styles.redoBtn}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="17" viewBox="0 0 14 17" fill="none">
-                          <path d="M9.42756 0.0237427H4.57245C2.06179 0.0237427 0 2.09532 0 4.65538V8.69754C0 9.06807 0.299228 9.37117 0.665024 9.37117C1.03082 9.37117 1.33005 9.06807 1.33005 8.69754L1.33016 4.65538C1.33016 2.85319 2.77669 1.38797 4.55582 1.38797H9.3943C11.2066 1.38797 12.6532 2.85322 12.6532 4.65538V8.19227C12.6532 9.99446 11.2067 11.4597 9.42755 11.4597L3.42518 11.4596L5.43711 9.42158C5.70317 9.15208 5.70317 8.73102 5.43711 8.46151C5.17105 8.19201 4.75537 8.19201 4.48931 8.46151L1.33016 11.6616C1.0641 11.9311 1.0641 12.3521 1.33016 12.6216L4.48931 15.8217C4.62234 15.9564 4.78854 16.0237 4.97144 16.0237C5.13775 16.0237 5.32066 15.9564 5.45356 15.8217C5.71962 15.5522 5.71962 15.1311 5.45356 14.8616L3.42518 12.824H9.42755C11.9549 12.824 14 10.7524 14 8.19234V4.65545C14 2.09538 11.9382 0.0238056 9.42755 0.0238056L9.42756 0.0237427Z" fill="#CCCCCC"/>
-                          <path d="M9.42756 0.0237427H4.57245C2.06179 0.0237427 0 2.09532 0 4.65538V8.69754C0 9.06807 0.299228 9.37117 0.665024 9.37117C1.03082 9.37117 1.33005 9.06807 1.33005 8.69754L1.33016 4.65538C1.33016 2.85319 2.77669 1.38797 4.55582 1.38797H9.3943C11.2066 1.38797 12.6532 2.85322 12.6532 4.65538V8.19227C12.6532 9.99446 11.2067 11.4597 9.42755 11.4597L3.42518 11.4596L5.43711 9.42158C5.70317 9.15208 5.70317 8.73102 5.43711 8.46151C5.17105 8.19201 4.75537 8.19201 4.48931 8.46151L1.33016 11.6616C1.0641 11.9311 1.0641 12.3521 1.33016 12.6216L4.48931 15.8217C4.62234 15.9564 4.78854 16.0237 4.97144 16.0237C5.13775 16.0237 5.32066 15.9564 5.45356 15.8217C5.71962 15.5522 5.71962 15.1311 5.45356 14.8616L3.42518 12.824H9.42755C11.9549 12.824 14 10.7524 14 8.19234V4.65545C14 2.09538 11.9382 0.0238056 9.42755 0.0238056L9.42756 0.0237427Z" stroke="#CCCCCC"/>
-                        </svg>
-                      </button>
+                  <div style={{display: 'flex',justifyContent:'flex-start', alignItems: 'center',width:'100%',flexDirection:'column',gap:'20px' }}>
+                      <input type="file" onChange={handleHeadIconChange} style={{ display: 'none' }} id="file-icon" />
+                      <div style={styles.headIconLayout} onClick={() => document.getElementById('file-icon').click()}>
+                        <img src="/headIcon.png" alt="Description of image F"/>
+                      </div>
+                      <div style={styles.imgBtnLayout}>
+                          <button style={styles.uploadBtn} onClick={handleUpload}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
+                              <g clip-path="url(#clip0_52_6150)">
+                                <path d="M12.9 6.71708C12.4467 4.41708 10.4267 2.69041 8 2.69041C6.07333 2.69041 4.4 3.78374 3.56667 5.38374C1.56 5.59708 0 7.29708 0 9.35708C0 11.5637 1.79333 13.3571 4 13.3571H12.6667C14.5067 13.3571 16 11.8637 16 10.0237C16 8.26374 14.6333 6.83708 12.9 6.71708ZM9.33333 8.69041V11.3571H6.66667V8.69041H4.66667L7.76667 5.59041C7.9 5.45708 8.10667 5.45708 8.24 5.59041L11.3333 8.69041H9.33333Z" fill="white"/>
+                              </g>
+                              <defs>
+                                <clipPath id="clip0_52_6150">
+                                  <rect width="16" height="16" fill="white" transform="translate(0 0.0237427)"/>
+                                </clipPath>
+                              </defs>
+                            </svg>
+                            上傳照片
+                          </button>
+                          <button style={styles.redoBtn}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="17" viewBox="0 0 14 17" fill="none">
+                              <path d="M9.42756 0.0237427H4.57245C2.06179 0.0237427 0 2.09532 0 4.65538V8.69754C0 9.06807 0.299228 9.37117 0.665024 9.37117C1.03082 9.37117 1.33005 9.06807 1.33005 8.69754L1.33016 4.65538C1.33016 2.85319 2.77669 1.38797 4.55582 1.38797H9.3943C11.2066 1.38797 12.6532 2.85322 12.6532 4.65538V8.19227C12.6532 9.99446 11.2067 11.4597 9.42755 11.4597L3.42518 11.4596L5.43711 9.42158C5.70317 9.15208 5.70317 8.73102 5.43711 8.46151C5.17105 8.19201 4.75537 8.19201 4.48931 8.46151L1.33016 11.6616C1.0641 11.9311 1.0641 12.3521 1.33016 12.6216L4.48931 15.8217C4.62234 15.9564 4.78854 16.0237 4.97144 16.0237C5.13775 16.0237 5.32066 15.9564 5.45356 15.8217C5.71962 15.5522 5.71962 15.1311 5.45356 14.8616L3.42518 12.824H9.42755C11.9549 12.824 14 10.7524 14 8.19234V4.65545C14 2.09538 11.9382 0.0238056 9.42755 0.0238056L9.42756 0.0237427Z" fill="#CCCCCC"/>
+                              <path d="M9.42756 0.0237427H4.57245C2.06179 0.0237427 0 2.09532 0 4.65538V8.69754C0 9.06807 0.299228 9.37117 0.665024 9.37117C1.03082 9.37117 1.33005 9.06807 1.33005 8.69754L1.33016 4.65538C1.33016 2.85319 2.77669 1.38797 4.55582 1.38797H9.3943C11.2066 1.38797 12.6532 2.85322 12.6532 4.65538V8.19227C12.6532 9.99446 11.2067 11.4597 9.42755 11.4597L3.42518 11.4596L5.43711 9.42158C5.70317 9.15208 5.70317 8.73102 5.43711 8.46151C5.17105 8.19201 4.75537 8.19201 4.48931 8.46151L1.33016 11.6616C1.0641 11.9311 1.0641 12.3521 1.33016 12.6216L4.48931 15.8217C4.62234 15.9564 4.78854 16.0237 4.97144 16.0237C5.13775 16.0237 5.32066 15.9564 5.45356 15.8217C5.71962 15.5522 5.71962 15.1311 5.45356 14.8616L3.42518 12.824H9.42755C11.9549 12.824 14 10.7524 14 8.19234V4.65545C14 2.09538 11.9382 0.0238056 9.42755 0.0238056L9.42756 0.0237427Z" stroke="#CCCCCC"/>
+                            </svg>
+                          </button>
+                        </div>
                     </div>
                 </div>
                 <div style={styles.uplaodLayout}>
@@ -352,7 +356,7 @@ const ApplicationPage = () => {
                     </div>
                     {fileName && <span>{fileName}</span>} {/* 顯示檔案名稱 */}
                     <div style={styles.imgBtnLayout}>
-                      <button style={styles.uploadBtn} onClick={handleUpload}>
+                      <button style={styles.uploadBtn}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
                           <g clip-path="url(#clip0_52_6150)">
                             <path d="M12.9 6.71708C12.4467 4.41708 10.4267 2.69041 8 2.69041C6.07333 2.69041 4.4 3.78374 3.56667 5.38374C1.56 5.59708 0 7.29708 0 9.35708C0 11.5637 1.79333 13.3571 4 13.3571H12.6667C14.5067 13.3571 16 11.8637 16 10.0237C16 8.26374 14.6333 6.83708 12.9 6.71708ZM9.33333 8.69041V11.3571H6.66667V8.69041H4.66667L7.76667 5.59041C7.9 5.45708 8.10667 5.45708 8.24 5.59041L11.3333 8.69041H9.33333Z" fill="white"/>
@@ -379,7 +383,7 @@ const ApplicationPage = () => {
                     </div>
                     {fileNameBack && <span>{fileNameBack}</span>} {/* 顯示檔案名稱 */}
                     <div style={styles.imgBtnLayout}>
-                      <button style={styles.uploadBtn} onClick={handleUploadBack}>
+                      <button style={styles.uploadBtn}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
                           <g clip-path="url(#clip0_52_6150)">
                             <path d="M12.9 6.71708C12.4467 4.41708 10.4267 2.69041 8 2.69041C6.07333 2.69041 4.4 3.78374 3.56667 5.38374C1.56 5.59708 0 7.29708 0 9.35708C0 11.5637 1.79333 13.3571 4 13.3571H12.6667C14.5067 13.3571 16 11.8637 16 10.0237C16 8.26374 14.6333 6.83708 12.9 6.71708ZM9.33333 8.69041V11.3571H6.66667V8.69041H4.66667L7.76667 5.59041C7.9 5.45708 8.10667 5.45708 8.24 5.59041L11.3333 8.69041H9.33333Z" fill="white"/>
@@ -448,6 +452,14 @@ const styles = {
     display:'flex',
     gap:'12px',
     alignItems:'flex-start',
+    width:'100%'
+  },
+  uploadIconLayout:{
+    display:'flex',
+    flexDirection:'column',
+    alignItems:'center',
+    justifyContent:'center',
+    gap:'20px',
     width:'100%'
   },
   uploadimgLayout:{

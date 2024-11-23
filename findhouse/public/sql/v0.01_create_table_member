@@ -6,6 +6,7 @@ CREATE TABLE member (
     email VARCHAR,         -- 電子郵件
     kycId VARCHAR,                  -- KYC ID (身份驗證ID)
     identityType VARCHAR,   -- 身分別 (家長/保母)
+    job VARCHAR(100),               -- 職業 (保母時帶入保母)
     created_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 建立時間
     update_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 更新時間
     UNIQUE (lineId),                 -- 確保 lineId 唯一

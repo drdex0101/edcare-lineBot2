@@ -1,4 +1,4 @@
-CREATE TABLE "order" (
+CREATE TABLE orderInfo (
     id BIGSERIAL PRIMARY KEY,                  -- 流水號 (主鍵，自動遞增)
     parentId BIGINT NOT NULL,                  -- 家長 ID (只有家長可建立訂單)
     nannyId BIGINT,                            -- 保母 ID (可為 NULL)
@@ -14,7 +14,6 @@ CREATE TABLE "order" (
     rank VARCHAR(50),                          -- 胎別
     hope TEXT[],                               -- 期望 (使用陣列型態存放多個值)
     intro TEXT,                                -- 托育理念
-    orderId VARCHAR(50) UNIQUE NOT NULL,       -- 訂單 ID (唯一且不可為 NULL)
     isShow BOOLEAN DEFAULT TRUE,               -- 是否公開 (預設為公開)
     CONSTRAINT chk_status CHECK (status IN ('已成立', '已取消', '已完成')), -- 訂單狀態限制
     CONSTRAINT chk_chooseType CHECK (chooseType IN ('長期', '臨時')),       -- 托育型別限制
