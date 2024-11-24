@@ -5,11 +5,11 @@ CREATE TABLE kyc_info (
     identityFrontUploadId BIGINT,     -- 身分證正面上傳ID
     identityBackUploadId BIGINT,      -- 身分證背面上傳ID
     iconUploadId BIGINT,             -- 大頭貼上傳ID
-    birthday DATE,                             -- 生日
-    name VARCHAR(255) NOT NULL,                -- 姓名
+    birthday VARCHAR,                             -- 生日
+    name VARCHAR,                -- 姓名
     gender VARCHAR(10),                        -- 性別
     welfareCertNo VARCHAR(50),                 -- 居福證字號
-    status VARCHAR(20) CHECK (status IN ('通過', '不通過')), -- 審核狀態 (限制為指定值)
+    status VARCHAR(20) CHECK (status IN ('pending', '通過', '不通過')), -- 審核狀態 (限制為指定值)
     identityCard VARCHAR(20) ,           -- 身分證號碼 (需唯一)
     created_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 建立時間
     update_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- 更新時間

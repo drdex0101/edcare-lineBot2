@@ -5,16 +5,61 @@ import TextField from '@mui/material/TextField';
 import Select from '@mui/material/Select';
 import { MenuItem, InputLabel,FormControl } from '@mui/material';
 import { useState } from 'react';
-
+import { useDispatch } from 'react-redux';
+import { setMemberId } from '../../features/member/memberSlice';
 const ApplicationPage = () => {
   const router = useRouter();
   const [file, setFile] = useState(null);
   const [fileBack, setFileBack] = useState(null);
   const [message, setMessage] = useState('');
-  const [imageList, setImageList] = useState([]);
+  const [frontImg, setFrontImg] = useState(null);
+  const [backImg, setBackImg] = useState(null);
+  const [headIcon, setHeadIcon] = useState(null);
+  const [gender, setGender] = useState('');
   
-  const handleNextClick = () => {
-    router.push('/nanny/create/choose'); // 替换 '/next-page' 为你想要跳转的路径
+  const handleNextClick = async () => {
+    const kycInfoData = {
+      name: document.getElementById('name').value,
+      identityCard: document.getElementById('identityCard').value,
+      gender: gender,
+      birthday: document.getElementById('birthday').value,
+      address: document.getElementById('address').value,
+      communicateAddress: document.getElementById('communicateAddress').value,
+      welfareCertNo: document.getElementById('welfareCertNo').value,
+      identityFrontUploadId: frontImg,
+      identityBackUploadId: backImg,
+      iconUploadId: headIcon,
+      status: '通過'
+    };
+    try {
+      const response = await fetch('/api/kycInfo/createKycInfo', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(kycInfoData)
+      });
+
+      console.log('kyc created:', response.data);
+      const memberId = response.data.member.id; // 獲取返回的 memberId
+      dispatch(setMemberId(memberId)); // 保存到 Redux Store
+      const kycId = response.data.kyc.id; // 獲取返回的 kycId
+      const kycInfoUpdateData = {
+        kycId: kycId,
+        memberId: memberId
+      };
+      const response2 = await fetch('/api/member/updateKycId', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(kycInfoUpdateData)
+      });
+      console.log('kycId updated:', response2.data);
+      router.push('/nanny/create/choose');
+    } catch (error) {
+      console.error('Error creating member:', error);
+    }
   };
 
   const [fileName, setFileName] = useState(''); // 新增狀態以存儲檔案名稱
@@ -37,15 +82,25 @@ const ApplicationPage = () => {
       });
 
       const result = await res.json();
-
-      if (result.uploadId) {
-        setImageList((prevList) => [
-          ...prevList,
-          { type, uploadId: result.uploadId },
-        ]);
-        setMessage(`Upload successful: ${type}`);
-      } else {
-        setMessage(result.error || 'Upload failed.');
+      console.log(result);
+      const resUpload = await fetch('/api/kycInfo/uploadImg', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          fileUrl: result.fileUrl,
+          type: type
+        })
+      });
+      const uploadResponse = await resUpload.json();
+      const uploadId = uploadResponse.uploadId.id;
+      if(type === 'ID Front'){
+        setFrontImg(uploadId);
+      }else if(type === 'ID Back'){
+        setBackImg(uploadId);
+      }else if(type === 'Head Icon'){
+        setHeadIcon(uploadId);
       }
     } catch (error) {
       console.error('Upload error:', error);
@@ -74,6 +129,9 @@ const ApplicationPage = () => {
     handleUpload(file, 'Head Icon'); // 指定文件类型
   };
 
+  const handleGenderChange = (event) => {
+    setGender(event.target.value);
+  };
 
   return (
     <div style={styles.main}>  
@@ -179,6 +237,8 @@ const ApplicationPage = () => {
                     <Select
                       labelId="gender-label"
                       id="gender"
+                      value={gender}
+                      onChange={handleGenderChange}
                       label="性別"
                       sx={{
                         backgroundColor:'#FFF',
@@ -198,8 +258,6 @@ const ApplicationPage = () => {
                       <MenuItem value="female">女</MenuItem>
                     </Select>
                   </FormControl>
-
-
 
                   <TextField
                     id="birthday"

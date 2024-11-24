@@ -19,12 +19,28 @@ export default async function handler(req, res) {
 
       // 使用參數化查詢插入資料
       const query = `
-        INSERT INTO kyc_info (name, identityCard, gender, birthday, welfareCertNo, address, communicateAddress, identityFrontUploadId, identityBackUploadId,iconUploadId, status, created_ts)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, NOW())
+        INSERT INTO kyc_info (
+          name, identityCard, gender, birthday, address, communicateAddress, 
+          welfareCertNo, identityFrontUploadId, identityBackUploadId, iconUploadId, status
+      ) VALUES (
+          $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
+        )
         RETURNING *;
       `;
       console.log(query);
-      const values = [name, identityCard, gender, birthday, welfareCertNo, address, communicateAddress, identityFrontUploadId, identityBackUploadId, status];
+      const values = [
+        name, 
+        identityCard, 
+        gender, 
+        birthday, 
+        address,           // was welfareCertNo
+        communicateAddress,// was address
+        welfareCertNo,     // was communicateAddress
+        identityFrontUploadId,
+        identityBackUploadId,
+        iconUploadId,
+        status
+      ];
       const result = await client.query(query, values);
 
       console.log('kycInfo created successfully:', result.rows[0]);
