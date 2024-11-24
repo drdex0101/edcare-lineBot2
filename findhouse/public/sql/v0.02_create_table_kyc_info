@@ -2,8 +2,9 @@ CREATE TABLE kyc_info (
     id BIGSERIAL PRIMARY KEY,                  -- 流水號 (主鍵，自動遞增)
     address VARCHAR(255),                      -- 戶籍地址
     communicateAddress VARCHAR(255),           -- 通訊地址
-    identityFrontUploadId BIGINT NOT NULL,     -- 身分證正面上傳ID
-    identityBackUploadId BIGINT NOT NULL,      -- 身分證背面上傳ID
+    identityFrontUploadId BIGINT,     -- 身分證正面上傳ID
+    identityBackUploadId BIGINT,      -- 身分證背面上傳ID
+    iconUploadId BIGINT,             -- 大頭貼上傳ID
     birthday DATE,                             -- 生日
     name VARCHAR(255) NOT NULL,                -- 姓名
     gender VARCHAR(10),                        -- 性別

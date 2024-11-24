@@ -119,7 +119,7 @@ const ApplicationPage = () => {
                   autoComplete="off"
                 >
                   <TextField
-                    id="account-name"
+                    id="name"
                     label="真實姓名"
                     variant="outlined"
                     InputProps={{
@@ -147,7 +147,7 @@ const ApplicationPage = () => {
                   />
 
                   <TextField
-                    id="phone-number"
+                    id="identityCard"
                     label="身分證字號"
                     variant="outlined"
                     InputProps={{
@@ -202,7 +202,7 @@ const ApplicationPage = () => {
 
 
                   <TextField
-                    id="phone-number"
+                    id="birthday"
                     label="出生日期"
                     variant="outlined"
                     InputProps={{
@@ -230,7 +230,7 @@ const ApplicationPage = () => {
                   />
 
                   <TextField
-                    id="phone-number"
+                    id="address"
                     label="戶籍地址"
                     variant="outlined"
                     InputProps={{
@@ -258,7 +258,7 @@ const ApplicationPage = () => {
                   />
 
                   <TextField
-                    id="phone-number"
+                    id="communicateAddress"
                     label="通訊地址"
                     variant="outlined"
                     InputProps={{
@@ -286,7 +286,7 @@ const ApplicationPage = () => {
                   />
 
                   <TextField
-                    id="phone-number"
+                    id="welfareCertNo"
                     label="居家式托育服務登記書號"
                     variant="outlined"
                     InputProps={{
