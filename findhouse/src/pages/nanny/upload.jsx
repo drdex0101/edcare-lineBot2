@@ -5,7 +5,7 @@ import TextField from '@mui/material/TextField';
 import Select from '@mui/material/Select';
 import { MenuItem, InputLabel,FormControl } from '@mui/material';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch,useSelector } from 'react-redux';
 import { setMemberId } from '../../features/member/memberSlice';
 const ApplicationPage = () => {
   const router = useRouter();
@@ -16,7 +16,8 @@ const ApplicationPage = () => {
   const [backImg, setBackImg] = useState(null);
   const [headIcon, setHeadIcon] = useState(null);
   const [gender, setGender] = useState('');
-  
+  const memberId = useSelector((state) => state.member.memberId);
+
   const handleNextClick = async () => {
     const kycInfoData = {
       name: document.getElementById('name').value,
@@ -39,11 +40,8 @@ const ApplicationPage = () => {
         },
         body: JSON.stringify(kycInfoData)
       });
-
-      console.log('kyc created:', response.data);
-      const memberId = response.data.member.id; // 獲取返回的 memberId
-      dispatch(setMemberId(memberId)); // 保存到 Redux Store
-      const kycId = response.data.kyc.id; // 獲取返回的 kycId
+      const kycData = await response.json();
+      const kycId = kycData.member.id; // 獲取返回的 kycId
       const kycInfoUpdateData = {
         kycId: kycId,
         memberId: memberId
@@ -55,7 +53,7 @@ const ApplicationPage = () => {
         },
         body: JSON.stringify(kycInfoUpdateData)
       });
-      console.log('kycId updated:', response2.data);
+      console.log('kycId updated:', response2.json());
       router.push('/nanny/create/choose');
     } catch (error) {
       console.error('Error creating member:', error);

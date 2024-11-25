@@ -3,19 +3,61 @@ import { useRouter } from 'next/router';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Select from '@mui/material/Select';
-import { MenuItem, InputLabel } from '@mui/material';
+import { MenuItem, InputLabel,FormControl } from '@mui/material';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
-
+import { useDispatch,useSelector } from 'react-redux';
+import { setMemberId } from '../../features/member/memberSlice';
 const ApplicationPage = () => {
   const router = useRouter();
-  const memberId = useSelector((state) => state.member.memberId);
   const [file, setFile] = useState(null);
   const [fileBack, setFileBack] = useState(null);
   const [message, setMessage] = useState('');
+  const [frontImg, setFrontImg] = useState(null);
+  const [backImg, setBackImg] = useState(null);
+  const [headIcon, setHeadIcon] = useState(null);
+  const [gender, setGender] = useState('');
+  const memberId = useSelector((state) => state.member.memberId);
 
-  const handleNextClick = () => {
-    router.push('/parent/create'); // 替换 '/next-page' 为你想要跳转的路径
+  const handleNextClick = async () => {
+    const kycInfoData = {
+      name: document.getElementById('name').value,
+      identityCard: document.getElementById('identityCard').value,
+      gender: gender,
+      birthday: document.getElementById('birthday').value,
+      address: document.getElementById('address').value,
+      communicateAddress: document.getElementById('communicateAddress').value,
+      welfareCertNo: null,
+      identityFrontUploadId: frontImg,
+      identityBackUploadId: backImg,
+      iconUploadId: null,
+      status: '通過'
+    };
+    try {
+      const response = await fetch('/api/kycInfo/createKycInfo', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(kycInfoData)
+      });
+      const kycData = await response.json();
+      const kycId = kycData.member.id; // 獲取返回的 kycId
+      const kycInfoUpdateData = {
+        kycId: kycId,
+        memberId: memberId
+      };
+      const response2 = await fetch('/api/member/updateKycId', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(kycInfoUpdateData)
+      });
+      console.log('kycId updated:', response2.json());
+      router.push('/parent/create/choose');
+    } catch (error) {
+      console.error('Error creating member:', error);
+    }
   };
 
   const [fileName, setFileName] = useState(''); // 新增狀態以存儲檔案名稱
@@ -25,53 +67,75 @@ const ApplicationPage = () => {
     router.push('/parent/verify/'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0]); // 設置檔案
-    setFileName(e.target.files[0] ? e.target.files[0].name : ''); // 更新檔案名稱
-    handleUpload(); // 新增：在文件选择后触发上传
-  };
-
-  const handleUpload = async () => {
+  const handleUpload = async (file, type) => {
     if (!file) return;
 
     const formData = new FormData();
     formData.append('file', file);
 
-    const res = await fetch('/api/upload', {
-      method: 'POST',
-      body: formData,
-    });
+    try {
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
 
-    const result = await res.json();
-    setMessage(result.message || result.error);
+      const result = await res.json();
+      console.log(result);
+      const resUpload = await fetch('/api/kycInfo/uploadImg', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          fileUrl: result.fileUrl,
+          type: type
+        })
+      });
+      const uploadResponse = await resUpload.json();
+      const uploadId = uploadResponse.uploadId.id;
+      if(type === 'ID Front'){
+        setFrontImg(uploadId);
+      }else if(type === 'ID Back'){
+        setBackImg(uploadId);
+      }else if(type === 'Head Icon'){
+        setHeadIcon(uploadId);
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      setMessage('Upload failed.');
+    }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setFile(file);
+    setFileName(file?.name || '');
+    handleUpload(file, 'ID Front'); // 指定文件类型
   };
 
   const handleFileChangeBack = (e) => {
-    setFileBack(e.target.files[0]); // 設置反面檔案
-    setFileNameBack(e.target.files[0] ? e.target.files[0].name : ''); // 更新反面檔案名稱
-    handleUploadBack();
+    const file = e.target.files[0];
+    setFile(file);
+    setFileName(file?.name || '');
+    handleUpload(file, 'ID Back'); // 指定文件类型
   };
 
-  const handleUploadBack = async () => {
-    if (!fileBack) return;
+  const handleHeadIconChange = (e) => {
+    const file = e.target.files[0];
+    setFile(file);
+    setFileName(file?.name || '');
+    handleUpload(file, 'Head Icon'); // 指定文件类型
+  };
 
-    const formData = new FormData();
-    formData.append('file', fileBack);
-
-    const res = await fetch('/api/upload', {
-      method: 'POST',
-      body: formData,
-    });
-
-    const result = await res.json();
-    setMessage(result.message || result.error);
+  const handleGenderChange = (event) => {
+    setGender(event.target.value);
   };
 
   return (
-    <div style={styles.main}>
+    <div style={styles.main}>  
         <div style={styles.header}> 
             <span style={styles.headerFont}>
-              申請成為保母
+              申請成為家長
             </span>
             <button onClick={handleLastClick} style={styles.lastButton}>
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -86,13 +150,12 @@ const ApplicationPage = () => {
               </svg>
             </button>
         </div>
-        <div style={{ backgroundColor: 'white', width: '100%' }}>
+        <div style={{ backgroundColor: 'white', width: '100%',display: 'flex',justifyContent:'center', alignItems: 'center' }}>
           <div style={styles.contentLayout}>
               <div style={styles.rollerLayout}>
                 <div style={styles.roller}></div>
                 <div style={styles.roller}></div>
                 <div style={styles.rollerActive}></div>
-                <div style={styles.roller}></div>
                 <div style={styles.roller}></div>
                 <div style={styles.roller}></div>
               </div>
@@ -112,7 +175,7 @@ const ApplicationPage = () => {
                   autoComplete="off"
                 >
                   <TextField
-                    id="account-name"
+                    id="name"
                     label="真實姓名"
                     variant="outlined"
                     InputProps={{
@@ -140,7 +203,7 @@ const ApplicationPage = () => {
                   />
 
                   <TextField
-                    id="phone-number"
+                    id="identityCard"
                     label="身分證字號"
                     variant="outlined"
                     InputProps={{
@@ -167,43 +230,35 @@ const ApplicationPage = () => {
                     }}
                   />
 
-                  <Select
-                        labelId="gender-label"
-                        id="gender"
-                        label="性別"
-                        defaultValue=""
-                        InputProps={{
-                          sx: {
-                            padding: '0px 16px',
-                            borderRadius: '8px',
-                            backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
-                          },
-                        }}
-                        sx={{
-                            alignSelf: 'stretch',
-                            borderRadius: '8px',
-                            '& .MuiOutlinedInput-root': {
-                                '& fieldset': {
-                                    borderColor: 'var(--OutLine-OutLine, #78726D)',
-                                },
-                                '&:hover fieldset': {
-                                    borderColor: '#E3838E',
-                                },
-                                '&.Mui-focused fieldset': {
-                                    borderColor: '#E3838E',
-                                },
-                            },
-                            backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)',
-                        }}
+                  <FormControl fullWidth sx={{ alignSelf: 'stretch' }}>
+                    <InputLabel id="gender-label">性別</InputLabel>
+                    <Select
+                      labelId="gender-label"
+                      id="gender"
+                      value={gender}
+                      onChange={handleGenderChange}
+                      label="性別"
+                      sx={{
+                        backgroundColor:'#FFF',
+                        borderRadius: '8px',
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          borderColor: 'var(--OutLine-OutLine, #78726D)',
+                        },
+                        '&:hover .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#E3838E',
+                        },
+                        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                          borderColor: '#E3838E',
+                        },
+                      }}
                     >
-                        <MenuItem value="male">男</MenuItem>
-                        <MenuItem value="female">女</MenuItem>
+                      <MenuItem value="male">男</MenuItem>
+                      <MenuItem value="female">女</MenuItem>
                     </Select>
-
-
+                  </FormControl>
 
                   <TextField
-                    id="phone-number"
+                    id="birthday"
                     label="出生日期"
                     variant="outlined"
                     InputProps={{
@@ -229,9 +284,8 @@ const ApplicationPage = () => {
                       },
                     }}
                   />
-
                   <TextField
-                    id="phone-number"
+                    id="address"
                     label="戶籍地址"
                     variant="outlined"
                     InputProps={{
@@ -257,9 +311,8 @@ const ApplicationPage = () => {
                       },
                     }}
                   />
-
                   <TextField
-                    id="phone-number"
+                    id="communicateAddress"
                     label="通訊地址"
                     variant="outlined"
                     InputProps={{
@@ -299,7 +352,7 @@ const ApplicationPage = () => {
                     </div>
                     {fileName && <span>{fileName}</span>} {/* 顯示檔案名稱 */}
                     <div style={styles.imgBtnLayout}>
-                      <button style={styles.uploadBtn} onClick={handleUpload}>
+                      <button style={styles.uploadBtn}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
                           <g clip-path="url(#clip0_52_6150)">
                             <path d="M12.9 6.71708C12.4467 4.41708 10.4267 2.69041 8 2.69041C6.07333 2.69041 4.4 3.78374 3.56667 5.38374C1.56 5.59708 0 7.29708 0 9.35708C0 11.5637 1.79333 13.3571 4 13.3571H12.6667C14.5067 13.3571 16 11.8637 16 10.0237C16 8.26374 14.6333 6.83708 12.9 6.71708ZM9.33333 8.69041V11.3571H6.66667V8.69041H4.66667L7.76667 5.59041C7.9 5.45708 8.10667 5.45708 8.24 5.59041L11.3333 8.69041H9.33333Z" fill="white"/>
@@ -326,7 +379,7 @@ const ApplicationPage = () => {
                     </div>
                     {fileNameBack && <span>{fileNameBack}</span>} {/* 顯示檔案名稱 */}
                     <div style={styles.imgBtnLayout}>
-                      <button style={styles.uploadBtn} onClick={handleUploadBack}>
+                      <button style={styles.uploadBtn}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
                           <g clip-path="url(#clip0_52_6150)">
                             <path d="M12.9 6.71708C12.4467 4.41708 10.4267 2.69041 8 2.69041C6.07333 2.69041 4.4 3.78374 3.56667 5.38374C1.56 5.59708 0 7.29708 0 9.35708C0 11.5637 1.79333 13.3571 4 13.3571H12.6667C14.5067 13.3571 16 11.8637 16 10.0237C16 8.26374 14.6333 6.83708 12.9 6.71708ZM9.33333 8.69041V11.3571H6.66667V8.69041H4.66667L7.76667 5.59041C7.9 5.45708 8.10667 5.45708 8.24 5.59041L11.3333 8.69041H9.33333Z" fill="white"/>
@@ -395,6 +448,14 @@ const styles = {
     display:'flex',
     gap:'12px',
     alignItems:'flex-start',
+    width:'100%'
+  },
+  uploadIconLayout:{
+    display:'flex',
+    flexDirection:'column',
+    alignItems:'center',
+    justifyContent:'center',
+    gap:'20px',
     width:'100%'
   },
   uploadimgLayout:{

@@ -27,7 +27,6 @@ export default async function handler(req, res) {
         )
         RETURNING *;
       `;
-      console.log(query);
       const values = [
         name, 
         identityCard, 

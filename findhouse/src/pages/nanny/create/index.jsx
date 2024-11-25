@@ -4,15 +4,15 @@ const ApplicationPage = () => {
   const router = useRouter();
 
   const handleNextClick = () => {
-    router.push('/parent/create/choose'); // 替换 '/next-page' 为你想要跳转的路径
+    router.push('/nanny/create/choose'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   const finishClick = () => {
-    router.push('/parent/finish'); // 替换 '/next-page' 为你想要跳转的路径
+    router.push('/nanny/finish'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   const handleLastClick = () => {
-    router.push('/parent/verify/'); // 替换 '/next-page' 为你想要跳转的路径
+    router.push('/nanny/verify/'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   return (

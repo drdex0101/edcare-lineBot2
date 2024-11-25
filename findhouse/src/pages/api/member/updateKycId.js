@@ -20,7 +20,7 @@ export default async function handler(req, res) {
       const query = `
         UPDATE member
         SET kyc_id = $1,
-            updated_ts = NOW()
+            update_ts = NOW()
         WHERE id = $2
         RETURNING *;
       `;
