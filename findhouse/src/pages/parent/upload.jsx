@@ -7,6 +7,10 @@ import { MenuItem, InputLabel,FormControl } from '@mui/material';
 import { useState } from 'react';
 import { useDispatch,useSelector } from 'react-redux';
 import { setMemberId } from '../../features/member/memberSlice';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import dayjs from 'dayjs';
 const ApplicationPage = () => {
   const router = useRouter();
   const [file, setFile] = useState(null);
@@ -16,6 +20,7 @@ const ApplicationPage = () => {
   const [backImg, setBackImg] = useState(null);
   const [headIcon, setHeadIcon] = useState(null);
   const [gender, setGender] = useState('');
+  const [selectedDate, setSelectedDate] = useState();
   const memberId = useSelector((state) => state.member.memberId);
 
   const handleNextClick = async () => {
@@ -23,7 +28,7 @@ const ApplicationPage = () => {
       name: document.getElementById('name').value,
       identityCard: document.getElementById('identityCard').value,
       gender: gender,
-      birthday: document.getElementById('birthday').value,
+      birthday: selectedDate,
       address: document.getElementById('address').value,
       communicateAddress: document.getElementById('communicateAddress').value,
       welfareCertNo: null,
@@ -257,10 +262,14 @@ const ApplicationPage = () => {
                     </Select>
                   </FormControl>
 
-                  <TextField
-                    id="birthday"
-                    label="出生日期"
-                    variant="outlined"
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
+                    label="生日"
+                    value={selectedDate}
+                    onChange={(newValue) => setSelectedDate(newValue)}
+                    renderInput={(params) => <TextField {...params} />}
+                    disableFuture
+                    shouldDisableDate={(date) => date.day() === 0 || date.day() === 6} // 禁用週末
                     InputProps={{
                       sx: {
                         padding: '0px 16px',
@@ -272,18 +281,20 @@ const ApplicationPage = () => {
                       alignSelf: 'stretch',
                       borderRadius: '8px',
                       '& .MuiOutlinedInput-root': {
-                        '& fieldset': {
-                          borderColor: 'var(--OutLine-OutLine, #78726D)',
-                        },
-                        '&:hover fieldset': {
-                          borderColor: '#E3838E',
-                        },
-                        '&.Mui-focused fieldset': {
-                          borderColor: '#E3838E',
-                        },
+                          '& fieldset': {
+                              borderColor: 'var(--OutLine-OutLine, #78726D)',
+                          },
+                          '&:hover fieldset': {
+                              borderColor: '#E3838E',
+                          },
+                          '&.Mui-focused fieldset': {
+                              borderColor: '#E3838E',
+                          },
                       },
+                      backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)',
                     }}
                   />
+                </LocalizationProvider>
                   <TextField
                     id="address"
                     label="戶籍地址"

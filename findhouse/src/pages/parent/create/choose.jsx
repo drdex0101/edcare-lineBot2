@@ -12,7 +12,7 @@ const ApplicationPage = () => {
   };
 
   const handleLongClick = () => {
-    router.push('/parent/longTern'); // 替换 '/next-page' 为你想要跳转的路径
+    router.push('/parent/create/long'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   return (

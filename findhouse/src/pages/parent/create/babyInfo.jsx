@@ -16,11 +16,11 @@ const ApplicationPage = () => {
   const router = useRouter();
   const [selectedDate, setSelectedDate] = useState();
   const handleNextClick = () => {
-    router.push('/parent/search'); // 替换 '/next-page' 为你想要跳转的路径
+    router.push('/parent/search'); 
   };
 
   const handleLastClick = () => {
-    router.push('/parent/create/'); // 替换 '/next-page' 为你想要跳转的路径
+    router.push('/parent/create/suddenly'); 
   };
 
   return (
