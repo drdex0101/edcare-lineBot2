@@ -34,13 +34,12 @@ const ApplicationPage = () => {
               </svg>
             </button>
         </div>
-        <div style={{ backgroundColor: 'white', width: '100%' }}>
+        <div style={{ backgroundColor: 'white', width: '100%',display: 'flex',justifyContent:'center', alignItems: 'center',width: '100%',}}>
           <div style={styles.contentLayout}>
               <div style={styles.rollerLayout}>
                 <div style={styles.roller}></div>
                 <div style={styles.roller}></div>
                 <div style={styles.rollerActive}></div>
-                <div style={styles.roller}></div>
                 <div style={styles.roller}></div>
                 <div style={styles.roller}></div>
               </div>
@@ -57,7 +56,7 @@ const ApplicationPage = () => {
                 </svg>
                   進行身分認證
                 </button>
-                <button style={styles.nextBtn} onClick={finishClick}>
+                <button style={styles.nextVerifyBtn} onClick={finishClick}>
                   稍後再驗證
                 </button>
               </div>
@@ -71,7 +70,8 @@ const styles = {
   buttonLayout: {
     display:'flex',
     flexDirection:'column',
-    gap:'10px'
+    gap:'10px',
+    width: '320px',
   },
   imgLayout: {
     height: '180px',
@@ -92,12 +92,6 @@ const styles = {
   lastButton: {
     border:'none',
     backgroundColor:'#FFF'
-  },
-  buttonLayout:{
-    width:'100%',
-    display:'flex',
-    justifyContent:'flex-end',
-    marginTop:'12px'
   },
   subTitleLayout:{
     width:'100%',
@@ -184,7 +178,28 @@ const styles = {
     border: 'none',
     borderRadius: '5px',
     cursor: 'pointer',
-    margin:'5px'
+    margin:'5px',
+    color: '#FFF',
+    fontFamily: 'LINE Seed JP_TTF',
+    fontSize: '18px',
+    fontStyle: 'normal',
+    fontWeight: '700',
+    lineHeight: 'normal'
+  },
+  nextVerifyBtn: {
+    padding: '10px 20px',
+    backgroundColor: '#FFB3B3',
+    color: '#000',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
+    margin:'5px',
+    color: '#6F2E2A',
+    fontFamily: 'LINE Seed JP_TTF',
+    fontSize: '18px',
+    fontStyle: 'normal',
+    fontWeight: '700',
+    lineHeight: 'normal'
   },
 };
 

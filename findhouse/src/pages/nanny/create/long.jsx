@@ -17,7 +17,7 @@ const ApplicationPage = () => {
     <div style={styles.main}>  
         <div style={styles.header}> 
             <span style={styles.headerFont}>
-              申請成為家長
+            申請成為保母
             </span>
             <button onClick={handleLastClick} style={styles.lastButton}>
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">

@@ -34,10 +34,9 @@ const ApplicationPage = () => {
               </svg>
             </button>
         </div>
-        <div style={{ backgroundColor: 'white', width: '100%' }}>
+        <div style={{ backgroundColor: 'white', width: '100%',display: 'flex',justifyContent:'center', alignItems: 'center',width: '100%',}}>
           <div style={styles.contentLayout}>
               <div style={styles.rollerLayout}>
-                <div style={styles.roller}></div>
                 <div style={styles.roller}></div>
                 <div style={styles.roller}></div>
                 <div style={styles.roller}></div>
@@ -64,11 +63,14 @@ const ApplicationPage = () => {
 
 const styles = {
   titleLayout:{
-    display:'flex',
+    display: 'flex',
+    height: '43px',
+    padding: '21px 30px',
+    alignItems: 'flex-start',
+    gap: '10px',
+    alignSelf: 'stretch',
     flexDirection:'column',
-    alignItems:'flex-start',
-    width:'100%',
-    marginLeft:'30px'
+    justifyContent:'flex-start'
   },
       smallTitle:{
         color: 'var(---Primary-OnContainer, #6F2E2A)',
@@ -90,7 +92,7 @@ const styles = {
   buttonLayout: {
     display:'flex',
     flexDirection:'column',
-    gap:'10px',
+    gap:'20px',
     marginTop:'35px'
   },
   imgLayout: {
@@ -155,6 +157,7 @@ const styles = {
     paddingRight:'35px',
     paddingTop: '20px',
     borderRadius: '40px 0px 0px 0px', // 左上、右上、右下、左下的圓角
+    gap:'20px'
   },
   rollerLayout: {
     display: 'flex',
@@ -176,9 +179,13 @@ const styles = {
     margin: '0 5px',
   },
   subTitle: {
-    fontSize: '18px',
-    marginBottom: '10px',
-    color:'#E3838E'
+    color: 'var(---Primary-Primary, #E3838E)',
+    textAlign: 'center',
+    fontFamily: '"LINE Seed JP_TTF"',
+    fontSize: '16px',
+    fontStyle: 'normal',
+    fontWeight: '700',
+    lineHeight: 'normal',
   },
   lawLayout: {
     display: 'flex',
