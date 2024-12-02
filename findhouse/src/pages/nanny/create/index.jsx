@@ -4,22 +4,22 @@ const ApplicationPage = () => {
   const router = useRouter();
 
   const handleNextClick = () => {
-    router.push('/parent/create/choose'); // 替换 '/next-page' 为你想要跳转的路径
+    router.push('/nanny/create/choose'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   const finishClick = () => {
-    router.push('/parent/finish'); // 替换 '/next-page' 为你想要跳转的路径
+    router.push('/nanny/finish'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   const handleLastClick = () => {
-    router.push('/parent/verify/'); // 替换 '/next-page' 为你想要跳转的路径
+    router.push('/nanny/verify/'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   return (
     <div style={styles.main}>  
         <div style={styles.header}> 
             <span style={styles.headerFont}>
-              申請成為家長
+            申請成為保母
             </span>
             <button onClick={handleLastClick} style={styles.lastButton}>
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">

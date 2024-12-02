@@ -5,16 +5,58 @@ import TextField from '@mui/material/TextField';
 import Select from '@mui/material/Select';
 import { MenuItem, InputLabel,FormControl } from '@mui/material';
 import { useState } from 'react';
-
+import { useDispatch,useSelector } from 'react-redux';
 const ApplicationPage = () => {
   const router = useRouter();
   const [file, setFile] = useState(null);
   const [fileBack, setFileBack] = useState(null);
   const [message, setMessage] = useState('');
-  const [imageList, setImageList] = useState([]);
-  
-  const handleNextClick = () => {
-    router.push('/nanny/create/choose'); // 替换 '/next-page' 为你想要跳转的路径
+  const [frontImg, setFrontImg] = useState(null);
+  const [backImg, setBackImg] = useState(null);
+  const [headIcon, setHeadIcon] = useState(null);
+  const [gender, setGender] = useState('');
+  const memberId = useSelector((state) => state.member.memberId);
+
+  const handleNextClick = async () => {
+    const kycInfoData = {
+      name: document.getElementById('name').value,
+      identityCard: document.getElementById('identityCard').value,
+      gender: gender,
+      birthday: document.getElementById('birthday').value,
+      address: document.getElementById('address').value,
+      communicateAddress: document.getElementById('communicateAddress').value,
+      welfareCertNo: document.getElementById('welfareCertNo').value,
+      identityFrontUploadId: frontImg,
+      identityBackUploadId: backImg,
+      iconUploadId: headIcon,
+      status: '通過'
+    };
+    try {
+      const response = await fetch('/api/kycInfo/createKycInfo', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(kycInfoData)
+      });
+      const kycData = await response.json();
+      const kycId = kycData.member.id; // 獲取返回的 kycId
+      const kycInfoUpdateData = {
+        kycId: kycId,
+        memberId: memberId
+      };
+      const response2 = await fetch('/api/member/updateKycId', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(kycInfoUpdateData)
+      });
+      console.log('kycId updated:', response2.json());
+      router.push('/nanny/create/choose');
+    } catch (error) {
+      console.error('Error creating member:', error);
+    }
   };
 
   const [fileName, setFileName] = useState(''); // 新增狀態以存儲檔案名稱
@@ -37,15 +79,25 @@ const ApplicationPage = () => {
       });
 
       const result = await res.json();
-
-      if (result.uploadId) {
-        setImageList((prevList) => [
-          ...prevList,
-          { type, uploadId: result.uploadId },
-        ]);
-        setMessage(`Upload successful: ${type}`);
-      } else {
-        setMessage(result.error || 'Upload failed.');
+      console.log(result);
+      const resUpload = await fetch('/api/kycInfo/uploadImg', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          fileUrl: result.fileUrl,
+          type: type
+        })
+      });
+      const uploadResponse = await resUpload.json();
+      const uploadId = uploadResponse.uploadId.id;
+      if(type === 'ID Front'){
+        setFrontImg(uploadId);
+      }else if(type === 'ID Back'){
+        setBackImg(uploadId);
+      }else if(type === 'Head Icon'){
+        setHeadIcon(uploadId);
       }
     } catch (error) {
       console.error('Upload error:', error);
@@ -74,6 +126,9 @@ const ApplicationPage = () => {
     handleUpload(file, 'Head Icon'); // 指定文件类型
   };
 
+  const handleGenderChange = (event) => {
+    setGender(event.target.value);
+  };
 
   return (
     <div style={styles.main}>  
@@ -119,7 +174,7 @@ const ApplicationPage = () => {
                   autoComplete="off"
                 >
                   <TextField
-                    id="account-name"
+                    id="name"
                     label="真實姓名"
                     variant="outlined"
                     InputProps={{
@@ -147,7 +202,7 @@ const ApplicationPage = () => {
                   />
 
                   <TextField
-                    id="phone-number"
+                    id="identityCard"
                     label="身分證字號"
                     variant="outlined"
                     InputProps={{
@@ -179,6 +234,8 @@ const ApplicationPage = () => {
                     <Select
                       labelId="gender-label"
                       id="gender"
+                      value={gender}
+                      onChange={handleGenderChange}
                       label="性別"
                       sx={{
                         backgroundColor:'#FFF',
@@ -199,10 +256,8 @@ const ApplicationPage = () => {
                     </Select>
                   </FormControl>
 
-
-
                   <TextField
-                    id="phone-number"
+                    id="birthday"
                     label="出生日期"
                     variant="outlined"
                     InputProps={{
@@ -230,7 +285,7 @@ const ApplicationPage = () => {
                   />
 
                   <TextField
-                    id="phone-number"
+                    id="address"
                     label="戶籍地址"
                     variant="outlined"
                     InputProps={{
@@ -258,7 +313,7 @@ const ApplicationPage = () => {
                   />
 
                   <TextField
-                    id="phone-number"
+                    id="communicateAddress"
                     label="通訊地址"
                     variant="outlined"
                     InputProps={{
@@ -286,7 +341,7 @@ const ApplicationPage = () => {
                   />
 
                   <TextField
-                    id="phone-number"
+                    id="welfareCertNo"
                     label="居家式托育服務登記書號"
                     variant="outlined"
                     InputProps={{
@@ -314,36 +369,6 @@ const ApplicationPage = () => {
                   />
                 </Box>
               <div style={styles.imgStyle}>
-                <div style={styles.uploadIconLayout}>
-                  <span style={styles.mainCode}>上傳大頭貼</span>
-                  <div style={{display: 'flex',justifyContent:'flex-start', alignItems: 'center',width:'100%',flexDirection:'column',gap:'20px' }}>
-                      <input type="file" onChange={handleHeadIconChange} style={{ display: 'none' }} id="file-icon" />
-                      <div style={styles.headIconLayout} onClick={() => document.getElementById('file-icon').click()}>
-                        <img src="/headIcon.png" alt="Description of image F"/>
-                      </div>
-                      <div style={styles.imgBtnLayout}>
-                          <button style={styles.uploadBtn} onClick={handleUpload}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
-                              <g clip-path="url(#clip0_52_6150)">
-                                <path d="M12.9 6.71708C12.4467 4.41708 10.4267 2.69041 8 2.69041C6.07333 2.69041 4.4 3.78374 3.56667 5.38374C1.56 5.59708 0 7.29708 0 9.35708C0 11.5637 1.79333 13.3571 4 13.3571H12.6667C14.5067 13.3571 16 11.8637 16 10.0237C16 8.26374 14.6333 6.83708 12.9 6.71708ZM9.33333 8.69041V11.3571H6.66667V8.69041H4.66667L7.76667 5.59041C7.9 5.45708 8.10667 5.45708 8.24 5.59041L11.3333 8.69041H9.33333Z" fill="white"/>
-                              </g>
-                              <defs>
-                                <clipPath id="clip0_52_6150">
-                                  <rect width="16" height="16" fill="white" transform="translate(0 0.0237427)"/>
-                                </clipPath>
-                              </defs>
-                            </svg>
-                            上傳照片
-                          </button>
-                          <button style={styles.redoBtn}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="17" viewBox="0 0 14 17" fill="none">
-                              <path d="M9.42756 0.0237427H4.57245C2.06179 0.0237427 0 2.09532 0 4.65538V8.69754C0 9.06807 0.299228 9.37117 0.665024 9.37117C1.03082 9.37117 1.33005 9.06807 1.33005 8.69754L1.33016 4.65538C1.33016 2.85319 2.77669 1.38797 4.55582 1.38797H9.3943C11.2066 1.38797 12.6532 2.85322 12.6532 4.65538V8.19227C12.6532 9.99446 11.2067 11.4597 9.42755 11.4597L3.42518 11.4596L5.43711 9.42158C5.70317 9.15208 5.70317 8.73102 5.43711 8.46151C5.17105 8.19201 4.75537 8.19201 4.48931 8.46151L1.33016 11.6616C1.0641 11.9311 1.0641 12.3521 1.33016 12.6216L4.48931 15.8217C4.62234 15.9564 4.78854 16.0237 4.97144 16.0237C5.13775 16.0237 5.32066 15.9564 5.45356 15.8217C5.71962 15.5522 5.71962 15.1311 5.45356 14.8616L3.42518 12.824H9.42755C11.9549 12.824 14 10.7524 14 8.19234V4.65545C14 2.09538 11.9382 0.0238056 9.42755 0.0238056L9.42756 0.0237427Z" fill="#CCCCCC"/>
-                              <path d="M9.42756 0.0237427H4.57245C2.06179 0.0237427 0 2.09532 0 4.65538V8.69754C0 9.06807 0.299228 9.37117 0.665024 9.37117C1.03082 9.37117 1.33005 9.06807 1.33005 8.69754L1.33016 4.65538C1.33016 2.85319 2.77669 1.38797 4.55582 1.38797H9.3943C11.2066 1.38797 12.6532 2.85322 12.6532 4.65538V8.19227C12.6532 9.99446 11.2067 11.4597 9.42755 11.4597L3.42518 11.4596L5.43711 9.42158C5.70317 9.15208 5.70317 8.73102 5.43711 8.46151C5.17105 8.19201 4.75537 8.19201 4.48931 8.46151L1.33016 11.6616C1.0641 11.9311 1.0641 12.3521 1.33016 12.6216L4.48931 15.8217C4.62234 15.9564 4.78854 16.0237 4.97144 16.0237C5.13775 16.0237 5.32066 15.9564 5.45356 15.8217C5.71962 15.5522 5.71962 15.1311 5.45356 14.8616L3.42518 12.824H9.42755C11.9549 12.824 14 10.7524 14 8.19234V4.65545C14 2.09538 11.9382 0.0238056 9.42755 0.0238056L9.42756 0.0237427Z" stroke="#CCCCCC"/>
-                            </svg>
-                          </button>
-                        </div>
-                    </div>
-                </div>
                 <div style={styles.uplaodLayout}>
                   <span style={styles.mainCode}>上傳身分證正反面</span>
                   <span style={styles.subCode}>僅供通托育平台身分驗證使用，請提供清晰正見正反照。</span>
@@ -356,7 +381,7 @@ const ApplicationPage = () => {
                     </div>
                     {fileName && <span>{fileName}</span>} {/* 顯示檔案名稱 */}
                     <div style={styles.imgBtnLayout}>
-                      <button style={styles.uploadBtn}>
+                      <button style={styles.uploadBtn} onClick={() => document.getElementById('file-upload').click()}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
                           <g clip-path="url(#clip0_52_6150)">
                             <path d="M12.9 6.71708C12.4467 4.41708 10.4267 2.69041 8 2.69041C6.07333 2.69041 4.4 3.78374 3.56667 5.38374C1.56 5.59708 0 7.29708 0 9.35708C0 11.5637 1.79333 13.3571 4 13.3571H12.6667C14.5067 13.3571 16 11.8637 16 10.0237C16 8.26374 14.6333 6.83708 12.9 6.71708ZM9.33333 8.69041V11.3571H6.66667V8.69041H4.66667L7.76667 5.59041C7.9 5.45708 8.10667 5.45708 8.24 5.59041L11.3333 8.69041H9.33333Z" fill="white"/>
@@ -383,7 +408,7 @@ const ApplicationPage = () => {
                     </div>
                     {fileNameBack && <span>{fileNameBack}</span>} {/* 顯示檔案名稱 */}
                     <div style={styles.imgBtnLayout}>
-                      <button style={styles.uploadBtn}>
+                      <button style={styles.uploadBtn} onClick={() => document.getElementById('file-backend').click()}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
                           <g clip-path="url(#clip0_52_6150)">
                             <path d="M12.9 6.71708C12.4467 4.41708 10.4267 2.69041 8 2.69041C6.07333 2.69041 4.4 3.78374 3.56667 5.38374C1.56 5.59708 0 7.29708 0 9.35708C0 11.5637 1.79333 13.3571 4 13.3571H12.6667C14.5067 13.3571 16 11.8637 16 10.0237C16 8.26374 14.6333 6.83708 12.9 6.71708ZM9.33333 8.69041V11.3571H6.66667V8.69041H4.66667L7.76667 5.59041C7.9 5.45708 8.10667 5.45708 8.24 5.59041L11.3333 8.69041H9.33333Z" fill="white"/>

@@ -1,0 +1,21 @@
+CREATE TABLE upload (
+    id BIGSERIAL PRIMARY KEY, -- 自動生成的流水號
+    type VARCHAR, -- 資料類型
+    upload_url VARCHAR, -- 上傳路徑
+    created_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 創建時間
+    update_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- 更新時間，初始化為當前時間
+);
+
+CREATE OR REPLACE FUNCTION set_update_timestamp()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.update_ts = CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_update_timestamp
+BEFORE UPDATE ON upload 
+FOR EACH ROW
+EXECUTE FUNCTION set_update_timestamp();
+

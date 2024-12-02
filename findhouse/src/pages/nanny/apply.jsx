@@ -16,10 +16,10 @@ const ApplicationPage = () => {
 
   const handleNextClick = async () => {
     const memberData = {
-      accountName: document.getElementById('account').value,
+      account: document.getElementById('account').value,
       phoneNumber: document.getElementById('cellphone').value,
       email: document.getElementById('email').value,
-      job: document.getElementById('job').value
+      job: "保母"
     };
     try {
       const response = await axios.post('/api/member/createMember', memberData);
@@ -138,34 +138,6 @@ const ApplicationPage = () => {
                   <TextField
                     id="email"
                     label="聯絡信箱"
-                    variant="outlined"
-                    InputProps={{
-                      sx: {
-                        padding: '0px 16px',
-                        borderRadius: '8px',
-                        backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
-                      },
-                    }}
-                    sx={{
-                      alignSelf: 'stretch',
-                      borderRadius: '8px',
-                      '& .MuiOutlinedInput-root': {
-                        '& fieldset': {
-                          borderColor: 'var(--OutLine-OutLine, #78726D)',
-                        },
-                        '&:hover fieldset': {
-                          borderColor: '#E3838E',
-                        },
-                        '&.Mui-focused fieldset': {
-                          borderColor: '#E3838E',
-                        },
-                      },
-                    }}
-                  />
-
-                  <TextField
-                    id="job"
-                    label="職業"
                     variant="outlined"
                     InputProps={{
                       sx: {

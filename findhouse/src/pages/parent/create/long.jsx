@@ -40,7 +40,6 @@ const ApplicationPage = () => {
               <div style={styles.roller}></div>
               <div style={styles.roller}></div>
               <div style={styles.roller}></div>
-              <div style={styles.roller}></div>
               <div style={styles.rollerActive}></div>
             </div>
             <div style={styles.titleLayout}>
@@ -55,7 +54,7 @@ const ApplicationPage = () => {
                 <Select
                       labelId="gender-label"
                       id="gender"
-                      label="性別"
+                      label="選擇情境"
                       defaultValue=""
                       InputProps={{
                         sx: {

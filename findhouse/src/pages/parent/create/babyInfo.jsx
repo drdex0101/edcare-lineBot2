@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { styled } from '@mui/material/styles';
 import FormGroup from '@mui/material/FormGroup';
@@ -6,18 +6,21 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
 import Select from '@mui/material/Select';
-
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import dayjs from 'dayjs';
 
 import { MenuItem, InputLabel, FormControl } from '@mui/material';
 const ApplicationPage = () => {
   const router = useRouter();
-
+  const [selectedDate, setSelectedDate] = useState();
   const handleNextClick = () => {
-    router.push('/parent/search'); // 替换 '/next-page' 为你想要跳转的路径
+    router.push('/parent/search'); 
   };
 
   const handleLastClick = () => {
-    router.push('/parent/create/'); // 替换 '/next-page' 为你想要跳转的路径
+    router.push('/parent/create/suddenly'); 
   };
 
   return (
@@ -39,10 +42,9 @@ const ApplicationPage = () => {
           </svg>
         </button>
       </div>
-      <div style={{ backgroundColor: 'white', width: '100%' }}>
+      <div style={{ backgroundColor: 'white', width: '100%',display: 'flex',justifyContent:'center', alignItems: 'center',width: '100%',}}>
         <div style={styles.contentLayout}>
           <div style={styles.rollerLayout}>
-            <div style={styles.roller}></div>
             <div style={styles.roller}></div>
             <div style={styles.roller}></div>
             <div style={styles.roller}></div>
@@ -117,11 +119,39 @@ const ApplicationPage = () => {
                   <MenuItem value="female">女</MenuItem>
               </Select>
             </FormControl>
-            <div style={styles.inputField} onClick={() => document.getElementById('datepicker1').showPicker()}>
-              <input type="date" id="datepicker1" name="date"
-                min="2023-01-01" max="2024-12-31" style={styles.dateInput}
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                label="生日"
+                value={selectedDate}
+                onChange={(newValue) => setSelectedDate(newValue)}
+                renderInput={(params) => <TextField {...params} />}
+                disableFuture
+                shouldDisableDate={(date) => date.day() === 0 || date.day() === 6} // 禁用週末
+                InputProps={{
+                  sx: {
+                    padding: '0px 16px',
+                    borderRadius: '8px',
+                    backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
+                  },
+                }}
+                sx={{
+                  alignSelf: 'stretch',
+                  borderRadius: '8px',
+                  '& .MuiOutlinedInput-root': {
+                      '& fieldset': {
+                          borderColor: 'var(--OutLine-OutLine, #78726D)',
+                      },
+                      '&:hover fieldset': {
+                          borderColor: '#E3838E',
+                      },
+                      '&.Mui-focused fieldset': {
+                          borderColor: '#E3838E',
+                      },
+                  },
+                  backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)',
+                }}
               />
-            </div>
+            </LocalizationProvider>
             <FormControl>
               <InputLabel id="gender-label">胎別</InputLabel>
               <Select
