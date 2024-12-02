@@ -36,7 +36,7 @@ export default async function handler(req, res) {
 
     const userId = profileResponse.data.userId;
 
-    res.status(200).json({ userId });
+    res.redirect(302, `/nanny?userId=${userId}`);
 
   } catch (error) {
     console.error('Error fetching user profile:', error);
