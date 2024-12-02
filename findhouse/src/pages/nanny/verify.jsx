@@ -4,15 +4,15 @@ const ApplicationPage = () => {
   const router = useRouter();
 
   const handleNextClick = () => {
-    router.push('/parent/upload'); // 替换 '/next-page' 为你想要跳转的路径
+    router.push('/nanny/upload'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   const finishClick = () => {
-    router.push('/parent/finish'); // 替换 '/next-page' 为你想要跳转的路径
+    router.push('/nanny/finish'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   const handleLastClick = () => {
-    router.push('/parent/'); // 替换 '/next-page' 为你想要跳转的路径
+    router.push('/nanny/'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   return (

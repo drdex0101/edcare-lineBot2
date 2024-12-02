@@ -12,7 +12,7 @@ const ApplicationPage = () => {
   };
 
   const handleLastClick = () => {
-    router.push('/parent/'); // 替换 '/next-page' 为你想要跳转的路径
+    router.push('/parent/apply'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   return (

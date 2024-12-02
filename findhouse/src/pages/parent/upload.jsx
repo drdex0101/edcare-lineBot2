@@ -363,7 +363,7 @@ const ApplicationPage = () => {
                     </div>
                     {fileName && <span>{fileName}</span>} {/* 顯示檔案名稱 */}
                     <div style={styles.imgBtnLayout}>
-                      <button style={styles.uploadBtn}>
+                      <button style={styles.uploadBtn} onClick={() => document.getElementById('file-upload').click()}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
                           <g clip-path="url(#clip0_52_6150)">
                             <path d="M12.9 6.71708C12.4467 4.41708 10.4267 2.69041 8 2.69041C6.07333 2.69041 4.4 3.78374 3.56667 5.38374C1.56 5.59708 0 7.29708 0 9.35708C0 11.5637 1.79333 13.3571 4 13.3571H12.6667C14.5067 13.3571 16 11.8637 16 10.0237C16 8.26374 14.6333 6.83708 12.9 6.71708ZM9.33333 8.69041V11.3571H6.66667V8.69041H4.66667L7.76667 5.59041C7.9 5.45708 8.10667 5.45708 8.24 5.59041L11.3333 8.69041H9.33333Z" fill="white"/>
@@ -386,10 +386,11 @@ const ApplicationPage = () => {
                     <span style={styles.mainCode}>證件照反面</span>
                     <input type="file" onChange={handleFileChangeBack} style={{ display: 'none' }} id="file-backend" />
                     <div style={styles.imgLayout} onClick={() => document.getElementById('file-backend').click()}>
-                      <img src="/ID-B.png" alt="Description of image F" />
+                      <img src="/ID-B.png" alt="身分證反面圖片" style={styles.imgSize}/>
                     </div>
                     {fileNameBack && <span>{fileNameBack}</span>} {/* 顯示檔案名稱 */}
                     <div style={styles.imgBtnLayout}>
+                      <button style={styles.uploadBtn} onClick={() => document.getElementById('file-backend').click()}/>
                       <button style={styles.uploadBtn}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="17" viewBox="0 0 16 17" fill="none">
                           <g clip-path="url(#clip0_52_6150)">

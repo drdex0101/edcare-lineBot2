@@ -1,30 +1,45 @@
 import axios from 'axios';
-import { useEffect } from 'react';
-import { useRouter } from 'next/router';
 
-export default function Callback() {
-  const router = useRouter();
-  const { code, state } = router.query;
+export default async function handler(req, res) {
+  const { code } = req.query;
 
-  useEffect(() => {
-    if (code && state) {
-      const saveCodeAndState = async () => {
-        try {
-          // 將 code 和 state 存入資料庫
-          await axios.post('/api/save-code-state', {
-            code: code,
-            state: state,
-          });
-          console.log('API');
-          router.push('/success'); // 重定向到一個新的頁面，例如成功頁面
-        } catch (error) {
-          console.error('Error saving code and state:', error);
+  if (!code) {
+    return res.status(400).json({ error: 'Missing authorization code' });
+  }
+
+  try {
+    // 1. 使用 code 交換訪問令牌
+    const params = new URLSearchParams({
+      grant_type: 'authorization_code',
+      code: code,
+      redirect_uri: process.env.NEXT_PUBLIC_LINE_REDIRECT_URI,
+      client_id: process.env.NEXT_PUBLIC_LINE_CLIENT_ID,
+      client_secret: process.env.LINE_CLIENT_SECRET
+    });
+
+    const tokenResponse = await axios.post('https://api.line.me/oauth2/v2.1/token', 
+      params,
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
         }
-      };
+      }
+    );
 
-      saveCodeAndState();
-    }
-  }, [code, state, router]);
+    const accessToken = tokenResponse.data.access_token;
 
-  return <div>處理回調並儲存資料中...</div>;
+    const profileResponse = await axios.get('https://api.line.me/v2/profile', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
+    });
+
+    const userId = profileResponse.data.userId;
+
+    res.status(200).json({ userId });
+
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+    res.status(500).json({ error: 'Failed to fetch user profile' });
+  }
 }
