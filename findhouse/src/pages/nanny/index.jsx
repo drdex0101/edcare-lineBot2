@@ -4,7 +4,6 @@ const ApplicationPage = () => {
   const router = useRouter();
   const { userId } = router.query;
   const [isChecked, setIsChecked] = React.useState(false); // 新增状态来跟踪复选框状态
-
   const handleNextClick = () => {
     if (!isChecked) { // 检查复选框是否被勾选
       alert('請勾選同意才能進行下一步'); // 提示用户
