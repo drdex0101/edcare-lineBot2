@@ -13,7 +13,8 @@ import { MenuItem, InputLabel, FormControl } from '@mui/material';
 
 const ApplicationPage = () => {
   const router = useRouter();
-  const [selectedDate, setSelectedDate] = useState();
+  const [selectedStartDate, setSelectedStartDate] = useState();
+  const [selectedEndDate, setSelectedEndDate] = useState();
   const handleNextClick = () => {
     router.push('/parent/create/babyInfo'); // 替换 '/next-page' 为你想要跳转的路径
   };
@@ -93,8 +94,8 @@ const ApplicationPage = () => {
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
               label="開始日期"
-              value={selectedDate}
-              onChange={(newValue) => setSelectedDate(newValue)}
+              value={selectedStartDate}
+              onChange={(newValue) => setSelectedStartDate(newValue)}
               renderInput={(params) => <TextField {...params} />}
               disableFuture
               shouldDisableDate={(date) => date.day() === 0 || date.day() === 6} // 禁用週末
@@ -119,8 +120,8 @@ const ApplicationPage = () => {
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
               label="結束日期"
-              value={selectedDate}
-              onChange={(newValue) => setSelectedDate(newValue)}
+              value={selectedEndDate}
+              onChange={(newValue) => setSelectedEndDate(newValue)}
               renderInput={(params) => <TextField {...params} />}
               disableFuture
               shouldDisableDate={(date) => date.day() === 0 || date.day() === 6} // 禁用週末

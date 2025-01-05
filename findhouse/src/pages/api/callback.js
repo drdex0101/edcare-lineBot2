@@ -8,7 +8,6 @@ export default async function handler(req, res) {
   }
 
   try {
-    // 使用 code 交换访问令牌
     const params = new URLSearchParams({
       grant_type: 'authorization_code',
       code: code,
@@ -29,7 +28,6 @@ export default async function handler(req, res) {
 
     const accessToken = tokenResponse.data.access_token;
 
-    // 使用访问令牌获取用户资料
     const profileResponse = await axios.get('https://api.line.me/v2/profile', {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -41,10 +39,11 @@ export default async function handler(req, res) {
 
     // 设置 authToken Cookie
     const isSecure = process.env.NODE_ENV === 'production';
-    res.setHeader(
-      'Set-Cookie',
-      `authToken=${access_token}; Path=/; HttpOnly; ${isSecure ? 'Secure;' : ''}`
-    );
+    // 设置 authToken 和 userId 到 Cookie
+    res.setHeader('Set-Cookie', [
+      `authToken=${accessToken}; Path=/; HttpOnly; ${isSecure ? 'Secure;' : ''}`,
+      `userId=${userId}; Path=/; HttpOnly; ${isSecure ? 'Secure;' : ''}`,
+    ]);
     // 重定向到 state（原始页面），并附加 userId 作为查询参数
     const redirectUrl = state ? `${state}?userId=${userId}` : `/?userId=${userId}`;
     res.redirect(redirectUrl);

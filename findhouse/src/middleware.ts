@@ -19,5 +19,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/', '/nanny/:path*', '/protected/:path*'], // 確保包含相關路徑
+    matcher: ['/', '/nanny/:path*', '/parent/:path*', '/protected/:path*'], // 確保包含相關路徑
   };
