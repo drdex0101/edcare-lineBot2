@@ -6,11 +6,15 @@ import Select from '@mui/material/Select';
 import { MenuItem, InputLabel,FormControl } from '@mui/material';
 import { useState } from 'react';
 import { useDispatch,useSelector } from 'react-redux';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 const ApplicationPage = () => {
   const router = useRouter();
   const [file, setFile] = useState(null);
   const [fileBack, setFileBack] = useState(null);
   const [message, setMessage] = useState('');
+  const [selectedDate, setSelectedDate] = useState();
   const [frontImg, setFrontImg] = useState(null);
   const [backImg, setBackImg] = useState(null);
   const [headIcon, setHeadIcon] = useState(null);
@@ -117,13 +121,6 @@ const ApplicationPage = () => {
     setFile(file);
     setFileName(file?.name || '');
     handleUpload(file, 'ID Back'); // 指定文件类型
-  };
-
-  const handleHeadIconChange = (e) => {
-    const file = e.target.files[0];
-    setFile(file);
-    setFileName(file?.name || '');
-    handleUpload(file, 'Head Icon'); // 指定文件类型
   };
 
   const handleGenderChange = (event) => {
@@ -256,10 +253,14 @@ const ApplicationPage = () => {
                     </Select>
                   </FormControl>
 
-                  <TextField
-                    id="birthday"
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DatePicker
                     label="出生日期"
-                    variant="outlined"
+                    value={selectedDate}
+                    onChange={(newValue) => setSelectedDate(newValue)}
+                    renderInput={(params) => <TextField {...params} />}
+                    disableFuture
+                    shouldDisableDate={(date) => date.day() === 0 || date.day() === 6} // 禁用週末
                     InputProps={{
                       sx: {
                         padding: '0px 16px',
@@ -271,18 +272,20 @@ const ApplicationPage = () => {
                       alignSelf: 'stretch',
                       borderRadius: '8px',
                       '& .MuiOutlinedInput-root': {
-                        '& fieldset': {
-                          borderColor: 'var(--OutLine-OutLine, #78726D)',
-                        },
-                        '&:hover fieldset': {
-                          borderColor: '#E3838E',
-                        },
-                        '&.Mui-focused fieldset': {
-                          borderColor: '#E3838E',
-                        },
+                          '& fieldset': {
+                              borderColor: 'var(--OutLine-OutLine, #78726D)',
+                          },
+                          '&:hover fieldset': {
+                              borderColor: '#E3838E',
+                          },
+                          '&.Mui-focused fieldset': {
+                              borderColor: '#E3838E',
+                          },
                       },
+                      backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)',
                     }}
                   />
+                </LocalizationProvider>
 
                   <TextField
                     id="address"
