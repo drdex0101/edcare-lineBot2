@@ -5,6 +5,7 @@ import Switch from '@mui/material/Switch';
 import Select from '@mui/material/Select';
 
 import { MenuItem, InputLabel, FormControl } from '@mui/material';
+import CalendarRangePicker from '../../../components/base/CalendarRangePicker';
 
 const ApplicationPage = () => {
   const router = useRouter();
@@ -15,6 +16,12 @@ const ApplicationPage = () => {
 
   const handleLastClick = () => {
     router.push('/nanny/create/'); // 替换 '/next-page' 为你想要跳转的路径
+  };
+
+  const [selectedRange, setSelectedRange] = React.useState({ startDate: null, endDate: null });
+
+  const handleDateChange = (range) => {
+    setSelectedRange(range);
   };
 
   return (
@@ -51,87 +58,30 @@ const ApplicationPage = () => {
           </div>
           <div style={styles.buttonLayout}>
             
-            <div style={styles.inputField} onClick={() => document.getElementById('datepicker1').showPicker()}>
-              <input type="date" id="datepicker1" name="date"
+            <div style={styles.inputField}>
+              <input type="date" id="datepicker1" name="startDate"
                 min="2023-01-01" max="2024-12-31" style={styles.dateInput}
+                onChange={(e) => handleDateChange({ ...selectedRange, startDate: e.target.value })}
               />
             </div>
 
-            <div style={styles.inputField} onClick={() => document.getElementById('datepicker2').showPicker()}>
-              <input type="date" id="datepicker2" name="date"
+            <div style={styles.inputField}>
+              <input type="date" id="datepicker2" name="endDate"
                 min="2023-01-01" max="2024-12-31" style={styles.dateInput}
+                onChange={(e) => handleDateChange({ ...selectedRange, endDate: e.target.value })}
               />
             </div>
-            <FormControl>
-              <InputLabel id="gender-label">選擇情境</InputLabel>
-              <Select
-                required
-                labelId="gender-label"
-                id="gender"
-                label="選擇情境"
-                defaultValue=""
-                InputProps={{
-                  sx: {
-                    padding: '0px 16px',
-                    borderRadius: '8px',
-                    backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
-                  },
+            <div>
+              <CalendarRangePicker
+                startDate={selectedRange.startDate}
+                endDate={selectedRange.endDate}
+                onDateChange={handleDateChange}
+                styles={{
+                  calendar: { maxWidth: "400px" },
+                  day: { width: "50px", height: "50px" },
                 }}
-                sx={{
-                  alignSelf: 'stretch',
-                  borderRadius: '8px',
-                  '& .MuiOutlinedInput-root': {
-                      '& fieldset': {
-                          borderColor: 'var(--OutLine-OutLine, #78726D)',
-                      },
-                      '&:hover fieldset': {
-                          borderColor: '#E3838E',
-                      },
-                      '&.Mui-focused fieldset': {
-                          borderColor: '#E3838E',
-                      },
-                  },
-                  backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)',
-                }}
-              >
-                <MenuItem value="male">定點托育</MenuItem>
-              </Select>
-            </FormControl>
-            <FormControl>
-              <InputLabel id="gender-label">定點選擇</InputLabel>
-              <Select
-                required
-                labelId="gender-label"
-                id="gender"
-                label="定點選擇"
-                defaultValue=""
-                InputProps={{
-                  sx: {
-                    padding: '0px 16px',
-                    borderRadius: '8px',
-                    backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
-                  },
-                }}
-                sx={{
-                  alignSelf: 'stretch',
-                  borderRadius: '8px',
-                  '& .MuiOutlinedInput-root': {
-                      '& fieldset': {
-                          borderColor: 'var(--OutLine-OutLine, #78726D)',
-                      },
-                      '&:hover fieldset': {
-                          borderColor: '#E3838E',
-                      },
-                      '&.Mui-focused fieldset': {
-                          borderColor: '#E3838E',
-                      },
-                  },
-                  backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)',
-                }}
-              >
-                <MenuItem value="center">雲林縣私立蓁心托嬰中心</MenuItem>
-              </Select>
-            </FormControl>
+              />
+            </div>
           </div>
           <div style={styles.buttonLayout}>
             <button style={styles.nextBtn} onClick={handleNextClick}>
