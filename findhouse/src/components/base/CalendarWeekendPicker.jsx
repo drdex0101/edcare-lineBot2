@@ -2,9 +2,31 @@ import React, { useState, useEffect } from "react";
 
 const DAYS_OF_WEEK = ["日", "一", "二", "三", "四", "五", "六"];
 
-export default function CustomCalendar({ startDate, endDate }) {
+export default function CustomCalendar({ selectedWeekday }) {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [highlightedDates, setHighlightedDates] = useState([]); // 初始化為空陣列
+  const [highlightedDates, setHighlightedDates] = useState([]);
+
+  useEffect(() => {
+    if (typeof selectedWeekday === 'number' && selectedWeekday >= 0 && selectedWeekday <= 6) {
+      const currentYear = currentDate.getFullYear();
+      const currentMonth = currentDate.getMonth();
+      const totalDays = new Date(currentYear, currentMonth + 1, 0).getDate();
+      const range = [];
+
+      // 遍歷當月所有日期
+      for (let i = 1; i <= totalDays; i++) {
+        const date = new Date(currentYear, currentMonth, i);
+        // 如果是選中的星期幾，就加入高亮清單
+        if (date.getDay() === selectedWeekday) {
+          range.push(i);
+        }
+      }
+      setHighlightedDates(range);
+    } else {
+      setHighlightedDates([]);
+    }
+  }, [selectedWeekday, currentDate]);
+
   // 計算當月的所有天數
   const getDaysInMonth = (year, month) => {
     const days = [];
@@ -30,36 +52,6 @@ export default function CustomCalendar({ startDate, endDate }) {
   };
 
   const days = getDaysInMonth(currentDate.getFullYear(), currentDate.getMonth());
-  useEffect(() => {
-    if (startDate instanceof Date && endDate instanceof Date) {
-      const range = [];
-      
-      // 檢查是否在當前顯示的月份內
-      const currentYear = currentDate.getFullYear();
-      const currentMonth = currentDate.getMonth();
-      const startTime = new Date(currentYear, currentMonth, 1);
-      const endTime = new Date(currentYear, currentMonth + 1, 0);
-
-      // 計算實際要顯示的日期範圍
-      const rangeStart = new Date(Math.max(startDate, startTime));
-      const rangeEnd = new Date(Math.min(endDate, endTime));
-
-      // 如果日期範圍與當前月份有重疊
-      if (rangeStart <= endTime && rangeEnd >= startTime) {
-        const startDay = rangeStart.getDate();
-        const endDay = rangeEnd.getDate();
-        
-        for (let i = startDay; i <= endDay; i++) {
-          range.push(i);
-        }
-        setHighlightedDates(range);
-      } else {
-        setHighlightedDates([]); // 當前月份沒有需要高亮的日期
-      }
-    } else {
-      setHighlightedDates([]); // 如果沒有範圍，清空高亮日期
-    }
-  }, [startDate, endDate, currentDate]);
 
   // 切換月份
   const handleMonthChange = (direction) => {
