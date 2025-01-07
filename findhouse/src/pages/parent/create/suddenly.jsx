@@ -7,20 +7,33 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import TextField from '@mui/material/TextField';
-import dayjs from 'dayjs';
+import CalendarRangePicker from '../../../components/base/CalendarRangePicker';
 
 import { MenuItem, InputLabel, FormControl } from '@mui/material';
 
 const ApplicationPage = () => {
   const router = useRouter();
-  const [selectedStartDate, setSelectedStartDate] = useState();
-  const [selectedEndDate, setSelectedEndDate] = useState();
   const handleNextClick = () => {
     router.push('/parent/create/babyInfo'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   const handleLastClick = () => {
     router.push('/parent/create/'); // 替换 '/next-page' 为你想要跳转的路径
+  };
+  
+  const [selectedRange, setSelectedRange] = React.useState({ startDate: null, endDate: null });
+
+   const parseDate = (dateString) => {
+    if (!dateString) return null;
+    return new Date(dateString);
+  };
+
+  const handleDateChange = (range) => {
+    // 將字符串格式轉換為 Date 對象
+    setSelectedRange({
+      startDate: range.startDate ? parseDate(range.startDate) : null,
+      endDate: range.endDate ? parseDate(range.endDate) : null
+    });
   };
 
   return (
@@ -91,58 +104,41 @@ const ApplicationPage = () => {
                 <MenuItem value="male">全日</MenuItem>
               </Select>
             </FormControl>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              label="開始日期"
-              value={selectedStartDate}
-              onChange={(newValue) => setSelectedStartDate(newValue)}
-              renderInput={(params) => <TextField {...params} />}
-              disableFuture
-              shouldDisableDate={(date) => date.day() === 0 || date.day() === 6} // 禁用週末
-              sx={{
-                alignSelf: 'stretch',
-                borderRadius: '8px',
-                '& .MuiOutlinedInput-root': {
-                    '& fieldset': {
-                        borderColor: 'var(--OutLine-OutLine, #78726D)',
-                    },
-                    '&:hover fieldset': {
-                        borderColor: '#E3838E',
-                    },
-                    '&.Mui-focused fieldset': {
-                        borderColor: '#E3838E',
-                    },
-                },
-                backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)',
-              }}
-            />
-          </LocalizationProvider>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              label="結束日期"
-              value={selectedEndDate}
-              onChange={(newValue) => setSelectedEndDate(newValue)}
-              renderInput={(params) => <TextField {...params} />}
-              disableFuture
-              shouldDisableDate={(date) => date.day() === 0 || date.day() === 6} // 禁用週末
-              sx={{
-                alignSelf: 'stretch',
-                borderRadius: '8px',
-                '& .MuiOutlinedInput-root': {
-                    '& fieldset': {
-                        borderColor: 'var(--OutLine-OutLine, #78726D)',
-                    },
-                    '&:hover fieldset': {
-                        borderColor: '#E3838E',
-                    },
-                    '&.Mui-focused fieldset': {
-                        borderColor: '#E3838E',
-                    },
-                },
-                backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)',
-              }}
-            />
-          </LocalizationProvider>
+          <div style={styles.inputField}>
+              <input 
+                type="date" 
+                id="datepicker1" 
+                name="startDate"
+                min="2023-01-01" 
+                style={styles.dateInput}
+                onChange={(e) => handleDateChange({ ...selectedRange, startDate: e.target.value })}
+                lang="zh-TW"
+              />
+            </div>
+
+            <div style={styles.inputField}>
+              <input 
+                type="date" 
+                id="datepicker2" 
+                name="endDate"
+                min="2023-01-01" 
+                style={styles.dateInput}
+                onChange={(e) => handleDateChange({ ...selectedRange, endDate: e.target.value })}
+                lang="zh-TW"
+              />
+            </div>
+            <div style={{width:'100%'}}>
+              <CalendarRangePicker
+                startDate={selectedRange.startDate}
+                endDate={selectedRange.endDate}
+                onDateChange={handleDateChange}
+                locale="zh-TW"
+                styles={{
+                  calendar: { maxWidth: "400px" },
+                  day: { width: "50px", height: "50px" },
+                }}
+              />
+            </div>
             <FormControl>
               <InputLabel id="gender-label">選擇情境</InputLabel>
               <Select

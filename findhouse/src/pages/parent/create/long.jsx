@@ -1,24 +1,36 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { styled } from '@mui/material/styles';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import Select from '@mui/material/Select';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import TextField from '@mui/material/TextField';
-import { MenuItem, InputLabel, FormControl } from '@mui/material';
+import CalendarWeekendPicker from '../../../components/base/CalendarWeekendPicker';
 
+import { MenuItem, InputLabel, FormControl } from '@mui/material';
 const ApplicationPage = () => {
   const router = useRouter();
-  const [selectedStartDate, setSelectedStartDate] = useState();
-  const [selectedEndDate, setSelectedEndDate] = useState();
+
   const handleNextClick = () => {
     router.push('/parent/create/babyInfo'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   const handleLastClick = () => {
     router.push('/parent/create/'); // 替换 '/next-page' 为你想要跳转的路径
+  };
+
+  const [selectedDays, setSelectedDays] = useState({
+    monday: false,
+    tuesday: false,
+    wednesday: false,
+    thursday: false,
+    friday: false,
+    saturday: false,
+    sunday: false,
+  });
+
+  const handleDayChange = (day) => {
+    setSelectedDays((prev) => ({ ...prev, [day]: !prev[day] }));
   };
 
   return (
@@ -40,9 +52,10 @@ const ApplicationPage = () => {
           </svg>
         </button>
       </div>
-      <div style={{ backgroundColor: 'white', width: '100%',display: 'flex',justifyContent:'center', alignItems: 'center',width: '100%',}}>
+      <div style={{ backgroundColor: 'white', width: '100%',display: 'flex',justifyContent:'center', alignItems: 'center',width: '100%'}}>
         <div style={styles.contentLayout}>
           <div style={styles.rollerLayout}>
+            <div style={styles.roller}></div>
             <div style={styles.roller}></div>
             <div style={styles.roller}></div>
             <div style={styles.roller}></div>
@@ -60,8 +73,7 @@ const ApplicationPage = () => {
                 required
                 labelId="gender-label"
                 id="gender"
-                label="選擇情境"
-                defaultValue=""
+                label="性別"
                 InputProps={{
                   sx: {
                     padding: '0px 16px',
@@ -73,82 +85,105 @@ const ApplicationPage = () => {
                   alignSelf: 'stretch',
                   borderRadius: '8px',
                   '& .MuiOutlinedInput-root': {
-                      '& fieldset': {
-                          borderColor: 'var(--OutLine-OutLine, #78726D)',
-                      },
-                      '&:hover fieldset': {
-                          borderColor: '#E3838E',
-                      },
-                      '&.Mui-focused fieldset': {
-                          borderColor: '#E3838E',
-                      },
+                    '& fieldset': {
+                      borderColor: 'var(--OutLine-OutLine, #78726D)',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: '#E3838E',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#E3838E',
+                    },
                   },
                   backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)',
                 }}
               >
-                <MenuItem value="male">全日</MenuItem>
+                  <MenuItem value="home">全日</MenuItem>
               </Select>
             </FormControl>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              label="開始日期"
-              value={selectedStartDate}
-              onChange={(newValue) => setSelectedStartDate(newValue)}
-              renderInput={(params) => <TextField {...params} />}
-              disableFuture
-              shouldDisableDate={(date) => date.day() === 0 || date.day() === 6} // 禁用週末
-              sx={{
-                alignSelf: 'stretch',
-                borderRadius: '8px',
-                '& .MuiOutlinedInput-root': {
-                    '& fieldset': {
-                        borderColor: 'var(--OutLine-OutLine, #78726D)',
-                    },
-                    '&:hover fieldset': {
-                        borderColor: '#E3838E',
-                    },
-                    '&.Mui-focused fieldset': {
-                        borderColor: '#E3838E',
-                    },
-                },
-                backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)',
-              }}
-            />
-          </LocalizationProvider>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              label="結束日期"
-              value={selectedEndDate}
-              onChange={(newValue) => setSelectedEndDate(newValue)}
-              renderInput={(params) => <TextField {...params} />}
-              disableFuture
-              shouldDisableDate={(date) => date.day() === 0 || date.day() === 6} // 禁用週末
-              sx={{
-                alignSelf: 'stretch',
-                borderRadius: '8px',
-                '& .MuiOutlinedInput-root': {
-                    '& fieldset': {
-                        borderColor: 'var(--OutLine-OutLine, #78726D)',
-                    },
-                    '&:hover fieldset': {
-                        borderColor: '#E3838E',
-                    },
-                    '&.Mui-focused fieldset': {
-                        borderColor: '#E3838E',
-                    },
-                },
-                backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)',
-              }}
-            />
-          </LocalizationProvider>
+            <div style={styles.hopeLayout}>
+              <div style={styles.componentLayout}>
+                <span>星期一</span>
+                <FormGroup>
+                  <FormControlLabel
+                    control={<IOSSwitch sx={{ m: 1 }} checked={selectedDays.monday} onChange={() => handleDayChange('monday')} />}
+                    style={{ marginRight: '0px' }}
+                  />
+                </FormGroup>
+              </div>
+              <div style={styles.componentLayout}>
+                <span>星期二</span>
+                <FormGroup>
+                  <FormControlLabel
+                    control={<IOSSwitch sx={{ m: 1 }} checked={selectedDays.tuesday} onChange={() => handleDayChange('tuesday')} />}
+                    style={{ marginRight: '0px' }}
+                  />
+                </FormGroup>
+              </div>
+              <div style={styles.componentLayout}>
+                <span>星期三</span>
+                <FormGroup>
+                  <FormControlLabel
+                    control={<IOSSwitch sx={{ m: 1 }} checked={selectedDays.wednesday} onChange={() => handleDayChange('wednesday')} />}
+                    style={{ marginRight: '0px' }}
+                  />
+                </FormGroup>
+              </div>
+              <div style={styles.componentLayout}>
+                <span>星期四</span>
+                <FormGroup>
+                  <FormControlLabel
+                    control={<IOSSwitch sx={{ m: 1 }} checked={selectedDays.thursday} onChange={() => handleDayChange('thursday')} />}
+                    style={{ marginRight: '0px' }}
+                  />
+                </FormGroup>
+              </div>
+              <div style={styles.componentLayout}>
+                <span>星期五</span>
+                <FormGroup>
+                  <FormControlLabel
+                    control={<IOSSwitch sx={{ m: 1 }} checked={selectedDays.friday} onChange={() => handleDayChange('friday')} />}
+                    style={{ marginRight: '0px' }}
+                  />
+                </FormGroup>
+              </div>
+              <div style={{...styles.componentLayout, borderBottom: "none"}}>
+                <span>星期六</span>
+                <FormGroup>
+                  <FormControlLabel
+                    control={<IOSSwitch sx={{ m: 1 }} checked={selectedDays.saturday} onChange={() => handleDayChange('saturday')} />}
+                    style={{ marginRight: '0px' }}
+                  />
+                </FormGroup>
+              </div>
+              <div style={{...styles.componentLayout, borderBottom: "none"}}>
+                <span>星期日</span>
+                <FormGroup>
+                  <FormControlLabel
+                    control={<IOSSwitch sx={{ m: 1 }} checked={selectedDays.sunday} onChange={() => handleDayChange('sunday')} />}
+                    style={{ marginRight: '0px' }}
+                  />
+                </FormGroup>
+              </div>
+            </div>
+            <div style={{width:'100%'}}>
+              <CalendarWeekendPicker
+                selectedWeekday={selectedDays} 
+                handleDayChange={handleDayChange} 
+                locale="zh-TW"
+                styles={{
+                  calendar: { maxWidth: "400px" },
+                  day: { width: "50px", height: "50px" },
+                }}
+              />
+            </div>
             <FormControl>
               <InputLabel id="gender-label">選擇情境</InputLabel>
               <Select
                 required
                 labelId="gender-label"
                 id="gender"
-                label="選擇情境"
-                defaultValue=""
+                label="性別"
                 InputProps={{
                   sx: {
                     padding: '0px 16px',
@@ -160,74 +195,27 @@ const ApplicationPage = () => {
                   alignSelf: 'stretch',
                   borderRadius: '8px',
                   '& .MuiOutlinedInput-root': {
-                      '& fieldset': {
-                          borderColor: 'var(--OutLine-OutLine, #78726D)',
-                      },
-                      '&:hover fieldset': {
-                          borderColor: '#E3838E',
-                      },
-                      '&.Mui-focused fieldset': {
-                          borderColor: '#E3838E',
-                      },
+                    '& fieldset': {
+                      borderColor: 'var(--OutLine-OutLine, #78726D)',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: '#E3838E',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#E3838E',
+                    },
                   },
                   backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)',
                 }}
               >
-                <MenuItem value="male">定點托育</MenuItem>
-              </Select>
-            </FormControl>
-            <FormControl>
-              <InputLabel id="gender-label">定點選擇</InputLabel>
-              <Select
-                required
-                labelId="gender-label"
-                id="gender"
-                label="定點選擇"
-                defaultValue=""
-                InputProps={{
-                  sx: {
-                    padding: '0px 16px',
-                    borderRadius: '8px',
-                    backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
-                  },
-                }}
-                sx={{
-                  alignSelf: 'stretch',
-                  borderRadius: '8px',
-                  '& .MuiOutlinedInput-root': {
-                      '& fieldset': {
-                          borderColor: 'var(--OutLine-OutLine, #78726D)',
-                      },
-                      '&:hover fieldset': {
-                          borderColor: '#E3838E',
-                      },
-                      '&.Mui-focused fieldset': {
-                          borderColor: '#E3838E',
-                      },
-                  },
-                  backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)',
-                }}
-              >
-                <MenuItem value="center" sx={{color:'#410002'}}>雲林縣私立蓁心托嬰中心</MenuItem>
+                  <MenuItem value="home">居家托育</MenuItem>
               </Select>
             </FormControl>
           </div>
-          <div style={styles.comfirmLayout}>
-            <div style={styles.comfirmBtn}>
-              <button style={styles.nextBtn} onClick={handleNextClick}>
+          <div style={styles.buttonLayout}>
+            <button style={styles.nextBtn} onClick={handleNextClick}>
               下一步
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <g clip-path="url(#clip0_45_10393)">
-                  <path d="M14.29 5.71047C13.9 6.10047 13.9 6.73047 14.29 7.12047L18.17 11.0005H3C2.45 11.0005 2 11.4505 2 12.0005C2 12.5505 2.45 13.0005 3 13.0005H18.18L14.3 16.8805C13.91 17.2705 13.91 17.9005 14.3 18.2905C14.69 18.6805 15.32 18.6805 15.71 18.2905L21.3 12.7005C21.69 12.3105 21.69 11.6805 21.3 11.2905L15.7 5.71047C15.32 5.32047 14.68 5.32047 14.29 5.71047Z" fill="#FFFFFF"/>
-                </g>
-                <defs>
-                  <clipPath id="clip0_45_10393">
-                    <rect width="24" height="24" fill="white"/>
-                  </clipPath>
-                </defs>
-              </svg>
-              </button>
-            </div>
+            </button>
           </div>
         </div>
       </div>
@@ -236,21 +224,13 @@ const ApplicationPage = () => {
 };
 
 const styles = {
-  comfirmBtn: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-  },
   nextBtn: {
-    display: 'flex',
-    padding: '8px 12px',
-    alignItems: 'center',
-    gap: '8px',
-    cursor: 'pointer',
-    borderRadius: '6px',
-    background: 'var(---Primary-Primary, #E3838E)',
-    border: 'none',
+    padding: '10px 20px',
+    backgroundColor: 'var(---Primary-Primary, #E3838E)',
     color: '#fff',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer',
   },
   componentLayout:{
     display: 'flex',
@@ -293,14 +273,6 @@ const styles = {
     fontWeight: '700',
     linHeight: 'normal'
   },
-  comfirmLayout: {
-    display:'flex',
-    flexDirection:'column',
-    gap:'10px',
-    gap:'24px',
-    marginBottom:'28px',
-    width:'100%'
-  },
   buttonLayout: {
     display:'flex',
     flexDirection:'column',
@@ -316,28 +288,11 @@ const styles = {
     backgroundColor:'#FFF'
   },
   inputField: {
-    padding: '25px 14px',
+    padding: '16.5px 14px',
     borderRadius: '8px',
     border: '1px solid #E3838E',
     background: 'var(---SurfaceContainer-Lowest, #FFF)',
     color: 'gray',
-    width:'100%',
-    position: 'relative',
-    cursor: 'pointer',
-  },
-  dateInput: {
-    opacity: 1,
-    cursor: 'pointer',
-    position: 'absolute',
-    width:'100%',
-    height: '100%',
-    top: 0,
-    left: 0,
-    border: 'none',
-    zIndex: 999,
-    outline:'none',
-    background:'transparent',
-    padding:'10px',
   },
   lastButton: {
     border:'none',

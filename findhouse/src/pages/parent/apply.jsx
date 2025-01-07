@@ -19,9 +19,7 @@ const ApplicationPage = () => {
     console.log(memberData);
     try {
       const response = await axios.post('/api/member/createMember', memberData);
-      console.log('Member created:', response.data);
       const memberId = response.data.member.id; // 獲取返回的 memberId
-      console.log('member',memberId);
       dispatch(setMemberId(memberId)); // 保存到 Redux Store
       router.push('/parent/verify');
     } catch (error) {
