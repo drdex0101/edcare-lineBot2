@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { styled } from '@mui/material/styles';
 import FormGroup from '@mui/material/FormGroup';
@@ -12,11 +12,25 @@ const ApplicationPage = () => {
   const router = useRouter();
 
   const handleNextClick = () => {
-    router.push('/parent/create/babyInfo'); // 替换 '/next-page' 为你想要跳转的路径
+    router.push('/nanny/create/nannyInfo'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   const handleLastClick = () => {
-    router.push('/parent/create/'); // 替换 '/next-page' 为你想要跳转的路径
+    router.push('/nanny/create/'); // 替换 '/next-page' 为你想要跳转的路径
+  };
+
+  const [selectedDays, setSelectedDays] = useState({
+    monday: false,
+    tuesday: false,
+    wednesday: false,
+    thursday: false,
+    friday: false,
+    saturday: false,
+    sunday: false,
+  });
+
+  const handleDayChange = (day) => {
+    setSelectedDays((prev) => ({ ...prev, [day]: !prev[day] }));
   };
 
   return (
@@ -38,10 +52,9 @@ const ApplicationPage = () => {
           </svg>
         </button>
       </div>
-      <div style={{ backgroundColor: 'white', width: '100%' }}>
+      <div style={{ backgroundColor: 'white', width: '100%',display: 'flex',justifyContent:'center', alignItems: 'center',width: '100%'}}>
         <div style={styles.contentLayout}>
           <div style={styles.rollerLayout}>
-            <div style={styles.roller}></div>
             <div style={styles.roller}></div>
             <div style={styles.roller}></div>
             <div style={styles.roller}></div>
@@ -53,12 +66,46 @@ const ApplicationPage = () => {
             <span style={styles.smallTitle}>長期托育</span>
           </div>
           <div style={styles.buttonLayout}>
+          <FormControl>
+              <InputLabel id="gender-label">托育時間</InputLabel>
+              <Select
+                required
+                labelId="gender-label"
+                id="gender"
+                label="性別"
+                InputProps={{
+                  sx: {
+                    padding: '0px 16px',
+                    borderRadius: '8px',
+                    backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
+                  },
+                }}
+                sx={{
+                  alignSelf: 'stretch',
+                  borderRadius: '8px',
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': {
+                      borderColor: 'var(--OutLine-OutLine, #78726D)',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: '#E3838E',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#E3838E',
+                    },
+                  },
+                  backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)',
+                }}
+              >
+                  <MenuItem value="home">全日</MenuItem>
+              </Select>
+            </FormControl>
             <div style={styles.hopeLayout}>
               <div style={styles.componentLayout}>
                 <span>星期一</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
+                    control={<IOSSwitch sx={{ m: 1 }} checked={selectedDays.monday} onChange={() => handleDayChange('monday')} />}
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -67,7 +114,7 @@ const ApplicationPage = () => {
                 <span>星期二</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
+                    control={<IOSSwitch sx={{ m: 1 }} checked={selectedDays.tuesday} onChange={() => handleDayChange('tuesday')} />}
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -76,7 +123,7 @@ const ApplicationPage = () => {
                 <span>星期三</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
+                    control={<IOSSwitch sx={{ m: 1 }} checked={selectedDays.wednesday} onChange={() => handleDayChange('wednesday')} />}
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -85,7 +132,7 @@ const ApplicationPage = () => {
                 <span>星期四</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
+                    control={<IOSSwitch sx={{ m: 1 }} checked={selectedDays.thursday} onChange={() => handleDayChange('thursday')} />}
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -94,7 +141,7 @@ const ApplicationPage = () => {
                 <span>星期五</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
+                    control={<IOSSwitch sx={{ m: 1 }} checked={selectedDays.friday} onChange={() => handleDayChange('friday')} />}
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -103,7 +150,7 @@ const ApplicationPage = () => {
                 <span>星期六</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
+                    control={<IOSSwitch sx={{ m: 1 }} checked={selectedDays.saturday} onChange={() => handleDayChange('saturday')} />}
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -112,7 +159,7 @@ const ApplicationPage = () => {
                 <span>星期日</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
+                    control={<IOSSwitch sx={{ m: 1 }} checked={selectedDays.sunday} onChange={() => handleDayChange('sunday')} />}
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -120,9 +167,8 @@ const ApplicationPage = () => {
             </div>
             <div style={{width:'100%'}}>
               <CalendarWeekendPicker
-                startDate={selectedRange.startDate}
-                endDate={selectedRange.endDate}
-                onDateChange={handleDateChange}
+                selectedWeekday={selectedDays} 
+                handleDayChange={handleDayChange} 
                 locale="zh-TW"
                 styles={{
                   calendar: { maxWidth: "400px" },
@@ -319,7 +365,6 @@ const styles = {
     marginBottom: '15px',
     color:'#E3838E',
   },
-
   lawLayout: {
     display: 'flex',
     width: '320px',

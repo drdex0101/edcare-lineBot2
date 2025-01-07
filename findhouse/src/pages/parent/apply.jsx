@@ -190,11 +190,21 @@ const ApplicationPage = () => {
                   />
                 </Box>
 
-              <div style={styles.buttonLayout}>
-                <button style={styles.nextBtn} onClick={handleNextClick}>
-                  下一步
-                </button>
-              </div>
+                <div style={styles.buttonLayout}>
+                  <button style={styles.nextBtn} onClick={handleNextClick}>
+                    下一步
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                      <g clip-path="url(#clip0_45_10393)">
+                        <path d="M14.29 5.71047C13.9 6.10047 13.9 6.73047 14.29 7.12047L18.17 11.0005H3C2.45 11.0005 2 11.4505 2 12.0005C2 12.5505 2.45 13.0005 3 13.0005H18.18L14.3 16.8805C13.91 17.2705 13.91 17.9005 14.3 18.2905C14.69 18.6805 15.32 18.6805 15.71 18.2905L21.3 12.7005C21.69 12.3105 21.69 11.6805 21.3 11.2905L15.7 5.71047C15.32 5.32047 14.68 5.32047 14.29 5.71047Z" fill="#FFFFFF"/>
+                      </g>
+                      <defs>
+                        <clipPath id="clip0_45_10393">
+                          <rect width="24" height="24" fill="white"/>
+                        </clipPath>
+                      </defs>
+                    </svg>
+                  </button>
+                </div>
             </div>
         </div>
     </div>
@@ -202,6 +212,30 @@ const ApplicationPage = () => {
 };
 
 const styles = {
+  buttonLayout: {
+    display:'flex',
+    flexDirection:'column',
+    gap:'10px',
+    gap:'24px',
+    width:'100%',
+    marginBottom:'28px'
+  },
+  comfirmBtn: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  nextBtn: {
+    display: 'flex',
+    padding: '8px 12px',
+    alignItems: 'center',
+    gap: '8px',
+    cursor: 'pointer',
+    borderRadius: '6px',
+    background: 'var(---Primary-Primary, #E3838E)',
+    border: 'none',
+    color: '#fff',
+  },
   buttonLayout: {
     display:'flex',
     flexDirection:'column',
