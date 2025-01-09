@@ -5,8 +5,6 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
-import Select from '@mui/material/Select';
-
 
 import { MenuItem, InputLabel, FormControl } from '@mui/material';
 const ApplicationPage = () => {
@@ -225,7 +223,7 @@ const ApplicationPage = () => {
 };
 
 const styles = {
-  
+
   environmentLayout: {
     height: '177px',
     alignSelf: 'stretch',
