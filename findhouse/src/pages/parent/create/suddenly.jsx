@@ -4,6 +4,10 @@ import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import Select from '@mui/material/Select';
 import CalendarRangePicker from '../../../components/base/CalendarRangePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
 
 import { MenuItem, InputLabel, FormControl } from '@mui/material';
 
@@ -17,19 +21,16 @@ const ApplicationPage = () => {
     router.push('/parent/create/'); // 替换 '/next-page' 为你想要跳转的路径
   };
   
-  const [selectedRange, setSelectedRange] = React.useState({ startDate: null, endDate: null });
+  const [selectedRange, setSelectedRange] = React.useState({
+    startDate: null,
+    endDate: null
+  });
 
-   const parseDate = (dateString) => {
-    if (!dateString) return null;
-    return new Date(dateString);
-  };
-
-  const handleDateChange = (range) => {
-    // 將字符串格式轉換為 Date 對象
-    setSelectedRange({
-      startDate: range.startDate ? parseDate(range.startDate) : null,
-      endDate: range.endDate ? parseDate(range.endDate) : null
-    });
+  const handleDateChange = (type, newValue) => {
+    setSelectedRange((prev) => ({
+      ...prev,
+      [type]: newValue ? dayjs(newValue).format("YYYY/MM/DD") : null,
+    }));
   };
 
   return (
@@ -100,29 +101,67 @@ const ApplicationPage = () => {
                 <MenuItem value="male">全日</MenuItem>
               </Select>
             </FormControl>
-          <div style={styles.inputField}>
-              <input 
-                type="date" 
-                id="datepicker1" 
-                name="startDate"
-                min="2023-01-01" 
-                style={styles.dateInput}
-                onChange={(e) => handleDateChange({ ...selectedRange, startDate: e.target.value })}
-                lang="zh-TW"
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                label="開始日期"
+                format="YYYY/MM/DD"
+                value={selectedRange.startDate ? dayjs(selectedRange.startDate) : null}
+                onChange={(newValue) => handleDateChange("startDate", newValue)}
+                InputProps={{
+                  sx: {
+                    padding: '0px 16px',
+                    borderRadius: '8px',
+                    backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
+                  },
+                }}
+                sx={{
+                  alignSelf: 'stretch',
+                  borderRadius: '8px',
+                  '& .MuiOutlinedInput-root': {
+                      '& fieldset': {
+                          borderColor: 'var(--OutLine-OutLine, #78726D)',
+                      },
+                      '&:hover fieldset': {
+                          borderColor: '#E3838E',
+                      },
+                      '&.Mui-focused fieldset': {
+                          borderColor: '#E3838E',
+                      },
+                  },
+                  backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)',
+                }}
               />
-            </div>
 
-            <div style={styles.inputField}>
-              <input 
-                type="date" 
-                id="datepicker2" 
-                name="endDate"
-                min="2023-01-01" 
-                style={styles.dateInput}
-                onChange={(e) => handleDateChange({ ...selectedRange, endDate: e.target.value })}
-                lang="zh-TW"
+              <DatePicker
+                label="結束日期"
+                format="YYYY/MM/DD"
+                value={selectedRange.endDate ? dayjs(selectedRange.endDate) : null}
+                onChange={(newValue) => handleDateChange("endDate", newValue)}
+                InputProps={{
+                  sx: {
+                    padding: '0px 16px',
+                    borderRadius: '8px',
+                    backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
+                  },
+                }}
+                sx={{
+                  alignSelf: 'stretch',
+                  borderRadius: '8px',
+                  '& .MuiOutlinedInput-root': {
+                      '& fieldset': {
+                          borderColor: 'var(--OutLine-OutLine, #78726D)',
+                      },
+                      '&:hover fieldset': {
+                          borderColor: '#E3838E',
+                      },
+                      '&.Mui-focused fieldset': {
+                          borderColor: '#E3838E',
+                      },
+                  },
+                  backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)',
+                }}
               />
-            </div>
+            </LocalizationProvider>
             <div style={{width:'100%'}}>
               <CalendarRangePicker
                 startDate={selectedRange.startDate}
@@ -312,7 +351,7 @@ const styles = {
   inputField: {
     padding: '25px 14px',
     borderRadius: '8px',
-    border: '1px solid #E3838E',
+    border: '1px solid #d4d4d4',
     background: 'var(---SurfaceContainer-Lowest, #FFF)',
     color: 'gray',
     width:'100%',
