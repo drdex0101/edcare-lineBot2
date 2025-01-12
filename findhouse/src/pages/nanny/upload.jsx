@@ -10,19 +10,12 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
-import CalendarRangePicker from '../../components/base/CalendarRangePicker';
-
 const ApplicationPage = () => {
 
   const [selectedRange, setSelectedRange] = useState({
     startDate: null,
     endDate: null,
   });
-
-  const handleDateChange = (range) => {
-    setSelectedRange(range);
-    console.log("選擇的日期範圍:", range);
-  };
 
   const router = useRouter();
   const [file, setFile] = useState(null);
