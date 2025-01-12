@@ -5,16 +5,16 @@ import Image from "next/image";
 export default function Home() {
   const LINE_LOGIN_URL = "https://access.line.me/oauth2/v2.1/authorize";
   const LINE_CHANNEL_ID = process.env.NEXT_PUBLIC_LINE_CLIENT_ID;
-
+  const LINE_URL = process.env.NEXT_PUBLIC_LINE_LOGIN_CALLBACK_URL;
+  
   const handleLoginWithLine = () => {
     const params = new URLSearchParams({
       response_type: "code",
       client_id: LINE_CHANNEL_ID,
-      redirect_uri: process.env.NEXT_PUBLIC_LINE_REDIRECT_URI,
+      redirect_uri: LINE_URL,
       state: "random-state-value",
       scope: "profile openid email",
     });
-  
     window.location.href = `${LINE_LOGIN_URL}?${params.toString()}`;
   };
 

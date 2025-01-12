@@ -42,7 +42,6 @@ const ApplicationPage = () => {
                 <div style={styles.rollerActive}></div>
                 <div style={styles.roller}></div>
                 <div style={styles.roller}></div>
-                <div style={styles.roller}></div>
               </div>
               <span style={styles.subTitle}>身分驗證</span>
               <div style={styles.lawLayout}>

@@ -2,16 +2,13 @@ import React from 'react';
 import { useRouter } from 'next/router';
 import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
-import Select from '@mui/material/Select';
-
-import { MenuItem, InputLabel, FormControl } from '@mui/material';
 import CalendarRangePicker from '../../../components/base/CalendarRangePicker';
 
 const ApplicationPage = () => {
   const router = useRouter();
 
   const handleNextClick = () => {
-    router.push('/nanny/search/'); // 替换 '/next-page' 为你想要跳转的路径
+    router.push('/nanny/create/nannyInfo'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   const handleLastClick = () => {
@@ -20,8 +17,18 @@ const ApplicationPage = () => {
 
   const [selectedRange, setSelectedRange] = React.useState({ startDate: null, endDate: null });
 
+  // 添加 parseDate 函數定義
+  const parseDate = (dateString) => {
+    if (!dateString) return null;
+    return new Date(dateString);
+  };
+
   const handleDateChange = (range) => {
-    setSelectedRange(range);
+    // 將字符串格式轉換為 Date 對象
+    setSelectedRange({
+      startDate: range.startDate ? parseDate(range.startDate) : null,
+      endDate: range.endDate ? parseDate(range.endDate) : null
+    });
   };
 
   return (
@@ -59,23 +66,34 @@ const ApplicationPage = () => {
           <div style={styles.buttonLayout}>
             
             <div style={styles.inputField}>
-              <input type="date" id="datepicker1" name="startDate"
-                min="2023-01-01" max="2024-12-31" style={styles.dateInput}
+              <input 
+                type="date" 
+                id="datepicker1" 
+                name="startDate"
+                min="2023-01-01" 
+                style={styles.dateInput}
                 onChange={(e) => handleDateChange({ ...selectedRange, startDate: e.target.value })}
+                lang="zh-TW"
               />
             </div>
 
             <div style={styles.inputField}>
-              <input type="date" id="datepicker2" name="endDate"
-                min="2023-01-01" max="2024-12-31" style={styles.dateInput}
+              <input 
+                type="date" 
+                id="datepicker2" 
+                name="endDate"
+                min="2023-01-01" 
+                style={styles.dateInput}
                 onChange={(e) => handleDateChange({ ...selectedRange, endDate: e.target.value })}
+                lang="zh-TW"
               />
             </div>
-            <div>
+            <div style={{width:'100%'}}>
               <CalendarRangePicker
                 startDate={selectedRange.startDate}
                 endDate={selectedRange.endDate}
                 onDateChange={handleDateChange}
+                locale="zh-TW"
                 styles={{
                   calendar: { maxWidth: "400px" },
                   day: { width: "50px", height: "50px" },

@@ -10,19 +10,12 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
-import CalendarRangePicker from '../../components/base/CalendarRangePicker';
-
 const ApplicationPage = () => {
 
   const [selectedRange, setSelectedRange] = useState({
     startDate: null,
     endDate: null,
   });
-
-  const handleDateChange = (range) => {
-    setSelectedRange(range);
-    console.log("選擇的日期範圍:", range);
-  };
 
   const router = useRouter();
   const [file, setFile] = useState(null);
@@ -40,7 +33,7 @@ const ApplicationPage = () => {
       name: document.getElementById('name').value,
       identityCard: document.getElementById('identityCard').value,
       gender: gender,
-      birthday: document.getElementById('birthday').value,
+      birthday: selectedDate,
       address: document.getElementById('address').value,
       communicateAddress: document.getElementById('communicateAddress').value,
       welfareCertNo: document.getElementById('welfareCertNo').value,
@@ -132,13 +125,31 @@ const ApplicationPage = () => {
 
   const handleFileChangeBack = (e) => {
     const file = e.target.files[0];
-    setFile(file);
-    setFileName(file?.name || '');
+    setFileBack(file);
+    setFileNameBack(file?.name || '');
     handleUpload(file, 'ID Back'); // 指定文件类型
   };
 
   const handleGenderChange = (event) => {
     setGender(event.target.value);
+  };
+
+  const handleClearFront = () => {
+    setFile(null);
+    setFileName('');
+    setFrontImg(null);
+    // 清空 file input
+    const fileInput = document.getElementById('file-upload');
+    if (fileInput) fileInput.value = '';
+  };
+
+  const handleClearBack = () => {
+    setFileBack(null);
+    setFileNameBack('');
+    setBackImg(null);
+    // 清空 file input
+    const fileInput = document.getElementById('file-backend');
+    if (fileInput) fileInput.value = '';
   };
 
   return (
@@ -411,7 +422,7 @@ const ApplicationPage = () => {
                         </svg>
                         上傳照片
                       </button>
-                      <button style={styles.redoBtn}>
+                      <button style={styles.redoBtn} onClick={handleClearFront}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="17" viewBox="0 0 14 17" fill="none">
                           <path d="M9.42756 0.0237427H4.57245C2.06179 0.0237427 0 2.09532 0 4.65538V8.69754C0 9.06807 0.299228 9.37117 0.665024 9.37117C1.03082 9.37117 1.33005 9.06807 1.33005 8.69754L1.33016 4.65538C1.33016 2.85319 2.77669 1.38797 4.55582 1.38797H9.3943C11.2066 1.38797 12.6532 2.85322 12.6532 4.65538V8.19227C12.6532 9.99446 11.2067 11.4597 9.42755 11.4597L3.42518 11.4596L5.43711 9.42158C5.70317 9.15208 5.70317 8.73102 5.43711 8.46151C5.17105 8.19201 4.75537 8.19201 4.48931 8.46151L1.33016 11.6616C1.0641 11.9311 1.0641 12.3521 1.33016 12.6216L4.48931 15.8217C4.62234 15.9564 4.78854 16.0237 4.97144 16.0237C5.13775 16.0237 5.32066 15.9564 5.45356 15.8217C5.71962 15.5522 5.71962 15.1311 5.45356 14.8616L3.42518 12.824H9.42755C11.9549 12.824 14 10.7524 14 8.19234V4.65545C14 2.09538 11.9382 0.0238056 9.42755 0.0238056L9.42756 0.0237427Z" fill="#CCCCCC"/>
                           <path d="M9.42756 0.0237427H4.57245C2.06179 0.0237427 0 2.09532 0 4.65538V8.69754C0 9.06807 0.299228 9.37117 0.665024 9.37117C1.03082 9.37117 1.33005 9.06807 1.33005 8.69754L1.33016 4.65538C1.33016 2.85319 2.77669 1.38797 4.55582 1.38797H9.3943C11.2066 1.38797 12.6532 2.85322 12.6532 4.65538V8.19227C12.6532 9.99446 11.2067 11.4597 9.42755 11.4597L3.42518 11.4596L5.43711 9.42158C5.70317 9.15208 5.70317 8.73102 5.43711 8.46151C5.17105 8.19201 4.75537 8.19201 4.48931 8.46151L1.33016 11.6616C1.0641 11.9311 1.0641 12.3521 1.33016 12.6216L4.48931 15.8217C4.62234 15.9564 4.78854 16.0237 4.97144 16.0237C5.13775 16.0237 5.32066 15.9564 5.45356 15.8217C5.71962 15.5522 5.71962 15.1311 5.45356 14.8616L3.42518 12.824H9.42755C11.9549 12.824 14 10.7524 14 8.19234V4.65545C14 2.09538 11.9382 0.0238056 9.42755 0.0238056L9.42756 0.0237427Z" stroke="#CCCCCC"/>
@@ -438,7 +449,7 @@ const ApplicationPage = () => {
                         </svg>
                         上傳照片
                       </button>
-                      <button style={styles.redoBtn}>
+                      <button style={styles.redoBtn} onClick={handleClearBack}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="17" viewBox="0 0 14 17" fill="none">
                           <path d="M9.42756 0.0237427H4.57245C2.06179 0.0237427 0 2.09532 0 4.65538V8.69754C0 9.06807 0.299228 9.37117 0.665024 9.37117C1.03082 9.37117 1.33005 9.06807 1.33005 8.69754L1.33016 4.65538C1.33016 2.85319 2.77669 1.38797 4.55582 1.38797H9.3943C11.2066 1.38797 12.6532 2.85322 12.6532 4.65538V8.19227C12.6532 9.99446 11.2067 11.4597 9.42755 11.4597L3.42518 11.4596L5.43711 9.42158C5.70317 9.15208 5.70317 8.73102 5.43711 8.46151C5.17105 8.19201 4.75537 8.19201 4.48931 8.46151L1.33016 11.6616C1.0641 11.9311 1.0641 12.3521 1.33016 12.6216L4.48931 15.8217C4.62234 15.9564 4.78854 16.0237 4.97144 16.0237C5.13775 16.0237 5.32066 15.9564 5.45356 15.8217C5.71962 15.5522 5.71962 15.1311 5.45356 14.8616L3.42518 12.824H9.42755C11.9549 12.824 14 10.7524 14 8.19234V4.65545C14 2.09538 11.9382 0.0238056 9.42755 0.0238056L9.42756 0.0237427Z" fill="#CCCCCC"/>
                           <path d="M9.42756 0.0237427H4.57245C2.06179 0.0237427 0 2.09532 0 4.65538V8.69754C0 9.06807 0.299228 9.37117 0.665024 9.37117C1.03082 9.37117 1.33005 9.06807 1.33005 8.69754L1.33016 4.65538C1.33016 2.85319 2.77669 1.38797 4.55582 1.38797H9.3943C11.2066 1.38797 12.6532 2.85322 12.6532 4.65538V8.19227C12.6532 9.99446 11.2067 11.4597 9.42755 11.4597L3.42518 11.4596L5.43711 9.42158C5.70317 9.15208 5.70317 8.73102 5.43711 8.46151C5.17105 8.19201 4.75537 8.19201 4.48931 8.46151L1.33016 11.6616C1.0641 11.9311 1.0641 12.3521 1.33016 12.6216L4.48931 15.8217C4.62234 15.9564 4.78854 16.0237 4.97144 16.0237C5.13775 16.0237 5.32066 15.9564 5.45356 15.8217C5.71962 15.5522 5.71962 15.1311 5.45356 14.8616L3.42518 12.824H9.42755C11.9549 12.824 14 10.7524 14 8.19234V4.65545C14 2.09538 11.9382 0.0238056 9.42755 0.0238056L9.42756 0.0237427Z" stroke="#CCCCCC"/>
@@ -507,7 +518,7 @@ const styles = {
   uploadimgLayout:{
     display:'flex',
     flexDirection:'column',
-    alignItems:'center',
+    alignItems:'flex-start',
     justifyContent:'center',
     padding:'20px',
     gap:'20px'

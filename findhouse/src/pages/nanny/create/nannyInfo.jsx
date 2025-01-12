@@ -4,26 +4,25 @@ import { styled } from '@mui/material/styles';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
-import Select from '@mui/material/Select';
-
+import TextField from '@mui/material/TextField';
 
 import { MenuItem, InputLabel, FormControl } from '@mui/material';
 const ApplicationPage = () => {
   const router = useRouter();
 
   const handleNextClick = () => {
-    router.push('/parent/create/babyInfo'); // 替换 '/next-page' 为你想要跳转的路径
+    router.push('/nanny/create/choose'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   const handleLastClick = () => {
-    router.push('/parent/create/'); // 替换 '/next-page' 为你想要跳转的路径
+    router.push('/nanny/create/'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   return (
     <div style={styles.main}>  
       <div style={styles.header}> 
         <span style={styles.headerFont}>
-          申請成為家長
+          申請成為保母
         </span>
         <button onClick={handleLastClick} style={styles.lastButton}>
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -38,124 +37,182 @@ const ApplicationPage = () => {
           </svg>
         </button>
       </div>
-      <div style={{ backgroundColor: 'white', width: '100%' }}>
+      <div style={{ backgroundColor: 'white', width: '100%',display: 'flex',justifyContent:'center', alignItems: 'center',width: '100%'}}>
         <div style={styles.contentLayout}>
           <div style={styles.rollerLayout}>
             <div style={styles.roller}></div>
             <div style={styles.roller}></div>
             <div style={styles.roller}></div>
-            <div style={styles.roller}></div>
-            <div style={styles.roller}></div>
             <div style={styles.rollerActive}></div>
+            <div style={styles.roller}></div>
           </div>
           <div style={styles.titleLayout}>
             <span style={styles.subTitle}>托育資料填寫</span>
-            <span style={styles.smallTitle}>長期托育</span>
           </div>
+
+          <div style={styles.iconLayout}>
+            <div style={styles.fontLayout}>
+              <span style={styles.smallTitle}>上傳個人照</span>
+              <span style={styles.noticeTitle}>僅提供家長能更快認識保母。</span>
+            </div>
+          </div>
+
+          <div style={styles.uploadAvatorLayout}>
+            <div style={styles.avatorLayout}>
+
+            </div>
+          </div>
+
+          <div style={styles.checkBoxLayout}>
+            <input type='checkbox' /> 在宅托育
+            <input type='checkbox' /> 到宅托育
+          </div>
+
           <div style={styles.buttonLayout}>
+            <TextField
+              required
+              id="name"
+              label="服務地址"
+              variant="outlined"
+              InputProps={{
+                sx: {
+                  padding: '0px 16px',
+                  borderRadius: '8px',
+                  backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
+                },
+              }}
+              sx={{
+                alignSelf: 'stretch',
+                borderRadius: '8px',
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': {
+                    borderColor: 'var(--OutLine-OutLine, #78726D)',
+                  },
+                  '&:hover fieldset': {
+                    borderColor: '#E3838E',
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: '#E3838E',
+                  },
+                },
+              }}
+            />
+              
             <div style={styles.hopeLayout}>
               <div style={styles.componentLayout}>
-                <span>星期一</span>
+                <span>可接送小朋友</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
+                    control={<IOSSwitch sx={{ m: 1 }}  />}
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
               </div>
               <div style={styles.componentLayout}>
-                <span>星期二</span>
+                <span>寶寶衣物清洗</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
+                    control={<IOSSwitch sx={{ m: 1 }}  />}
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
               </div>
               <div style={styles.componentLayout}>
-                <span>星期三</span>
+                <span>製作副食品</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
+                    control={<IOSSwitch sx={{ m: 1 }}  />}
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
               </div>
               <div style={styles.componentLayout}>
-                <span>星期四</span>
+                <span>可遠端查看育兒情形</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
+                    control={<IOSSwitch sx={{ m: 1 }}  />}
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
               </div>
               <div style={styles.componentLayout}>
-                <span>星期五</span>
+                <span>可配合不使用3C育兒</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
+                    control={<IOSSwitch sx={{ m: 1 }}  />}
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
               </div>
               <div style={{...styles.componentLayout, borderBottom: "none"}}>
-                <span>星期六</span>
+                <span>可配合家長外出</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
-                    style={{ marginRight: '0px' }}
-                  />
-                </FormGroup>
-              </div>
-              <div style={{...styles.componentLayout, borderBottom: "none"}}>
-                <span>星期日</span>
-                <FormGroup>
-                  <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
+                    control={<IOSSwitch sx={{ m: 1 }}  />}
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
               </div>
             </div>
-            <FormControl>
-              <InputLabel id="gender-label">選擇情境</InputLabel>
-              <Select
-                required
-                labelId="gender-label"
-                id="gender"
-                label="性別"
-                InputProps={{
-                  sx: {
-                    padding: '0px 16px',
-                    borderRadius: '8px',
-                    backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
-                  },
-                }}
-                sx={{
-                  alignSelf: 'stretch',
+
+            <div style={styles.iconLayout}>
+              <div style={styles.fontLayout}>
+                <span style={styles.smallTitle}>上傳托育環境照</span>
+                <span style={styles.noticeTitle}>以6張照片為限。</span>
+              </div>
+            </div>
+
+            <div style={styles.uploadAvatorLayout}>
+              <div style={styles.environmentLayout}>
+
+              </div>
+            </div>
+
+            <TextField
+              required
+              id="phone-number"
+              variant="outlined"
+              label="自我介紹"
+              multiline
+              rows={4}
+              maxRows={4}
+              InputProps={{
+                sx: {
+                  padding: '0px 16px',
                   borderRadius: '8px',
-                  '& .MuiOutlinedInput-root': {
-                    '& fieldset': {
-                      borderColor: 'var(--OutLine-OutLine, #78726D)',
-                    },
-                    '&:hover fieldset': {
-                      borderColor: '#E3838E',
-                    },
-                    '&.Mui-focused fieldset': {
-                      borderColor: '#E3838E',
-                    },
+                  backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
+                },
+              }}
+              sx={{
+                alignSelf: 'stretch',
+                borderRadius: '8px',
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': {
+                    borderColor: 'var(--OutLine-OutLine, #78726D)',
                   },
-                  backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)',
-                }}
-              >
-                  <MenuItem value="home">居家托育</MenuItem>
-              </Select>
-            </FormControl>
+                  '&:hover fieldset': {
+                    borderColor: '#E3838E',
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: '#E3838E',
+                  },
+                },
+              }}
+            />
           </div>
           <div style={styles.buttonLayout}>
             <button style={styles.nextBtn} onClick={handleNextClick}>
-              下一步
+              確認送出
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <g clip-path="url(#clip0_45_10393)">
+                    <path d="M14.29 5.71047C13.9 6.10047 13.9 6.73047 14.29 7.12047L18.17 11.0005H3C2.45 11.0005 2 11.4505 2 12.0005C2 12.5505 2.45 13.0005 3 13.0005H18.18L14.3 16.8805C13.91 17.2705 13.91 17.9005 14.3 18.2905C14.69 18.6805 15.32 18.6805 15.71 18.2905L21.3 12.7005C21.69 12.3105 21.69 11.6805 21.3 11.2905L15.7 5.71047C15.32 5.32047 14.68 5.32047 14.29 5.71047Z" fill="#FFFFFF"/>
+                  </g>
+                  <defs>
+                    <clipPath id="clip0_45_10393">
+                      <rect width="24" height="24" fill="white"/>
+                    </clipPath>
+                  </defs>
+                </svg>
             </button>
           </div>
         </div>
@@ -165,6 +222,64 @@ const ApplicationPage = () => {
 };
 
 const styles = {
+
+  environmentLayout: {
+    height: '177px',
+    alignSelf: 'stretch',
+    boxShadow: '-1px 6px 12px -6px rgba(186, 186, 186, 0.25), 0px 8px 24px -4px rgba(186, 186, 186, 0.25)'
+  },
+  avatorLayout:{
+    display: 'flex',
+    width: '115px',
+    height: '115px',
+    padding: '18px 17.342px 18.536px 19px',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: '1000px',
+    border: '6px solid var(---Button-01, #FBDBD6)',
+    background: 'var(---SurfaceContainer-Lowest, #FFF)',
+  },
+  uploadAvatorLayout: {
+    display:'flex',
+    alignItems:'center',
+    width:'100%',
+    justifyContent: 'center',
+  },
+  checkBoxLayout: {
+    display: 'flex',
+    height: '40px',
+    alignItems: 'center',
+    gap: '31px',
+    alignSelf: 'stretch'
+  },
+  noticeTitle: {
+    color: 'var(---Surface-Black-25, #252525)',
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: '10px',
+    fontStyle: 'normal',
+    fontWeight: '400',
+    lineHeight: 'normal'
+  },
+  smallTitle: {
+    color: 'var(---Surface-Black-25, #252525)',
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: '16px',
+    fontStyle: 'normal',
+    fontWeight: '800',
+    lineHeight: 'normal'
+  },
+  fontLayout: {
+    display:'flex',
+    alignItems:'flex-start',
+    width:'100%',
+    flexDirection:'column'
+  },
+  iconLayout: {
+    display:'flex',
+    flexDirection:'column',
+    gap:'24px',
+    width:'100%'
+  },
   nextBtn: {
     padding: '10px 20px',
     backgroundColor: 'var(---Primary-Primary, #E3838E)',
@@ -197,14 +312,6 @@ const styles = {
     alignItems:'flex-start',
     width:'100%',
   },
-  smallTitle: {
-    color: 'var(---Primary-OnContainer, #6F2E2A)',
-    fontFamily: "LINE Seed JP_TTF",
-    fontSize: '16px',
-    fontWeight: '800',
-    lineHeight: 'normal',
-    marginBottom: '15px',
-  },
   typeFont:{
     color: 'var(---SurfaceContainer-Lowest, #FFF)',
     /* Line/bold/24pt */
@@ -229,11 +336,28 @@ const styles = {
     backgroundColor:'#FFF'
   },
   inputField: {
-    padding: '16.5px 14px',
+    padding: '28px 14px',
     borderRadius: '8px',
-    border: '1px solid #E3838E',
+    border: '1px solid #000',
     background: 'var(---SurfaceContainer-Lowest, #FFF)',
     color: 'gray',
+    width:'100%',
+    position: 'relative',
+    cursor: 'pointer',
+  },
+  dateInput: {
+    opacity: 1,
+    cursor: 'pointer',
+    position: 'absolute',
+    width:'100%',
+    height: '100%',
+    top: 0,
+    left: 0,
+    border: 'none',
+    zIndex: 999,
+    outline:'none',
+    background:'transparent',
+    padding:'10px',
   },
   lastButton: {
     border:'none',

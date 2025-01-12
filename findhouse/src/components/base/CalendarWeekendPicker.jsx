@@ -1,13 +1,34 @@
 import React, { useState, useEffect } from "react";
 
-const DAYS_OF_WEEK = ["日", "一", "二", "三", "四", "五", "六"];
+const DAYS_OF_WEEK = ["sunday","monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+const DAYS_OF_WEEK_CHINESE = ["日", "一", "二", "三", "四", "五", "六"];
 
-export default function CustomCalendar({ startDate, endDate }) {
-  // 將輸入的日期轉換為 Date 物件
-  const parsedStartDate = startDate ? new Date(startDate) : null;
-  const parsedEndDate = endDate ? new Date(endDate) : null;
+export default function CustomCalendar({ selectedWeekday }) {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [highlightedDates, setHighlightedDates] = useState([]); // 初始化為空陣列
+  const [highlightedDates, setHighlightedDates] = useState([]);
+  console.log(selectedWeekday);
+  useEffect(() => {
+    if (typeof selectedWeekday === 'object' && Object.values(selectedWeekday).every(value => typeof value === 'boolean')) {
+      const currentYear = currentDate.getFullYear();
+      const currentMonth = currentDate.getMonth();
+      const totalDays = new Date(currentYear, currentMonth + 1, 0).getDate();
+      const range = [];
+      // 遍歷當月所有日期
+      for (let i = 1; i <= totalDays; i++) {
+        const date = new Date(currentYear, currentMonth, i);
+        console.log(selectedWeekday['monday']);
+        // 如果對應的星期幾為 true，就加入高亮清單
+        if (selectedWeekday[DAYS_OF_WEEK[date.getDay()]]) {
+          range.push(i);
+        }
+      }
+      console.log(range);
+      setHighlightedDates(range);
+    } else {
+      setHighlightedDates([]);
+    }
+  }, [selectedWeekday, currentDate]);
+
   // 計算當月的所有天數
   const getDaysInMonth = (year, month) => {
     const days = [];
@@ -33,38 +54,6 @@ export default function CustomCalendar({ startDate, endDate }) {
   };
 
   const days = getDaysInMonth(currentDate.getFullYear(), currentDate.getMonth());
-  useEffect(() => {
-    // 只有當日期真的改變時才更新 highlightedDates
-    if (parsedStartDate instanceof Date && parsedEndDate instanceof Date) {
-      const currentYear = currentDate.getFullYear();
-      const currentMonth = currentDate.getMonth();
-      const startTime = new Date(currentYear, currentMonth, 1);
-      const endTime = new Date(currentYear, currentMonth + 1, 0);
-
-      // 如果日期範圍與當前月份有重疊才進行更新
-      if (parsedStartDate <= endTime && parsedEndDate >= startTime) {
-        const rangeStart = new Date(Math.max(parsedStartDate.getTime(), startTime.getTime()));
-        const rangeEnd = new Date(Math.min(parsedEndDate.getTime(), endTime.getTime()));
-        
-        const range = [];
-        const startDay = rangeStart.getDate();
-        const endDay = rangeEnd.getDate();
-        
-        for (let i = startDay; i <= endDay; i++) {
-          range.push(i);
-        }
-        
-        // 比較新舊值，只有在真正需要更新時才設置新的狀態
-        if (JSON.stringify(range) !== JSON.stringify(highlightedDates)) {
-          setHighlightedDates(range);
-        }
-      } else if (highlightedDates.length > 0) {
-        setHighlightedDates([]);
-      }
-    } else if (highlightedDates.length > 0) {
-      setHighlightedDates([]);
-    }
-  }, [parsedStartDate, parsedEndDate, currentDate, highlightedDates]);
 
   // 切換月份
   const handleMonthChange = (direction) => {
@@ -96,7 +85,7 @@ export default function CustomCalendar({ startDate, endDate }) {
 
       {/* 星期標籤 */}
       <div style={styles.weekRow}>
-        {DAYS_OF_WEEK.map((day) => (
+        {DAYS_OF_WEEK_CHINESE.map((day) => (
           <div key={day} style={styles.weekday}>
             {day}
           </div>
@@ -181,6 +170,6 @@ const styles = {
     backgroundColor: "#e0f7fa",
     color: "#000",
     fontWeight: "bold",
-    background: 'var(---Button-01, linear-gradient(81deg, #FBDBD6 10.58%, #D9DFF0 75.92%))'
+    background: 'var(--Button-01, linear-gradient(81deg, #FBDBD6 10.58%, #D9DFF0 75.92%))'
   },
 };

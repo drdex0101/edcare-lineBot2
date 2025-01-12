@@ -1,0 +1,96 @@
+.service-schedule {
+    display: flex;
+    height: 255px;
+    padding: 10px 35px;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    align-self: stretch;
+  }
+  
+  .header {
+    background-color: transparent;
+    padding: 10px;
+    text-align: left;
+    font-size: 16px;
+    font-weight: bold;
+    border-bottom: 1px solid #eee;
+    color: var(---Primary-Primary, #E3838E);
+    /* Line/bold/14pt */
+    font-family: "LINE Seed JP_TTF";
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+  }
+
+  .schedule-container {
+    width: 310px;
+    height: 200px;
+    flex-shrink: 0;
+    background: var(---SurfaceContainer-Low, #FCF7F7);
+    padding: 10px;
+  }
+
+  .days {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  
+  .day {
+    width: 17px;
+    height: 17px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fdd;
+    border-radius: 50%;
+    color: var(---Outline-OnSurface, #252525);
+    /* Line/medium/11pt */
+    font-family: "LINE Seed JP_TTF";
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
+  
+  .time-slots {
+    display: grid;
+    grid-template-columns: 35px auto;
+  }
+  
+  .time-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    align-items: flex-start;
+    color: var(---Outline-OnSurface, #252525);
+    /* Line/medium/8pt */
+    font-family: "LINE Seed JP_TTF";
+    font-size: 8px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
+  
+  .slots {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .slot {
+    flex: 1;
+    height: 40px;
+    background-color: #eee;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .slot.active {
+    background-color: #f8a5c2;
+  }
+  
+  .slot:hover {
+    background-color: #f76a97;
+  }
