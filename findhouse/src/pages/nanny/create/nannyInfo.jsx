@@ -21,6 +21,7 @@ const ApplicationPage = () => {
   const [headIcon, setHeadIcon] = useState(null);
   const [message, setMessage] = useState('');
   const [uploadedImages, setUploadedImages] = useState([]); // State to track uploaded images
+  const [selectedCareType, setSelectedCareType] = useState(null);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -88,6 +89,20 @@ const ApplicationPage = () => {
     console.log(uploadedImages);
   };
 
+  const handleSwitchChange = (optionId, isChecked) => {
+    setSelectedOptions(prevOptions => {
+      if (isChecked) {
+        return [...prevOptions, optionId];
+      } else {
+        return prevOptions.filter(id => id !== optionId);
+      }
+    });
+  };
+
+  const handleCareTypeChange = (e) => {
+    setSelectedCareType(e.target.value);
+  };
+
   return (
     <div style={styles.main}>  
       <div style={styles.header}> 
@@ -141,8 +156,28 @@ const ApplicationPage = () => {
           </div>
 
           <div style={styles.checkBoxLayout}>
-            <input type='checkbox' /> 在宅托育
-            <input type='checkbox' /> 到宅托育
+            <input
+              type='radio'
+              name='careType'
+              value='在宅托育'
+              checked={selectedCareType === '在宅托育'}
+              onChange={handleCareTypeChange}
+              style={{
+                ...styles.radioButton,
+                ...(selectedCareType === '在宅托育' && styles.radioButtonChecked),
+              }}
+            /> 在宅托育
+            <input
+              type='radio'
+              name='careType'
+              value='到宅托育'
+              checked={selectedCareType === '到宅托育'}
+              onChange={handleCareTypeChange}
+              style={{
+                ...styles.radioButton,
+                ...(selectedCareType === '到宅托育' && styles.radioButtonChecked),
+              }}
+            /> 到宅托育
           </div>
 
           <div style={styles.buttonLayout}>
@@ -180,7 +215,12 @@ const ApplicationPage = () => {
                 <span>可接送小朋友</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }}  />}
+                    control={
+                      <IOSSwitch
+                        sx={{ m: 1 }}
+                        onChange={(e) => handleSwitchChange(1, e.target.checked)}
+                      />
+                    }
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -189,7 +229,12 @@ const ApplicationPage = () => {
                 <span>寶寶衣物清洗</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }}  />}
+                    control={
+                      <IOSSwitch
+                        sx={{ m: 1 }}
+                        onChange={(e) => handleSwitchChange(2, e.target.checked)}
+                      />
+                    }
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -198,7 +243,12 @@ const ApplicationPage = () => {
                 <span>製作副食品</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }}  />}
+                    control={
+                      <IOSSwitch
+                        sx={{ m: 1 }}
+                        onChange={(e) => handleSwitchChange(3, e.target.checked)}
+                      />
+                    }
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -207,7 +257,12 @@ const ApplicationPage = () => {
                 <span>可遠端查看育兒情形</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }}  />}
+                    control={
+                      <IOSSwitch
+                        sx={{ m: 1 }}
+                        onChange={(e) => handleSwitchChange(4, e.target.checked)}
+                      />
+                    }
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -216,7 +271,12 @@ const ApplicationPage = () => {
                 <span>可配合不使用3C育兒</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }}  />}
+                    control={
+                      <IOSSwitch
+                        sx={{ m: 1 }}
+                        onChange={(e) => handleSwitchChange(5, e.target.checked)}
+                      />
+                    }
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -225,7 +285,12 @@ const ApplicationPage = () => {
                 <span>可配合家長外出</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }}  />}
+                    control={
+                      <IOSSwitch
+                        sx={{ m: 1 }}
+                        onChange={(e) => handleSwitchChange(6, e.target.checked)}
+                      />
+                    }
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -553,6 +618,21 @@ const styles = {
     background:'var(---Primary-Primary, #F3CCD4)',
     border:'none',
     borderRadius:'12px'
+  },
+  radioButton: {
+    appearance: 'none',
+    width: '16px',
+    height: '16px',
+    backgroundColor: '#fff',
+    border: '1px solid #ccc',
+    borderRadius: '2px',
+    display: 'inline-block',
+    position: 'relative',
+    cursor: 'pointer',
+  },
+  radioButtonChecked: {
+    backgroundColor: '#e3838e',
+    border: '1px solid #e3838e',
   },
 };
 
