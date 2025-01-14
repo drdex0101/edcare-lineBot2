@@ -11,33 +11,41 @@ import { MenuItem, InputLabel, FormControl } from '@mui/material';
 const ApplicationPage = () => {
   const router = useRouter();
 
-  const handleNextClick = () => {
-    router.push('/nanny/create/nannyInfo'); // 替换 '/next-page' 为你想要跳转的路径
-  };
-
   const handleLastClick = () => {
     router.push('/nanny/create/'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
-  const [selectedDays, setSelectedDays] = useState({
-    monday: false,
-    tuesday: false,
-    wednesday: false,
-    thursday: false,
-    friday: false,
-    saturday: false,
-    sunday: false,
-  });
-
-  const handleDayChange = (day) => {
-    setSelectedDays((prev) => ({ ...prev, [day]: !prev[day] }));
+  const handleNextClick = () => {
+    localStorage.setItem('way', 'longTerm');
+    localStorage.setItem('longTermDays',selectedDays);
+    localStorage.setItem('longTermCareType', selectedCareTime);
+    localStorage.setItem('careScenario', selectedScenario);
+    router.push('/nanny/create/nannyInfo');
   };
 
+  const [selectedDays, setSelectedDays] = useState([]);
+
+  const handleDayChange = (day) => {
+    setSelectedDays(prev => {
+      const dayNumber = typeof day === 'string' 
+        ? ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'].indexOf(day.toLowerCase())
+        : day;
+      
+      if (dayNumber === -1) return prev;
+      
+      return prev.includes(dayNumber) 
+        ? prev.filter(d => d !== dayNumber)
+        : [...prev, dayNumber].sort((a, b) => a - b);
+    });
+  };
+
+  const [selectedCareTime, setSelectedCareTime] = useState('');
+  const [selectedScenario, setSelectedScenario] = useState('');
   return (
     <div style={styles.main}>  
       <div style={styles.header}> 
         <span style={styles.headerFont}>
-          申請成為保母
+        編輯保母資料
         </span>
         <button onClick={handleLastClick} style={styles.lastButton}>
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -55,11 +63,9 @@ const ApplicationPage = () => {
       <div style={{ backgroundColor: 'white', width: '100%',display: 'flex',justifyContent:'center', alignItems: 'center',width: '100%'}}>
         <div style={styles.contentLayout}>
           <div style={styles.rollerLayout}>
-            <div style={styles.roller}></div>
-            <div style={styles.roller}></div>
-            <div style={styles.roller}></div>
-            <div style={styles.roller}></div>
             <div style={styles.rollerActive}></div>
+            <div style={styles.rollerActive}></div>
+            <div style={styles.roller}></div>
           </div>
           <div style={styles.titleLayout}>
             <span style={styles.subTitle}>托育資料填寫</span>
@@ -70,9 +76,11 @@ const ApplicationPage = () => {
               <InputLabel id="gender-label">托育時間</InputLabel>
               <Select
                 required
-                labelId="gender-label"
-                id="gender"
-                label="性別"
+                labelId="care-time-label"
+                id="care-time"
+                value={selectedCareTime}
+                onChange={(e) => setSelectedCareTime(e.target.value)}
+                label="托育時間"
                 InputProps={{
                   sx: {
                     padding: '0px 16px',
@@ -97,7 +105,9 @@ const ApplicationPage = () => {
                   backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)',
                 }}
               >
-                  <MenuItem value="home">全日</MenuItem>
+                  <MenuItem value="allDay">全日</MenuItem>
+                  <MenuItem value="morning">日間</MenuItem>
+                  <MenuItem value="night">夜間</MenuItem>
               </Select>
             </FormControl>
             <div style={styles.hopeLayout}>
@@ -105,7 +115,7 @@ const ApplicationPage = () => {
                 <span>星期一</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }} checked={selectedDays.monday} onChange={() => handleDayChange('monday')} />}
+                    control={<IOSSwitch sx={{ m: 1 }} checked={selectedDays.includes(1)} onChange={() => handleDayChange(1)} />}
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -114,7 +124,7 @@ const ApplicationPage = () => {
                 <span>星期二</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }} checked={selectedDays.tuesday} onChange={() => handleDayChange('tuesday')} />}
+                    control={<IOSSwitch sx={{ m: 1 }} checked={selectedDays.includes(2)} onChange={() => handleDayChange(2)} />}
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -123,7 +133,7 @@ const ApplicationPage = () => {
                 <span>星期三</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }} checked={selectedDays.wednesday} onChange={() => handleDayChange('wednesday')} />}
+                    control={<IOSSwitch sx={{ m: 1 }} checked={selectedDays.includes(3)} onChange={() => handleDayChange(3)} />}
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -132,7 +142,7 @@ const ApplicationPage = () => {
                 <span>星期四</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }} checked={selectedDays.thursday} onChange={() => handleDayChange('thursday')} />}
+                    control={<IOSSwitch sx={{ m: 1 }} checked={selectedDays.includes(4)} onChange={() => handleDayChange(4)} />}
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -141,7 +151,7 @@ const ApplicationPage = () => {
                 <span>星期五</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }} checked={selectedDays.friday} onChange={() => handleDayChange('friday')} />}
+                    control={<IOSSwitch sx={{ m: 1 }} checked={selectedDays.includes(5)} onChange={() => handleDayChange(5)} />}
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -150,7 +160,7 @@ const ApplicationPage = () => {
                 <span>星期六</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }} checked={selectedDays.saturday} onChange={() => handleDayChange('saturday')} />}
+                    control={<IOSSwitch sx={{ m: 1 }} checked={selectedDays.includes(6)} onChange={() => handleDayChange(6)} />}
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -159,7 +169,7 @@ const ApplicationPage = () => {
                 <span>星期日</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }} checked={selectedDays.sunday} onChange={() => handleDayChange('sunday')} />}
+                    control={<IOSSwitch sx={{ m: 1 }} checked={selectedDays.includes(0)} onChange={() => handleDayChange(0)} />}
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -180,9 +190,11 @@ const ApplicationPage = () => {
               <InputLabel id="gender-label">選擇情境</InputLabel>
               <Select
                 required
-                labelId="gender-label"
-                id="gender"
-                label="性別"
+                labelId="scenario-label"
+                id="scenario"
+                value={selectedScenario}
+                onChange={(e) => setSelectedScenario(e.target.value)}
+                label="托育場景"
                 InputProps={{
                   sx: {
                     padding: '0px 16px',

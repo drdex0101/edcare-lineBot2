@@ -9,12 +9,52 @@ import { useState } from 'react';
 const ApplicationPage = () => {
   const router = useRouter();
 
-  const handleNextClick = () => {
-    router.push('/nanny/finish'); // 替换 '/next-page' 为你想要跳转的路径
+  const handleNextClick = async () => {
+    const nannyData = {
+      memberId: '',
+      experienment: 0,
+      age: 0,
+      kidCount: 0,
+      way: localStorage.getItem('way'),
+      scenario: selectedCareType,
+      environmentPic: [],
+      serviceLocation: address,
+      introduction: introduction,
+      service: selectedOptions,
+      score: '',
+      isShow: true,
+      location: address,
+      kycId: 0,
+      uploadId: headIcon
+    };
+
+    try {
+      const response = await fetch('/api/nanny/createNanny', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(nannyData)
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit nanny data');
+      }
+      const data = await response.json();
+      if (localStorage.getItem('way') === 'suddenly') {
+        await createSuddenlyRecord(data.nanny.id, selectedCareType, address);
+      }
+      else if (localStorage.getItem('way') === 'longTerm') {
+        await createLongTermRecord(data.nanny.id);
+      }
+      router.push('/nanny/finish');
+    } catch (error) {
+      console.error('Error submitting nanny data:', error);
+    }
   };
 
   const handleLastClick = () => {
-    router.push('/nanny/create/'); // 替换 '/next-page' 为你想要跳转的路径
+    router.back(); // 替换 '/next-page' 为你想要跳转的路径
   };
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState(''); // 新增狀態以存儲檔案名稱
@@ -22,6 +62,9 @@ const ApplicationPage = () => {
   const [message, setMessage] = useState('');
   const [uploadedImages, setUploadedImages] = useState([]); // State to track uploaded images
   const [selectedCareType, setSelectedCareType] = useState(null);
+  const [address, setAddress] = useState('');
+  const [selectedOptions, setSelectedOptions] = useState([]);
+  const [introduction, setIntroduction] = useState('');
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -103,11 +146,62 @@ const ApplicationPage = () => {
     setSelectedCareType(e.target.value);
   };
 
+  const handleAddressChange = (event) => {
+    setAddress(event.target.value);
+  };
+
+  const createLongTermRecord = async (nannyId) => {
+    const weekdaysString = localStorage.getItem('longTermDays');
+    const weekdaysArray = weekdaysString.split(',').map(Number); // 將字串轉換成數字數組
+
+    const response = await fetch('/api/nanny/createLongTern', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        nannyId: nannyId,
+        weekdays: weekdaysArray, // 使用轉換後的數組
+        scenario: localStorage.getItem('careScenario'),
+        careTime: localStorage.getItem('longTermCareTime')
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to insert data into long_term table');
+    }
+
+    return response.json();
+  }
+
+  const createSuddenlyRecord = async (nannyId, selectedCareType, address) => {
+    const response = await fetch('/api/nanny/createSuddenly', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        nannyId: nannyId,
+        startDate: localStorage.getItem('suddenlyStartDate'),
+        endDate: localStorage.getItem('suddsuddenlyEndDate'),
+        scenario: selectedCareType,
+        location: address,
+        careTime: ''
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to insert data into suddenly table');
+    }
+
+    return response.json();
+  };
+
   return (
     <div style={styles.main}>  
       <div style={styles.header}> 
         <span style={styles.headerFont}>
-          申請成為保母
+        編輯保母資料
         </span>
         <button onClick={handleLastClick} style={styles.lastButton}>
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -125,11 +219,9 @@ const ApplicationPage = () => {
       <div style={{ backgroundColor: 'white', width: '100%',display: 'flex',justifyContent:'center', alignItems: 'center',width: '100%'}}>
         <div style={styles.contentLayout}>
           <div style={styles.rollerLayout}>
-            <div style={styles.roller}></div>
-            <div style={styles.roller}></div>
-            <div style={styles.roller}></div>
             <div style={styles.rollerActive}></div>
-            <div style={styles.roller}></div>
+            <div style={styles.rollerActive}></div>
+            <div style={styles.rollerActive}></div>
           </div>
           <div style={styles.titleLayout}>
             <span style={styles.subTitle}>托育資料填寫</span>
@@ -183,9 +275,11 @@ const ApplicationPage = () => {
           <div style={styles.buttonLayout}>
             <TextField
               required
-              id="name"
+              id="address"
               label="服務地址"
               variant="outlined"
+              value={address}
+              onChange={handleAddressChange}
               InputProps={{
                 sx: {
                   padding: '0px 16px',

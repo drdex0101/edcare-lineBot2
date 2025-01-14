@@ -19,7 +19,7 @@ const ApplicationPage = () => {
     <div style={styles.main}>  
         <div style={styles.header}> 
             <span style={styles.headerFont}>
-              申請成為保母
+              編輯保母資料
             </span>
             <button onClick={handleLastClick} style={styles.lastButton}>
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -37,11 +37,9 @@ const ApplicationPage = () => {
         <div style={{ backgroundColor: 'white', width: '100%', display:'flex', justifyContent:'center' }}>
           <div style={styles.contentLayout}>
               <div style={styles.rollerLayout}>
-                <div style={styles.roller}></div>
-                <div style={styles.roller}></div>
-                <div style={styles.roller}></div>
-                <div style={styles.roller}></div>
                 <div style={styles.rollerActive}></div>
+                <div style={styles.roller}></div>
+                <div style={styles.roller}></div>
               </div>
               <div style={styles.titleLayout}>
                 <span style={styles.subTitle}>托育資料填寫</span>

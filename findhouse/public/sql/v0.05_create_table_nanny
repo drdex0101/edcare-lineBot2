@@ -1,0 +1,20 @@
+CREATE TABLE nanny (
+    id BIGSERIAL PRIMARY KEY,
+    memberId VARCHAR,
+    experienment BIGINT, -- 經驗年數
+    age BIGINT,
+    kidCount BIGINT, -- 可接受照顧小孩數量
+    way VARCHAR, -- 托育方式
+    scenario TEXT, -- 托育情境
+    environmentPic VARCHAR[], -- 環境照片，使用陣列儲存多張照片的URL
+    serviceLocation VARCHAR, -- 服務地點
+    introduction VARCHAR, -- 自我介紹
+    service VARCHAR[], -- 服務項目，使用陣列儲存多個服務
+    score VARCHAR, -- 評分，例如 4.85
+    isShow BOOLEAN DEFAULT true, -- 是否顯示
+    location VARCHAR, -- 地理位置座標
+    kycId BIGINT , 
+    uploadId BIGINT , 
+    created_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    update_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
