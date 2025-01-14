@@ -5,8 +5,7 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
-
-import { MenuItem, InputLabel, FormControl } from '@mui/material';
+import { useState } from 'react';
 const ApplicationPage = () => {
   const router = useRouter();
 
@@ -16,6 +15,77 @@ const ApplicationPage = () => {
 
   const handleLastClick = () => {
     router.push('/nanny/create/'); // 替换 '/next-page' 为你想要跳转的路径
+  };
+  const [file, setFile] = useState(null);
+  const [fileName, setFileName] = useState(''); // 新增狀態以存儲檔案名稱
+  const [headIcon, setHeadIcon] = useState(null);
+  const [message, setMessage] = useState('');
+  const [uploadedImages, setUploadedImages] = useState([]); // State to track uploaded images
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setFile(file);
+    setFileName(file?.name || '');
+    handleUpload(file, 'avator'); // 指定文件类型
+  };
+
+  const handleUpload = async (file, type) => {
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+        const res = await fetch('/api/upload', {
+            method: 'POST',
+            body: formData,
+        });
+
+        // Check if the response is OK
+        if (!res.ok) {
+            const errorText = await res.text(); // Get the full response text
+            console.error(`HTTP error! status: ${res.status}, response: ${errorText}`);
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+
+        const result = await res.json();
+        console.log(result);
+        const resUpload = await fetch('/api/kycInfo/uploadImg', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                fileUrl: result.fileUrl,
+                type: type
+            })
+        });
+        const uploadResponse = await resUpload.json();
+        const uploadId = uploadResponse.uploadId.id;
+        if (type === 'environment') {
+          setUploadedImages(prevImages => [...prevImages, uploadId]);
+        }
+        else {
+          setHeadIcon(uploadId);
+        }
+    } catch (error) {
+        console.error('Upload error:', error);
+        setMessage('Upload failed.');
+    }
+  };
+
+  const handleEnvironmentImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    
+    if (uploadedImages.length + files.length > 6) {
+      alert('最多只能上傳6張照片');
+      return;
+    }
+
+    files.forEach(file => {
+      handleUpload(file, 'environment'); // Call handleUpload for each fil
+    });
+    console.log(uploadedImages);
   };
 
   return (
@@ -58,9 +128,16 @@ const ApplicationPage = () => {
           </div>
 
           <div style={styles.uploadAvatorLayout}>
-            <div style={styles.avatorLayout}>
-
-            </div>
+            <input 
+              type="file" 
+              accept="image/*" 
+              onChange={handleFileChange}
+              style={{ display: 'none' }}
+              id="file-input"
+            />
+            <label htmlFor="file-input" style={styles.avatorLayout}>
+              <span>上傳照片</span>
+            </label>
           </div>
 
           <div style={styles.checkBoxLayout}>
@@ -158,14 +235,22 @@ const ApplicationPage = () => {
             <div style={styles.iconLayout}>
               <div style={styles.fontLayout}>
                 <span style={styles.smallTitle}>上傳托育環境照</span>
-                <span style={styles.noticeTitle}>以6張照片為限。</span>
+                <span style={styles.noticeTitle}>{`${uploadedImages.length}/6`}</span>
               </div>
             </div>
 
             <div style={styles.uploadAvatorLayout}>
-              <div style={styles.environmentLayout}>
-
-              </div>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleEnvironmentImageChange}
+                style={{ display: 'none' }}
+                id="environment-file-input"
+              />
+              <label htmlFor="environment-file-input" style={styles.environmentLayout}>
+                <img></img>
+              </label>
             </div>
 
             <TextField
