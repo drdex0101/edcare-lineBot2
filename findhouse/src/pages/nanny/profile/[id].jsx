@@ -7,13 +7,9 @@ export default function ProfilePage() {
   const { id } = router.query;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [nannyInfo, setNannyInfo] = useState({});
-  // 圖片數組，可以替換成你想要展示的圖片路徑
-  const images = [
-    '/static/image1.jpg',
-    '/static/image2.jpg',
-    '/static/image3.jpg',
-  ];
-
+  const [urls, setUrls] = useState([]);
+  const [iconUrl, setIconUrl] = useState('/assets/images/resource/error.png');
+  
   // 處理點擊圓點來跳轉到對應圖片
   const handleDotClick = (index) => {
     setCurrentImageIndex(index);
@@ -28,6 +24,18 @@ export default function ProfilePage() {
         const response = await fetch(`/api/nanny/getNannyInfo?id=${id}`);
         const data = await response.json();
         setNannyInfo(data.nannies[0]);
+
+        // 如果有環境照片，則獲取每張照片的URL
+        if (data.nannies[0].environmentPic && data.nannies[0].environmentPic.length > 0) {
+          for (const picId of data.nannies[0].environmentPic) {
+            const response2 = await fetch(`/api/base/getImgUrl?id=${picId}`);
+            const data2 = await response2.json();
+            urls.push(data2.url);
+          }
+          const response3 = await fetch(`/api/base/getImgUrl?id=${data.nannies[0].uploadid}`);
+          const data3 = await response3.json();
+          setIconUrl(data3.url);
+        }
       } catch (error) {
         console.error('Failed to fetch nanny info:', error);
       }
@@ -53,7 +61,7 @@ export default function ProfilePage() {
       {/* Profile Section */}
       <div className="profileSection">
         
-        <img className="profilePic" src="/assets/images/resource/error.png" alt="Profile" /> {/* 頭貼圓形 */}
+        <img className="profilePic" src={iconUrl} alt="Profile" /> {/* 頭貼圓形 */}
         <h2 className="profileName">王美麗</h2>
         <div className="rating">
           {nannyInfo.score}
@@ -100,7 +108,7 @@ export default function ProfilePage() {
           <span className='imgFont'>托育環境</span>
           <div className="carousel">
             <img
-              src={images[currentImageIndex]}
+              src={urls[currentImageIndex]}
               alt={`圖片 ${currentImageIndex + 1}`}
               className="carouselImage"
             />
