@@ -32,6 +32,8 @@ export default function ProfilePage() {
             const data2 = await response2.json();
             urls.push(data2.url);
           }
+        }
+        if(data.nannies[0].uploadid){
           const response3 = await fetch(`/api/base/getImgUrl?id=${data.nannies[0].uploadid}`);
           const data3 = await response3.json();
           setIconUrl(data3.url);

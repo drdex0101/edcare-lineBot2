@@ -9,12 +9,12 @@ import Select from '@mui/material/Select';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import dayjs from 'dayjs';
 
 import { MenuItem, InputLabel, FormControl } from '@mui/material';
 const ApplicationPage = () => {
   const router = useRouter();
   const [selectedDate, setSelectedDate] = useState();
+  const [selectedOptions, setSelectedOptions] = useState([]);
   const handleNextClick = () => {
     router.push('/parent/search'); 
   };
@@ -23,11 +23,21 @@ const ApplicationPage = () => {
     router.push('/parent/create/suddenly'); 
   };
 
+  const handleSwitchChange = (optionId, isChecked) => {
+    setSelectedOptions(prevOptions => {
+      if (isChecked) {
+        return [...prevOptions, optionId];
+      } else {
+        return prevOptions.filter(id => id !== optionId);
+      }
+    });
+  };
+
   return (
     <div style={styles.main}>  
       <div style={styles.header}> 
         <span style={styles.headerFont}>
-          申請成為家長
+          托育資料填寫
         </span>
         <button onClick={handleLastClick} style={styles.lastButton}>
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -45,10 +55,8 @@ const ApplicationPage = () => {
       <div style={{ backgroundColor: 'white', width: '100%',display: 'flex',justifyContent:'center', alignItems: 'center',width: '100%',}}>
         <div style={styles.contentLayout}>
           <div style={styles.rollerLayout}>
-            <div style={styles.roller}></div>
-            <div style={styles.roller}></div>
-            <div style={styles.roller}></div>
-            <div style={styles.roller}></div>
+            <div style={styles.rollerActive}></div>
+            <div style={styles.rollerActive}></div>
             <div style={styles.rollerActive}></div>
           </div>
           <div style={styles.titleLayout}>
@@ -194,7 +202,12 @@ const ApplicationPage = () => {
                 <span>可接送小朋友</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
+                    control={
+                      <IOSSwitch
+                        sx={{ m: 1 }}
+                        onChange={(e) => handleSwitchChange(1, e.target.checked)}
+                      />
+                    }
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -203,7 +216,12 @@ const ApplicationPage = () => {
                 <span>寶寶衣物清洗</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
+                    control={
+                      <IOSSwitch
+                        sx={{ m: 1 }}
+                        onChange={(e) => handleSwitchChange(2, e.target.checked)}
+                      />
+                    }
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -212,7 +230,12 @@ const ApplicationPage = () => {
                 <span>製作副食品</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
+                    control={
+                      <IOSSwitch
+                        sx={{ m: 1 }}
+                        onChange={(e) => handleSwitchChange(3, e.target.checked)}
+                      />
+                    }
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -221,7 +244,12 @@ const ApplicationPage = () => {
                 <span>可遠端查看育兒情形</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
+                    control={
+                      <IOSSwitch
+                        sx={{ m: 1 }}
+                        onChange={(e) => handleSwitchChange(4, e.target.checked)}
+                      />
+                    }
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -230,7 +258,12 @@ const ApplicationPage = () => {
                 <span>可配合不使用3C育兒</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
+                    control={
+                      <IOSSwitch
+                        sx={{ m: 1 }}
+                        onChange={(e) => handleSwitchChange(5, e.target.checked)}
+                      />
+                    }
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -239,12 +272,18 @@ const ApplicationPage = () => {
                 <span>可配合家長外出</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
+                    control={
+                      <IOSSwitch
+                        sx={{ m: 1 }}
+                        onChange={(e) => handleSwitchChange(6, e.target.checked)}
+                      />
+                    }
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
               </div>
             </div>
+
             <TextField
               required
               id="phone-number"

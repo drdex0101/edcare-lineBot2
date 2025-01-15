@@ -66,7 +66,6 @@ const ApplicationPage = () => {
             <span style={styles.smallTitle}>臨時托育</span>
           </div>
           <div style={styles.buttonLayout}>
-            
             <div style={styles.inputField}>
               <input 
                 type="date" 
