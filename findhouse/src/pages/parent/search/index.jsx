@@ -1,11 +1,54 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import Pagination from '../../../components/base/pagenation';
 import SearchBar from '../../../components/base/SearchBar';
+
 const ApplicationPage = () => {
   const router = useRouter();
+  const [nannyInfo, setNannyInfo] = useState([]);
+  const [totalItem, setTotalItem] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0); // Track current page
+  const pageSize = 5;
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchNannyInfoList = async (page = 0, pageSize = 5) => {
+    setIsLoading(true); // Set loading state to true while fetching data
+    try {
+      const response = await fetch(`/api/nanny/getNannyInfoList?page=${page}&pageSize=${pageSize}`, {
+        method: 'GET',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache',
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      setNannyInfo(data.nannies);
+      setTotalItem(data.totalCount); // Set total items for pagination
+    } catch (error) {
+      console.error('Error fetching nanny info:', error);
+    } finally {
+      setIsLoading(false); // Set loading state to false when done fetching
+    }
+  };
+
+  // Log nannyInfo whenever it changes
+  useEffect(() => {
+    console.log(nannyInfo);
+  }, [nannyInfo]);
+
+  useEffect(() => {
+    fetchNannyInfoList(currentPage, pageSize); // Fetch data when the page is loaded or currentPage changes
+  }, [currentPage]);
+
+  const handlePageChange = (page) => {
+    console.log('page:',page)
+    setCurrentPage(page); // Update currentPage when a new page is selected
+  };
 
   const handleNextClick = () => {
     router.push('/parent/create/choose'); // 替换 '/next-page' 为你想要跳转的路径
@@ -16,131 +59,107 @@ const ApplicationPage = () => {
   };
 
   return (
-    <div style={styles.main}>  
-      <div style={styles.header}> 
-        <div style={styles.createInfoLayout} onClick={handleNextClick}>
-            <span style={styles.headerFont}>
-            + 建立托育資料
-            </span>
-        </div>
-        <div style={styles.createButtonLayout}>
-            <div style={styles.iconLayout}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 38 38" fill="none">
-                <rect width="38" height="38" rx="4" fill="#F5E5E5"/>
-                <path d="M26.0231 9C25.2613 9 24.4994 9.29013 23.9179 9.87171L22.6843 11.1053L26.8949 15.3158L28.1284 14.0822C29.2905 12.9201 29.2905 11.0349 28.1284 9.87171C27.5468 9.29013 26.785 9 26.0231 9ZM21.1053 12.6842L9 24.7895V29H13.2106L25.3159 16.8947L21.1053 12.6842Z" fill="#E3838E"/>
-                </svg>
+    <div style={styles.main}>
+      {isLoading ? (
+        <div style={styles.spinner}>Loading...</div>
+      ) : (
+        <>
+          <div style={styles.header}>
+            <div style={styles.createInfoLayout} onClick={handleNextClick}>
+              <span style={styles.headerFont}>
+                + 建立托育資料
+              </span>
             </div>
-            <div style={styles.iconLayout}>
+            <div style={styles.createButtonLayout}>
+              <div style={styles.iconLayout}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 38 38" fill="none">
-                <rect width="38" height="38" rx="4" fill="#F5E5E5"/>
-                <path d="M30.8209 18.2351C29.8547 16.2781 28.4397 14.5436 26.6759 13.1543L29.7079 10.3225L28.2929 9L24.9999 12.0728C23.1772 11.0881 21.1054 10.5776 18.9999 10.5943C11.4999 10.5943 8.05687 16.4419 7.17887 18.2351C7.06101 18.4754 7 18.7366 7 19.0009C7 19.2653 7.06101 19.5265 7.17887 19.7668C8.14501 21.7237 9.56009 23.4583 11.3239 24.8476L8.29287 27.6794L9.70687 29L12.9999 25.9272C14.8225 26.9119 16.8944 27.4224 18.9999 27.4057C26.4999 27.4057 29.9429 21.5581 30.8209 19.7649C30.9385 19.5249 30.9994 19.264 30.9994 19C30.9994 18.736 30.9385 18.4751 30.8209 18.2351ZM12.9999 19C12.998 17.9713 13.2998 16.9621 13.8721 16.0832C14.4445 15.2043 15.2652 14.4899 16.244 14.0183C17.2229 13.5468 18.322 13.3364 19.4206 13.4104C20.5191 13.4844 21.5745 13.8398 22.4709 14.4376L21.0189 15.7937C20.4093 15.4504 19.7117 15.2674 18.9999 15.2641C17.939 15.2641 16.9216 15.6577 16.1714 16.3583C15.4213 17.0589 14.9999 18.0092 14.9999 19C15.0034 19.6648 15.1993 20.3164 15.5669 20.8857L14.1149 22.2418C13.3898 21.2965 12.9999 20.1628 12.9999 19ZM18.9999 24.6038C17.7548 24.6038 16.541 24.2396 15.5289 23.5624L16.9809 22.2063C17.5904 22.5496 18.2881 22.7326 18.9999 22.7359C20.0607 22.7359 21.0782 22.3423 21.8283 21.6417C22.5784 20.941 22.9999 19.9908 22.9999 19C22.9964 18.3352 22.8005 17.6836 22.4329 17.1143L23.8849 15.7582C24.5249 16.5953 24.9055 17.5811 24.9847 18.6071C25.0639 19.6331 24.8386 20.6596 24.3338 21.5739C23.8289 22.4881 23.0639 23.2546 22.1229 23.7891C21.1819 24.3237 20.1013 24.6056 18.9999 24.6038Z" fill="#E3838E"/>
+                  <rect width="38" height="38" rx="4" fill="#F5E5E5"/>
+                  <path d="M26.0231 9C25.2613 9 24.4994 9.29013 23.9179 9.87171L22.6843 11.1053L26.8949 15.3158L28.1284 14.0822C29.2905 12.9201 29.2905 11.0349 28.1284 9.87171C27.5468 9.29013 26.785 9 26.0231 9ZM21.1053 12.6842L9 24.7895V29H13.2106L25.3159 16.8947L21.1053 12.6842Z" fill="#E3838E"/>
                 </svg>
+              </div>
+              <div style={styles.iconLayout}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 38 38" fill="none">
+                  <rect width="38" height="38" rx="4" fill="#F5E5E5"/>
+                  <path d="M30.8209 18.2351C29.8547 16.2781 28.4397 14.5436 26.6759 13.1543L29.7079 10.3225L28.2929 9L24.9999 12.0728C23.1772 11.0881 21.1054 10.5776 18.9999 10.5943C11.4999 10.5943 8.05687 16.4419 7.17887 18.2351C7.06101 18.4754 7 18.7366 7 19.0009C7 19.2653 7.06101 19.5265 7.17887 19.7668C8.14501 21.7237 9.56009 23.4583 11.3239 24.8476L8.29287 27.6794L9.70687 29L12.9999 25.9272C14.8225 26.9119 16.8944 27.4224 18.9999 27.4057C26.4999 27.4057 29.9429 21.5581 30.8209 19.7649C30.9385 19.5249 30.9994 19.264 30.9994 19C30.9994 18.736 30.9385 18.4751 30.8209 18.2351ZM12.9999 19C12.998 17.9713 13.2998 16.9621 13.8721 16.0832C14.4445 15.2043 15.2652 14.4899 16.244 14.0183C17.2229 13.5468 18.322 13.3364 19.4206 13.4104C20.5191 13.4844 21.5745 13.8398 22.4709 14.4376L21.0189 15.7937C20.4093 15.4504 19.7117 15.2674 18.9999 15.2641C17.939 15.2641 16.9216 15.6577 16.1714 16.3583C15.4213 17.0589 14.9999 18.0092 14.9999 19C15.0034 19.6648 15.1993 20.3164 15.5669 20.8857L14.1149 22.2418C13.3898 21.2965 12.9999 20.1628 12.9999 19ZM18.9999 24.6038C17.7548 24.6038 16.541 24.2396 15.5289 23.5624L16.9809 22.2063C17.5904 22.5496 18.2881 22.7326 18.9999 22.7359C20.0607 22.7359 21.0782 22.3423 21.8283 21.6417C22.5784 20.941 22.9999 19.9908 22.9999 19C22.9964 18.3352 22.8005 17.6836 22.4329 17.1143L23.8849 15.7582C24.5249 16.5953 24.9055 17.5811 24.9847 18.6071C25.0639 19.6331 24.8386 20.6596 24.3338 21.5739C23.8289 22.4881 23.0639 23.2546 22.1229 23.7891C21.1819 24.3237 20.1013 24.6056 18.9999 24.6038Z" fill="#E3838E"/>
+                </svg>
+              </div>
             </div>
-        </div>
-      </div>
-      <div style={{ backgroundColor: 'white', width: '100%',display:'flex',alignItems:'center',flexDirection:'column' }}>
-        <div style={styles.contentLayout}>
-            <div style={styles.rollerLayout}>
-              <div style={styles.searchInput}>
+          </div>
+          <div style={{ backgroundColor: 'white', width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
+            <div style={styles.contentLayout}>
+              <div style={styles.rollerLayout}>
+                <div style={styles.searchInput}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path d="M8.94286 3C10.519 3 12.0306 3.62612 13.1451 4.74062C14.2596 5.85512 14.8857 7.36671 14.8857 8.94286C14.8857 10.4149 14.3463 11.768 13.4594 12.8103L13.7063 13.0571H14.4286L19 17.6286L17.6286 19L13.0571 14.4286V13.7063L12.8103 13.4594C11.768 14.3463 10.4149 14.8857 8.94286 14.8857C7.36671 14.8857 5.85512 14.2596 4.74062 13.1451C3.62612 12.0306 3 10.519 3 8.94286C3 7.36671 3.62612 5.85512 4.74062 4.74062C5.85512 3.62612 7.36671 3 8.94286 3ZM8.94286 4.82857C6.65714 4.82857 4.82857 6.65714 4.82857 8.94286C4.82857 11.2286 6.65714 13.0571 8.94286 13.0571C11.2286 13.0571 13.0571 11.2286 13.0571 8.94286C13.0571 6.65714 11.2286 4.82857 8.94286 4.82857Z" fill="#999999"/>
+                    <path d="M8.94286 3C10.519 3 12.0306 3.62612 13.1451 4.74062C14.2596 5.85512 14.8857 7.36671 14.8857 8.94286C14.8857 10.4149 14.3463 11.768 13.4594 12.8103L13.7063 13.0571H14.4286L19 17.6286L17.6286 19L13.0571 14.4286V13.7063L12.8103 13.4594C11.768 14.3463 10.4149 14.8857 8.94286 14.8857C7.36671 14.8857 5.85512 14.2596 4.74062 13.1451C3.62612 12.0306 3 10.519 3 8.94286C3 7.36671 3.62612 5.85512 4.74062 4.74062C5.85512 3.62612 7.36671 3 8.94286 3ZM8.94286 4.82857C6.65714 4.82857 4.82857 6.65714 4.82857 8.94286C4.82857 11.2286 6.65714 13.0571 8.94286 13.0571C11.2286 13.0571 13.0571 11.2286 13.0571 8.94286C13.0571 6.65714 11.2286 4.82857 8.94286 4.82857Z" fill="#999999"/>
                   </svg>
                   <input style={{ border: 'none' }}></input>
+                </div>
+                <SearchBar></SearchBar>
               </div>
-              <SearchBar></SearchBar>
+              <div style={styles.titleLayout}>
+              </div>
             </div>
-            <div style={styles.titleLayout}>
+            <div style={{ backgroundColor: '#f8ecec', width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
+              <div style={styles.nannyItemLayout}>
+                {nannyInfo.map((nanny, index) => (
+                  <div 
+                    key={index} 
+                    style={styles.nannyItem} 
+                    onClick={() => {
+                      if (nanny.id) {
+                        router.push(`/nanny/profile/${nanny.id}`);
+                      } else {
+                        console.error('Nanny ID not found');
+                      }
+                    }}
+                  >
+                    <div style={styles.rightPart}>
+                      <div>
+                        <img src={nanny.image || '/nannyIcon.jpg'} style={styles.nannyIcon} alt="Nanny Icon" />
+                      </div>
+                      <div style={styles.nannyFontLayout}>
+                        <div style={styles.nannyNameFont}>{nanny.name}</div>
+                        <div style={styles.nannySubInfo}>{nanny.experience} 托育經驗</div>
+                      </div>
+                    </div>
+                    <div style={styles.scoreLayout}>
+                      <span style={styles.scoreFont}>{nanny.rating}</span>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
+                        <g clip-path="url(#clip0_75_7187)">
+                          <path d="M12 0.5C5.38 0.5 0 5.88 0 12.5C0 19.12 5.38 24.5 12 24.5C18.62 24.5 24 19.12 24 12.5C24 5.88 18.62 0.5 12 0.5ZM17.17 12.12L15 13.89L15.9 16.62C16.02 16.99 15.9 17.4 15.59 17.63C15.28 17.87 14.86 17.88 14.53 17.67L12.01 16.03L9.53 17.69C9.38 17.79 9.2 17.84 9.02 17.84C8.83 17.84 8.63 17.78 8.47 17.66C8.16 17.43 8.03 17.02 8.15 16.65L9.01 13.89L6.83 12.12C6.54 11.87 6.43 11.47 6.56 11.11C6.69 10.75 7.04 10.51 7.42 10.51H10.17L11.14 7.9C11.27 7.54 11.62 7.3 12 7.3C12.38 7.3 12.73 7.54 12.86 7.9L13.83 10.51H16.58C16.96 10.51 17.31 10.75 17.44 11.11C17.57 11.47 17.46 11.88 17.17 12.13V12.12Z" fill="#FFD22F"/>
+                        </g>
+                        <defs>
+                          <clipPath id="clip0_75_7187">
+                            <rect width="24" height="24" fill="white" transform="translate(0 0.5)"/>
+                          </clipPath>
+                        </defs>
+                      </svg>
+                    </div>
+                  </div>
+                ))}
+               <Pagination
+                    totalItems={totalItem}
+                    pageSize={pageSize}
+                    currentPage={currentPage}
+                    onPageChange={handlePageChange}
+                    fetchNannyInfoList={fetchNannyInfoList}
+                  />
+              </div>
             </div>
-        </div>
-        <div style={{ backgroundColor: '#f8ecec', width: '100%',display:'flex',alignItems:'center',flexDirection:'column'}}>
-        <div style={styles.nannyItemLayout}>
-            <div style={styles.nannyItem}  onClick={() => router.push('/nanny/profile')}>
-                <div style={styles.rightPart}>
-                    <div>
-                        <img src='/nannyIcon.jpg' style={styles.nannyIcon}></img>
-                    </div>
-                    <div style={styles.nannyFontLayout}>
-                        <div style={styles.nannyNameFont}>王保母</div>
-                        <div style={styles.nannySubInfo}>6年 3 月 托育經驗</div>
-                    </div>
-                </div>
-                <div style={styles.scoreLayout}>
-                    <span style={styles.scoreFont}>4.8</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
-                    <g clip-path="url(#clip0_75_7187)">
-                        <path d="M12 0.5C5.38 0.5 0 5.88 0 12.5C0 19.12 5.38 24.5 12 24.5C18.62 24.5 24 19.12 24 12.5C24 5.88 18.62 0.5 12 0.5ZM17.17 12.12L15 13.89L15.9 16.62C16.02 16.99 15.9 17.4 15.59 17.63C15.28 17.87 14.86 17.88 14.53 17.67L12.01 16.03L9.53 17.69C9.38 17.79 9.2 17.84 9.02 17.84C8.83 17.84 8.63 17.78 8.47 17.66C8.16 17.43 8.03 17.02 8.15 16.65L9.01 13.89L6.83 12.12C6.54 11.87 6.43 11.47 6.56 11.11C6.69 10.75 7.04 10.51 7.42 10.51H10.17L11.14 7.9C11.27 7.54 11.62 7.3 12 7.3C12.38 7.3 12.73 7.54 12.86 7.9L13.83 10.51H16.58C16.96 10.51 17.31 10.75 17.44 11.11C17.57 11.47 17.46 11.88 17.17 12.13V12.12Z" fill="#FFD22F"/>
-                    </g>
-                    <defs>
-                        <clipPath id="clip0_75_7187">
-                        <rect width="24" height="24" fill="white" transform="translate(0 0.5)"/>
-                        </clipPath>
-                    </defs>
-                    </svg>
-                </div>
-            </div>
-            <div style={styles.nannyItem}  onClick={() => router.push('/nanny/profile')}>
-                <div style={styles.rightPart}>
-                    <div>
-                        <img src='/nannyIcon.jpg' style={styles.nannyIcon}></img>
-                    </div>
-                    <div style={styles.nannyFontLayout}>
-                        <div style={styles.nannyNameFont}>王保母</div>
-                        <div style={styles.nannySubInfo}>6年 3 月 托育經驗</div>
-                    </div>
-                </div>
-                <div style={styles.scoreLayout}>
-                    <span style={styles.scoreFont}>4.8</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
-                    <g clip-path="url(#clip0_75_7187)">
-                        <path d="M12 0.5C5.38 0.5 0 5.88 0 12.5C0 19.12 5.38 24.5 12 24.5C18.62 24.5 24 19.12 24 12.5C24 5.88 18.62 0.5 12 0.5ZM17.17 12.12L15 13.89L15.9 16.62C16.02 16.99 15.9 17.4 15.59 17.63C15.28 17.87 14.86 17.88 14.53 17.67L12.01 16.03L9.53 17.69C9.38 17.79 9.2 17.84 9.02 17.84C8.83 17.84 8.63 17.78 8.47 17.66C8.16 17.43 8.03 17.02 8.15 16.65L9.01 13.89L6.83 12.12C6.54 11.87 6.43 11.47 6.56 11.11C6.69 10.75 7.04 10.51 7.42 10.51H10.17L11.14 7.9C11.27 7.54 11.62 7.3 12 7.3C12.38 7.3 12.73 7.54 12.86 7.9L13.83 10.51H16.58C16.96 10.51 17.31 10.75 17.44 11.11C17.57 11.47 17.46 11.88 17.17 12.13V12.12Z" fill="#FFD22F"/>
-                    </g>
-                    <defs>
-                        <clipPath id="clip0_75_7187">
-                        <rect width="24" height="24" fill="white" transform="translate(0 0.5)"/>
-                        </clipPath>
-                    </defs>
-                    </svg>
-                </div>
-            </div>
-            <div style={styles.nannyItem}  onClick={() => router.push('/nanny/profile')}>
-                <div style={styles.rightPart}>
-                    <div>
-                        <img src='/nannyIcon.jpg' style={styles.nannyIcon}></img>
-                    </div>
-                    <div style={styles.nannyFontLayout}>
-                        <div style={styles.nannyNameFont}>王保母</div>
-                        <div style={styles.nannySubInfo}>6年 3 月 托育經驗</div>
-                    </div>
-                </div>
-                <div style={styles.scoreLayout}>
-                    <span style={styles.scoreFont}>4.8</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
-                    <g clip-path="url(#clip0_75_7187)">
-                        <path d="M12 0.5C5.38 0.5 0 5.88 0 12.5C0 19.12 5.38 24.5 12 24.5C18.62 24.5 24 19.12 24 12.5C24 5.88 18.62 0.5 12 0.5ZM17.17 12.12L15 13.89L15.9 16.62C16.02 16.99 15.9 17.4 15.59 17.63C15.28 17.87 14.86 17.88 14.53 17.67L12.01 16.03L9.53 17.69C9.38 17.79 9.2 17.84 9.02 17.84C8.83 17.84 8.63 17.78 8.47 17.66C8.16 17.43 8.03 17.02 8.15 16.65L9.01 13.89L6.83 12.12C6.54 11.87 6.43 11.47 6.56 11.11C6.69 10.75 7.04 10.51 7.42 10.51H10.17L11.14 7.9C11.27 7.54 11.62 7.3 12 7.3C12.38 7.3 12.73 7.54 12.86 7.9L13.83 10.51H16.58C16.96 10.51 17.31 10.75 17.44 11.11C17.57 11.47 17.46 11.88 17.17 12.13V12.12Z" fill="#FFD22F"/>
-                    </g>
-                    <defs>
-                        <clipPath id="clip0_75_7187">
-                        <rect width="24" height="24" fill="white" transform="translate(0 0.5)"/>
-                        </clipPath>
-                    </defs>
-                    </svg>
-                </div>
-            </div>
-            <Pagination></Pagination>
           </div>
-        </div>
-      </div>
+        </>
+      )}
     </div>
   );
 };
 
 const styles = {
-profilePic: {
-        width: '80px',
-        height: '80px',
-        borderRadius: '50%',
-        marginBottom: '10px'
-      },
+  profilePic: {
+    width: '80px',
+    height: '80px',
+    borderRadius: '50%',
+    marginBottom: '10px'
+  },
   nextBtn: {
     padding: '10px 20px',
     backgroundColor: 'var(---Primary-Primary, #E3838E)',
@@ -438,6 +457,14 @@ profilePic: {
     background:'var(---Primary-Primary, #F3CCD4)',
     border:'none',
     borderRadius:'12px'
+  },
+  spinner: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100vh',
+    fontSize: '24px',
+    color: '#E3838E',
   },
 };
 

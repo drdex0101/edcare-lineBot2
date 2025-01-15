@@ -1,53 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import ServiceSchedule from '../../components/base/ServiceSchedule';
-import { useParams } from 'react-router-dom';
-
+import React, { useState } from 'react';
+import ServiceSchedule from '../../../components/base/ServiceSchedule';
 export default function ProfilePage() {
-  const { id } = useParams();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [nannyInfo, setNannyInfo] = useState('');
-  const [images, setImages] = useState([]);
-
-  useEffect(() => {
-    fetchNannyInfo();
-  }, []);
-
-  const fetchNannyInfo = async () => {
-    setIsLoading(true); // Set loading state to true while fetching data
-    try {
-      const response = await fetch(`/api/nanny/getNannyInfo/${id}`, {
-        method: 'GET',
-        headers: {
-          'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache',
-        },
-      });
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const data = await response.json();
-      setNannyInfo(data.nannies);
-      setTotalItem(data.totalCount); // Set total items for pagination
-    } catch (error) {
-      console.error('Error fetching nanny info:', error);
-    } finally {
-      setIsLoading(false); // Set loading state to false when done fetching
-    }
-  };
-
-  // 處理下一張圖片
-  const handleNextImage = () => {
-    setCurrentImageIndex((prevIndex) =>
-      prevIndex === images.length - 1 ? 0 : prevIndex + 1
-    );
-  };
-
-  // 處理上一張圖片
-  const handlePrevImage = () => {
-    setCurrentImageIndex((prevIndex) =>
-      prevIndex === 0 ? images.length - 1 : prevIndex - 1
-    );
-  };
+  // 圖片數組，可以替換成你想要展示的圖片路徑
+  const images = [
+    '/static/image1.jpg',
+    '/static/image2.jpg',
+    '/static/image3.jpg',
+  ];
 
   // 處理點擊圓點來跳轉到對應圖片
   const handleDotClick = (index) => {
