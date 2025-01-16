@@ -7,7 +7,8 @@ export default async function handler(req, res) {
         nannyId,          // 用作 memberId
         weekdays,
         scenario,
-        careTime
+        careTime,
+        idType
     } = req.body;
 
     const client = new Client({
@@ -35,7 +36,7 @@ export default async function handler(req, res) {
         weekdays,
         scenario,
         careTime,
-        'nanny'
+        idType
       ];
       
       const result = await client.query(query, values);

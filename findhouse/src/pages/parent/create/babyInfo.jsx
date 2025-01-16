@@ -15,12 +15,42 @@ const ApplicationPage = () => {
   const router = useRouter();
   const [selectedDate, setSelectedDate] = useState();
   const [selectedOptions, setSelectedOptions] = useState([]);
+  const [babyName, setBabyName] = useState('');
+  const [babyGender, setBabyGender] = useState('');
+  const [babyBirthOrder, setBabyBirthOrder] = useState('');
+  const [babyHope, setBabyHope] = useState('');
   const handleNextClick = () => {
+    createBabyRecord();
     router.push('/parent/search'); 
   };
 
   const handleLastClick = () => {
     router.push('/parent/create/suddenly'); 
+  };
+
+  const createBabyRecord = async () => {
+    const response = await fetch('/api/order/createOrder', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        parentid: '',
+        nannyid: '',
+        status: 'created',
+        choosetype: localStorage.getItem('choosetype'),
+        orderstatus: 'on',
+        caretypeid: localStorage.getItem('careTypeId'),
+        nickname: babyName,
+        gender: babyGender,
+        birthday: selectedDate,
+        rank: babyBirthOrder,
+        hope: selectedOptions,
+        intro: babyHope,
+        isshow: true,
+        created_by: localStorage.getItem('account'),
+      })
+    });
   };
 
   const handleSwitchChange = (optionId, isChecked) => {
@@ -31,6 +61,20 @@ const ApplicationPage = () => {
         return prevOptions.filter(id => id !== optionId);
       }
     });
+  };
+
+  const handleDateChange = (newValue) => {
+    if (newValue) {
+      const today = new Date();
+      const birthDate = new Date(newValue);
+      const age = today.getFullYear() - birthDate.getFullYear();
+
+      if (age >= 12) {
+        alert('孩童年齡不能超過12歲');
+        return;
+      }
+    }
+    setSelectedDate(newValue);
   };
 
   return (
@@ -69,6 +113,7 @@ const ApplicationPage = () => {
               id="name"
               label="孩童暱稱"
               variant="outlined"
+              onChange={(e) => setBabyName(e.target.value)}
               InputProps={{
                 sx: {
                   padding: '0px 16px',
@@ -99,6 +144,8 @@ const ApplicationPage = () => {
                 labelId="gender-label"
                 id="gender"
                 label="性別"
+                value={babyGender}
+                onChange={(e) => setBabyGender(e.target.value)}
                 InputProps={{
                   sx: {
                     padding: '0px 16px',
@@ -131,7 +178,7 @@ const ApplicationPage = () => {
               <DatePicker
                 label="生日"
                 value={selectedDate}
-                onChange={(newValue) => setSelectedDate(newValue)}
+                onChange={handleDateChange}
                 renderInput={(params) => <TextField {...params} />}
                 disableFuture
                 shouldDisableDate={(date) => date.day() === 0 || date.day() === 6} // 禁用週末
@@ -167,7 +214,8 @@ const ApplicationPage = () => {
                 labelId="gender-label"
                 id="gender"
                 label="胎別"
-                defaultValue=""
+                value={babyBirthOrder}
+                onChange={(e) => setBabyBirthOrder(e.target.value)}
                 InputProps={{
                   sx: {
                     padding: '0px 16px',
@@ -192,8 +240,11 @@ const ApplicationPage = () => {
                   backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)',
                 }}
               >
-                <MenuItem value="male">第一胎</MenuItem>
-                <MenuItem value="female">第二胎</MenuItem>
+                <MenuItem value="1">第一胎</MenuItem>
+                <MenuItem value="2">第二胎</MenuItem>
+                <MenuItem value="3">第三胎</MenuItem>
+                <MenuItem value="4">第四胎</MenuItem>
+                <MenuItem value="5">第五胎</MenuItem>
               </Select>
             </FormControl>
               
@@ -290,6 +341,8 @@ const ApplicationPage = () => {
               variant="outlined"
               label="托育理念"
               multiline
+              value={babyHope}
+              onChange={(e) => setBabyHope(e.target.value)}
               rows={4}
               maxRows={4}
               InputProps={{

@@ -19,3 +19,5 @@ CREATE TABLE orderInfo (
     CONSTRAINT chk_chooseType CHECK (chooseType IN ('長期', '臨時')),       -- 托育型別限制
     CONSTRAINT chk_orderStatus CHECK (orderStatus IN ('上架', '下架'))     -- 上架狀態限制
 );
+
+ALTER TABLE orderInfo ADD COLUMN created_by VARCHAR(50);

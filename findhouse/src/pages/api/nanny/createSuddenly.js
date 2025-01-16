@@ -9,7 +9,8 @@ export default async function handler(req, res) {
         endDate,
         scenario,
         location,
-        careTime
+        careTime,
+        idType
     } = req.body;
 
     const client = new Client({
@@ -39,7 +40,7 @@ export default async function handler(req, res) {
         scenario,
         location,
         careTime,
-        'nanny'
+        idType
       ];
       
       const result = await client.query(query, values);

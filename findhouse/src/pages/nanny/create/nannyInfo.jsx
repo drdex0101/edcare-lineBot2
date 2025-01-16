@@ -163,7 +163,8 @@ const ApplicationPage = () => {
         nannyId: nannyId,
         weekdays: weekdaysArray, // 使用轉換後的數組
         scenario: localStorage.getItem('careScenario'),
-        careTime: localStorage.getItem('longTermCareTime')
+        careTime: localStorage.getItem('longTermCareTime'),
+        idType: 'nanny'
       })
     });
 
@@ -186,7 +187,8 @@ const ApplicationPage = () => {
         endDate: localStorage.getItem('suddsuddenlyEndDate'),
         scenario: selectedCareType,
         location: address,
-        careTime: ''
+        careTime: '',
+        idType: 'nanny'
       })
     });
 

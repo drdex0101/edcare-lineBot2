@@ -3,7 +3,7 @@ import { Client } from 'pg';
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     console.log('req.body', req.body);
-    const { account, phoneNumber, email, job, parentid, nannyid, status, choosetype, orderstatus, caretypeid, nickname, gender, birthday, rank, hope, intro, isshow } = req.body;
+    const {parentid, nannyid, status, choosetype, orderstatus, caretypeid, nickname, gender, birthday, rank, hope, intro, isshow, created_by } = req.body;
 
     // 創建 PostgreSQL 客戶端
     const client = new Client({
@@ -16,15 +16,13 @@ export default async function handler(req, res) {
     try {
       // 連接資料庫
       await client.connect();
-
       // 使用參數化查詢插入資料
       const query = `
-        INSERT INTO member (account, cellphone, email, job, parentid, nannyid, status, created_ts, update_ts, choosetype, orderstatus, caretypeid, nickname, gender, birthday, rank, hope, intro, isshow)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW(), $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
-        RETURNING *;
+        INSERT INTO orderinfo (parentid, nannyid, status, created_ts, update_ts, choosetype, orderstatus, caretypeid, nickname, gender, birthday, rank, hope, intro, isshow,created_by)
+        VALUES ($1, $2, $3, NOW(), NOW(), $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
       `;
       console.log(query);
-      const values = [account, phoneNumber, email, job, parentid, nannyid, status, choosetype, orderstatus, caretypeid, nickname, gender, birthday, rank, hope, intro, isshow];
+      const values = [parentid, nannyid, status, choosetype, orderstatus, caretypeid, nickname, gender, birthday, rank, hope, intro, isshow, created_by];
       const result = await client.query(query, values);
 
       console.log('Member created successfully:', result.rows[0]);

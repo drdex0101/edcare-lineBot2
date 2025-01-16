@@ -4,10 +4,6 @@ import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import Select from '@mui/material/Select';
 import CalendarRangePicker from '../../../components/base/CalendarRangePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs from 'dayjs';
 
 import { MenuItem, InputLabel, FormControl } from '@mui/material';
 
@@ -15,20 +11,46 @@ const ApplicationPage = () => {
   const router = useRouter();
 
   const handleNextClick = () => {
-    localStorage.setItem('suddenlyStartDate', selectedRange.startDate?.toISOString());
-    localStorage.setItem('suddenlyEndDate', selectedRange.endDate?.toISOString());
-    
+    createSuddenlyRecord();
+    localStorage.setItem('careTypeId', data.id);
+    localStorage.setItem('choosetype','suddenly');
     router.push('/parent/create/babyInfo'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   const [selectedRange, setSelectedRange] = React.useState({ startDate: null, endDate: null });
-
+  const [selectedCareType, setSelectedCareType] = React.useState('');
+  const [selectedAddress, setSelectedAddress] = React.useState('');
+  const [data, setData] = React.useState('');
   // 添加 parseDate 函數定義
   const parseDate = (dateString) => {
     if (!dateString) return null;
     return new Date(dateString);
   };
 
+  const createSuddenlyRecord = async () => {
+    const response = await fetch('/api/nanny/createSuddenly', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        orderId: '',
+        startDate: selectedRange.startDate,
+        endDate: selectedRange.endDate,
+        scenario: selectedCareType,
+        location: selectedAddress,
+        careTime: '',
+        idType: 'parent'
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to insert data into suddenly table');
+    }
+    const data = await response.json();
+    setData(data.suddenly);
+    return response.json();
+  };
 
   const handleLastClick = () => {
     router.push('/parent/create/'); // 替换 '/next-page' 为你想要跳转的路径
@@ -64,50 +86,15 @@ const ApplicationPage = () => {
       <div style={{ backgroundColor: 'white', width: '100%',display: 'flex',justifyContent:'center', alignItems: 'center',width: '100%',}}>
         <div style={styles.contentLayout}>
           <div style={styles.rollerLayout}>
+            <div style={styles.rollerActive}></div>
+            <div style={styles.rollerActive}></div>
             <div style={styles.roller}></div>
-            <div style={styles.rollerActive}></div>
-            <div style={styles.rollerActive}></div>
           </div>
           <div style={styles.titleLayout}>
             <span style={styles.subTitle}>托育資料填寫</span>
             <span style={styles.smallTitle}>臨時托育</span>
           </div>
           <div style={styles.buttonLayout}>
-          <FormControl>
-              <InputLabel id="gender-label">托育時間</InputLabel>
-              <Select
-                required
-                labelId="gender-label"
-                id="gender"
-                label="選擇情境"
-                defaultValue=""
-                InputProps={{
-                  sx: {
-                    padding: '0px 16px',
-                    borderRadius: '8px',
-                    backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
-                  },
-                }}
-                sx={{
-                  alignSelf: 'stretch',
-                  borderRadius: '8px',
-                  '& .MuiOutlinedInput-root': {
-                      '& fieldset': {
-                          borderColor: 'var(--OutLine-OutLine, #78726D)',
-                      },
-                      '&:hover fieldset': {
-                          borderColor: '#E3838E',
-                      },
-                      '&.Mui-focused fieldset': {
-                          borderColor: '#E3838E',
-                      },
-                  },
-                  backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)',
-                }}
-              >
-                <MenuItem value="male">全日</MenuItem>
-              </Select>
-            </FormControl>
             <div style={styles.buttonLayout}>
             <div style={styles.inputField}>
               <input 
@@ -152,6 +139,7 @@ const ApplicationPage = () => {
                 labelId="gender-label"
                 id="gender"
                 label="選擇情境"
+                onChange={(e) => setSelectedCareType(e.target.value)}
                 defaultValue=""
                 InputProps={{
                   sx: {
@@ -188,6 +176,7 @@ const ApplicationPage = () => {
                 id="gender"
                 label="定點選擇"
                 defaultValue=""
+                onChange={(e) => setSelectedAddress(e.target.value)}
                 InputProps={{
                   sx: {
                     padding: '0px 16px',
@@ -212,7 +201,7 @@ const ApplicationPage = () => {
                   backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)',
                 }}
               >
-                <MenuItem value="center" sx={{color:'#410002'}}>雲林縣私立蓁心托嬰中心</MenuItem>
+                <MenuItem value="雲林縣私立蓁心托嬰中心" sx={{color:'#410002'}}>雲林縣私立蓁心托嬰中心</MenuItem>
               </Select>
             </FormControl>
           </div>
