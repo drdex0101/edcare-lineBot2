@@ -324,7 +324,6 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    marginBottom:'28px',
     backgroundColor: '#f8ecec',
     height:'100vh'
   },

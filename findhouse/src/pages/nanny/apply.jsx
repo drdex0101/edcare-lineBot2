@@ -21,6 +21,23 @@ const ApplicationPage = () => {
       email: document.getElementById('email').value,
       job: "保母"
     };
+
+    // 驗證手機號碼格式（假設為台灣的手機號碼格式）
+    const phonePattern = /^09\d{8}$/;
+    if (!phonePattern.test(memberData.phoneNumber)) {
+      console.error('Invalid phone number format:', memberData.phoneNumber);
+      alert('請輸入有效的手機號碼（例如：0912345678）。');
+      return; // 終止函數執行
+    }
+
+    // 驗證電子郵件格式
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(memberData.email)) {
+      console.error('Invalid email format:', memberData.email);
+      alert('請輸入有效的電子郵件地址。');
+      return; // 終止函數執行
+    }
+
     try {
       const response = await axios.post('/api/member/createMember', memberData);
       console.log('Member created:', response.data);
@@ -82,6 +99,7 @@ const ApplicationPage = () => {
                   <TextField
                     id="account"
                     label="帳號名稱"
+                    placeholder="a123456"
                     variant="outlined"
                     InputProps={{
                       sx: {
@@ -111,6 +129,7 @@ const ApplicationPage = () => {
                     id="cellphone"
                     label="常用電話"
                     variant="outlined"
+                    placeholder="0912345678"
                     InputProps={{
                       sx: {
                         padding: '0px 16px',
@@ -139,6 +158,7 @@ const ApplicationPage = () => {
                     id="email"
                     label="聯絡信箱"
                     variant="outlined"
+                    placeholder="apple@gmail.com"
                     InputProps={{
                       sx: {
                         padding: '0px 16px',

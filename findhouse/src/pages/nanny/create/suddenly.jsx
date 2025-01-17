@@ -217,7 +217,6 @@ const styles = {
     alignItems: 'center',
     height: '100vh', // 占满整个视口高度
     backgroundColor: '#f8ecec',
-    marginBottom:'28px'
   },
   header: {
     display: 'flex',

@@ -280,12 +280,11 @@ const ApplicationPage = () => {
 
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
-                    label="出生日期"
+                    label="生日"
                     value={selectedDate}
                     onChange={(newValue) => setSelectedDate(newValue)}
                     renderInput={(params) => <TextField {...params} />}
                     disableFuture
-                    shouldDisableDate={(date) => date.day() === 0 || date.day() === 6} // 禁用週末
                     InputProps={{
                       sx: {
                         padding: '0px 16px',
