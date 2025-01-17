@@ -35,9 +35,9 @@ const ApplicationPage = () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        parentid: '',
+        parentLineId: request.cookies.get('userId'),
         nannyid: '',
-        status: 'created',
+        status: 'create',
         choosetype: localStorage.getItem('choosetype'),
         orderstatus: 'on',
         caretypeid: localStorage.getItem('careTypeId'),

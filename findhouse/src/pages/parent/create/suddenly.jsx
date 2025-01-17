@@ -10,17 +10,15 @@ import { MenuItem, InputLabel, FormControl } from '@mui/material';
 const ApplicationPage = () => {
   const router = useRouter();
 
-  const handleNextClick = () => {
-    createSuddenlyRecord();
-    localStorage.setItem('careTypeId', data.id);
-    localStorage.setItem('choosetype','suddenly');
+  const handleNextClick = async () => {
+    await createSuddenlyRecord();
     router.push('/parent/create/babyInfo'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   const [selectedRange, setSelectedRange] = React.useState({ startDate: null, endDate: null });
   const [selectedCareType, setSelectedCareType] = React.useState('');
   const [selectedAddress, setSelectedAddress] = React.useState('');
-  const [data, setData] = React.useState('');
+  const [orderData, setData] = React.useState('');
   // 添加 parseDate 函數定義
   const parseDate = (dateString) => {
     if (!dateString) return null;
@@ -28,7 +26,7 @@ const ApplicationPage = () => {
   };
 
   const createSuddenlyRecord = async () => {
-    const response = await fetch('/api/nanny/createSuddenly', {
+    const response = await fetch('/api/base/createSuddenly', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -49,7 +47,9 @@ const ApplicationPage = () => {
     }
     const data = await response.json();
     setData(data.suddenly);
-    return response.json();
+    console.log(data.suddenly);
+    localStorage.setItem('careTypeId', data.suddenly.id);
+    localStorage.setItem('choosetype','suddenly');
   };
 
   const handleLastClick = () => {

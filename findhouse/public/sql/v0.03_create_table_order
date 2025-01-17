@@ -1,6 +1,6 @@
 CREATE TABLE orderInfo (
     id BIGSERIAL PRIMARY KEY,                  -- 流水號 (主鍵，自動遞增)
-    parentId BIGINT NOT NULL,                  -- 家長 ID (只有家長可建立訂單)
+    parentLineId VARCHAR,                  -- 家長 ID (只有家長可建立訂單)
     nannyId BIGINT,                            -- 保母 ID (可為 NULL)
     status VARCHAR(20) NOT NULL,               -- 訂單狀態
     created_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 建立時間
@@ -15,9 +15,8 @@ CREATE TABLE orderInfo (
     hope TEXT[],                               -- 期望 (使用陣列型態存放多個值)
     intro TEXT,                                -- 托育理念
     isShow BOOLEAN DEFAULT TRUE,               -- 是否公開 (預設為公開)
-    CONSTRAINT chk_status CHECK (status IN ('已成立', '已取消', '已完成')), -- 訂單狀態限制
-    CONSTRAINT chk_chooseType CHECK (chooseType IN ('長期', '臨時')),       -- 托育型別限制
-    CONSTRAINT chk_orderStatus CHECK (orderStatus IN ('上架', '下架'))     -- 上架狀態限制
+    created_by VARCHAR(50),
+    CONSTRAINT chk_status CHECK (status IN ('create', 'cancel', 'finish')), -- 訂單狀態限制
+    CONSTRAINT chk_chooseType CHECK (chooseType IN ('longTern', 'suddenly')),       -- 托育型別限制
+    CONSTRAINT chk_orderStatus CHECK (orderStatus IN ('on', 'off'))     -- 上架狀態限制
 );
-
-ALTER TABLE orderInfo ADD COLUMN created_by VARCHAR(50);

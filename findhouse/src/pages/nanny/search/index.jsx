@@ -8,7 +8,6 @@ import SearchBar from '../../../components/base/SearchBar';
 const ApplicationPage = () => {
   const router = useRouter();
   const [nannyInfo, setNannyInfo] = useState([]);
-  const [orderInfo, setOrderInfo] = useState([]);
   const [totalItem, setTotalItem] = useState(0);
   const [currentPage, setCurrentPage] = useState(0); // Track current page
   const pageSize = 5;
@@ -37,69 +36,14 @@ const ApplicationPage = () => {
     }
   };
 
-  const fetchOrderInfo = async () => {
-    setIsLoading(true); // 設置加載狀態為 true，表示正在請求資料
-    let userId = null;
+  // Log nannyInfo whenever it changes
+  useEffect(() => {
+    console.log(nannyInfo);
+  }, [nannyInfo]);
 
-    // 從 cookies 中獲取 userId，並檢查其有效性
-    try {
-      const cookies = document.cookie.split('; ');
-      const userIdCookie = cookies.find(row => row.startsWith('userId='));
-      if (userIdCookie) {
-        userId = userIdCookie.split('=')[1];
-      } else {
-        throw new Error('userId not found in cookies');
-      }
-
-      if (!userId) {
-        throw new Error('Invalid userId');
-      }
-
-      // 發送 GET 請求，帶上 userId 作為查詢參數
-      const response = await fetch(`/api/order/getOrderInfo?userId=${userId}`, {
-        method: 'GET',
-        headers: {
-          'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Network response was not ok: ${response.statusText}`);
-      }
-
-      // 解析返回的 JSON 數據
-      const data = await response.json();
-
-      // 根據返回數據處理
-      if (data && data.orderInfo) {
-        setOrderInfo(data.orderInfo);  // 假設返回的資料格式是 data.orderInfo
-      } else {
-        throw new Error('No order information found in the response');
-      }
-
-    } catch (error) {
-      console.error('Error fetching order info:', error.message);
-      // 可以顯示錯誤消息給用戶
-    } finally {
-      setIsLoading(false); // 請求完成後，設置加載狀態為 false
-    }
-};
-
-
-
-useEffect(() => {
-  const fetchData = async () => {
-      try {
-          await fetchNannyInfoList(currentPage, pageSize); // Fetch nanny info when currentPage or pageSize changes
-          await fetchOrderInfo(); // Fetch order info when currentPage changes
-      } catch (error) {
-          console.error("Error fetching data:", error); // Log any errors that happen during fetch
-      }
-  };
-
-  fetchData();
-}, [currentPage, pageSize]); // Add pageSize if it's used in fetchOrderInfo
+  useEffect(() => {
+    fetchNannyInfoList(currentPage, pageSize); // Fetch data when the page is loaded or currentPage changes
+  }, [currentPage]);
 
   const handlePageChange = (page) => {
     console.log('page:',page)

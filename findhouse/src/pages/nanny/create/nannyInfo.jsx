@@ -154,7 +154,7 @@ const ApplicationPage = () => {
     const weekdaysString = localStorage.getItem('longTermDays');
     const weekdaysArray = weekdaysString.split(',').map(Number); // 將字串轉換成數字數組
 
-    const response = await fetch('/api/nanny/createLongTern', {
+    const response = await fetch('/api/base/createLongTern', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -176,7 +176,7 @@ const ApplicationPage = () => {
   }
 
   const createSuddenlyRecord = async (nannyId, selectedCareType, address) => {
-    const response = await fetch('/api/nanny/createSuddenly', {
+    const response = await fetch('/api/base/createSuddenly', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
