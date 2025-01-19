@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import ServiceSchedule from '../../components/base/ServiceSchedule';
+import ServiceSchedule from '../../../components/base/ServiceSchedule';
 export default function ProfilePage() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
