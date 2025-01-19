@@ -35,7 +35,7 @@ const ApplicationPage = () => {
       identityFrontUploadId: frontImg,
       identityBackUploadId: backImg,
       iconUploadId: headIcon,
-      status: '通過'
+      status: 'pending'
     };
     try {
       const response = await fetch('/api/kycInfo/createKycInfo', {
