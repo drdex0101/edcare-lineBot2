@@ -9,7 +9,8 @@ export default function ProfilePage() {
   const [nannyInfo, setNannyInfo] = useState({});
   const [urls, setUrls] = useState([]);
   const [iconUrl, setIconUrl] = useState('/assets/images/resource/error.png');
-  
+  const [isLoading, setIsLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   // 處理點擊圓點來跳轉到對應圖片
   const handleDotClick = (index) => {
     setCurrentImageIndex(index);
@@ -17,6 +18,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     const fetchNannyInfo = async () => {
+      setIsLoading(true);
       if (!router.isReady) return; // 等待路由準備就緒
       if (!id) return;
       
@@ -46,8 +48,6 @@ export default function ProfilePage() {
     fetchNannyInfo();
   }, [id, router.isReady]); // 添加 router.isReady 作為依賴
 
-  console.log(nannyInfo);
-
   const serviceNames = {
     '1': '可接送小朋友',
     '2': '可遠端查看育兒情形',
@@ -55,6 +55,14 @@ export default function ProfilePage() {
     '4': '可配合不使用3C育兒',
     '5': '寶寶衣物清洗',
     '6': '可配合家長外出'
+  };
+
+  const handleBookingClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
@@ -186,16 +194,61 @@ export default function ProfilePage() {
                   <span className='imgFont'>{nannyInfo.introduction}</span>
                 </div>
               </div>
+              <div className="criticismSection">
+                <span className='criticalFont'>保母評語</span>
+                
+              </div>
           </div>
         </div>
 
         <div className='buttonLayout'>
-          <button className="submitButton">+ 馬上預約</button>
+          <button className="submitButton" onClick={handleBookingClick}>+ 馬上預約</button>
         </div>
-
       </div>
 
+      {isModalOpen && (
+        <div className="modalOverlay">
+          <div className="modalContent">
+            <button className="closeButton" onClick={handleCloseModal}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <g clip-path="url(#clip0_304_31413)">
+                  <path d="M14.7782 5.22943C14.4824 4.93364 14.0045 4.93364 13.7088 5.22943L10 8.9306L6.29124 5.22184C5.99545 4.92605 5.51763 4.92605 5.22184 5.22184C4.92605 5.51763 4.92605 5.99545 5.22184 6.29124L8.9306 10L5.22184 13.7088C4.92605 14.0045 4.92605 14.4824 5.22184 14.7782C5.51763 15.0739 5.99545 15.0739 6.29124 14.7782L10 11.0694L13.7088 14.7782C14.0045 15.0739 14.4824 15.0739 14.7782 14.7782C15.0739 14.4824 15.0739 14.0045 14.7782 13.7088L11.0694 10L14.7782 6.29124C15.0664 6.00303 15.0664 5.51763 14.7782 5.22943Z" fill="#252525"/>
+                </g>
+                <defs>
+                  <clipPath id="clip0_304_31413">
+                    <rect width="20" height="20" fill="white"/>
+                  </clipPath>
+                </defs>
+              </svg>
+            </button>
+            <span className="modalTitle">確認向此保母發送托育服務需求</span>
+            <div style={{display:'flex',flexDirection:'row',justifyContent:'space-between',gap:'16px'}}>
+              <button className="cancelBtn" onClick={handleCloseModal}>取消</button>
+              <button className="confirmBtn">確認</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <style jsx>{`
+        .criticalFont {
+            color: #fff;
+            font-family: "LINE Seed JP_TTF";
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 700;
+            line-height: normal;
+          }
+          .criticismSection {
+            display: flex;
+            padding: 10px 40px;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+            align-self: stretch;
+            background-color:#F3CCD4;
+            border-radius: 50px 0px 0 0px;
+          }
         .iconStyle.inactive {
             opacity: 0.5;
         }
@@ -225,7 +278,6 @@ export default function ProfilePage() {
           }
         .container {
           background-color: #fceff1;
-          padding: 20px;
           height: 100vh;
           display: flex;
           flex-direction: column;
@@ -234,6 +286,7 @@ export default function ProfilePage() {
           background-repeat: no-repeat; // 防止重疊
           background-size: cover; // 使背景圖像覆蓋整個容器
           border: none;
+          width:100%;
         }
 
         .imageSection {
@@ -245,6 +298,7 @@ export default function ProfilePage() {
           gap: 6px;
           align-self: stretch;
           width: 100%;
+          align-items:start
         }
 
         .imgFont {
@@ -614,7 +668,8 @@ export default function ProfilePage() {
           background: var(---Primary-Primary, #E3838E);
           box-shadow: -1px 6px 12px -6px rgba(186, 186, 186, 0.25), 0px 8px 24px -4px rgba(186, 186, 186, 0.25);
           border:none;
-          width:100%
+          width:100%;
+          color:#fff
         }
 
         .submitButton:hover {
@@ -634,6 +689,85 @@ export default function ProfilePage() {
             font-size: 14px;
           }
         }
+
+
+        .modalOverlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: rgba(0, 0, 0, 0.5);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          z-index: 1100;
+        }
+
+        .modalContent {
+          gap:8px;
+          display: flex;
+          width: 292px;
+          padding-bottom: 20px;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          border-radius: 12px;
+          background: var(---SurfaceContainer-Lowest, #FFF);
+          box-shadow: -1px 6px 12px -6px rgba(186, 186, 186, 0.25), 0px 8px 24px -4px rgba(186, 186, 186, 0.25);
+          position: relative;
+        }
+
+        .closeButton {
+          display: flex;
+          padding: 6px 5px 0px 267px;
+          justify-content: flex-end;
+          align-items: center;
+          align-self: stretch;
+          border:none;
+          background:transparent;
+          font-size:24px;
+          cursor:pointer;
+          color:#666
+        }
+
+        .closeButton:hover {
+          color: #333;
+        }
+        .modalTitle {
+          color: var(---Outline-OnSurfaceVariant, #402626);
+          text-align: center;
+          /* Line/bold/16pt */
+          font-family: "LINE Seed JP_TTF";
+          font-size: 16px;
+          font-style: normal;
+          font-weight: 700;
+          line-height: normal;
+        }
+        .cancelBtn {
+          display: flex;
+          width: 100px;
+          padding: 8px 12px;
+          flex-direction: column;
+          align-items: center;
+          gap: 8px;
+          border-radius: 6px;
+          background: var(---Surface-LT, #F2F2F2);
+          border:none;
+          color:#CCC
+        }
+          .confirmBtn {
+            display: flex;
+            width: 100px;
+            padding: 8px 12px;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            border-radius: 6px;
+            background: var(---Primary-Primary, #E3838E);
+            border:none;
+            color:#fff
+          }
       `}</style>
     </div>
   );

@@ -13,7 +13,6 @@ const ApplicationPage = () => {
     router.push('/nanny/'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
-
   const handleNextClick = async () => {
     const memberData = {
       account: document.getElementById('account').value,
@@ -48,7 +47,6 @@ const ApplicationPage = () => {
       console.error('Error creating member:', error);
     }
   };
-
 
   return (
     <div style={styles.main}>  

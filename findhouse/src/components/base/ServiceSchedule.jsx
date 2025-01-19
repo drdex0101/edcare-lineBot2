@@ -13,7 +13,7 @@ export default function ServiceSchedule() {
 
   return (
     <div className="service-schedule">
-      <div className="header">服務時段</div>
+      <span className="header1">服務時段</span>
       <div className="schedule-container">
         <div className="days">
           {["","日", "一", "二", "三", "四", "五", "六"].map((day) => (
