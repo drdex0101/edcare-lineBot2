@@ -4,40 +4,71 @@ import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import Select from '@mui/material/Select';
 import CalendarRangePicker from '../../../components/base/CalendarRangePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs from 'dayjs';
 
 import { MenuItem, InputLabel, FormControl } from '@mui/material';
 
 const ApplicationPage = () => {
   const router = useRouter();
-  const handleNextClick = () => {
+
+  const handleNextClick = async () => {
+    await createSuddenlyRecord();
     router.push('/parent/create/babyInfo'); // 替换 '/next-page' 为你想要跳转的路径
+  };
+
+  const [selectedRange, setSelectedRange] = React.useState({ startDate: null, endDate: null });
+  const [selectedCareType, setSelectedCareType] = React.useState('');
+  const [selectedAddress, setSelectedAddress] = React.useState('');
+  const [orderData, setData] = React.useState('');
+  // 添加 parseDate 函數定義
+  const parseDate = (dateString) => {
+    if (!dateString) return null;
+    return new Date(dateString);
+  };
+
+  const createSuddenlyRecord = async () => {
+    const response = await fetch('/api/base/createSuddenly', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        orderId: '',
+        startDate: selectedRange.startDate,
+        endDate: selectedRange.endDate,
+        scenario: selectedCareType,
+        location: selectedAddress,
+        careTime: '',
+        idType: 'parent'
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to insert data into suddenly table');
+    }
+    const data = await response.json();
+    setData(data.suddenly);
+    console.log(data.suddenly);
+    localStorage.setItem('careTypeId', data.suddenly.id);
+    localStorage.setItem('choosetype','suddenly');
   };
 
   const handleLastClick = () => {
     router.push('/parent/create/'); // 替换 '/next-page' 为你想要跳转的路径
   };
-  
-  const [selectedRange, setSelectedRange] = React.useState({
-    startDate: null,
-    endDate: null
-  });
 
-  const handleDateChange = (type, newValue) => {
-    setSelectedRange((prev) => ({
-      ...prev,
-      [type]: newValue ? dayjs(newValue).format("YYYY/MM/DD") : null,
-    }));
+  const handleDateChange = (range) => {
+    // 將字符串格式轉換為 Date 對象
+    setSelectedRange({
+      startDate: range.startDate ? parseDate(range.startDate) : null,
+      endDate: range.endDate ? parseDate(range.endDate) : null
+    });
   };
 
   return (
     <div style={styles.main}>  
       <div style={styles.header}> 
         <span style={styles.headerFont}>
-          申請成為家長
+          托育資料填寫
         </span>
         <button onClick={handleLastClick} style={styles.lastButton}>
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -55,113 +86,39 @@ const ApplicationPage = () => {
       <div style={{ backgroundColor: 'white', width: '100%',display: 'flex',justifyContent:'center', alignItems: 'center',width: '100%',}}>
         <div style={styles.contentLayout}>
           <div style={styles.rollerLayout}>
-            <div style={styles.roller}></div>
-            <div style={styles.roller}></div>
-            <div style={styles.roller}></div>
-            <div style={styles.roller}></div>
             <div style={styles.rollerActive}></div>
+            <div style={styles.rollerActive}></div>
+            <div style={styles.roller}></div>
           </div>
           <div style={styles.titleLayout}>
             <span style={styles.subTitle}>托育資料填寫</span>
             <span style={styles.smallTitle}>臨時托育</span>
           </div>
           <div style={styles.buttonLayout}>
-          <FormControl>
-              <InputLabel id="gender-label">托育時間</InputLabel>
-              <Select
-                required
-                labelId="gender-label"
-                id="gender"
-                label="選擇情境"
-                defaultValue=""
-                InputProps={{
-                  sx: {
-                    padding: '0px 16px',
-                    borderRadius: '8px',
-                    backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
-                  },
-                }}
-                sx={{
-                  alignSelf: 'stretch',
-                  borderRadius: '8px',
-                  '& .MuiOutlinedInput-root': {
-                      '& fieldset': {
-                          borderColor: 'var(--OutLine-OutLine, #78726D)',
-                      },
-                      '&:hover fieldset': {
-                          borderColor: '#E3838E',
-                      },
-                      '&.Mui-focused fieldset': {
-                          borderColor: '#E3838E',
-                      },
-                  },
-                  backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)',
-                }}
-              >
-                <MenuItem value="male">全日</MenuItem>
-              </Select>
-            </FormControl>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                label="開始日期"
-                format="YYYY/MM/DD"
-                value={selectedRange.startDate ? dayjs(selectedRange.startDate) : null}
-                onChange={(newValue) => handleDateChange("startDate", newValue)}
-                InputProps={{
-                  sx: {
-                    padding: '0px 16px',
-                    borderRadius: '8px',
-                    backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
-                  },
-                }}
-                sx={{
-                  alignSelf: 'stretch',
-                  borderRadius: '8px',
-                  '& .MuiOutlinedInput-root': {
-                      '& fieldset': {
-                          borderColor: 'var(--OutLine-OutLine, #78726D)',
-                      },
-                      '&:hover fieldset': {
-                          borderColor: '#E3838E',
-                      },
-                      '&.Mui-focused fieldset': {
-                          borderColor: '#E3838E',
-                      },
-                  },
-                  backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)',
-                }}
+            <div style={styles.buttonLayout}>
+            <div style={styles.inputField}>
+              <input 
+                type="date" 
+                id="datepicker1" 
+                name="startDate"
+                min="2023-01-01" 
+                style={styles.dateInput}
+                onChange={(e) => handleDateChange({ ...selectedRange, startDate: e.target.value })}
+                lang="zh-TW"
               />
+            </div>
 
-              <DatePicker
-                label="結束日期"
-                format="YYYY/MM/DD"
-                value={selectedRange.endDate ? dayjs(selectedRange.endDate) : null}
-                onChange={(newValue) => handleDateChange("endDate", newValue)}
-                InputProps={{
-                  sx: {
-                    padding: '0px 16px',
-                    borderRadius: '8px',
-                    backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
-                  },
-                }}
-                sx={{
-                  alignSelf: 'stretch',
-                  borderRadius: '8px',
-                  '& .MuiOutlinedInput-root': {
-                      '& fieldset': {
-                          borderColor: 'var(--OutLine-OutLine, #78726D)',
-                      },
-                      '&:hover fieldset': {
-                          borderColor: '#E3838E',
-                      },
-                      '&.Mui-focused fieldset': {
-                          borderColor: '#E3838E',
-                      },
-                  },
-                  backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)',
-                }}
+            <div style={styles.inputField}>
+              <input 
+                type="date" 
+                id="datepicker2" 
+                name="endDate"
+                min="2023-01-01" 
+                style={styles.dateInput}
+                onChange={(e) => handleDateChange({ ...selectedRange, endDate: e.target.value })}
+                lang="zh-TW"
               />
-            </LocalizationProvider>
+            </div>
             <div style={{width:'100%'}}>
               <CalendarRangePicker
                 startDate={selectedRange.startDate}
@@ -174,6 +131,7 @@ const ApplicationPage = () => {
                 }}
               />
             </div>
+          </div>
             <FormControl>
               <InputLabel id="gender-label">選擇情境</InputLabel>
               <Select
@@ -181,6 +139,7 @@ const ApplicationPage = () => {
                 labelId="gender-label"
                 id="gender"
                 label="選擇情境"
+                onChange={(e) => setSelectedCareType(e.target.value)}
                 defaultValue=""
                 InputProps={{
                   sx: {
@@ -217,6 +176,7 @@ const ApplicationPage = () => {
                 id="gender"
                 label="定點選擇"
                 defaultValue=""
+                onChange={(e) => setSelectedAddress(e.target.value)}
                 InputProps={{
                   sx: {
                     padding: '0px 16px',
@@ -241,7 +201,7 @@ const ApplicationPage = () => {
                   backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)',
                 }}
               >
-                <MenuItem value="center" sx={{color:'#410002'}}>雲林縣私立蓁心托嬰中心</MenuItem>
+                <MenuItem value="雲林縣私立蓁心托嬰中心" sx={{color:'#410002'}}>雲林縣私立蓁心托嬰中心</MenuItem>
               </Select>
             </FormControl>
           </div>
@@ -387,8 +347,7 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     height: '100vh', // 占满整个视口高度
-    backgroundColor: '#f8ecec',
-    marginBottom:'28px'
+    backgroundColor: '#f8ecec'
   },
   header: {
     display: 'flex',

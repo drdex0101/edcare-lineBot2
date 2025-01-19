@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
-const Pagination = ({ totalPages, currentPage, onPageChange }) => {
+const Pagination = ({ totalItems, pageSize, currentPage, onPageChange }) => {
+  const totalPages = Math.ceil(totalItems / pageSize);
   const [activePage, setActivePage] = useState(currentPage);
 
   const handlePageClick = (page) => {
@@ -73,20 +74,23 @@ const Pagination = ({ totalPages, currentPage, onPageChange }) => {
   );
 };
 
-const App = () => {
+const App = ({ totalItems,fetchNannyInfoList }) => {
   const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 5; // Example page size
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
-    // Perform any actions for the new page, e.g., fetching data
+    fetchNannyInfoList(page);
   };
 
   return (
     <div>
       <Pagination
-        totalPages={5}
+        totalItems={totalItems}
+        pageSize={pageSize}
         currentPage={currentPage}
         onPageChange={handlePageChange}
+        fetchNannyInfoList={fetchNannyInfoList} // Pass the function as a prop
       />
     </div>
   );

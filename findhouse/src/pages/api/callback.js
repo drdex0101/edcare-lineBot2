@@ -45,13 +45,12 @@ export default async function handler(req, res) {
     
     const profile = profileResponse.data;
     const userId = profile.userId;
-
     // Set the auth token and userId cookies before redirecting
     res.setHeader(
       'Set-Cookie',
       [
-        `authToken=${accessToken}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=3600`,
-        `userId=${userId}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=3600`
+        `authToken=${accessToken}; Path=/; Secure; SameSite=Lax; Max-Age=3600`,
+        `userId=${userId}; Path=/; Secure; SameSite=Lax; Max-Age=3600`,
       ]
     );
 

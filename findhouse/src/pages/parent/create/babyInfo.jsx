@@ -9,13 +9,18 @@ import Select from '@mui/material/Select';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import dayjs from 'dayjs';
 
 import { MenuItem, InputLabel, FormControl } from '@mui/material';
 const ApplicationPage = () => {
   const router = useRouter();
   const [selectedDate, setSelectedDate] = useState();
+  const [selectedOptions, setSelectedOptions] = useState([]);
+  const [babyName, setBabyName] = useState('');
+  const [babyGender, setBabyGender] = useState('');
+  const [babyBirthOrder, setBabyBirthOrder] = useState('');
+  const [babyHope, setBabyHope] = useState('');
   const handleNextClick = () => {
+    createBabyRecord();
     router.push('/parent/search'); 
   };
 
@@ -23,11 +28,60 @@ const ApplicationPage = () => {
     router.push('/parent/create/suddenly'); 
   };
 
+  const createBabyRecord = async () => {
+    const response = await fetch('/api/order/createOrder', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        parentLineId: request.cookies.get('userId'),
+        nannyid: '',
+        status: 'create',
+        choosetype: localStorage.getItem('choosetype'),
+        orderstatus: 'on',
+        caretypeid: localStorage.getItem('careTypeId'),
+        nickname: babyName,
+        gender: babyGender,
+        birthday: selectedDate,
+        rank: babyBirthOrder,
+        hope: selectedOptions,
+        intro: babyHope,
+        isshow: true,
+        created_by: localStorage.getItem('account'),
+      })
+    });
+  };
+
+  const handleSwitchChange = (optionId, isChecked) => {
+    setSelectedOptions(prevOptions => {
+      if (isChecked) {
+        return [...prevOptions, optionId];
+      } else {
+        return prevOptions.filter(id => id !== optionId);
+      }
+    });
+  };
+
+  const handleDateChange = (newValue) => {
+    if (newValue) {
+      const today = new Date();
+      const birthDate = new Date(newValue);
+      const age = today.getFullYear() - birthDate.getFullYear();
+
+      if (age >= 12) {
+        alert('孩童年齡不能超過12歲');
+        return;
+      }
+    }
+    setSelectedDate(newValue);
+  };
+
   return (
     <div style={styles.main}>  
       <div style={styles.header}> 
         <span style={styles.headerFont}>
-          申請成為家長
+          托育資料填寫
         </span>
         <button onClick={handleLastClick} style={styles.lastButton}>
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -45,10 +99,8 @@ const ApplicationPage = () => {
       <div style={{ backgroundColor: 'white', width: '100%',display: 'flex',justifyContent:'center', alignItems: 'center',width: '100%',}}>
         <div style={styles.contentLayout}>
           <div style={styles.rollerLayout}>
-            <div style={styles.roller}></div>
-            <div style={styles.roller}></div>
-            <div style={styles.roller}></div>
-            <div style={styles.roller}></div>
+            <div style={styles.rollerActive}></div>
+            <div style={styles.rollerActive}></div>
             <div style={styles.rollerActive}></div>
           </div>
           <div style={styles.titleLayout}>
@@ -61,6 +113,7 @@ const ApplicationPage = () => {
               id="name"
               label="孩童暱稱"
               variant="outlined"
+              onChange={(e) => setBabyName(e.target.value)}
               InputProps={{
                 sx: {
                   padding: '0px 16px',
@@ -91,6 +144,8 @@ const ApplicationPage = () => {
                 labelId="gender-label"
                 id="gender"
                 label="性別"
+                value={babyGender}
+                onChange={(e) => setBabyGender(e.target.value)}
                 InputProps={{
                   sx: {
                     padding: '0px 16px',
@@ -123,7 +178,7 @@ const ApplicationPage = () => {
               <DatePicker
                 label="生日"
                 value={selectedDate}
-                onChange={(newValue) => setSelectedDate(newValue)}
+                onChange={handleDateChange}
                 renderInput={(params) => <TextField {...params} />}
                 disableFuture
                 shouldDisableDate={(date) => date.day() === 0 || date.day() === 6} // 禁用週末
@@ -159,7 +214,8 @@ const ApplicationPage = () => {
                 labelId="gender-label"
                 id="gender"
                 label="胎別"
-                defaultValue=""
+                value={babyBirthOrder}
+                onChange={(e) => setBabyBirthOrder(e.target.value)}
                 InputProps={{
                   sx: {
                     padding: '0px 16px',
@@ -184,8 +240,11 @@ const ApplicationPage = () => {
                   backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)',
                 }}
               >
-                <MenuItem value="male">第一胎</MenuItem>
-                <MenuItem value="female">第二胎</MenuItem>
+                <MenuItem value="1">第一胎</MenuItem>
+                <MenuItem value="2">第二胎</MenuItem>
+                <MenuItem value="3">第三胎</MenuItem>
+                <MenuItem value="4">第四胎</MenuItem>
+                <MenuItem value="5">第五胎</MenuItem>
               </Select>
             </FormControl>
               
@@ -194,7 +253,12 @@ const ApplicationPage = () => {
                 <span>可接送小朋友</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
+                    control={
+                      <IOSSwitch
+                        sx={{ m: 1 }}
+                        onChange={(e) => handleSwitchChange(1, e.target.checked)}
+                      />
+                    }
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -203,7 +267,12 @@ const ApplicationPage = () => {
                 <span>寶寶衣物清洗</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
+                    control={
+                      <IOSSwitch
+                        sx={{ m: 1 }}
+                        onChange={(e) => handleSwitchChange(2, e.target.checked)}
+                      />
+                    }
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -212,7 +281,12 @@ const ApplicationPage = () => {
                 <span>製作副食品</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
+                    control={
+                      <IOSSwitch
+                        sx={{ m: 1 }}
+                        onChange={(e) => handleSwitchChange(3, e.target.checked)}
+                      />
+                    }
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -221,7 +295,12 @@ const ApplicationPage = () => {
                 <span>可遠端查看育兒情形</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
+                    control={
+                      <IOSSwitch
+                        sx={{ m: 1 }}
+                        onChange={(e) => handleSwitchChange(4, e.target.checked)}
+                      />
+                    }
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -230,7 +309,12 @@ const ApplicationPage = () => {
                 <span>可配合不使用3C育兒</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
+                    control={
+                      <IOSSwitch
+                        sx={{ m: 1 }}
+                        onChange={(e) => handleSwitchChange(5, e.target.checked)}
+                      />
+                    }
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -239,18 +323,26 @@ const ApplicationPage = () => {
                 <span>可配合家長外出</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
+                    control={
+                      <IOSSwitch
+                        sx={{ m: 1 }}
+                        onChange={(e) => handleSwitchChange(6, e.target.checked)}
+                      />
+                    }
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
               </div>
             </div>
+
             <TextField
               required
               id="phone-number"
               variant="outlined"
               label="托育理念"
               multiline
+              value={babyHope}
+              onChange={(e) => setBabyHope(e.target.value)}
               rows={4}
               maxRows={4}
               InputProps={{
@@ -391,8 +483,7 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     height: '100vh', // 占满整个视口高度
-    backgroundColor: '#f8ecec',
-    marginBottom:'28px'
+    backgroundColor: '#f8ecec'
   },
   header: {
     display: 'flex',

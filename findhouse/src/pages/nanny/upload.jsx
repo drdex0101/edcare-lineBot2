@@ -9,13 +9,8 @@ import { useDispatch,useSelector } from 'react-redux';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-
+import Cookies from 'js-cookie';
 const ApplicationPage = () => {
-
-  const [selectedRange, setSelectedRange] = useState({
-    startDate: null,
-    endDate: null,
-  });
 
   const router = useRouter();
   const [file, setFile] = useState(null);
@@ -64,6 +59,14 @@ const ApplicationPage = () => {
         body: JSON.stringify(kycInfoUpdateData)
       });
       console.log('kycId updated:', response2.json());
+      await fetch('/api/line/changeRichMenu', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        
+        body: JSON.stringify({ userId: Cookies.get('userId'), richMenuId: 'richmenu-307b8975e551ebd54362c688b7cb9e54' })
+      });
       router.push('/nanny/create/choose');
     } catch (error) {
       console.error('Error creating member:', error);
@@ -280,12 +283,11 @@ const ApplicationPage = () => {
 
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DatePicker
-                    label="出生日期"
+                    label="生日"
                     value={selectedDate}
                     onChange={(newValue) => setSelectedDate(newValue)}
                     renderInput={(params) => <TextField {...params} />}
                     disableFuture
-                    shouldDisableDate={(date) => date.day() === 0 || date.day() === 6} // 禁用週末
                     InputProps={{
                       sx: {
                         padding: '0px 16px',

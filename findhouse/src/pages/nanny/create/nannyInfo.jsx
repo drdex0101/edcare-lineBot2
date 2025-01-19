@@ -5,24 +5,205 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
-
-import { MenuItem, InputLabel, FormControl } from '@mui/material';
+import { useState } from 'react';
 const ApplicationPage = () => {
   const router = useRouter();
 
-  const handleNextClick = () => {
-    router.push('/nanny/create/choose'); // 替换 '/next-page' 为你想要跳转的路径
+  const handleNextClick = async () => {
+    const nannyData = {
+      memberId: '',
+      experienment: 0,
+      age: 0,
+      kidCount: 0,
+      way: localStorage.getItem('way'),
+      scenario: selectedCareType,
+      environmentPic: [],
+      serviceLocation: address,
+      introduction: introduction,
+      service: selectedOptions,
+      score: '',
+      isShow: true,
+      location: address,
+      kycId: 0,
+      uploadId: headIcon
+    };
+
+    try {
+      const response = await fetch('/api/nanny/createNanny', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(nannyData)
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit nanny data');
+      }
+      const data = await response.json();
+      if (localStorage.getItem('way') === 'suddenly') {
+        await createSuddenlyRecord(data.nanny.id, selectedCareType, address);
+      }
+      else if (localStorage.getItem('way') === 'longTerm') {
+        await createLongTermRecord(data.nanny.id);
+      }
+      router.push('/nanny/finish');
+    } catch (error) {
+      console.error('Error submitting nanny data:', error);
+    }
   };
 
   const handleLastClick = () => {
-    router.push('/nanny/create/'); // 替换 '/next-page' 为你想要跳转的路径
+    router.back(); // 替换 '/next-page' 为你想要跳转的路径
+  };
+  const [file, setFile] = useState(null);
+  const [fileName, setFileName] = useState(''); // 新增狀態以存儲檔案名稱
+  const [headIcon, setHeadIcon] = useState(null);
+  const [message, setMessage] = useState('');
+  const [uploadedImages, setUploadedImages] = useState([]); // State to track uploaded images
+  const [selectedCareType, setSelectedCareType] = useState(null);
+  const [address, setAddress] = useState('');
+  const [selectedOptions, setSelectedOptions] = useState([]);
+  const [introduction, setIntroduction] = useState('');
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setFile(file);
+    setFileName(file?.name || '');
+    handleUpload(file, 'avator'); // 指定文件类型
+  };
+
+  const handleUpload = async (file, type) => {
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+        const res = await fetch('/api/upload', {
+            method: 'POST',
+            body: formData,
+        });
+
+        // Check if the response is OK
+        if (!res.ok) {
+            const errorText = await res.text(); // Get the full response text
+            console.error(`HTTP error! status: ${res.status}, response: ${errorText}`);
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
+
+        const result = await res.json();
+        console.log(result);
+        const resUpload = await fetch('/api/kycInfo/uploadImg', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                fileUrl: result.fileUrl,
+                type: type
+            })
+        });
+        const uploadResponse = await resUpload.json();
+        const uploadId = uploadResponse.uploadId.id;
+        if (type === 'environment') {
+          setUploadedImages(prevImages => [...prevImages, uploadId]);
+        }
+        else {
+          setHeadIcon(uploadId);
+        }
+    } catch (error) {
+        console.error('Upload error:', error);
+        setMessage('Upload failed.');
+    }
+  };
+
+  const handleEnvironmentImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    
+    if (uploadedImages.length + files.length > 6) {
+      alert('最多只能上傳6張照片');
+      return;
+    }
+
+    files.forEach(file => {
+      handleUpload(file, 'environment'); // Call handleUpload for each fil
+    });
+    console.log(uploadedImages);
+  };
+
+  const handleSwitchChange = (optionId, isChecked) => {
+    setSelectedOptions(prevOptions => {
+      if (isChecked) {
+        return [...prevOptions, optionId];
+      } else {
+        return prevOptions.filter(id => id !== optionId);
+      }
+    });
+  };
+
+  const handleCareTypeChange = (e) => {
+    setSelectedCareType(e.target.value);
+  };
+
+  const handleAddressChange = (event) => {
+    setAddress(event.target.value);
+  };
+
+  const createLongTermRecord = async (nannyId) => {
+    const weekdaysString = localStorage.getItem('longTermDays');
+    const weekdaysArray = weekdaysString.split(',').map(Number); // 將字串轉換成數字數組
+
+    const response = await fetch('/api/base/createLongTern', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        nannyId: nannyId,
+        weekdays: weekdaysArray, // 使用轉換後的數組
+        scenario: localStorage.getItem('careScenario'),
+        careTime: localStorage.getItem('longTermCareTime'),
+        idType: 'nanny'
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to insert data into long_term table');
+    }
+
+    return response.json();
+  }
+
+  const createSuddenlyRecord = async (nannyId, selectedCareType, address) => {
+    const response = await fetch('/api/base/createSuddenly', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        nannyId: nannyId,
+        startDate: localStorage.getItem('suddenlyStartDate'),
+        endDate: localStorage.getItem('suddsuddenlyEndDate'),
+        scenario: selectedCareType,
+        location: address,
+        careTime: '',
+        idType: 'nanny'
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to insert data into suddenly table');
+    }
+
+    return response.json();
   };
 
   return (
     <div style={styles.main}>  
       <div style={styles.header}> 
         <span style={styles.headerFont}>
-          申請成為保母
+        編輯保母資料
         </span>
         <button onClick={handleLastClick} style={styles.lastButton}>
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -40,11 +221,9 @@ const ApplicationPage = () => {
       <div style={{ backgroundColor: 'white', width: '100%',display: 'flex',justifyContent:'center', alignItems: 'center',width: '100%'}}>
         <div style={styles.contentLayout}>
           <div style={styles.rollerLayout}>
-            <div style={styles.roller}></div>
-            <div style={styles.roller}></div>
-            <div style={styles.roller}></div>
             <div style={styles.rollerActive}></div>
-            <div style={styles.roller}></div>
+            <div style={styles.rollerActive}></div>
+            <div style={styles.rollerActive}></div>
           </div>
           <div style={styles.titleLayout}>
             <span style={styles.subTitle}>托育資料填寫</span>
@@ -58,22 +237,51 @@ const ApplicationPage = () => {
           </div>
 
           <div style={styles.uploadAvatorLayout}>
-            <div style={styles.avatorLayout}>
-
-            </div>
+            <input 
+              type="file" 
+              accept="image/*" 
+              onChange={handleFileChange}
+              style={{ display: 'none' }}
+              id="file-input"
+            />
+            <label htmlFor="file-input" style={styles.avatorLayout}>
+              <span>上傳照片</span>
+            </label>
           </div>
 
           <div style={styles.checkBoxLayout}>
-            <input type='checkbox' /> 在宅托育
-            <input type='checkbox' /> 到宅托育
+            <input
+              type='radio'
+              name='careType'
+              value='在宅托育'
+              checked={selectedCareType === '在宅托育'}
+              onChange={handleCareTypeChange}
+              style={{
+                ...styles.radioButton,
+                ...(selectedCareType === '在宅托育' && styles.radioButtonChecked),
+              }}
+            /> 在宅托育
+            <input
+              type='radio'
+              name='careType'
+              value='到宅托育'
+              checked={selectedCareType === '到宅托育'}
+              onChange={handleCareTypeChange}
+              style={{
+                ...styles.radioButton,
+                ...(selectedCareType === '到宅托育' && styles.radioButtonChecked),
+              }}
+            /> 到宅托育
           </div>
 
           <div style={styles.buttonLayout}>
             <TextField
               required
-              id="name"
+              id="address"
               label="服務地址"
               variant="outlined"
+              value={address}
+              onChange={handleAddressChange}
               InputProps={{
                 sx: {
                   padding: '0px 16px',
@@ -103,7 +311,12 @@ const ApplicationPage = () => {
                 <span>可接送小朋友</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }}  />}
+                    control={
+                      <IOSSwitch
+                        sx={{ m: 1 }}
+                        onChange={(e) => handleSwitchChange(1, e.target.checked)}
+                      />
+                    }
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -112,7 +325,12 @@ const ApplicationPage = () => {
                 <span>寶寶衣物清洗</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }}  />}
+                    control={
+                      <IOSSwitch
+                        sx={{ m: 1 }}
+                        onChange={(e) => handleSwitchChange(2, e.target.checked)}
+                      />
+                    }
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -121,7 +339,12 @@ const ApplicationPage = () => {
                 <span>製作副食品</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }}  />}
+                    control={
+                      <IOSSwitch
+                        sx={{ m: 1 }}
+                        onChange={(e) => handleSwitchChange(3, e.target.checked)}
+                      />
+                    }
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -130,7 +353,12 @@ const ApplicationPage = () => {
                 <span>可遠端查看育兒情形</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }}  />}
+                    control={
+                      <IOSSwitch
+                        sx={{ m: 1 }}
+                        onChange={(e) => handleSwitchChange(4, e.target.checked)}
+                      />
+                    }
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -139,7 +367,12 @@ const ApplicationPage = () => {
                 <span>可配合不使用3C育兒</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }}  />}
+                    control={
+                      <IOSSwitch
+                        sx={{ m: 1 }}
+                        onChange={(e) => handleSwitchChange(5, e.target.checked)}
+                      />
+                    }
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -148,7 +381,12 @@ const ApplicationPage = () => {
                 <span>可配合家長外出</span>
                 <FormGroup>
                   <FormControlLabel
-                    control={<IOSSwitch sx={{ m: 1 }}  />}
+                    control={
+                      <IOSSwitch
+                        sx={{ m: 1 }}
+                        onChange={(e) => handleSwitchChange(6, e.target.checked)}
+                      />
+                    }
                     style={{ marginRight: '0px' }}
                   />
                 </FormGroup>
@@ -158,14 +396,22 @@ const ApplicationPage = () => {
             <div style={styles.iconLayout}>
               <div style={styles.fontLayout}>
                 <span style={styles.smallTitle}>上傳托育環境照</span>
-                <span style={styles.noticeTitle}>以6張照片為限。</span>
+                <span style={styles.noticeTitle}>{`${uploadedImages.length}/6`}</span>
               </div>
             </div>
 
             <div style={styles.uploadAvatorLayout}>
-              <div style={styles.environmentLayout}>
-
-              </div>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleEnvironmentImageChange}
+                style={{ display: 'none' }}
+                id="environment-file-input"
+              />
+              <label htmlFor="environment-file-input" style={styles.environmentLayout}>
+                <img></img>
+              </label>
             </div>
 
             <TextField
@@ -374,8 +620,7 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     height: '100vh', // 占满整个视口高度
-    backgroundColor: '#f8ecec',
-    marginBottom:'28px'
+    backgroundColor: '#f8ecec'
   },
   header: {
     display: 'flex',
@@ -468,6 +713,21 @@ const styles = {
     background:'var(---Primary-Primary, #F3CCD4)',
     border:'none',
     borderRadius:'12px'
+  },
+  radioButton: {
+    appearance: 'none',
+    width: '16px',
+    height: '16px',
+    backgroundColor: '#fff',
+    border: '1px solid #ccc',
+    borderRadius: '2px',
+    display: 'inline-block',
+    position: 'relative',
+    cursor: 'pointer',
+  },
+  radioButtonChecked: {
+    backgroundColor: '#e3838e',
+    border: '1px solid #e3838e',
   },
 };
 
