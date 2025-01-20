@@ -59,6 +59,14 @@ const ApplicationPage = () => {
         },
         body: JSON.stringify(kycInfoUpdateData)
       });
+      await fetch('/api/line/changeRichMenu', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        
+        body: JSON.stringify({ userId: Cookies.get('userId'), richMenuId: 'richmenu-307b8975e551ebd54362c688b7cb9e54' })
+      });
       router.push('/parent/create/choose');
     } catch (error) {
       console.error('Error creating member:', error);
