@@ -21,17 +21,60 @@ const ApplicationPage = () => {
     }
   };
 
-  const updateStatus = async (id, status) => {
+  const changeRichMenu = async (lineId,richMenuId) => {
     try {
-      const response = await fetch('/api/kycInfo/updateStatus', { method: 'POST', body: JSON.stringify({ id, status }) });
+      const response = await fetch('/api/line/changeRichMenu', {
+        method: 'POST',  // 確保是POST方法
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: lineId, 
+          richMenuId: richMenuId
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+  
       const data = await response.json();
-      console.log(data);
-      //window.location.reload();
+      console.log('Update Response:', data);
+      window.location.reload();
     } catch (err) {
+      console.error('Error updating status:', err);
       setError(err.message);
     }
   };
 
+  const updateStatus = async (id, status, lineId, job) => {
+    try {
+      const response = await fetch('/api/kycInfo/updateStatus', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id, status }),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      if (status == '通過') {
+        if (job == '保母') {
+          changeRichMenu(lineId,'richmenu-80140f174c84df860ab6e4b2f1382634')
+        }
+        else {
+          changeRichMenu(lineId,'richmenu-dbfe9df32ebd1e9aba105ca6fc996955')
+        }
+      }
+      window.location.reload();
+    } catch (err) {
+      console.error('Error updating status:', err);
+      setError(err.message);
+    }
+  };
+  
   React.useEffect(() => {
     fetchKycInfoList();
   }, []);
@@ -85,8 +128,8 @@ const ApplicationPage = () => {
                       <td style={styles.tableCell}>{kycInfo.iconUploadId}</td>
                       <td style={styles.tableCell}>{kycInfo.status}</td>
                       <td style={styles.tableCell}>
-                        <button style={styles.button} onClick={() => updateStatus(kycInfo.id, '通過')}>通過</button>
-                        <button style={styles.button} onClick={() => updateStatus(kycInfo.id, '不通過')}>不通過</button>
+                        <button style={styles.button} onClick={() => updateStatus(kycInfo.id, '通過', kycInfo.line_id, kycInfo.job)}>通過</button>
+                        <button style={styles.button} onClick={() => updateStatus(kycInfo.id, '不通過', kycInfo.line_id, kycInfo.job)}>不通過</button>
                       </td>
                     </tr>
                   ))}

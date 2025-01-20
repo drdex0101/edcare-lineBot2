@@ -1,7 +1,7 @@
 import { Client } from 'pg';
 
 export default async function handler(req, res) {
-  if (req.method === 'POST') {
+  if (req.method === 'PATCH') {
     const { status, id } = req.body;
 
     // 創建 PostgreSQL 客戶端

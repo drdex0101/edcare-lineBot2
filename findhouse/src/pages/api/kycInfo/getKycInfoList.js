@@ -20,7 +20,7 @@ export default async function handler(req, res) {
 
       // Query to get the paginated results
       const query = `
-       SELECT k.*, m.job
+       SELECT k.*, m.job, m.line_id
         FROM kyc_info k
         JOIN member m ON m.kyc_id = CAST(k.id AS VARCHAR);
       `;
