@@ -165,8 +165,12 @@ const ApplicationPage = () => {
                   backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)',
                 }}
               >
-                <MenuItem value="home">在宅托育</MenuItem>
-                <MenuItem value="infantCareCenter">定點托育</MenuItem>
+                <MenuItem value="home">
+                  <span style={styles.addressName}>在宅托育</span>
+                </MenuItem>
+                <MenuItem style={styles.addressName} value="infantCareCenter">
+                  <span style={styles.addressName}>定點托育</span>
+                </MenuItem>
               </Select>
             </FormControl>
             {selectedCareType === 'infantCareCenter' && (
