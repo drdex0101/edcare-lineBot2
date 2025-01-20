@@ -5,6 +5,7 @@ import TextField from '@mui/material/TextField';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { setMemberId } from '../../features/member/memberSlice';
+import Cookies from 'js-cookie';
 const ApplicationPage = () => {
   const router = useRouter();
   const dispatch = useDispatch(); // Redux 的 dispatch 函数
@@ -16,6 +17,7 @@ const ApplicationPage = () => {
   const handleNextClick = async () => {
     const memberData = {
       account: document.getElementById('account').value,
+      lineId: Cookies.get('lineId'),
       phoneNumber: document.getElementById('cellphone').value,
       email: document.getElementById('email').value,
       job: "保母"

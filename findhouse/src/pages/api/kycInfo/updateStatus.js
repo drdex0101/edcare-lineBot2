@@ -1,9 +1,8 @@
 import { Client } from 'pg';
 
 export default async function handler(req, res) {
-  if (req.method === 'POST') {
-    console.log('req.body', req.body);
-    const { account, lineId, phoneNumber, email, job } = req.body;
+  if (req.method === 'PATCH') {
+    const { status, id } = req.body;
 
     // 創建 PostgreSQL 客戶端
     const client = new Client({
@@ -17,18 +16,20 @@ export default async function handler(req, res) {
       // 連接資料庫
       await client.connect();
 
-      // 使用參數化查詢插入資料
+      // 使用參數化查詢更新資料
       const query = `
-        INSERT INTO member (account, line_id, cellphone, email, job, created_ts)
-        VALUES ($1, $2, $3, $4, $5, NOW())
+        UPDATE kyc_info
+        SET status = $1,
+            update_ts = NOW()
+        WHERE id = $2
         RETURNING *;
       `;
-      console.log(query);
-      const values = [account, lineId, phoneNumber, email, job];
+      const values = [status, id];
+
       const result = await client.query(query, values);
 
       console.log('Member created successfully:', result.rows[0]);
-      return res.status(201).json({ success: true, member: result.rows[0] });
+      return res.status(201).json({ success: true, kycInfo: result.rows[0] });
     } catch (error) {
       console.error('Database error:', error);
       res.status(500).json({ error: 'Database error' });

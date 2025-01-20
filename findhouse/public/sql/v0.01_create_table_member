@@ -9,7 +9,9 @@ CREATE TABLE member (
     job VARCHAR(100),               -- 職業 (保母時帶入保母)
     created_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 建立時間
     update_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 更新時間
+);
+
+#測試先移除
     UNIQUE (lineId),                 -- 確保 lineId 唯一
     UNIQUE (account),                -- 確保帳號唯一
     UNIQUE (email)                   -- 確保電子郵件唯一
-);

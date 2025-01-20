@@ -24,6 +24,7 @@ const ApplicationPage = () => {
   const memberId = useSelector((state) => state.member.memberId);
 
   const handleNextClick = async () => {
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
     const kycInfoData = {
       name: document.getElementById('name').value,
       identityCard: document.getElementById('identityCard').value,
@@ -35,7 +36,7 @@ const ApplicationPage = () => {
       identityFrontUploadId: frontImg,
       identityBackUploadId: backImg,
       iconUploadId: null,
-      status: '通過'
+      status: 'pending'
     };
     try {
       const response = await fetch('/api/kycInfo/createKycInfo', {
@@ -57,6 +58,14 @@ const ApplicationPage = () => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(kycInfoUpdateData)
+      });
+      await fetch('/api/line/changeRichMenu', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        
+        body: JSON.stringify({ userId: Cookies.get('userId'), richMenuId: 'richmenu-307b8975e551ebd54362c688b7cb9e54' })
       });
       router.push('/parent/create/choose');
     } catch (error) {
@@ -277,8 +286,8 @@ const ApplicationPage = () => {
                     value={selectedDate}
                     onChange={(newValue) => setSelectedDate(newValue)}
                     renderInput={(params) => <TextField {...params} />}
+                    views={['year','month', 'day']}
                     disableFuture
-                    shouldDisableDate={(date) => date.day() === 0 || date.day() === 6} // 禁用週末
                     InputProps={{
                       sx: {
                         padding: '0px 16px',
