@@ -3,7 +3,7 @@ import { Client } from 'pg';
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     console.log('req.body', req.body);
-    const { account, phoneNumber, email, job } = req.body;
+    const { account, lineId, phoneNumber, email, job } = req.body;
 
     // 創建 PostgreSQL 客戶端
     const client = new Client({
@@ -19,12 +19,12 @@ export default async function handler(req, res) {
 
       // 使用參數化查詢插入資料
       const query = `
-        INSERT INTO member (account, cellphone, email, job, created_ts)
-        VALUES ($1, $2, $3, $4, NOW())
+        INSERT INTO member (account, line_id, cellphone, email, job, created_ts)
+        VALUES ($1, $2, $3, $4, $5, NOW())
         RETURNING *;
       `;
       console.log(query);
-      const values = [account, phoneNumber, email, job];
+      const values = [account, lineId, phoneNumber, email, job];
       const result = await client.query(query, values);
 
       console.log('Member created successfully:', result.rows[0]);

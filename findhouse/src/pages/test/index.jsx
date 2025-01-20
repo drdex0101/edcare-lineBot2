@@ -113,7 +113,7 @@ const ApplicationPage = () => {
                         <td style={styles.tableCell}>操作</td>
                     </tr>
                   {kycInfoList.map((kycInfo) => (
-                    <tr>
+                    <tr key={kycInfo.id}>
                       <td style={styles.tableCell}>{kycInfo.id}</td>
                       <td style={styles.tableCell}>{kycInfo.name}</td>
                       <td style={styles.tableCell}>{kycInfo.job}</td>
