@@ -5,6 +5,7 @@ import TextField from '@mui/material/TextField';
 import { useDispatch } from 'react-redux';
 import { setMemberId } from '../../features/member/memberSlice';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 const ApplicationPage = () => {
   const router = useRouter();
   const dispatch = useDispatch(); // Redux 的 dispatch 函数

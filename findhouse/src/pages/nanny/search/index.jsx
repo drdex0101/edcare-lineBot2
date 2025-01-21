@@ -7,16 +7,32 @@ import SearchBar from '../../../components/base/SearchBar';
 
 const ApplicationPage = () => {
   const router = useRouter();
-  const [nannyInfo, setNannyInfo] = useState([]);
+  const [orderInfo, setOrderInfo] = useState([]);
   const [totalItem, setTotalItem] = useState(0);
   const [currentPage, setCurrentPage] = useState(0); // Track current page
+  const [keywords, setKeywords] = useState('');
   const pageSize = 5;
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchNannyInfoList = async (page = 0, pageSize = 5) => {
+  const handleFilterChange = (region, locations,sorts) => {
+    setSelectedRegion(region);
+    setSelectedLocations(locations);
+    setSelectedSort(sorts);
+    fetchOrderInfoList(currentPage, pageSize); // Fetch nanny info with updated filters
+  };
+
+  const fetchOrderInfoList = async (page = 0, pageSize = 5) => {
     setIsLoading(true); // Set loading state to true while fetching data
+    let userId = null;
     try {
-      const response = await fetch(`/api/nanny/getNannyInfoList?page=${page}&pageSize=${pageSize}`, {
+      const cookies = document.cookie.split('; ');
+      const userIdCookie = cookies.find(row => row.startsWith('userId='));
+      if (userIdCookie) {
+        userId = userIdCookie.split('=')[1];
+      } else {
+        throw new Error('userId not found in cookies');
+      }
+      const response = await fetch(`/api/order/getOrderInfoList?page=${page}&pageSize=${pageSize}&userId=${userId}`, {
         method: 'GET',
         headers: {
           'Cache-Control': 'no-cache',
@@ -27,22 +43,22 @@ const ApplicationPage = () => {
         throw new Error('Network response was not ok');
       }
       const data = await response.json();
-      setNannyInfo(data.nannies);
+      setOrderInfo(data.orders);
       setTotalItem(data.totalCount); // Set total items for pagination
     } catch (error) {
-      console.error('Error fetching nanny info:', error);
+      console.error('Error fetching order info:', error);
     } finally {
       setIsLoading(false); // Set loading state to false when done fetching
     }
   };
 
-  // Log nannyInfo whenever it changes
+  // Log orderInfo whenever it changes
   useEffect(() => {
-    console.log(nannyInfo);
-  }, [nannyInfo]);
+    console.log(orderInfo);
+  }, [orderInfo]);
 
   useEffect(() => {
-    fetchNannyInfoList(currentPage, pageSize); // Fetch data when the page is loaded or currentPage changes
+    fetchOrderInfoList(currentPage, pageSize); // Fetch data when the page is loaded or currentPage changes
   }, [currentPage]);
 
   const handlePageChange = (page) => {
@@ -88,48 +104,81 @@ const ApplicationPage = () => {
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                     <path d="M8.94286 3C10.519 3 12.0306 3.62612 13.1451 4.74062C14.2596 5.85512 14.8857 7.36671 14.8857 8.94286C14.8857 10.4149 14.3463 11.768 13.4594 12.8103L13.7063 13.0571H14.4286L19 17.6286L17.6286 19L13.0571 14.4286V13.7063L12.8103 13.4594C11.768 14.3463 10.4149 14.8857 8.94286 14.8857C7.36671 14.8857 5.85512 14.2596 4.74062 13.1451C3.62612 12.0306 3 10.519 3 8.94286C3 7.36671 3.62612 5.85512 4.74062 4.74062C5.85512 3.62612 7.36671 3 8.94286 3ZM8.94286 4.82857C6.65714 4.82857 4.82857 6.65714 4.82857 8.94286C4.82857 11.2286 6.65714 13.0571 8.94286 13.0571C11.2286 13.0571 13.0571 11.2286 13.0571 8.94286C13.0571 6.65714 11.2286 4.82857 8.94286 4.82857Z" fill="#999999"/>
                   </svg>
-                  <input style={{ border: 'none' }}></input>
+                  <input 
+                    style={{ border: 'none' }} 
+                    placeholder="搜尋暱稱" 
+                    value={keywords || ''}
+                    onChange={(e) => setKeywords(e.target.value)}
+                  ></input>
                 </div>
-                <SearchBar></SearchBar>
+                <SearchBar 
+                  keyword={keywords} // 將關鍵字傳遞給子組件
+                  setKeyword={setKeywords} // 傳遞更新函數
+                  onChange={handleFilterChange} // 傳遞選擇變更的處理函數
+                  from={'nanny'}
+                />
               </div>
               <div style={styles.titleLayout}>
               </div>
             </div>
             <div style={{ backgroundColor: '#f8ecec', width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
               <div style={styles.nannyItemLayout}>
-                {nannyInfo.map((nanny, index) => (
+                {orderInfo.map((order, index) => (
                   <div 
                     key={index} 
                     style={styles.nannyItem} 
                     onClick={() => {
-                      if (nanny.id) {
-                        router.push(`/nanny/profile/${nanny.id}`);
+                      if (order.id) {
+                        router.push(`/nanny/profile/${order.id}`);
                       } else {
-                        console.error('Nanny ID not found');
+                        console.error('Order ID not found');
                       }
                     }}
                   >
                     <div style={styles.rightPart}>
                       <div>
-                        <img src={nanny.image || '/nannyIcon.jpg'} style={styles.nannyIcon} alt="Nanny Icon" />
+                        <img src={order.image || '/orderCreate.png'} style={order.gender === 'female' ? styles.orderIconFemale : styles.orderIconMale} alt="Nanny Icon" />
                       </div>
                       <div style={styles.nannyFontLayout}>
-                        <div style={styles.nannyNameFont}>{nanny.name}</div>
-                        <div style={styles.nannySubInfo}>{nanny.experience} 托育經驗</div>
+                        <div style={styles.nannyNameFont}>{order.nickname}</div>
+                        <div style={styles.nannySubInfo}>{order.choosetype === 'suddenly' ? '臨時托育' : 
+                               order.choosetype === 'longTerm' ? '長期托育' : ''}</div>
                       </div>
                     </div>
                     <div style={styles.scoreLayout}>
-                      <span style={styles.scoreFont}>{nanny.rating}</span>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="25" viewBox="0 0 24 25" fill="none">
-                        <g clip-path="url(#clip0_75_7187)">
-                          <path d="M12 0.5C5.38 0.5 0 5.88 0 12.5C0 19.12 5.38 24.5 12 24.5C18.62 24.5 24 19.12 24 12.5C24 5.88 18.62 0.5 12 0.5ZM17.17 12.12L15 13.89L15.9 16.62C16.02 16.99 15.9 17.4 15.59 17.63C15.28 17.87 14.86 17.88 14.53 17.67L12.01 16.03L9.53 17.69C9.38 17.79 9.2 17.84 9.02 17.84C8.83 17.84 8.63 17.78 8.47 17.66C8.16 17.43 8.03 17.02 8.15 16.65L9.01 13.89L6.83 12.12C6.54 11.87 6.43 11.47 6.56 11.11C6.69 10.75 7.04 10.51 7.42 10.51H10.17L11.14 7.9C11.27 7.54 11.62 7.3 12 7.3C12.38 7.3 12.73 7.54 12.86 7.9L13.83 10.51H16.58C16.96 10.51 17.31 10.75 17.44 11.11C17.57 11.47 17.46 11.88 17.17 12.13V12.12Z" fill="#FFD22F"/>
-                        </g>
-                        <defs>
-                          <clipPath id="clip0_75_7187">
-                            <rect width="24" height="24" fill="white" transform="translate(0 0.5)"/>
-                          </clipPath>
-                        </defs>
-                      </svg>
+                      <div style={styles.iconLayout}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="13" viewBox="0 0 12 13" fill="none">
+                          <path d="M11.9305 4.5H6.5V0.5H7.5C7.5415 0.5 11.373 0.55 11.9305 4.5ZM2.75 5.5L2 4.5C1.76646 4.19023 1.46437 3.93874 1.11738 3.76524C0.770391 3.59175 0.387942 3.50096 0 3.5L0 4.5C0.232765 4.50058 0.462235 4.55505 0.670427 4.65915C0.878619 4.76324 1.05988 4.91413 1.2 5.1L2 6.1665V7C2 7.39782 2.15804 7.77936 2.43934 8.06066C2.72064 8.34196 3.10218 8.5 3.5 8.5H5.9325L4.6285 10.0645C3.9675 9.7555 2.9185 10.523 3.002 11.32C3.01398 11.5021 3.06582 11.6793 3.15383 11.8392C3.24185 11.999 3.3639 12.1376 3.51136 12.2451C3.65882 12.3526 3.82809 12.4263 4.00721 12.4612C4.18632 12.4961 4.37091 12.4912 4.54793 12.4469C4.72494 12.4025 4.89006 12.3199 5.03162 12.2047C5.17317 12.0896 5.2877 11.9447 5.36712 11.7804C5.44654 11.6162 5.4889 11.4364 5.49121 11.254C5.49352 11.0715 5.45573 10.8907 5.3805 10.7245L7 8.781L8.6195 10.7245C8.5452 10.8907 8.50822 11.0711 8.51117 11.2532C8.51411 11.4352 8.5569 11.6144 8.63653 11.7781C8.71616 11.9418 8.8307 12.086 8.97208 12.2007C9.11346 12.3154 9.27825 12.3977 9.45486 12.4418C9.63148 12.486 9.81561 12.4909 9.99433 12.4562C10.173 12.4215 10.342 12.3481 10.4893 12.2411C10.6366 12.1342 10.7586 11.9962 10.8469 11.837C10.9351 11.6777 10.9874 11.5011 11 11.3195C11.0835 10.5235 10.0345 9.755 9.3735 10.0645L8.0675 8.5H10.5C10.8978 8.5 11.2794 8.34196 11.5607 8.06066C11.842 7.77936 12 7.39782 12 7V5.5H2.75Z" fill="#E3838E"/>
+                        </svg>
+
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 13 13" fill="none">
+                          <path d="M7.25054 7.9995C6.83604 7.9995 6.50054 8.335 6.50054 8.7495V9.4995H1.50054V3.2495C1.50054 2.5605 2.06154 1.9995 2.75054 1.9995H5.25054C5.82154 1.9995 6.31954 2.385 6.46104 2.9365C6.56454 3.3375 6.97354 3.5805 7.37404 3.476C7.77554 3.3725 8.01704 2.964 7.91354 2.563C7.60104 1.348 6.50604 0.5 5.25004 0.5H2.75004C1.23404 0.4995 0.000538195 1.733 0.000538195 3.2495C0.000538195 3.2495 -0.00946181 10.102 0.000538195 10.1505C0.000538195 11.4995 1.17154 12.4995 2.50054 12.4995H5.50054C6.68354 12.4995 7.83204 11.61 8.00054 10.2495V8.7495C8.00054 8.335 7.66504 7.9995 7.25054 7.9995ZM4.50054 11.4995H3.50054C3.22454 11.4995 3.00054 11.2755 3.00054 10.9995C3.00054 10.7235 3.22454 10.4995 3.50054 10.4995H4.50054C4.77654 10.4995 5.00054 10.7235 5.00054 10.9995C5.00054 11.2755 4.77654 11.4995 4.50054 11.4995Z" fill="#E3838E"/>
+                          <path d="M12.057 5.00021V4.83971C12.057 4.61971 11.9845 4.40521 11.85 4.23071L10.6115 2.61721C10.2505 2.18421 9.60747 2.12571 9.17447 2.48671C8.74147 2.84771 8.68297 3.49071 9.04397 3.92371L9.46147 4.49971L5.76747 4.49321C5.28847 4.49321 4.91497 4.93471 5.04297 5.43521C5.13047 5.77621 5.46247 5.99971 5.81447 5.99971H7.89897L8.66647 8.68671C8.97147 9.75421 9.95997 10.4997 11.0705 10.4997H11.2505C11.665 10.4997 12.0005 10.1642 12.0005 9.74971C12.0005 9.33521 11.665 8.99971 11.2505 8.99971H11.0705C10.6265 8.99971 10.231 8.70121 10.109 8.27421L9.45897 5.99971H11.058C11.6105 5.99971 12.058 5.55221 12.058 4.99971L12.057 5.00021Z" fill="#E3838E"/>
+                        </svg>
+                      </div>
+
+                      <div style={styles.iconLayout}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="13" viewBox="0 0 12 13" fill="none">
+                          <path d="M11.9305 4.5H6.5V0.5H7.5C7.5415 0.5 11.373 0.55 11.9305 4.5ZM2.75 5.5L2 4.5C1.76646 4.19023 1.46437 3.93874 1.11738 3.76524C0.770391 3.59175 0.387942 3.50096 0 3.5L0 4.5C0.232765 4.50058 0.462235 4.55505 0.670427 4.65915C0.878619 4.76324 1.05988 4.91413 1.2 5.1L2 6.1665V7C2 7.39782 2.15804 7.77936 2.43934 8.06066C2.72064 8.34196 3.10218 8.5 3.5 8.5H5.9325L4.6285 10.0645C3.9675 9.7555 2.9185 10.523 3.002 11.32C3.01398 11.5021 3.06582 11.6793 3.15383 11.8392C3.24185 11.999 3.3639 12.1376 3.51136 12.2451C3.65882 12.3526 3.82809 12.4263 4.00721 12.4612C4.18632 12.4961 4.37091 12.4912 4.54793 12.4469C4.72494 12.4025 4.89006 12.3199 5.03162 12.2047C5.17317 12.0896 5.2877 11.9447 5.36712 11.7804C5.44654 11.6162 5.4889 11.4364 5.49121 11.254C5.49352 11.0715 5.45573 10.8907 5.3805 10.7245L7 8.781L8.6195 10.7245C8.5452 10.8907 8.50822 11.0711 8.51117 11.2532C8.51411 11.4352 8.5569 11.6144 8.63653 11.7781C8.71616 11.9418 8.8307 12.086 8.97208 12.2007C9.11346 12.3154 9.27825 12.3977 9.45486 12.4418C9.63148 12.486 9.81561 12.4909 9.99433 12.4562C10.173 12.4215 10.342 12.3481 10.4893 12.2411C10.6366 12.1342 10.7586 11.9962 10.8469 11.837C10.9351 11.6777 10.9874 11.5011 11 11.3195C11.0835 10.5235 10.0345 9.755 9.3735 10.0645L8.0675 8.5H10.5C10.8978 8.5 11.2794 8.34196 11.5607 8.06066C11.842 7.77936 12 7.39782 12 7V5.5H2.75Z" fill="#E3838E"/>
+                        </svg>
+
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 13 13" fill="none">
+                          <path d="M7.25054 7.9995C6.83604 7.9995 6.50054 8.335 6.50054 8.7495V9.4995H1.50054V3.2495C1.50054 2.5605 2.06154 1.9995 2.75054 1.9995H5.25054C5.82154 1.9995 6.31954 2.385 6.46104 2.9365C6.56454 3.3375 6.97354 3.5805 7.37404 3.476C7.77554 3.3725 8.01704 2.964 7.91354 2.563C7.60104 1.348 6.50604 0.5 5.25004 0.5H2.75004C1.23404 0.4995 0.000538195 1.733 0.000538195 3.2495C0.000538195 3.2495 -0.00946181 10.102 0.000538195 10.1505C0.000538195 11.4995 1.17154 12.4995 2.50054 12.4995H5.50054C6.68354 12.4995 7.83204 11.61 8.00054 10.2495V8.7495C8.00054 8.335 7.66504 7.9995 7.25054 7.9995ZM4.50054 11.4995H3.50054C3.22454 11.4995 3.00054 11.2755 3.00054 10.9995C3.00054 10.7235 3.22454 10.4995 3.50054 10.4995H4.50054C4.77654 10.4995 5.00054 10.7235 5.00054 10.9995C5.00054 11.2755 4.77654 11.4995 4.50054 11.4995Z" fill="#E3838E"/>
+                          <path d="M12.057 5.00021V4.83971C12.057 4.61971 11.9845 4.40521 11.85 4.23071L10.6115 2.61721C10.2505 2.18421 9.60747 2.12571 9.17447 2.48671C8.74147 2.84771 8.68297 3.49071 9.04397 3.92371L9.46147 4.49971L5.76747 4.49321C5.28847 4.49321 4.91497 4.93471 5.04297 5.43521C5.13047 5.77621 5.46247 5.99971 5.81447 5.99971H7.89897L8.66647 8.68671C8.97147 9.75421 9.95997 10.4997 11.0705 10.4997H11.2505C11.665 10.4997 12.0005 10.1642 12.0005 9.74971C12.0005 9.33521 11.665 8.99971 11.2505 8.99971H11.0705C10.6265 8.99971 10.231 8.70121 10.109 8.27421L9.45897 5.99971H11.058C11.6105 5.99971 12.058 5.55221 12.058 4.99971L12.057 5.00021Z" fill="#E3838E"/>
+                        </svg>
+                      </div>
+
+                      <div style={styles.iconLayout}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="13" viewBox="0 0 12 13" fill="none">
+                          <path d="M11.9305 4.5H6.5V0.5H7.5C7.5415 0.5 11.373 0.55 11.9305 4.5ZM2.75 5.5L2 4.5C1.76646 4.19023 1.46437 3.93874 1.11738 3.76524C0.770391 3.59175 0.387942 3.50096 0 3.5L0 4.5C0.232765 4.50058 0.462235 4.55505 0.670427 4.65915C0.878619 4.76324 1.05988 4.91413 1.2 5.1L2 6.1665V7C2 7.39782 2.15804 7.77936 2.43934 8.06066C2.72064 8.34196 3.10218 8.5 3.5 8.5H5.9325L4.6285 10.0645C3.9675 9.7555 2.9185 10.523 3.002 11.32C3.01398 11.5021 3.06582 11.6793 3.15383 11.8392C3.24185 11.999 3.3639 12.1376 3.51136 12.2451C3.65882 12.3526 3.82809 12.4263 4.00721 12.4612C4.18632 12.4961 4.37091 12.4912 4.54793 12.4469C4.72494 12.4025 4.89006 12.3199 5.03162 12.2047C5.17317 12.0896 5.2877 11.9447 5.36712 11.7804C5.44654 11.6162 5.4889 11.4364 5.49121 11.254C5.49352 11.0715 5.45573 10.8907 5.3805 10.7245L7 8.781L8.6195 10.7245C8.5452 10.8907 8.50822 11.0711 8.51117 11.2532C8.51411 11.4352 8.5569 11.6144 8.63653 11.7781C8.71616 11.9418 8.8307 12.086 8.97208 12.2007C9.11346 12.3154 9.27825 12.3977 9.45486 12.4418C9.63148 12.486 9.81561 12.4909 9.99433 12.4562C10.173 12.4215 10.342 12.3481 10.4893 12.2411C10.6366 12.1342 10.7586 11.9962 10.8469 11.837C10.9351 11.6777 10.9874 11.5011 11 11.3195C11.0835 10.5235 10.0345 9.755 9.3735 10.0645L8.0675 8.5H10.5C10.8978 8.5 11.2794 8.34196 11.5607 8.06066C11.842 7.77936 12 7.39782 12 7V5.5H2.75Z" fill="#E3838E"/>
+                        </svg>
+
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 13 13" fill="none">
+                          <path d="M7.25054 7.9995C6.83604 7.9995 6.50054 8.335 6.50054 8.7495V9.4995H1.50054V3.2495C1.50054 2.5605 2.06154 1.9995 2.75054 1.9995H5.25054C5.82154 1.9995 6.31954 2.385 6.46104 2.9365C6.56454 3.3375 6.97354 3.5805 7.37404 3.476C7.77554 3.3725 8.01704 2.964 7.91354 2.563C7.60104 1.348 6.50604 0.5 5.25004 0.5H2.75004C1.23404 0.4995 0.000538195 1.733 0.000538195 3.2495C0.000538195 3.2495 -0.00946181 10.102 0.000538195 10.1505C0.000538195 11.4995 1.17154 12.4995 2.50054 12.4995H5.50054C6.68354 12.4995 7.83204 11.61 8.00054 10.2495V8.7495C8.00054 8.335 7.66504 7.9995 7.25054 7.9995ZM4.50054 11.4995H3.50054C3.22454 11.4995 3.00054 11.2755 3.00054 10.9995C3.00054 10.7235 3.22454 10.4995 3.50054 10.4995H4.50054C4.77654 10.4995 5.00054 10.7235 5.00054 10.9995C5.00054 11.2755 4.77654 11.4995 4.50054 11.4995Z" fill="#E3838E"/>
+                          <path d="M12.057 5.00021V4.83971C12.057 4.61971 11.9845 4.40521 11.85 4.23071L10.6115 2.61721C10.2505 2.18421 9.60747 2.12571 9.17447 2.48671C8.74147 2.84771 8.68297 3.49071 9.04397 3.92371L9.46147 4.49971L5.76747 4.49321C5.28847 4.49321 4.91497 4.93471 5.04297 5.43521C5.13047 5.77621 5.46247 5.99971 5.81447 5.99971H7.89897L8.66647 8.68671C8.97147 9.75421 9.95997 10.4997 11.0705 10.4997H11.2505C11.665 10.4997 12.0005 10.1642 12.0005 9.74971C12.0005 9.33521 11.665 8.99971 11.2505 8.99971H11.0705C10.6265 8.99971 10.231 8.70121 10.109 8.27421L9.45897 5.99971H11.058C11.6105 5.99971 12.058 5.55221 12.058 4.99971L12.057 5.00021Z" fill="#E3838E"/>
+                        </svg>
+                      </div>
+
                     </div>
                   </div>
                 ))}
@@ -138,7 +187,7 @@ const ApplicationPage = () => {
                     pageSize={pageSize}
                     currentPage={currentPage}
                     onPageChange={handlePageChange}
-                    fetchNannyInfoList={fetchNannyInfoList}
+                    fetchOrderInfoList={fetchOrderInfoList}
                   />
               </div>
             </div>
@@ -226,14 +275,29 @@ const styles = {
     flexDirection:'column',
     gap:'10px'
   },
-  nannyIcon:{
+  orderIconFemale:{
     display: 'flex',
     width: '60px',
     height: '60px',
-    padding: '7.982px',
+    padding: '10px',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius:'50%'
+    gap: '10px',
+    flexShrink: '0',
+    backgroundColor: '#F3CCD4',
+    borderRadius: '50%',
+  },
+  orderIconMale:{
+    display: 'flex',
+    width: '60px',
+    height: '60px',
+    padding: '10px',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: '10px',
+    flexShrink: '0',
+    backgroundColor: '#BCE8F7',
+    borderRadius: '50%',
   },
   rightPart:{
     display:'flex',
@@ -244,19 +308,16 @@ const styles = {
   nannyItem:{
     display: 'flex',
     height: '70px',
-    padding: '6px 9px 4px 8px',
+    padding: '5px 9px 5px 9px',
     justifyContent: 'space-between',
     alignItems: 'center',
-    alignSelf: 'stretch',
     borderRadius: '8px',
     border: '2px solid var(---Button-01, #FBDBD6)',
     background: 'var(---SurfaceContainer-Lowest, #FFF)',
-    cursor:'pointer'
   },
   nannyItemLayout: {
     display:'flex',
     flexDirection:'column',
-    gap:'10px',
     gap:'24px',
     width:'100%',
     marginBottom:'28px',
@@ -265,6 +326,7 @@ const styles = {
     paddingLeft:'35px',
     paddingRight:'35px',
     paddingTop: '20px',
+    backgroundColor: '#F3CCD4',
     borderRadius: '40px 0px 0px 0px', // 左上、右上、右下、左下的圓角
   },
   buttonLayout: {
@@ -328,9 +390,13 @@ const styles = {
     gap:'8px'
   },
   iconLayout:{
-    height: '38px',
     alignSelf: 'stretch',
-    fill: 'var(---SurfaceContainer-High, #F5E5E5)'
+    fill: 'var(---SurfaceContainer-High, #F5E5E5)',
+    gap:'10px',
+    display:'flex',
+    flexDirection:'column',
+    justifyContent:'center',
+    alignItems:'center'
   },
   createButtonLayout:{
     display:'flex',
