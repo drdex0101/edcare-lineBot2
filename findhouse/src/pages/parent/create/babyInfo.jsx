@@ -11,6 +11,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 import { MenuItem, InputLabel, FormControl } from '@mui/material';
+import Cookies from 'js-cookie';
 const ApplicationPage = () => {
   const router = useRouter();
   const [selectedDate, setSelectedDate] = useState();
@@ -35,7 +36,7 @@ const ApplicationPage = () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        parentLineId: request.cookies.get('userId'),
+        parentLineId: Cookies.get('userId'),
         nannyid: '',
         status: 'create',
         choosetype: localStorage.getItem('choosetype'),

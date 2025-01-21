@@ -12,6 +12,7 @@ const ApplicationPage = () => {
   const handleNextClick = async () => {
     const memberData = {
       accountName: document.getElementById('account').value,
+      lineId: Cookies.get('userId'),
       phoneNumber: document.getElementById('cellphone').value,
       email: document.getElementById('email').value,
       job: document.getElementById('job').value,

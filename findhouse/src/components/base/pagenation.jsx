@@ -2,10 +2,8 @@ import React, { useState } from 'react';
 
 const Pagination = ({ totalItems, pageSize, currentPage, onPageChange }) => {
   const totalPages = Math.ceil(totalItems / pageSize);
-  const [activePage, setActivePage] = useState(currentPage);
 
   const handlePageClick = (page) => {
-    setActivePage(page);
     onPageChange(page);
   };
 
@@ -16,7 +14,7 @@ const Pagination = ({ totalItems, pageSize, currentPage, onPageChange }) => {
         <button
           key={i}
           onClick={() => handlePageClick(i)}
-          className={`page-button ${activePage === i ? 'active' : ''}`}
+          className={`page-button ${currentPage === i ? 'active' : ''}`}
         >
           {i}
         </button>
@@ -28,16 +26,16 @@ const Pagination = ({ totalItems, pageSize, currentPage, onPageChange }) => {
   return (
     <div className="pagination">
       <button
-        onClick={() => handlePageClick(Math.max(1, activePage - 1))}
-        disabled={activePage === 1}
+        onClick={() => handlePageClick(Math.max(1, currentPage - 1))}
+        disabled={currentPage === 1}
         className="page-button"
       >
         &lt;
       </button>
       {renderPageNumbers()}
       <button
-        onClick={() => handlePageClick(Math.min(totalPages, activePage + 1))}
-        disabled={activePage === totalPages}
+        onClick={() => handlePageClick(Math.min(totalPages, currentPage + 1))}
+        disabled={currentPage === totalPages}
         className="page-button"
       >
         &gt;
@@ -47,7 +45,7 @@ const Pagination = ({ totalItems, pageSize, currentPage, onPageChange }) => {
           display: flex;
           align-items: center;
           justify-content: center;
-          background-color: transparent; /* Pink background */
+          background-color: transparent;
           padding: 10px;
           border-radius: 5px;
         }
@@ -74,13 +72,13 @@ const Pagination = ({ totalItems, pageSize, currentPage, onPageChange }) => {
   );
 };
 
-const App = ({ totalItems,fetchNannyInfoList }) => {
+const App = ({ totalItems,fetchNannyInfoList,keyword }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 5; // Example page size
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
-    fetchNannyInfoList(page);
+    fetchNannyInfoList(page,keyword);
   };
 
   return (

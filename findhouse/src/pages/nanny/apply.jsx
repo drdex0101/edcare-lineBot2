@@ -17,7 +17,7 @@ const ApplicationPage = () => {
   const handleNextClick = async () => {
     const memberData = {
       account: document.getElementById('account').value,
-      lineId: Cookies.get('lineId'),
+      lineId: Cookies.get('userId'),
       phoneNumber: document.getElementById('cellphone').value,
       email: document.getElementById('email').value,
       job: "保母"

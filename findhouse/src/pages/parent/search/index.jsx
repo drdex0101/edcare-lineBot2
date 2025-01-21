@@ -13,11 +13,16 @@ const ApplicationPage = () => {
   const [currentPage, setCurrentPage] = useState(0); // Track current page
   const pageSize = 5;
   const [isLoading, setIsLoading] = useState(true);
-
-  const fetchNannyInfoList = async (page = 0, pageSize = 5) => {
+  const [keywords, setKeywords] = useState(null);
+  const [selectedRegion, setSelectedRegion] = useState(null);
+  const [selectedLocations, setSelectedLocations] = useState([]);
+  const [selectedSort, setSelectedSort] = useState(null); // 新增狀態以追蹤選擇的排序
+  const [shouldFetch, setShouldFetch] = useState(true); // 新增状态以控制是否需要获取数据
+  const fetchNannyInfoList = async (page, pageSize=5,  keywords) => {
     setIsLoading(true); // Set loading state to true while fetching data
+    console.log(selectedLocations);
     try {
-      const response = await fetch(`/api/nanny/getNannyInfoList?page=${page}&pageSize=${pageSize}`, {
+      const response = await fetch(`/api/nanny/getNannyInfoList?page=${page}&pageSize=${pageSize}&locations=${selectedLocations}&sort=${selectedSort}&keyword=${keywords}`, {
         method: 'GET',
         headers: {
           'Cache-Control': 'no-cache',
@@ -30,12 +35,23 @@ const ApplicationPage = () => {
       const data = await response.json();
       setNannyInfo(data.nannies);
       setTotalItem(data.totalCount); // Set total items for pagination
+      if(data.nannies[0].uploadid){
+        const response3 = await fetch(`/api/base/getImgUrl?id=${data.nannies[0].uploadid}`);
+        const data3 = await response3.json();
+        setIconUrl(data3.url);
+      }
     } catch (error) {
       console.error('Error fetching nanny info:', error);
     } finally {
       setIsLoading(false); // Set loading state to false when done fetching
     }
   };
+
+  const handleFetchClick = () => {
+    fetchNannyInfoList(currentPage, pageSize, keywords);
+    fetchOrderInfo();
+  };
+  
 
   const fetchOrderInfo = async () => {
     setIsLoading(true); // 設置加載狀態為 true，表示正在請求資料
@@ -89,17 +105,30 @@ const ApplicationPage = () => {
 
 
 useEffect(() => {
+  let isCancelled = false;  // 增加取消請求的控制變數
+
   const fetchData = async () => {
-      try {
-          await fetchNannyInfoList(currentPage, pageSize); // Fetch nanny info when currentPage or pageSize changes
-          await fetchOrderInfo(); // Fetch order info when currentPage changes
-      } catch (error) {
-          console.error("Error fetching data:", error); // Log any errors that happen during fetch
+    try {
+      setIsLoading(true);
+      // 只在组件未取消时执行数据获取
+      if (!isCancelled) {
+        await fetchNannyInfoList(currentPage, pageSize, keywords);
+        await fetchOrderInfo();
+        setIsLoading(true);
       }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      if (!isCancelled) setIsLoading(false);
+    }
   };
 
   fetchData();
-}, [currentPage, pageSize]); // Add pageSize if it's used in fetchOrderInfo
+
+  return () => {
+    isCancelled = true;  // 在組件卸載時取消請求
+  };
+}, [currentPage]);  // 監聽關鍵依賴變數
 
   const handlePageChange = (page) => {
     console.log('page:',page)
@@ -110,8 +139,11 @@ useEffect(() => {
     router.push('/parent/create/choose'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
-  const handleLastClick = () => {
-    router.push('/parent/create/'); // 替换 '/next-page' 为你想要跳转的路径
+  const handleFilterChange = (region, locations,sorts) => {
+    setSelectedRegion(region);
+    setSelectedLocations(locations);
+    setSelectedSort(sorts);
+    fetchNannyInfoList(currentPage, pageSize); // Fetch nanny info with updated filters
   };
 
   return (
@@ -127,7 +159,7 @@ useEffect(() => {
               </span>
             </div>
             <div style={styles.createButtonLayout}>
-              <div style={styles.iconLayout}>
+              <div style={styles.iconLayout} onClick={handleNextClick}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 38 38" fill="none">
                   <rect width="38" height="38" rx="4" fill="#F5E5E5"/>
                   <path d="M26.0231 9C25.2613 9 24.4994 9.29013 23.9179 9.87171L22.6843 11.1053L26.8949 15.3158L28.1284 14.0822C29.2905 12.9201 29.2905 11.0349 28.1284 9.87171C27.5468 9.29013 26.785 9 26.0231 9ZM21.1053 12.6842L9 24.7895V29H13.2106L25.3159 16.8947L21.1053 12.6842Z" fill="#E3838E"/>
@@ -145,12 +177,28 @@ useEffect(() => {
             <div style={styles.contentLayout}>
               <div style={styles.rollerLayout}>
                 <div style={styles.searchInput}>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    width="24" 
+                    height="24" 
+                    viewBox="0 0 24 24" 
+                    fill="none"
+                    onClick={() => handleFetchClick()}
+                  >
                     <path d="M8.94286 3C10.519 3 12.0306 3.62612 13.1451 4.74062C14.2596 5.85512 14.8857 7.36671 14.8857 8.94286C14.8857 10.4149 14.3463 11.768 13.4594 12.8103L13.7063 13.0571H14.4286L19 17.6286L17.6286 19L13.0571 14.4286V13.7063L12.8103 13.4594C11.768 14.3463 10.4149 14.8857 8.94286 14.8857C7.36671 14.8857 5.85512 14.2596 4.74062 13.1451C3.62612 12.0306 3 10.519 3 8.94286C3 7.36671 3.62612 5.85512 4.74062 4.74062C5.85512 3.62612 7.36671 3 8.94286 3ZM8.94286 4.82857C6.65714 4.82857 4.82857 6.65714 4.82857 8.94286C4.82857 11.2286 6.65714 13.0571 8.94286 13.0571C11.2286 13.0571 13.0571 11.2286 13.0571 8.94286C13.0571 6.65714 11.2286 4.82857 8.94286 4.82857Z" fill="#999999"/>
                   </svg>
-                  <input style={{ border: 'none' }}></input>
+                  <input 
+                    style={{ border: 'none' }} 
+                    placeholder="搜尋保母名稱" 
+                    value={keywords || ''}
+                    onChange={(e) => setKeywords(e.target.value)}
+                  ></input>
                 </div>
-                <SearchBar></SearchBar>
+                <SearchBar 
+                  keyword={keywords} // 將關鍵字傳遞給子組件
+                  setKeyword={setKeywords} // 傳遞更新函數
+                  onChange={handleFilterChange} // 傳遞選擇變更的處理函數
+                />
               </div>
               <div style={styles.titleLayout}>
               </div>
@@ -174,8 +222,8 @@ useEffect(() => {
                         <img src={nanny.image || '/nannyIcon.jpg'} style={styles.nannyIcon} alt="Nanny Icon" />
                       </div>
                       <div style={styles.nannyFontLayout}>
-                        <div style={styles.nannyNameFont}>{nanny.name}</div>
-                        <div style={styles.nannySubInfo}>{nanny.experience} 托育經驗</div>
+                        <div style={styles.nannyNameFont}>{nanny.account}</div>
+                        <div style={styles.nannySubInfo}>托育經驗: {nanny.experienment} 年</div>
                       </div>
                     </div>
                     <div style={styles.scoreLayout}>
@@ -185,7 +233,7 @@ useEffect(() => {
                           <path d="M12 0.5C5.38 0.5 0 5.88 0 12.5C0 19.12 5.38 24.5 12 24.5C18.62 24.5 24 19.12 24 12.5C24 5.88 18.62 0.5 12 0.5ZM17.17 12.12L15 13.89L15.9 16.62C16.02 16.99 15.9 17.4 15.59 17.63C15.28 17.87 14.86 17.88 14.53 17.67L12.01 16.03L9.53 17.69C9.38 17.79 9.2 17.84 9.02 17.84C8.83 17.84 8.63 17.78 8.47 17.66C8.16 17.43 8.03 17.02 8.15 16.65L9.01 13.89L6.83 12.12C6.54 11.87 6.43 11.47 6.56 11.11C6.69 10.75 7.04 10.51 7.42 10.51H10.17L11.14 7.9C11.27 7.54 11.62 7.3 12 7.3C12.38 7.3 12.73 7.54 12.86 7.9L13.83 10.51H16.58C16.96 10.51 17.31 10.75 17.44 11.11C17.57 11.47 17.46 11.88 17.17 12.13V12.12Z" fill="#FFD22F"/>
                         </g>
                         <defs>
-                          <clipPath id="clip0_75_7187">
+                          <clipPath id="clip0_75_7187)">
                             <rect width="24" height="24" fill="white" transform="translate(0 0.5)"/>
                           </clipPath>
                         </defs>
@@ -194,6 +242,7 @@ useEffect(() => {
                   </div>
                 ))}
                <Pagination
+                    keyword={keywords}
                     totalItems={totalItem}
                     pageSize={pageSize}
                     currentPage={currentPage}
