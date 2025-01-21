@@ -11,7 +11,8 @@ export default async function handler(req, res) {
         {},
         {
           headers: {
-            'Authorization': `Bearer ${process.env.NEXT_PUBLIC_CHANNEL_ACCESS_TOKEN}`,
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${process.env.LINE_CHANNEL_ACCESS_TOKEN}`,
           },
         }
       );
