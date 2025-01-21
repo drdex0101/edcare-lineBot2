@@ -13,7 +13,7 @@ const ApplicationPage = () => {
   const [currentPage, setCurrentPage] = useState(0); // Track current page
   const pageSize = 5;
   const [isLoading, setIsLoading] = useState(true);
-  const [keywords, setKeywords] = useState(null);
+  const [keywords, setKeywords] = useState('');
   const [selectedRegion, setSelectedRegion] = useState(null);
   const [selectedLocations, setSelectedLocations] = useState([]);
   const [selectedSort, setSelectedSort] = useState(null); // 新增狀態以追蹤選擇的排序
@@ -88,8 +88,9 @@ const ApplicationPage = () => {
       const data = await response.json();
 
       // 根據返回數據處理
-      if (data && data.orderInfo) {
-        setOrderInfo(data.orderInfo);  // 假設返回的資料格式是 data.orderInfo
+      if (data) {
+        setOrderInfo(data.nannies);  // 假設返回的資料格式是 data.orderInfo
+        console.log(data.nannies)
       } else {
         throw new Error('No order information found in the response');
       }
@@ -153,10 +154,31 @@ useEffect(() => {
       ) : (
         <>
           <div style={styles.header}>
-            <div style={styles.createInfoLayout} onClick={handleNextClick}>
-              <span style={styles.headerFont}>
-                + 建立托育資料
-              </span>
+            <div style={orderInfo.length > 0 ? styles.createInfoLayoutHave : styles.createInfoLayout}>
+              {orderInfo ? (
+                <div style={styles.orderInfoLayout}>
+                  {orderInfo.map((order, index) => (
+                    <div key={index} style={styles.orderItem}>
+                      <img src='/orderCreate.png' style={styles.headIcon} alt="Order Icon" />
+                      <div style={styles.orderInfo}>
+                        <span style={styles.nickname}>{order.nickname}</span>
+                        <div style={{ display: 'flex', gap: '5px' }}>
+                            <div style={styles.way}>{order.choosetype}</div>
+                            <div style={styles.screen}>{order.choosetype}</div>
+                        </div>
+                        <div style={{ display: 'flex', gap: '5px',flexDirection:'column' }}>
+                              <span style={styles.timeFont}>托育時間:</span>
+                              <span style={styles.timeFont}>123456</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <span style={styles.headerFont} onClick={handleNextClick}>
+                  + 建立托育資料
+                </span>
+              )}
             </div>
             <div style={styles.createButtonLayout}>
               <div style={styles.iconLayout} onClick={handleNextClick}>
@@ -241,14 +263,6 @@ useEffect(() => {
                     </div>
                   </div>
                 ))}
-               <Pagination
-                    keyword={keywords}
-                    totalItems={totalItem}
-                    pageSize={pageSize}
-                    currentPage={currentPage}
-                    onPageChange={handlePageChange}
-                    fetchNannyInfoList={fetchNannyInfoList}
-                  />
               </div>
             </div>
           </div>
@@ -259,6 +273,61 @@ useEffect(() => {
 };
 
 const styles = {
+  timeFont:{
+    color: 'var(---Surface-Black-25, #252525)',
+    /* Line/medium/8pt */
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: '8px',
+    fontStyle: 'normal',
+    fontWeight: '400',
+    lineHeight: 'normal'
+  },
+  screen: {
+    display: 'flex',
+    padding: '1px 5px',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: '10px',
+    borderRadius: '20px',
+    border: '1px solid var(---Button-02, #FBC2EB)'
+  },
+  way:{
+    display: 'flex',
+    padding: '1px 5px',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: '10px',
+    borderRadius: '20px',
+    background: 'var(---Button-02, linear-gradient(90deg, #FBC2EB 0%, #A6C1EE 100%))'
+  },
+  nickname:{
+    color: '#1E1E1E',
+    /* Line/bold/16pt */
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: '16px',
+    fontStyle: 'normal',
+    fontWeight: '700',
+    lineHeight: 'normal'
+  },
+  orderItem:{
+    display:'flex'
+  },
+  orderInfo: {
+    display:'flex',
+    flexDirection:'column',
+    gap:'6px'
+  },
+  headIcon:{
+    width: '88px',
+    height: '88px',
+    flexShrink: 0
+  },
+  orderInfoLayout :{
+    display: 'flex',
+    width: '218px',
+    alignItems: 'center',
+    gap: '15px'
+  },
   profilePic: {
     width: '80px',
     height: '80px',
@@ -447,6 +516,7 @@ const styles = {
     gap:'5px'
   },
   createInfoLayout:{
+    width:'100%',
     display: 'flex',
     height: '85px',
     padding: '28.5px 38.5px 27.5px 39.5px',
@@ -458,16 +528,25 @@ const styles = {
     gap:'8px',
     pointer:'cursor'
   },
+   createInfoLayoutHave:{
+    width:'100%',
+    display: 'flex',
+    height: '85px',
+    alignItems: 'center',
+    borderRadius: '12px',
+    background: 'var(---SurfaceContainer-Lowest, #FFF)',
+    gap:'8px',
+    pointer:'cursor'
+  },
   header: {
     display: 'flex',
-    justifyContent: 'space-between',
+    height: '147px',
+    padding: '15px 38px',
     alignItems: 'center',
+    gap: '20px',
+    alignSelf: 'stretch',
     width: '100%',
-    maxWidth: '600px',
-    // marginBottom: '20px',
-    padding: '10px',
-    paddingLeft: '50px',
-    paddingRight: '50px',
+    maxWidth: '680px',
     backgroundColor: '#fff',
     borderRadius: '0px 0px 40px 0px', // 左上、右上、右下、左下的圓角
   },

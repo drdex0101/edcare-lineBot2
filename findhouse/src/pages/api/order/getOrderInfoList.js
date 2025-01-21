@@ -34,7 +34,7 @@ export default async function handler(req, res) {
       console.log('Nannies retrieved successfully:', result.rows);
       return res.status(200).json({ 
         success: true, 
-        nannies: result.rows, 
+        orders: result.rows, 
         pageCount: result.rowCount // Count of records in the current page
       });
     } catch (error) {
