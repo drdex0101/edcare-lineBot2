@@ -2,7 +2,7 @@ import { Client } from 'pg';
 
 export default async function handler(req, res) {
   if (req.method === 'PATCH') {
-    const { isShow } = req.body;
+    const { isShow, id } = req.body;
 
     // 創建 PostgreSQL 客戶端
     const client = new Client({
@@ -21,9 +21,10 @@ export default async function handler(req, res) {
         UPDATE orderInfo
         SET isShow = $1,
             update_ts = NOW()
+        WHERE id = $2 
         RETURNING *;
       `;
-      const values = [isShow];
+      const values = [isShow, id];
 
       const result = await client.query(query, values);
       return res.status(201).json({ success: true, member: result.rows[0] });
