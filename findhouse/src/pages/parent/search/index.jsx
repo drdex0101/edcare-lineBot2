@@ -263,6 +263,14 @@ useEffect(() => {
                     </div>
                   </div>
                 ))}
+               <Pagination
+                    keyword={keywords}
+                    totalItems={totalItem}
+                    pageSize={pageSize}
+                    currentPage={currentPage}
+                    onPageChange={handlePageChange}
+                    fetchNannyInfoList={fetchNannyInfoList}
+                  />
               </div>
             </div>
           </div>
