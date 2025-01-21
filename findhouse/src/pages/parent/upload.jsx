@@ -6,11 +6,11 @@ import Select from '@mui/material/Select';
 import { MenuItem, InputLabel,FormControl } from '@mui/material';
 import { useState } from 'react';
 import { useDispatch,useSelector } from 'react-redux';
-import { setMemberId } from '../../features/member/memberSlice';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import dayjs from 'dayjs';
+import Cookies from 'js-cookie';
+
 const ApplicationPage = () => {
   const router = useRouter();
   const [file, setFile] = useState(null);
@@ -64,7 +64,6 @@ const ApplicationPage = () => {
         headers: {
           'Content-Type': 'application/json'
         },
-        
         body: JSON.stringify({ userId: Cookies.get('userId'), richMenuId: 'richmenu-307b8975e551ebd54362c688b7cb9e54' })
       });
       router.push('/parent/create/choose');

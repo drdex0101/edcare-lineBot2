@@ -2,7 +2,7 @@ import { Client } from 'pg';
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
-    const { pageSize = 5, index = 0 } = req.query; // Default values if not provided
+    const { pageSize = 5, index = 0,locations,keyword,sort } = req.query; // Default values if not provided
 
     const client = new Client({
       connectionString: process.env.POSTGRES_URL,
@@ -19,16 +19,32 @@ export default async function handler(req, res) {
       const totalCountResult = await client.query(totalCountQuery);
       const totalCount = parseInt(totalCountResult.rows[0].count, 10);
 
+      // Convert locations string to an array
+      const locationsArray = locations ? locations.split(',') : [];
+
+      // Determine the order by clause based on the sort parameter
+      let orderByClause = '';
+      if (sort === 'time') {
+        orderByClause = 'ORDER BY n.created_ts DESC';
+      } else if (sort === 'rating') {
+        orderByClause = 'ORDER BY n.score DESC';
+      }
+
       // Query to get the paginated results
       const query = `
         SELECT 
-          id,memberId, experienment, age, kidCount, way, scenario, 
-          environmentPic, serviceLocation, introduction, service, 
-          score, isShow, location, kycId, uploadId, created_ts
-        FROM nanny
-        LIMIT $1 OFFSET $2;
+          n.id, n.memberId, n.experienment, n.age, n.kidCount, n.way, n.scenario, 
+          n.environmentPic, n.serviceLocation, n.introduction, n.service, 
+          n.score, n.isShow, n.location, n.kycId, n.uploadId, n.created_ts,
+          m.account
+        FROM nanny n
+        JOIN member m ON n.memberId = m.id::VARCHAR  -- Cast m.id to VARCHAR for comparison
+        WHERE ($1::text[] IS NULL OR n.serviceLocation = ANY($1))  -- Filter by locations if provided
+        AND ($2::text IS NULL OR m.account ILIKE '%' || $2::text || '%')  -- Filter by account if keyword is provided
+        ${orderByClause}  -- Add the order by clause if applicable
+        LIMIT $3 OFFSET $4;
       `;
-      const result = await client.query(query, [pageSize, index * pageSize]);
+      const result = await client.query(query, [locationsArray.length ? locationsArray : null, keyword, pageSize, index * pageSize]);
 
       console.log('Nannies retrieved successfully:', result.rows);
       return res.status(200).json({ 

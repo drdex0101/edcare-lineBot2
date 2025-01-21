@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./css/SearchBar.css";
 
-export default function FilterButton() {
+export default function FilterButton({ onChange }) {
   const [isFilterOpen, setIsFilterOpen] = useState(false); // 控制篩選框顯示
   const [selectedLocations, setSelectedLocations] = useState([]); // 已選地區
   const [selectedRegion, setSelectedRegion] = useState(null); // 當前選擇的區域
@@ -126,16 +126,19 @@ export default function FilterButton() {
             <div 
               className={`filter-sort-font ${selectedSort === 'time' ? '' : 'filter-sort-font-none'}`} 
               onClick={() => toggleSort('time')}
+              onChange={() => toggleSort('time')}
             >
               上架時間（新 ⭢ 舊）
             </div>
             <div 
               className={`filter-sort-font ${selectedSort === 'rating' ? '' : 'filter-sort-font-none'}`} 
               onClick={() => toggleSort('rating')}
+              onChange={() => toggleSort('rating')}
             >
               保母評價（ 5 ⭢ 0 ）
             </div>
           </div>
+          <button onClick={() => onChange(selectedRegion, selectedLocations,selectedSort)}>搜尋</button>
         </div>
       )}
     </div>

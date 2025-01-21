@@ -2,7 +2,7 @@ import { Client } from 'pg';
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
-    const { userId } = req.query;
+    const { userId, page, pageSize } = req.query;
     
     if (!userId) {
       return res.status(400).json({ 
@@ -26,15 +26,15 @@ export default async function handler(req, res) {
           parentLineId, nannyid, status, created_ts, update_ts, choosetype, orderstatus, 
         caretypeid, nickname, gender, birthday, rank, hope, intro, isshow, created_by
         FROM orderinfo
-        WHERE parentLineId = $1;
+        WHERE parentLineId = $1
+        OFFSET $2 LIMIT $3;
       `;
-      
-      const result = await client.query(query, [userId]);
+      const result = await client.query(query, [userId, page, pageSize]);
 
       console.log('Nannies retrieved successfully:', result.rows);
       return res.status(200).json({ 
         success: true, 
-        nannies: result.rows, 
+        orders: result.rows, 
         pageCount: result.rowCount // Count of records in the current page
       });
     } catch (error) {

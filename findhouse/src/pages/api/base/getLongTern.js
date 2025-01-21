@@ -2,9 +2,9 @@ import { Client } from 'pg';
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
-    const { userId } = req.query;
+    const { id } = req.query;
     
-    if (!userId) {
+    if (!id) {
       return res.status(400).json({ 
         success: false, 
         message: 'ID parameter is required' 
@@ -23,19 +23,22 @@ export default async function handler(req, res) {
 
       const query = `
         SELECT 
-          parentLineId, nannyid, status, created_ts, update_ts, choosetype, orderstatus, 
-        caretypeid, nickname, gender, birthday, rank, hope, intro, isshow, created_by
-        FROM orderinfo
-        WHERE parentLineId = $1;
+          scenario,
+          care_time,
+          weekdays
+        FROM long_term
+        WHERE id = $1;
       `;
       
-      const result = await client.query(query, [userId]);
+      // Convert id to integer if it's a numeric string
+      const caretypeid = parseInt(id, 10);
+      const result = await client.query(query, [caretypeid]);
 
       console.log('Nannies retrieved successfully:', result.rows);
       return res.status(200).json({ 
         success: true, 
-        nannies: result.rows, 
-        pageCount: result.rowCount // Count of records in the current page
+        data: result.rows[0],
+        pageCount: result.rowCount
       });
     } catch (error) {
       console.error('Database error:', error);

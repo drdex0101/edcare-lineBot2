@@ -1,4 +1,5 @@
 import React from 'react';
+import Cookies from 'js-cookie';
 const ApplicationPage = () => {
   const [kycInfoList, setKycInfoList] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);  // 新增加載狀態
@@ -21,7 +22,8 @@ const ApplicationPage = () => {
     }
   };
 
-  const changeRichMenu = async (lineId,richMenuId) => {
+  const changeRichMenu = async (richMenuId) => {
+    console.log('richMenuId:',Cookies.get('userId'))
     try {
       const response = await fetch('/api/line/changeRichMenu', {
         method: 'POST',  // 確保是POST方法
@@ -29,7 +31,7 @@ const ApplicationPage = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userId: lineId, 
+          userId: Cookies.get('userId'), 
           richMenuId: richMenuId
         }),
       });
@@ -62,10 +64,10 @@ const ApplicationPage = () => {
       }
       if (status == '通過') {
         if (job == '保母') {
-          changeRichMenu(lineId,'richmenu-80140f174c84df860ab6e4b2f1382634')
+          changeRichMenu('richmenu-80140f174c84df860ab6e4b2f1382634')
         }
         else {
-          changeRichMenu(lineId,'richmenu-dbfe9df32ebd1e9aba105ca6fc996955')
+          changeRichMenu('richmenu-dbfe9df32ebd1e9aba105ca6fc996955')
         }
       }
       window.location.reload();
