@@ -16,11 +16,17 @@ const ApplicationPage = () => {
   const [keywords, setKeywords] = useState('');
   const [selectedRegion, setSelectedRegion] = useState(null);
   const [selectedLocations, setSelectedLocations] = useState([]);
-  const [selectedSort, setSelectedSort] = useState(null); // 新增狀態以追蹤選擇的排序
+  const [selectedSort, setSelectedSort] = useState('time'); // 新增狀態以追蹤選擇的排序
   const [orderImages, setOrderImages] = useState({});
   const [careTypeData, setCareTypeData] = useState(null);
   const [isShow, setIsShow] = useState(true);
-
+  const [orderCurrentPage, setOrderCurrentPage] = useState(1);
+  const itemsPerPage = 1; // 每頁顯示 1 筆
+  // 計算目前頁面的資料
+  const indexOfLastItem = orderCurrentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentOrders = orderInfo.slice(indexOfFirstItem, indexOfLastItem);
+  const [locationCount, setLocationCount] = useState(0); // 新增狀態以追蹤選擇的地區數量
   const fetchNannyInfoList = async (page, pageSize=5,  keywords) => {
     setIsLoading(true); // Set loading state to true while fetching data
     try {
@@ -159,6 +165,10 @@ useEffect(() => {
   };
 }, [currentPage]);  // 監聽關鍵依賴變數
 
+  const handleOrderPageChange = (page) => {
+    console.log('page:',page)
+    setOrderCurrentPage(page); // Update currentPage when a new page is selected
+  };
   const handlePageChange = (page) => {
     console.log('page:',page)
     setCurrentPage(page); // Update currentPage when a new page is selected
@@ -168,11 +178,12 @@ useEffect(() => {
     router.push('/parent/create/choose'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
-  const handleFilterChange = (region, locations,sorts) => {
+  const handleFilterChange = (region, locations, sorts, locationCount) => {
     setSelectedRegion(region);
     setSelectedLocations(locations);
     setSelectedSort(sorts);
     fetchNannyInfoList(currentPage, pageSize); // Fetch nanny info with updated filters
+    setLocationCount(locationCount); // 新增狀態以追蹤選擇的地區數量
   };
 
   const handleVisibilityToggle = async () => {
@@ -180,7 +191,7 @@ useEffect(() => {
       // Default to true if isShow is null
       const currentIsShow = isShow === null ? true : isShow;
       
-      const response = await fetch(`/api/order/updateIsShow?isShow=${!currentIsShow}&id=${orderInfo[0].id}`, {
+      const response = await fetch(`/api/order/updateIsShow?isShow=${!currentIsShow}&id=${orderInfo[orderCurrentPage].id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -213,7 +224,7 @@ useEffect(() => {
                   {isShow && (  // Add overlay when isShow is false
                     <div style={styles.overlay}></div>
                   )}
-                  {orderInfo.map((order, index) => (
+                  {currentOrders.map((order, index) => (
                     <div key={index} style={styles.orderItem}>
                       <img 
                         src={orderImages[order.id] || '/orderCreate.png'} 
@@ -225,7 +236,7 @@ useEffect(() => {
                         <div style={{ display: 'flex', gap: '5px' }}>
                             <div style={styles.way}>
                               {order.choosetype === 'suddenly' ? '臨時托育' : 
-                               order.choosetype === 'longTerm' ? '長期托育' : ''}
+                               order.choosetype === 'longTern' ? '長期托育' : ''}
                             </div>
                             <div style={styles.screen}>
                               {order.scenario}
@@ -241,6 +252,23 @@ useEffect(() => {
                       </div>
                     </div>
                   ))}
+                  <div style={styles.paginationContainer}>
+                    {Array.from({ length: Math.ceil(orderInfo.length / itemsPerPage) }, (_, i) => (
+                      <span
+                        key={i}
+                        onClick={() => handleOrderPageChange(i + 1)}
+                        style={{
+                          width: '7px',
+                          height: '7px',
+                          borderRadius: '50%',
+                          backgroundColor: orderCurrentPage === i + 1 ? '#CCC' : '#F2F2F2',
+                          margin: '0 5px',
+                          cursor: 'pointer',
+                          transition: 'background-color 0.3s ease',
+                        }}
+                      ></span>
+                    ))}
+                  </div>
                 </div>
               ) : (
                 <span style={styles.headerFont} onClick={handleNextClick}>
@@ -305,6 +333,22 @@ useEffect(() => {
             </div>
             <div style={{ backgroundColor: '#f8ecec', width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
               <div style={styles.nannyItemLayout}>
+              <div style={styles.searchLayout}>
+                <div style={styles.searchTypeLayout}>
+                  <span style={styles.searchFont}>地區: {locationCount}</span>
+                </div>
+                {selectedSort && (
+                  <div style={styles.searchTypeLayout}>
+                    <span style={styles.searchFont}>
+                      {selectedSort === 'time' 
+                        ? '上架時間（新 ⭢ 舊）' 
+                        : selectedSort === 'rating' 
+                        ? '保母評價(5 ⭢ 0)' 
+                        : ''}
+                    </span>
+                  </div>
+                )}
+              </div>
                 {nannyInfo.map((nanny, index) => (
                   <div 
                     key={index} 
@@ -359,6 +403,32 @@ useEffect(() => {
 };
 
 const styles = {
+  searchFont:{
+    color: '#000',
+    /* Line/medium/11pt */
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: '11px',
+    fontStyle: 'normal',
+    fontWeight: '400',
+    lineHeight: 'normal'
+  },
+  searchTypeLayout:{
+    display: 'flex',
+    padding: '0px 10px',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: '10px',
+    borderRadius: '30px',
+    background:' var(---SurfaceContainer-Lowest, #FFF)'
+  },
+  searchLayout: {
+    display:'flex',
+    gap:'12px'
+  },
+  paginationContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+  },
   timeFont:{
     color: 'var(---Surface-Black-25, #252525)',
     /* Line/medium/8pt */
@@ -426,7 +496,8 @@ const styles = {
     display: 'flex',
     width: '218px',
     alignItems: 'center',
-    gap: '15px'
+    justifyContent:'center',
+    flexDirection:'column',
   },
   profilePic: {
     width: '80px',

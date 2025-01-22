@@ -23,12 +23,13 @@ const ApplicationPage = () => {
   };
 
   const changeRichMenu = async (richMenuId) => {
-    console.log('richMenuId:',Cookies.get('userId'))
+    console.log('richMenuId:', Cookies.get('userId'))
     try {
       const response = await fetch('/api/line/changeRichMenu', {
-        method: 'POST',  // 確保是POST方法
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_CHANNEL_ACCESS_TOKEN}`,
         },
         body: JSON.stringify({
           userId: Cookies.get('userId'), 
