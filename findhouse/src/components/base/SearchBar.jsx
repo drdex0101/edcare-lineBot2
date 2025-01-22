@@ -135,10 +135,10 @@ export default function FilterButton({ onChange }) {
               onClick={() => toggleSort('rating')}
               onChange={() => toggleSort('rating')}
             >
-              保母評價（ 5 ⭢ 0 ）
+              保母評價( 5 ⭢ 0 )
             </div>
           </div>
-          <button onClick={() => onChange(selectedRegion, selectedLocations,selectedSort)}>搜尋</button>
+          <button onClick={() => onChange(selectedRegion, selectedLocations, selectedSort, selectedLocations.length)}>搜尋</button>
         </div>
       )}
     </div>

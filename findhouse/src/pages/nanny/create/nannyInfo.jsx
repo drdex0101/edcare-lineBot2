@@ -168,6 +168,18 @@ const ApplicationPage = () => {
       })
     });
 
+    const response2 = await fetch('/api/base/createLongTern', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        wayId: response.data.id,
+        way: 'suddenly', // 使用轉換後的數組
+        nannyId: nannyId
+      })
+    });
+
     if (!response.ok) {
       throw new Error('Failed to insert data into long_term table');
     }
