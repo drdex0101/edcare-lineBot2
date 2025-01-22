@@ -20,7 +20,13 @@ const ApplicationPage = () => {
   const [orderImages, setOrderImages] = useState({});
   const [careTypeData, setCareTypeData] = useState(null);
   const [isShow, setIsShow] = useState(true);
-
+  const [orderCurrentPage, setOrderCurrentPage] = useState(1);
+  const itemsPerPage = 1; // 每頁顯示 1 筆
+  // 計算目前頁面的資料
+  const indexOfLastItem = orderCurrentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentOrders = orderInfo.slice(indexOfFirstItem, indexOfLastItem);
+  
   const fetchNannyInfoList = async (page, pageSize=5,  keywords) => {
     setIsLoading(true); // Set loading state to true while fetching data
     try {
@@ -159,6 +165,10 @@ useEffect(() => {
   };
 }, [currentPage]);  // 監聽關鍵依賴變數
 
+  const handleOrderPageChange = (page) => {
+    console.log('page:',page)
+    setOrderCurrentPage(page); // Update currentPage when a new page is selected
+  };
   const handlePageChange = (page) => {
     console.log('page:',page)
     setCurrentPage(page); // Update currentPage when a new page is selected
@@ -180,7 +190,7 @@ useEffect(() => {
       // Default to true if isShow is null
       const currentIsShow = isShow === null ? true : isShow;
       
-      const response = await fetch(`/api/order/updateIsShow?isShow=${!currentIsShow}&id=${orderInfo[0].id}`, {
+      const response = await fetch(`/api/order/updateIsShow?isShow=${!currentIsShow}&id=${orderInfo[orderCurrentPage].id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -213,7 +223,7 @@ useEffect(() => {
                   {isShow && (  // Add overlay when isShow is false
                     <div style={styles.overlay}></div>
                   )}
-                  {orderInfo.map((order, index) => (
+                  {currentOrders.map((order, index) => (
                     <div key={index} style={styles.orderItem}>
                       <img 
                         src={orderImages[order.id] || '/orderCreate.png'} 
@@ -241,6 +251,23 @@ useEffect(() => {
                       </div>
                     </div>
                   ))}
+                  <div style={styles.paginationContainer}>
+                    {Array.from({ length: Math.ceil(orderInfo.length / itemsPerPage) }, (_, i) => (
+                      <span
+                        key={i}
+                        onClick={() => handleOrderPageChange(i + 1)}
+                        style={{
+                          width: '12px',
+                          height: '12px',
+                          borderRadius: '50%',
+                          backgroundColor: orderCurrentPage === i + 1 ? '#007bff' : '#ddd',
+                          margin: '0 5px',
+                          cursor: 'pointer',
+                          transition: 'background-color 0.3s ease',
+                        }}
+                      ></span>
+                    ))}
+                  </div>
                 </div>
               ) : (
                 <span style={styles.headerFont} onClick={handleNextClick}>
@@ -359,6 +386,11 @@ useEffect(() => {
 };
 
 const styles = {
+  paginationContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginTop: '20px',
+  },
   timeFont:{
     color: 'var(---Surface-Black-25, #252525)',
     /* Line/medium/8pt */
@@ -426,7 +458,8 @@ const styles = {
     display: 'flex',
     width: '218px',
     alignItems: 'center',
-    gap: '15px'
+    justifyContent:'center',
+    flexDirection:'column',
   },
   profilePic: {
     width: '80px',
