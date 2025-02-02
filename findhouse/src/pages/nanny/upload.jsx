@@ -82,42 +82,41 @@ const ApplicationPage = () => {
 
   const handleUpload = async (file, type) => {
     if (!file) return;
-
+  
     const formData = new FormData();
-    formData.append('file', file);
-
+    formData.append("file", file);
+    formData.append("type", type);
+  
     try {
-      const res = await fetch('/api/upload', {
-        method: 'POST',
+      const res = await fetch("/api/kycInfo/uploadImg", {
+        method: "POST",
         body: formData,
       });
-
+  
       const result = await res.json();
-      console.log(result);
-      const resUpload = await fetch('/api/kycInfo/uploadImg', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          fileUrl: result.fileUrl,
-          type: type
-        })
-      });
-      const uploadResponse = await resUpload.json();
-      const uploadId = uploadResponse.uploadId.id;
-      if(type === 'ID Front'){
+      console.log("Upload Response:", result);
+  
+      if (!result.success) {
+        console.error("上傳失敗:", result.message);
+        setMessage("Upload failed.");
+        return;
+      }
+  
+      const uploadId = result.uploadId; // 確保 API 返回的是 id 而不是物件
+  
+      if (type === "ID Front") {
         setFrontImg(uploadId);
-      }else if(type === 'ID Back'){
+      } else if (type === "ID Back") {
         setBackImg(uploadId);
-      }else if(type === 'Head Icon'){
+      } else if (type === "Head Icon") {
         setHeadIcon(uploadId);
       }
     } catch (error) {
-      console.error('Upload error:', error);
-      setMessage('Upload failed.');
+      console.error("Upload error:", error);
+      setMessage("Upload failed.");
     }
   };
+  
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];

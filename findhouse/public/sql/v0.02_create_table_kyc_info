@@ -14,3 +14,5 @@ CREATE TABLE kyc_info (
     created_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 建立時間
     update_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- 更新時間
 );
+
+LTER TABLE kyc_info ADD COLUMN updated_by VARCHAR(255); -- 添加更新者欄位
