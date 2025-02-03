@@ -81,42 +81,48 @@ const ApplicationPage = () => {
   };
 
   const handleUpload = async (file, type) => {
-    if (!file) return;
-  
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("type", type);
-  
-    try {
-      const res = await fetch("/api/kycInfo/uploadImg", {
-        method: "POST",
-        body: formData,
-      });
-  
-      const result = await res.json();
-      console.log("Upload Response:", result);
-  
-      if (!result.success) {
-        console.error("上傳失敗:", result.message);
-        setMessage("Upload failed.");
-        return;
-      }
-  
-      const uploadId = result.uploadId; // 確保 API 返回的是 id 而不是物件
-  
-      if (type === "ID Front") {
-        setFrontImg(uploadId);
-      } else if (type === "ID Back") {
-        setBackImg(uploadId);
-      } else if (type === "Head Icon") {
-        setHeadIcon(uploadId);
-      }
-    } catch (error) {
-      console.error("Upload error:", error);
-      setMessage("Upload failed.");
+    if (!file) {
+      console.error("No file selected");
+      return;
     }
-  };
   
+    // ✅ **將 `file` 轉成 `Base64`**
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+  
+    reader.onloadend = async () => {
+      const base64String = reader.result.split(",")[1]; // 取得 Base64 內容
+  
+      try {
+        const res = await fetch("/api/kycInfo/uploadImg", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json", // 🚀 以 `JSON` 形式傳遞 Base64
+          },
+          body: JSON.stringify({ file: `data:image/png;base64,${base64String}` }), // ✅ 傳遞 `Base64`
+        });
+  
+        const result = await res.json();
+        console.log("Upload Response:", result);
+        const uploadId = result.uploadId; // 確保 API 返回的是 id 而不是物件
+  
+        if (type === "ID Front") {
+          setFrontImg(uploadId);
+        } else if (type === "ID Back") {
+          setBackImg(uploadId);
+        } else if (type === "Head Icon") {
+          setHeadIcon(uploadId);
+        }
+        if (result.success) {
+          console.log("Uploaded Image URL:", result.url);
+        } else {
+          console.error("Upload Failed:", result.message);
+        }
+      } catch (error) {
+        console.error("Upload Error:", error);
+      }
+    };
+  };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
