@@ -37,20 +37,6 @@ export default function ProfilePage() {
     }
   };
 
-  // 處理下一張圖片
-  const handleNextImage = () => {
-    setCurrentImageIndex((prevIndex) =>
-      prevIndex === images.length - 1 ? 0 : prevIndex + 1
-    );
-  };
-
-  // 處理上一張圖片
-  const handlePrevImage = () => {
-    setCurrentImageIndex((prevIndex) =>
-      prevIndex === 0 ? images.length - 1 : prevIndex - 1
-    );
-  };
-
   // 處理點擊圓點來跳轉到對應圖片
   const handleDotClick = (index) => {
     setCurrentImageIndex(index);
