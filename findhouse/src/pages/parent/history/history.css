@@ -1,0 +1,150 @@
+.history-main{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    background-color: #fff;
+    width: 100%;
+}
+
+.history-header{
+    display: flex;
+    height: 50px;
+    padding: 8px 25px;
+    justify-content: space-between;
+    align-items: center;
+    align-self: stretch;
+    width: 100%;
+    background-color: #fff;
+}
+
+.history-body-header{
+    display: flex;
+    width: 100%;
+    height: 97px;
+    padding: 30px 124px;
+    align-items: center;
+    gap: 10px;
+    background-color: #FFFF;
+    border-radius: 0px 0 30px 0;
+}
+
+.history-body-header-background{
+    background-color: #FCF7F7;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.history-body-header-title{
+    color: var(---OutLine-OnSurfaceVariant, #504B49);
+    text-align: center;
+    /* Line/bold/24pt */
+    font-family: "LINE Seed JP_TTF";
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.history-body-layoff{
+    display: flex;
+    flex-direction: column;
+    max-width: 834px;
+    height: 200px;
+    padding: 26px 31px;
+    align-items: flex-start;
+    gap: 12px;
+    background-color: #FCF7F7;
+    border-radius: 30px 0 30px 0;
+    border: none;
+}
+
+
+.history-body-layoff-title{
+    color: var(---Primary-Primary, #E3838E);
+    /* Line/bold/16pt */
+    font-family: "LINE Seed JP_TTF";
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.avatar-container {
+    display: flex;
+    overflow-x: auto; /* 允許橫向滾動 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+/* 新增滾動條樣式 */
+.avatar-container::-webkit-scrollbar {
+    width: 5px; /* 滾動條的寬度 */
+}
+
+.avatar-container::-webkit-scrollbar-thumb {
+    background: transparent; /* 滾動條的顏色設置為透明 */
+}
+
+.avatar-container::-webkit-scrollbar-track {
+    background: transparent; /* 滾動條的背景設置為透明 */
+}
+
+.avatar {
+    flex: 0 0 auto; /* 防止 avatar 縮放 */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin: '15px'
+}
+
+.avatar-img{
+    width: 59.891px;
+    height: 59.891px;
+    border-radius: 145.069px;
+}
+
+.avatar-name{
+    color: var(---Outline-OnSurface, #252525);
+    font-family: "LINE Seed JP_TTF";
+    font-size: 13.6px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.history-body-layoff-content-background{
+    display: flex;
+    height: 485px;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    background-color: #FCF7F7;
+}
+.history-body-layoff-content {
+    display: flex;
+    height: 485px;
+    width: 100%;
+    padding: 42px 31px;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    background-color: #E3838E;
+    border-radius:30px 0 0 0px;
+}
+
+.history-body-layoff-content-title{
+    color: var(---SurfaceContainer-Low, #FCF7F7);
+    /* Line/bold/16pt */
+    font-family: "LINE Seed JP_TTF";
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
