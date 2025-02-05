@@ -193,18 +193,23 @@ export default function ProfilePage() {
           <div className="criticismSection">
             <span className='criticalFont'>保母評語</span>
             <div className='criticismContent'>
-              <div className='criticismContentTitle'>
-                <span className='criticismName'>王美麗</span>
-                <span className='criticismSubTitle'>2025-01-01</span>
+              <div className='criticismContentTitleLayout'>
+                <div className='criticismContentTitle'>
+                  <span className='criticismName'>王美麗</span>
+                  <span className='criticismSubTitle'>2025-01-01</span>
+                </div>
+                <RatingComponent score={3.7} size='small' />
               </div>
+              <div className='criticismContentTextLayout'>
+                <span className='criticismText'>文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文...</span>
+              </div>
+            </div>
+
+            <div className='buttonLayout'>
+              <button className="submitButton" onClick={handleBookingClick}>+ 馬上預約</button>
             </div>
           </div>
         </div>
-
-        <div className='buttonLayout'>
-          <button className="submitButton" onClick={handleBookingClick}>+ 馬上預約</button>
-        </div>
-
       </div>
 
       {isModalOpen && (

@@ -531,8 +531,26 @@
   .svg-icon.active {
     fill: #E3838E;
   }
-  .criticismContent {
+
+  .criticismText {
+    color: var(---Surface-Black-25, #252525);
+    font-family: "LINE Seed JP_TTF";
+    font-size: 6px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    padding: 10px;
+  }
+
+  .criticismContentTextLayout {
     display: flex;
+    padding: 0px 10px;
+    align-items: center;
+    gap: 5px;
+    align-self: stretch;
+  }
+
+  .criticismContent {
     width: 310px;
     min-width: 160px;
     padding: 10px;
@@ -564,12 +582,19 @@
     border-radius: 0px 0px 50px 50px;
     flex-direction: column;
   }
+
+  .criticismContentTitleLayout {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
   .criticismContentTitle {
     display: flex;
     height: 10px;
     padding: var(--Container-padding, 10px);
     flex-direction: column;
-    
+    justify-content: center;
   }
   .criticismName {
     color: var(---Surface-Black-25, #252525);
