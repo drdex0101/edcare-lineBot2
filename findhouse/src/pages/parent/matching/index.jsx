@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './matching.css';
 import Pagination from '../../../components/base/pagenation';
 export default function HistoryPage() {
@@ -10,6 +10,9 @@ export default function HistoryPage() {
     { id: 5, name: '托育阿姨', imgSrc: '/nannyIcon.jpg' },
     { id: 6, name: '托育阿姨', imgSrc: '/nannyIcon.jpg' },
   ];
+
+  const [totalCount, setTotalCount] = useState(0);
+  const [historyList, setHistoryList] = useState([]);
 
   return (
     <div className="matching-main">
