@@ -11,18 +11,6 @@ export default function HistoryPage() {
     { id: 6, name: '托育阿姨', imgSrc: '/nannyIcon.jpg' },
   ];
 
-  const [historyList, setHistoryList] = useState([]);
-  const [totalCount, setTotalCount] = useState(0);
-
-  const fetchHistoryList = async () => {
-    const response = await fetch('/api/order/getHistoryList');
-    const data = await response.json();
-    setHistoryList(data.historyList);
-    setTotalCount(data.totalCount);
-  };
-
-  useEffect 
-
   return (
     <div className="matching-main">
         <div className="matching-header">
