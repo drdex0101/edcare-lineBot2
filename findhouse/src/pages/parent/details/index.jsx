@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './details.css';
 import Pagination from '../../../components/base/pagenation';
+import OrderHistoryItem from '../../../components/base/OrderHistoryItem';
 export default function DetailsPage() {
   
 
@@ -85,12 +86,14 @@ export default function DetailsPage() {
                 </div>
             </div>
             <div className='order-history-list'>
-                <div className='order-history-list-item'>
-                    <div className='order-history-list-item-content'>
-                        <span className='order-history-list-item-content-title'>2025/01/01</span>
-                        <span className='order-history-list-item-content-title'>2025/01/01</span>
-                    </div>
-                </div>
+                <OrderHistoryItem 
+                    name="林小明" 
+                    way="日間長期" 
+                    scene="在宅" 
+                    orderId="69696969696969" 
+                    createdTime="2024/12/25" 
+                    status="已完成" 
+                />
             </div>
         </div>
     </div>
