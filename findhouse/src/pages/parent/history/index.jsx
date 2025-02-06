@@ -41,7 +41,7 @@ export default function HistoryPage() {
                 </p>
             </div>
         </div>
-        <div style={{backgroundColor: '#E3838E',borderRadius: '30px 0 0px 0',width:'100%',border:'none'}}>
+        <div style={{backgroundColor: '#F3CCD4',borderRadius: '40px 0 0px 0',width:'100%',border:'none'}}>
             <div className="history-body-layoff">
                 <span className="history-body-layoff-title">
                     新配對
@@ -70,7 +70,6 @@ export default function HistoryPage() {
             </div>
             <div className="history-body-layoff-content-background">
                 <div className="history-body-layoff-content">
-                    <span className="history-body-layoff-content-title">已配對，待社工聯繫...</span>
                     {totalCount === 0 ? (
                         <div className='space-layout'>
                             <img src='/icon/spaceIcon.png' className='space-icon' alt="space icon" />
@@ -78,23 +77,33 @@ export default function HistoryPage() {
                                 趕緊配對保母吧！</span>
                         </div>
                     ) : (
-                        historyList.map(avatar => (
-                            <div className='nanny-layout' key={avatar.id}>
-                                <div className='nanny-advator'>
-                                    <img src={avatar.imgSrc} className='nanny-advator-icon' alt="nanny avatar" />
+                        <>
+                            <span className="history-body-layoff-content-title">
+                            已配對，待社工聯繫...
+                            </span>
+                            {historyList.map((avatar) => (
+                            <div className="nanny-layout" key={avatar.id}>
+                                <div className="nanny-avatar">
+                                <img
+                                    src={avatar.imgSrc}
+                                    className="nanny-avatar-icon"
+                                    alt="nanny avatar"
+                                />
                                 </div>
-                                <div className='nanny-intro'>
-                                    <span className='nanny-intro-name'>{avatar.name}</span>
-                                    <span className='nanny-intro-exp'>{avatar.age}歲</span>
+                                <div className="nanny-intro">
+                                <span className="nanny-intro-name">{avatar.name}</span>
+                                <span className="nanny-intro-exp">{avatar.age}岁</span>
                                 </div>
-                                <div className='status'>
-                                    <span className='status-content'>已配對</span>
+                                <div className="status">
+                                <span className="status-content">已配對</span>
                                 </div>
                             </div>
-                        ))
+                            ))}
+                        </>
                     )}
+                    
                 </div>
-                <div style={{display: 'flex', justifyContent: 'center',backgroundColor: '#E3838E',width: '100%'}}>
+                <div style={{display: 'flex', justifyContent: 'center',backgroundColor: '#F3CCD4',width: '100%'}}>
                     <Pagination
                         totalItems={10}
                         pageSize={5}
