@@ -400,13 +400,8 @@
   }
 
   .buttonLayout {
-    position: fixed; /* Make the button layout fixed */
-    bottom: 20px; /* Distance from the bottom */
-    left: 50%; /* Center horizontally */
-    transform: translateX(-50%); /* Adjust for centering */
     width: 100%; /* Adjust width as needed */
     max-width:390px;
-    z-index: 1000; /* Ensure it appears above other content */
     padding: 20px 48px;
   }
 

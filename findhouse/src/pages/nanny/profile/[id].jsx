@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import ServiceSchedule from '../../../components/base/ServiceSchedule';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import './css/profileId.css';
+import RatingComponent from '../../../components/nanny/rating';
+import '../css/profile.css';
 export default function ProfilePage() {
   const router = useRouter();
   const { id } = router.query;
@@ -12,6 +13,10 @@ export default function ProfilePage() {
   const [iconUrl, setIconUrl] = useState('/assets/images/resource/error.png');
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isActive, setIsActive] = useState(false);
+  const handleSvgClick = () => {
+    setIsActive(!isActive);
+  };
   // 處理點擊圓點來跳轉到對應圖片
   const handleDotClick = (index) => {
     setCurrentImageIndex(index);
@@ -29,10 +34,11 @@ export default function ProfilePage() {
         setNannyInfo(data.nannies[0]);
 
         // 如果有環境照片，則獲取每張照片的URL
-        if (data.nannies[0].environmentPic && data.nannies[0].environmentPic.length > 0) {
+        if (data.nannies[0].environmentPic.length > 0) {
           for (const picId of data.nannies[0].environmentPic) {
             const response2 = await fetch(`/api/base/getImgUrl?id=${picId}`);
             const data2 = await response2.json();
+            console.log("data2",data2.url);
             urls.push(data2.url);
           }
         }
@@ -68,13 +74,29 @@ export default function ProfilePage() {
 
   return (
     <div className="container">
-
+      <div className='nanny-header'>
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="18" viewBox="0 0 20 18" fill="none">
+          <path d="M10 4.17381C8 -0.52063 1 -0.0206299 1 5.9794C1 11.9794 10 16.9796 10 16.9796C10 16.9796 19 11.9794 19 5.9794C19 -0.0206299 12 -0.52063 10 4.17381Z" stroke="#E3838E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <svg
+          className={`svg-icon ${isActive ? 'active' : ''}`}
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="18"
+          viewBox="0 0 20 18"
+          fill="none"
+          onClick={handleSvgClick}
+          style={{ cursor: 'pointer', fill: isActive ? '#E3838E' : 'none' }}
+        >
+          <path d="M10 4.17381C8 -0.52063 1 -0.0206299 1 5.9794C1 11.9794 10 16.9796 10 16.9796C10 16.9796 19 11.9794 19 5.9794C19 -0.0206299 12 -0.52063 10 4.17381Z" stroke="#E3838E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
       <div className="profileSection">
         
         <img className="profilePic" src={iconUrl} alt="Profile" /> {/* 頭貼圓形 */}
         <h2 className="profileName">王美麗</h2>
         <div className="rating">
-          {nannyInfo.score}
+          <RatingComponent score={nannyInfo.score} />
         </div>
 
         <div className='profile-section'>
@@ -94,23 +116,25 @@ export default function ProfilePage() {
 
           {/* Tabs */}
         <div className="tabs">
-          <button className="tab active">
+          <div className="tab-content">
               <span className='tab-tile'>
                   托育方式
               </span>
               <span className='tab-subTitle'>
                   {nannyInfo.way}
               </span>
-          </button>
-          <div className='mid-border'></div>
-          <button className="tab">
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="2" height="62" viewBox="0 0 2 62" fill="none">
+            <path d="M1 61L1 1" stroke="#FCF7F7" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <div className="tab-content">
               <span className='tab-tile'>
                   托育情境
               </span>
               <span className='tab-subTitle'>
                   {nannyInfo.scenario}
               </span>
-          </button>
+          </div>
         </div>
 
           {/* 圖片輪播區域 */}
@@ -137,11 +161,13 @@ export default function ProfilePage() {
           )}
         </div>
 
-        <ServiceSchedule></ServiceSchedule>
+        <div style={{backgroundColor:'#F8ECEC'}}>
+          <ServiceSchedule></ServiceSchedule>
+        </div>
 
             {/* Icon Navigation */}
-        <div style={{backgroundColor:'#F3CCD4'}}>
-          <div style={{backgroundColor:'#F3CCD4'}}>
+        <div style={{backgroundColor:'#fff',border:'none'}}>
+          <div style={{backgroundColor:'#F3CCD4',borderRadius:'50px 0px 0px 0px'}}>
           <div className="iconNav">
             {['1', '2', '3', '4', '5', '6'].map((number) => (
                 <div key={number} style={{
@@ -187,17 +213,14 @@ export default function ProfilePage() {
             ))}
           </div>    
           </div>
-          <div style={{backgroundColor:'#F8ECEC'}}>
-              <div className="introSection">
-                <div className="notesSection">
-                  <span className='imgFont'>保母自介</span>
-                  <span className='imgFont'>{nannyInfo.introduction}</span>
+          <div>
+            <div style={{backgroundColor:'#F8ECEC'}}>
+                <div className="introSection">
+                  <div className="notesSection">
+                    <span className='imgFont'>保母自介</span>
+                  </div>
                 </div>
-              </div>
-              <div className="criticismSection">
-                <span className='criticalFont'>保母評語</span>
-                
-              </div>
+            </div>
           </div>
         </div>
 
