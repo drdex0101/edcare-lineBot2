@@ -250,3 +250,22 @@
     font-weight: 400;
     line-height: normal;
 }
+
+.no-order-history {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.no-order-history-font {
+    color: var(---Surface-Dim, #DBD7D6);
+    text-align: center;
+    /* Line/bold/22pt */
+    font-family: "LINE Seed JP_TTF";
+    font-size: 22px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}

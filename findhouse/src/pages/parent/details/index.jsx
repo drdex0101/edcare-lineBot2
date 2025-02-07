@@ -101,7 +101,12 @@ export default function DetailsPage() {
                         />
                     ))
                 ) : (
-                    <p>No order history available.</p>
+                    <>
+                        <div className='no-order-history'>
+                            <img src={'/orderCreate.png'} alt="no-order-history" />
+                            <span className='no-order-history-font'>目前沒有訂單</span>
+                        </div>
+                    </>
                 )}
                 <Pagination totalItems={totalCount} pageSize={4} />
             </div>
