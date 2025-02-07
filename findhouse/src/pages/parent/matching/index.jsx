@@ -2,14 +2,6 @@ import React, { useState } from 'react';
 import './matching.css';
 import Pagination from '../../../components/base/pagenation';
 export default function HistoryPage() {
-  const avatars = [
-    { id: 1, name: '托育阿姨', imgSrc: '/nannyIcon.jpg' },
-    { id: 2, name: '托育阿姨', imgSrc: '/nannyIcon.jpg' },
-    { id: 3, name: '托育阿姨', imgSrc: '/nannyIcon.jpg' },
-    { id: 4, name: '托育阿姨', imgSrc: '/nannyIcon.jpg' },
-    { id: 5, name: '托育阿姨', imgSrc: '/nannyIcon.jpg' },
-    { id: 6, name: '托育阿姨', imgSrc: '/nannyIcon.jpg' },
-  ];
 
   const [totalCount, setTotalCount] = useState(0);
   const [historyList, setHistoryList] = useState([]);

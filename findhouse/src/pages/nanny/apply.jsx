@@ -48,8 +48,8 @@ const ApplicationPage = () => {
     try {
       const response = await axios.post('/api/member/createMember', memberData);
       console.log('Member created:', response.data);
-      const memberId = response.data.member.id; // 獲取返回的 memberId
-      dispatch(setMemberId(memberId)); // 保存到 Redux Store
+      const memberId = response.data.member.id;
+      dispatch(setMemberId(memberId)); 
       router.push('/nanny/upload');
     } catch (error) {
       console.error('Error creating member:', error);
