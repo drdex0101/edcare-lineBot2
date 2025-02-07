@@ -1,6 +1,7 @@
 import { Pool } from 'pg';
-import { verifyToken } from '../../utils/jwtUtils';
-import cookie from 'js-cookie';
+import { verifyToken } from '../../../utils/jwtUtils';
+
+// 連線池設定
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
   ssl: { rejectUnauthorized: false },
@@ -13,7 +14,7 @@ export default async function handler(req, res) {
   }
 
   const { page = 1, pageSize = 10 } = req.query;
-  const token = cookie.get('authToken');
+  const token = req.cookies.authToken;
   const payload = await verifyToken(token);
   const userId = payload.userId;
   
@@ -28,25 +29,42 @@ export default async function handler(req, res) {
     const client = await pool.connect();
 
     const query = `
-      SELECT 
-        o.nannyId,
-        n.id AS nannyId, 
-        n.kycId,
-        k.name AS kycName,
-        n.memberId, 
-        n.experienment, 
-        n.age, 
-        n.score,
+        SELECT 
+        o.parentLineId, 
+        o.nannyId, 
+        o.status, 
+        o.created_ts, 
+        o.update_ts, 
+        o.choosetype, 
+        o.orderstatus, 
+        o.caretypeid, 
+        o.nickname, 
+        o.gender, 
+        o.birthday, 
+        o.rank, 
+        o.hope, 
+        o.intro, 
+        o.isshow, 
+        o.created_by,
+        COALESCE(s.scenario, l.scenario) AS scenario,
         COUNT(*) OVER() AS totalCount
-      FROM orderinfo o
-      JOIN nanny n ON o.nannyId = n.id
-      JOIN kyc_info k ON n.kycId = k.id
-      WHERE o.nannyId IS NOT NULL
-      ORDER BY o.created_ts DESC
-      OFFSET $1 LIMIT $2;
+    FROM 
+        orderinfo o
+    LEFT JOIN 
+        suddenly s ON o.choosetype = 'suddenly' AND o.caretypeid = s.id
+    LEFT JOIN 
+        long_term l ON o.choosetype = 'long_term' AND o.caretypeid = l.id
+    WHERE 
+        o.parentLineId = $1
+    ORDER BY 
+        o.created_ts DESC
+    OFFSET 
+        $2 
+    LIMIT 
+        $3;
     `;
 
-    const { rows } = await client.query(query, [offset, limit]);
+    const { rows } = await client.query(query, [userId, offset, limit]);
 
     client.release();
 

@@ -1,6 +1,6 @@
 import { Pool } from 'pg';
-import { verifyToken } from '../../utils/jwtUtils';
-import cookie from 'js-cookie';
+import { verifyToken } from '../../../utils/jwtUtils';
+
 // 連線池設定
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
@@ -14,7 +14,7 @@ export default async function handler(req, res) {
   }
 
   const { page = 1, pageSize = 10 } = req.query;
-  const token = cookie.get('authToken');
+  const token = req.cookies.authToken;
   const payload = await verifyToken(token);
   const userId = payload.userId;
   

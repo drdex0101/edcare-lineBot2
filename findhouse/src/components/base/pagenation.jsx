@@ -72,13 +72,12 @@ const Pagination = ({ totalItems, pageSize, currentPage, onPageChange }) => {
   );
 };
 
-const App = ({ totalItems,fetchNannyInfoList,keyword }) => {
+const App = ({ totalItems,keyword }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 5; // Example page size
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
-    fetchNannyInfoList(page,keyword);
   };
 
   return (
@@ -88,7 +87,6 @@ const App = ({ totalItems,fetchNannyInfoList,keyword }) => {
         pageSize={pageSize}
         currentPage={currentPage}
         onPageChange={handlePageChange}
-        fetchNannyInfoList={fetchNannyInfoList} // Pass the function as a prop
       />
     </div>
   );

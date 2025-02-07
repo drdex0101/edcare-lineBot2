@@ -4,17 +4,19 @@ import Pagination from '../../../components/base/pagenation';
 import OrderHistoryItem from '../../../components/base/OrderHistoryItem';
 export default function DetailsPage() {
   
-
   const [historyList, setHistoryList] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
 
   const fetchHistoryList = async () => {
-    const response = await fetch('/api/order/getHistoryList');
+    const response = await fetch('/api/order/getHistoryList?page=1&pageSize=4');
     const data = await response.json();
-    setHistoryList(data.historyList);
+    setHistoryList(data.orders);
     setTotalCount(data.totalCount);
   };
 
+  useEffect(() => {
+    fetchHistoryList();
+  }, []);
   
 
   return (
@@ -81,19 +83,27 @@ export default function DetailsPage() {
                     </div>
                     <div className='details-four-layout-item-coulumn'>
                         <span className='details-four-layout-item-title'>歷史訂單</span>
-                        <span className='details-four-layout-item-content'>6</span>
+                        <span className='details-four-layout-item-content'>{totalCount}</span>
                     </div>
                 </div>
             </div>
             <div className='order-history-list'>
-                <OrderHistoryItem 
-                    name="林小明" 
-                    way="日間長期" 
-                    scene="在宅" 
-                    orderId="69696969696969" 
-                    createdTime="2024/12/25" 
-                    status="已完成" 
-                />
+                {historyList && historyList.length > 0 ? (
+                    historyList.map((item, index) => (
+                        <OrderHistoryItem 
+                            key={index}
+                            name={item.nickname} 
+                            way={item.way} 
+                            scene={item.choosetype} 
+                            orderId={item.orderId} 
+                            createdTime={item.created_ts} 
+                            status={item.status} 
+                        />
+                    ))
+                ) : (
+                    <p>No order history available.</p>
+                )}
+                <Pagination totalItems={totalCount} pageSize={4} />
             </div>
         </div>
     </div>
