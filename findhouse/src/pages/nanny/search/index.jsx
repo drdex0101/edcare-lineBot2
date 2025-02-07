@@ -3,8 +3,9 @@ import { useRouter } from 'next/router';
 import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import Pagination from '../../../components/base/pagenation';
-import SearchBar from '../../../components/base/searchBar';
-
+import SearchBar from '../../../components/base/SearchBar';
+import { verifyToken } from '../../utils/jwtUtils';
+import cookie from 'js-cookie';
 
 const ApplicationPage = () => {
   const router = useRouter();
@@ -28,7 +29,9 @@ const ApplicationPage = () => {
 
   const fetchOrderInfoList = async (page = 0, pageSize = 5) => {
     setIsLoading(true); // Set loading state to true while fetching data
-    let userId = null;
+    const token = cookie.get('authToken');
+    const payload = await verifyToken(token);
+    const userId = payload.userId;
     try {
       const cookies = document.cookie.split('; ');
       const userIdCookie = cookies.find(row => row.startsWith('userId='));

@@ -1,5 +1,6 @@
 import { Pool } from 'pg';
-
+import { verifyToken } from '../../utils/jwtUtils';
+import cookie from 'js-cookie';
 const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
   ssl: { rejectUnauthorized: false },
@@ -11,7 +12,10 @@ export default async function handler(req, res) {
     return res.status(405).json({ success: false, message: `Method ${req.method} Not Allowed` });
   }
 
-  const { userId, page = 1, pageSize = 10 } = req.query;
+  const { page = 1, pageSize = 10 } = req.query;
+  const token = cookie.get('authToken');
+  const payload = await verifyToken(token);
+  const userId = payload.userId;
   
   if (!userId) {
     return res.status(400).json({ success: false, message: 'ID parameter is required' });

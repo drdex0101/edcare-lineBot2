@@ -6,6 +6,8 @@ import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { setMemberId } from '../../features/member/memberSlice';
 import Cookies from 'js-cookie';
+import { verifyToken } from '../../utils/jwtUtils';
+
 const ApplicationPage = () => {
   const router = useRouter();
   const dispatch = useDispatch(); // Redux 的 dispatch 函数
@@ -15,9 +17,13 @@ const ApplicationPage = () => {
   };
 
   const handleNextClick = async () => {
+    const token = cookie.get('authToken');
+    const payload = await verifyToken(token);
+    const userId = payload.userId;
+    
     const memberData = {
       account: document.getElementById('account').value,
-      lineId: Cookies.get('userId'),
+      lineId: userId,
       phoneNumber: document.getElementById('cellphone').value,
       email: document.getElementById('email').value,
       job: "保母"

@@ -1,5 +1,5 @@
 import axios from "axios";
-
+import { generateToken } from '../../utils/jwtUtils';
 export default async function handler(req, res) {
   const { code, state } = req.query;
 
@@ -45,12 +45,13 @@ export default async function handler(req, res) {
     
     const profile = profileResponse.data;
     const userId = profile.userId;
+    const token = await generateToken({ userId });
+    
     // Set the auth token and userId cookies before redirecting
     res.setHeader(
       'Set-Cookie',
       [
-        `authToken=${accessToken}; Path=/; Secure; SameSite=Lax; Max-Age=3600`,
-        `userId=${userId}; Path=/; Secure; SameSite=Lax; Max-Age=3600`,
+        `authToken=${token}; Path=/; Secure; SameSite=Lax; Max-Age=3600`,
       ]
     );
 

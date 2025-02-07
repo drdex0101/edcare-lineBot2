@@ -1,8 +1,11 @@
 import { Client } from 'pg';
-
+import { verifyToken } from '../../utils/jwtUtils';
+import cookie from 'js-cookie';
 export default async function handler(req, res) {
   if (req.method === 'GET') {
-    const { userId } = req.query;
+    const token = cookie.get('authToken');
+    const payload = await verifyToken(token);
+    const userId = payload.userId;
     
     if (!userId) {
       return res.status(400).json({ 

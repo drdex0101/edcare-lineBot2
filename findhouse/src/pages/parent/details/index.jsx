@@ -15,7 +15,7 @@ export default function DetailsPage() {
     setTotalCount(data.totalCount);
   };
 
-  useEffect 
+  
 
   return (
     <div className="details-main">
