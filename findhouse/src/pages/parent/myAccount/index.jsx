@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './details.css';
+import './myAccount.css';
 import Pagination from '../../../components/base/pagenation';
 import OrderHistoryItem from '../../../components/base/OrderHistoryItem';
 export default function DetailsPage() {
@@ -103,8 +103,8 @@ export default function DetailsPage() {
                 ) : (
                     <>
                         <div className='no-order-history'>
-                            <img src={'/orderCreate.png'} alt="no-order-history" />
-                            <span className='no-order-history-font'>目前沒有訂單</span>
+                            <img src={'/orderCreate.png'} alt="no-order-history" className='no-order-history-img'/>
+                            <span className='no-order-history-font'>尚無訂單資料</span>
                         </div>
                     </>
                 )}

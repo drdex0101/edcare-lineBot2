@@ -1,9 +1,9 @@
 import { Client } from 'pg';
 import { verifyToken } from '../../utils/jwtUtils';
-import cookie from 'js-cookie';
+
 export default async function handler(req, res) {
   if (req.method === 'GET') {
-    const token = cookie.get('authToken');
+    const token = req.cookies.authToken;
     const payload = await verifyToken(token);
     const userId = payload.userId;
     
@@ -25,11 +25,36 @@ export default async function handler(req, res) {
       await client.connect();
 
       const query = `
-        SELECT 
-          parentLineId, nannyid, status, created_ts, update_ts, choosetype, orderstatus, 
-        caretypeid, nickname, gender, birthday, rank, hope, intro, isshow, created_by
-        FROM orderinfo
-        WHERE parentLineId = $1;
+       SELECT 
+        o.id,
+        o.parentLineId, 
+        o.nannyId, 
+        o.status, 
+        o.created_ts, 
+        o.update_ts, 
+        o.choosetype, 
+        o.orderstatus, 
+        o.caretypeid, 
+        o.nickname, 
+        o.gender, 
+        o.birthday, 
+        o.rank, 
+        o.hope, 
+        o.intro, 
+        o.isshow, 
+        o.created_by,
+        COALESCE(s.scenario, l.scenario) AS scenario,
+        COUNT(*) OVER() AS totalCount
+    FROM 
+        orderinfo o
+    LEFT JOIN 
+        suddenly s ON o.choosetype = 'suddenly' AND o.caretypeid = s.id
+    LEFT JOIN 
+        long_term l ON o.choosetype = 'long_term' AND o.caretypeid = l.id
+    WHERE 
+        o.parentLineId = $1
+    ORDER BY 
+        o.created_ts DESC
       `;
       
       const result = await client.query(query, [userId]);

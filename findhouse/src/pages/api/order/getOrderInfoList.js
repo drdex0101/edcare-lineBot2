@@ -30,7 +30,7 @@ export default async function handler(req, res) {
 
     const query = `
       SELECT 
-        parentLineId, nannyId, status, created_ts, update_ts, choosetype, orderstatus, 
+        nannyId, status, created_ts, update_ts, choosetype, orderstatus, 
         caretypeid, nickname, gender, birthday, rank, hope, intro, isshow, created_by,
         COUNT(*) OVER() AS totalCount
       FROM orderinfo
