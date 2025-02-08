@@ -9,9 +9,10 @@ const OrderHistoryItem = ({
   createdTime,
   status,
   orderId,
+  handleClick,
 }) => {
   return (
-    <div className='order-history-list-item'>
+    <div className='order-history-list-item' onClick={() => handleClick(orderId)}>
       <div className='order-history-list-item-icon'>
         <img src='/icon/detailsIcon.png' alt='details-icon' />
       </div>

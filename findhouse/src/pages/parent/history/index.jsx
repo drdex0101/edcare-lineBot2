@@ -3,14 +3,31 @@ import './history.css';
 import Pagination from '../../../components/base/pagenation';
 import SearchBar from '../../../components/base/SearchBar';
 import OrderHistoryItem from '../../../components/base/OrderHistoryItem';
+import { useRouter } from 'next/router';
 export default function HistoryPage() {
   const [keywords, setKeywords] = useState('');
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(10);
-
+  const [historyList, setHistoryList] = useState([]);
+  const router = useRouter();
   const handlePageChange = (newPage) => {
     setPage(newPage);
   };
+
+  const fetchHistoryList = async () => {
+    const response = await fetch(`/api/order/getHistoryList?page=${page}&pageSize=10&keyword=${keywords}`);
+    const data = await response.json();
+    setTotal(data.totalCount);
+    setHistoryList(data.orders);
+  };
+
+  const handleClick = (orderId) => {
+    router.push(`/parent/history/${orderId}`);
+  };
+
+  useEffect(() => {
+    fetchHistoryList();
+  }, [page, keywords]);
 
   return (
     <div className="history-main">
@@ -44,19 +61,25 @@ export default function HistoryPage() {
                     onChange={(e) => setKeywords(e.target.value)}
                   ></input>
             </div>
-            <SearchBar></SearchBar>
+            <SearchBar keyword={keywords}></SearchBar>
         </div>
 
         <div className='history-body-content'>
+          {historyList.map((item) => (
             <OrderHistoryItem 
-                    name="林小明" 
-                    way="日間長期" 
-                    scene="在宅" 
-                    orderId="69696969696969" 
-                    createdTime="2024/12/25" 
-                    status="已完成" 
+                    name={item.nickname} 
+                    way={item.choosetype} 
+                    scene={item.caretypeid} 
+                    orderId={item.id} 
+                    createdTime={item.created_ts} 
+                    status={item.status} 
+                    handleClick={handleClick} 
                 />
-            <Pagination page={page} total={total} onChange={handlePageChange} />
+          ))}
+          
+          {total > 0 && (
+            <Pagination page={page} totalItems={total} onPageChange={handlePageChange} />
+          )}
         </div>
     </div>
   );

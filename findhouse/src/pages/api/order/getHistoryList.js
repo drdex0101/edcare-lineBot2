@@ -13,7 +13,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ success: false, message: `Method ${req.method} Not Allowed` });
   }
 
-  const { page = 1, pageSize = 10 } = req.query;
+  const { page = 1, pageSize = 10, keyword = null } = req.query;
   const token = req.cookies.authToken;
   const payload = await verifyToken(token);
   const userId = payload.userId;
@@ -56,7 +56,8 @@ export default async function handler(req, res) {
     LEFT JOIN 
         long_term l ON o.choosetype = 'long_term' AND o.caretypeid = l.id
     WHERE 
-        o.parentLineId = $1
+        o.parentLineId = $1 
+        AND ($4::text IS NULL OR o.nickname ILIKE $4::text)
     ORDER BY 
         o.created_ts DESC
     OFFSET 
@@ -65,7 +66,7 @@ export default async function handler(req, res) {
         $3;
     `;
 
-    const { rows } = await client.query(query, [userId, offset, limit]);
+    const { rows } = await client.query(query, [userId, offset, limit, keyword]);
 
     client.release();
 

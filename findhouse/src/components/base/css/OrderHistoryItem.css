@@ -1,5 +1,6 @@
 
 .order-history-list-item {
+    cursor: pointer;
     display: flex;
     height: 48px;
     min-width: 160px;

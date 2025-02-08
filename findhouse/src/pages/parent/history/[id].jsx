@@ -1,24 +1,35 @@
+// pages/history/[id].js
+
+import { useRouter } from 'next/router';
 import React, { useState, useEffect } from 'react';
 import './historyId.css';
 
 export default function HistoryId() {
     const [orderInfo, setOrderInfo] = useState(null);
-    const [nannyInfo, setNannyInfo] = useState(null);
-    const [careTypeData, setCareTypeData] = useState(null);
+    const router = useRouter();
 
     useEffect(() => {
-        const fetchOrderInfo = async () => {
-            const response = await fetch('/api/order/getOrderInfo');
-            const data = await response.json();
-            setOrderInfo(data);
+        if (!router.isReady) return; // 等待路由准备完毕
+        const { id } = router.query;
+        fetchOrderInfo(id);
+    }, [router.isReady]);
 
-            const fetchNannyInfo = async () => {
-                const response = await fetch(`/api/order/getNannyInfo/${orderInfo.nannyid}`);
-                const data = await response.json();
-                setNannyInfo(data);
-            };
-        };
-    }, []);
+    const fetchOrderInfo = async (id) => {
+        try {
+            const response = await fetch(`/api/order/getOrderInfoById?id=${id}`);
+            const data = await response.json();
+            console.log(data);
+            if (data.orders) {
+                setOrderInfo(data.orders[0]);
+            } else {
+                console.error("API 响应中缺少 'orders' 属性:", data);
+            }
+        } catch (error) {
+            console.error("获取订单信息时出错:", error);
+        }
+    };
+    
+
 
     return (
         <div className='history-main'>
@@ -41,21 +52,43 @@ export default function HistoryId() {
             </div>
 
             <div className='order-info-layout'>
+                {orderInfo && (
                 <div className='about-baby-layout'>
                     <span className='sub-title-font'>訂單編號：{orderInfo.id}</span>
-                    <span className='sub-title-font'>建立時間：{orderInfo.created_ts}</span>
+                    <span className='sub-title-font'>建立時間：{orderInfo.created_ts.slice(0, 10)}</span>
                     <div className='about-baby-img-layout'>
                         <div className='about-baby-img-background'>
                             <img src='/orderCreate.png' alt='' />
                         </div>
                         <span>{orderInfo.nickname}</span>
                     </div>
-                    <span className='sub-title-font'>托育方式：{orderInfo.choosetype}</span>
-                    <span className='sub-title-font'>托育時間：{orderInfo.caretypeid}</span>
-                    <span className='sub-title-font'>托育日期：{orderInfo.caretypeid}</span>
-                    <span className='sub-title-font'>托育情境：{orderInfo.caretypeid}</span>
-                    <span className='sub-title-font'>托育地址：{orderInfo.caretypeid}</span>
+                    <span className='sub-title-font'>托育方式：
+                        {orderInfo.choosetype 
+                            ? (orderInfo.choosetype === 'suddenly' ? '臨時托育' : '長期托育') 
+                            : '無資料'}
+                    </span>
+                    <span className='sub-title-font'>托育時間：
+                        {orderInfo.choosetype === 'suddenly' 
+                            ? (orderInfo.suddenly_care_time || '無資料') 
+                            : (orderInfo.long_term_care_time || '無資料')}
+                    </span>
+                    <span className='sub-title-font'>托育日期：
+                        {orderInfo.choosetype === 'suddenly' 
+                            ? `${orderInfo.suddenly_start_date.slice(0, 10) || '無資料'} ~ ${orderInfo.suddenly_end_date.slice(0, 10) || '無資料'}` 
+                            : (orderInfo.long_term_care_time || '無資料')}
+                    </span>
+                    <span className='sub-title-font'>托育情境：
+                        {orderInfo.choosetype === 'suddenly' 
+                            ? (orderInfo.suddenly_scenario || '無資料') 
+                            : (orderInfo.long_term_scenario || '無資料')}
+                    </span>
+                    <span className='sub-title-font'>托育地址：
+                        {orderInfo.choosetype === 'suddenly' 
+                            ? (orderInfo.suddenly_location || '無資料') 
+                            : ( '無資料')}
+                    </span>
                 </div>
+                )}
 
                 <div className='status-layout'>
                     <span className='title-font'>訂單狀態</span>
@@ -78,14 +111,17 @@ export default function HistoryId() {
                     </div>
                 </div>
 
+                {orderInfo && (
                 <div className='about-nanny'>
                     <span className='title-font'>托育人員</span>
                     <div className='about-nanny-font-layout'>
-                        <span className='sub-title-font'>保母姓名：</span>
-                        <span className='sub-title-font'>配對時間：</span>
+                        <span className='sub-title-font'>保母姓名：{orderInfo.name ? orderInfo.name : '無'}</span>
+                        <span className='sub-title-font'>配對時間：{orderInfo && orderInfo.update_ts ? orderInfo.update_ts.slice(0, 10) : '無資料'}</span>
                     </div>
                 </div>
+                )}
+
             </div>
         </div>
-    )
+    );
 }
