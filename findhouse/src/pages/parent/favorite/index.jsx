@@ -163,7 +163,7 @@ useEffect(() => {
   return () => {
     isCancelled = true;  // 在組件卸載時取消請求
   };
-}, [currentPage]);  // 監聽關鍵依賴變數
+}, [currentPage,keywords]);  // 監聽關鍵依賴變數
 
   const handlePageChange = (page) => {
     console.log('page:',page)
@@ -174,7 +174,7 @@ useEffect(() => {
     setSelectedRegion(region);
     setSelectedLocations(locations);
     setSelectedSort(sorts);
-    fetchNannyInfoList(currentPage, pageSize); // Fetch nanny info with updated filters
+    fetchNannyInfoList(currentPage, pageSize, keywords); // Fetch nanny info with updated filters
     setLocationCount(locationCount); // 新增狀態以追蹤選擇的地區數量
   };
 
@@ -282,7 +282,8 @@ useEffect(() => {
                         </div>
                     </div>
                     ))}
-                <Pagination
+                {totalItem > 0 && (
+                    <Pagination
                         keyword={keywords}
                         totalItems={totalItem}
                         pageSize={pageSize}
@@ -290,6 +291,7 @@ useEffect(() => {
                         onPageChange={handlePageChange}
                         fetchNannyInfoList={fetchNannyInfoList}
                     />
+                )}
                 </div>
                 </div>
           </div>

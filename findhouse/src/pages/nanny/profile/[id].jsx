@@ -94,7 +94,7 @@ export default function ProfilePage() {
       <div className="profileSection">
         
         <img className="profilePic" src={iconUrl} alt="Profile" /> {/* 頭貼圓形 */}
-        <h2 className="profileName">王美麗</h2>
+        <h2 className="profileName">{nannyInfo.name}</h2>
         <div className="rating">
           <RatingComponent score={nannyInfo.score} />
         </div>
