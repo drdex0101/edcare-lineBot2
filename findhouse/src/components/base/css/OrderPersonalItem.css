@@ -11,6 +11,10 @@
     background: var(---SurfaceContainer-Lowest, #FFF);
 }
 
+.order-layout-item-right-icon {
+    cursor: pointer;
+}
+
 .order-img {
     width: 88px;
     height: 88px;

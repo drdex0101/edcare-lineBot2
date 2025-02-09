@@ -67,10 +67,10 @@ export default function OrderPage() {
                             key={index}
                             name={item.nickname} 
                             way={item.choosetype} 
-                            scene={item.choosetype} 
+                            scene={item.choosetype === 'suddenly' ? item.suddenly_scenario : item.long_term_scenario} 
                             orderId={item.orderId} 
                             createdTime={item.created_ts} 
-                            status={item.status} 
+                            item={item}
                         />
                     ))
                 ) : (

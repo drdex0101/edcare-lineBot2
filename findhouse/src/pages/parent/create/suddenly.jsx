@@ -1,29 +1,53 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import Select from '@mui/material/Select';
 import CalendarRangePicker from '../../../components/base/CalendarRangePicker';
-
 import { MenuItem, InputLabel, FormControl } from '@mui/material';
+import useStore from '../../../lib/store';
 
 const ApplicationPage = () => {
   const router = useRouter();
+  const item = useStore((state) => state.item);
+
+  useEffect(() => {
+    console.log(item);
+  }, [item]);
 
   const handleNextClick = async () => {
     await createSuddenlyRecord();
     router.push('/parent/create/babyInfo'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
-  const [selectedRange, setSelectedRange] = React.useState({ startDate: null, endDate: null });
-  const [selectedCareType, setSelectedCareType] = React.useState('');
-  const [selectedAddress, setSelectedAddress] = React.useState('');
-  const [orderData, setData] = React.useState('');
-  // 添加 parseDate 函數定義
+  // Define parseDate function before using it
   const parseDate = (dateString) => {
     if (!dateString) return null;
     return new Date(dateString);
   };
+
+  const parseEditDate = (dateString) => {
+    if (!dateString) return null;
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+
+    const formattedDate = `${year}-${month}-${day}`;
+    return formattedDate;
+  };
+
+  // Initialize state with default values based on item
+  const [selectedRange, setSelectedRange] = React.useState(() => ({
+    startDate: item ? parseEditDate(item.suddenly_start_date) : null,
+    endDate: item ? parseEditDate(item.suddenly_end_date) : null,
+  }));
+
+  const [selectedCareType, setSelectedCareType] = React.useState(() => item ? item.suddenly_scenario : '');
+
+  const [selectedAddress, setSelectedAddress] = React.useState(() => item ? item.suddenly_location : '');
+
+  const [orderData, setData] = React.useState('');
 
   const createSuddenlyRecord = async () => {
     const response = await fetch('/api/base/createSuddenly', {
@@ -105,6 +129,7 @@ const ApplicationPage = () => {
                 style={styles.dateInput}
                 onChange={(e) => handleDateChange({ ...selectedRange, startDate: e.target.value })}
                 lang="zh-TW"
+                defaultValue={item ? item.suddenly_start_date : ""}
               />
             </div>
 
@@ -117,6 +142,7 @@ const ApplicationPage = () => {
                 style={styles.dateInput}
                 onChange={(e) => handleDateChange({ ...selectedRange, endDate: e.target.value })}
                 lang="zh-TW"
+                defaultValue={item ? item.suddenly_end_date : ""}
               />
             </div>
             <div style={{width:'100%'}}>
@@ -140,10 +166,9 @@ const ApplicationPage = () => {
                 id="gender"
                 label="選擇情境"
                 onChange={(e) => setSelectedCareType(e.target.value)}
-                defaultValue=""
+                defaultValue={item ? item.suddenly_scenario : ""}
                 InputProps={{
                   sx: {
-                    padding: '0px 16px',
                     borderRadius: '8px',
                     backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
                   },
@@ -181,7 +206,7 @@ const ApplicationPage = () => {
                 labelId="gender-label"
                 id="gender"
                 label="定點選擇"
-                defaultValue=""
+                defaultValue={item ? item.suddenly_location : ""}
                 onChange={(e) => setSelectedAddress(e.target.value)}
                 MenuProps={{
                   PaperProps: {
@@ -250,7 +275,7 @@ const ApplicationPage = () => {
                 labelId="gender-label"
                 id="gender"
                 label="定點選擇"
-                defaultValue=""
+                defaultValue={item ? item.suddenly_location : ""}
                 onChange={(e) => setSelectedAddress(e.target.value)}
                 MenuProps={{
                   PaperProps: {

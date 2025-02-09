@@ -58,7 +58,7 @@
     "slick-carousel": "^1.8.1",
     "uuid": "^9.0.0",
     "vercel": "^32.5.0",
-    "zustand": "^5.0.1"
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@types/node": "20.8.4",

@@ -29,15 +29,49 @@ export default async function handler(req, res) {
     const client = await pool.connect();
 
     const query = `
-      SELECT 
-        nannyId, status, created_ts, update_ts, choosetype, orderstatus, 
-        caretypeid, nickname, gender, birthday, rank, hope, intro, isshow, created_by,
+       SELECT 
+        o.id,
+        o.nannyId, 
+        o.status, 
+        o.created_ts, 
+        o.update_ts, 
+        o.choosetype, 
+        o.orderstatus, 
+        o.caretypeid, 
+        o.nickname, 
+        o.gender, 
+        o.birthday, 
+        o.rank, 
+        o.hope, 
+        o.intro, 
+        o.isshow, 
+        o.created_by,
+        k.name,
+        l.weekdays,
+        l.care_time as long_term_care_time,
+        l.scenario as long_term_scenario,
+        s.start_date as suddenly_start_date,
+        s.end_date as suddenly_end_date,
+        s.care_time as suddenly_care_time,
+        s.location as suddenly_location,
+        s.scenario as suddenly_scenario,
+        COALESCE(s.scenario, l.scenario) AS scenario,
         COUNT(*) OVER() AS totalCount
-      FROM orderinfo
-      WHERE parentLineId = $1
-      ORDER BY created_ts DESC
+    FROM 
+        orderinfo o
+    LEFT JOIN 
+        suddenly s ON o.choosetype = 'suddenly' AND o.caretypeid = s.id
+    LEFT JOIN 
+        long_term l ON o.choosetype = 'long_term' AND o.caretypeid = l.id
+    LEFT JOIN 
+        nanny n ON o.nannyid = n.id
+    LEFT JOIN 
+        kyc_info k ON n.kycId = k.id
+    WHERE 
+        o.parentLineId = $1
+    ORDER BY created_ts DESC
       OFFSET $2 LIMIT $3;
-    `;
+      `;
 
     const { rows } = await client.query(query, [userId, offset, limit]);
 

@@ -29,7 +29,6 @@ export default async function handler(req, res) {
       const query = `
        SELECT 
         o.id,
-        o.parentLineId, 
         o.nannyId, 
         o.status, 
         o.created_ts, 
