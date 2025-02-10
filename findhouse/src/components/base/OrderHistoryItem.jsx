@@ -12,7 +12,7 @@ const OrderHistoryItem = ({
   handleClick,
 }) => {
   return (
-    <div className='order-history-list-item' onClick={() => handleClick(orderId)}>
+    <div className='order-history-list-item' onClick={() => handleClick(orderId)} key={orderId}>
       <div className='order-history-list-item-icon'>
         <img src='/icon/detailsIcon.png' alt='details-icon' />
       </div>

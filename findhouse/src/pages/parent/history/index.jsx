@@ -15,10 +15,17 @@ export default function HistoryPage() {
   };
 
   const fetchHistoryList = async () => {
-    const response = await fetch(`/api/order/getHistoryList?page=${page}&pageSize=10&keyword=${keywords}`);
-    const data = await response.json();
-    setTotal(data.totalCount);
-    setHistoryList(data.orders);
+    try {
+      const response = await fetch(`/api/order/getHistoryList?page=${page}&pageSize=10&keyword=${keywords}`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      setTotal(data.totalCount);
+      setHistoryList(data.orders);
+    } catch (error) {
+      console.error('Failed to fetch history list:', error);
+    }
   };
 
   const handleClick = (orderId) => {
@@ -27,7 +34,7 @@ export default function HistoryPage() {
 
   useEffect(() => {
     fetchHistoryList();
-  }, [page, keywords]);
+  }, [page, keywords,historyList]);
 
   return (
     <div className="history-main">
@@ -65,7 +72,7 @@ export default function HistoryPage() {
         </div>
 
         <div className='history-body-content'>
-          {historyList.map((item) => (
+          {historyList.map((item,key) => (
             <OrderHistoryItem 
                     name={item.nickname} 
                     way={item.choosetype} 

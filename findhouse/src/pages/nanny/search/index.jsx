@@ -4,7 +4,7 @@ import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import Pagination from '../../../components/base/pagenation';
 import SearchBar from '../../../components/base/SearchBar';
-import { verifyToken } from '../../utils/jwtUtils';
+import { verifyToken } from '../../../utils/jwtUtils';
 import cookie from 'js-cookie';
 
 const ApplicationPage = () => {
@@ -29,17 +29,11 @@ const ApplicationPage = () => {
 
   const fetchOrderInfoList = async (page = 0, pageSize = 5) => {
     setIsLoading(true); // Set loading state to true while fetching data
+
     const token = cookie.get('authToken');
     const payload = await verifyToken(token);
     const userId = payload.userId;
     try {
-      const cookies = document.cookie.split('; ');
-      const userIdCookie = cookies.find(row => row.startsWith('userId='));
-      if (userIdCookie) {
-        userId = userIdCookie.split('=')[1];
-      } else {
-        throw new Error('userId not found in cookies');
-      }
       const response = await fetch(`/api/order/getOrderInfoList?page=${page}&pageSize=${pageSize}&userId=${userId}`, {
         method: 'GET',
         headers: {
