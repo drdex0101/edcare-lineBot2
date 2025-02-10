@@ -58,7 +58,7 @@ const ApplicationPage = () => {
   };
 
   const handleLastClick = () => {
-    router.push('/parent/create/suddenly'); 
+    router.push('/parent/order/details/suddenly'); 
   };
 
   const updateBabyRecord = async () => {
