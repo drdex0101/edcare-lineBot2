@@ -34,7 +34,7 @@ export default function HistoryPage() {
 
   useEffect(() => {
     fetchHistoryList();
-  }, [page, keywords,historyList]);
+  }, [page, keywords]);
 
   return (
     <div className="history-main">
@@ -64,7 +64,7 @@ export default function HistoryPage() {
                   <input 
                     style={{ border: 'none' }} 
                     placeholder="搜尋暱稱" 
-                    value={keywords || ''}
+                    value={keywords || null}
                     onChange={(e) => setKeywords(e.target.value)}
                   ></input>
             </div>
@@ -72,7 +72,8 @@ export default function HistoryPage() {
         </div>
 
         <div className='history-body-content'>
-          {historyList.map((item,key) => (
+          {historyList.map((item) => (
+            <div key={item.id}>
             <OrderHistoryItem 
                     name={item.nickname} 
                     way={item.choosetype} 
@@ -82,8 +83,10 @@ export default function HistoryPage() {
                     status={item.status} 
                     handleClick={handleClick} 
                 />
+            </div>
           ))}
           
+
           {total > 0 && (
             <Pagination page={page} totalItems={total} onPageChange={handlePageChange} />
           )}

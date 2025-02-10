@@ -33,7 +33,7 @@ const OrderPersonalItem = ({
         <div className="order-layout-item-right">
           <Link
             href={{
-              pathname: '/parent/create/choose'
+              pathname: '/parent/order/details/choose'
             }}
             onClick={() => setItem(item)} 
             passHref

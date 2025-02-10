@@ -3,17 +3,32 @@ import { useRouter } from 'next/router';
 import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import Select from '@mui/material/Select';
-import CalendarRangePicker from '../../../components/base/CalendarRangePicker';
+import CalendarRangePicker from '../../../../components/base/CalendarRangePicker';
 import { MenuItem, InputLabel, FormControl } from '@mui/material';
-
+import useStore from '../../../../lib/store';
 
 const ApplicationPage = () => {
   const router = useRouter();
+  const item = useStore((state) => state.item);
+
+  useEffect(() => {
+  }, [item]);
+
+  useEffect(() => {
+    if (item) {
+      setSelectedRange({
+        startDate: parseEditDate(item.suddenly_start_date) || "", // 確保不是 `undefined`
+        endDate: parseEditDate(item.suddenly_end_date) || "",
+      });
+
+    }
+  }, [item]);
 
   const handleNextClick = async () => {
     await createSuddenlyRecord();
-    router.push('/parent/create/babyInfo'); // 替换 '/next-page' 为你想要跳转的路径
+    router.push('/parent/order/details/babyInfo'); // 替换 '/next-page' 为你想要跳转的路径
   };
+
 
   // Define parseDate function before using it
   const parseDate = (dateString) => {
@@ -34,23 +49,24 @@ const ApplicationPage = () => {
 
   // Initialize state with default values based on item
   const [selectedRange, setSelectedRange] = React.useState(() => ({
-    startDate: null,
-    endDate: null,
+    startDate: item ? parseEditDate(item.suddenly_start_date) : null,
+    endDate: item ? parseEditDate(item.suddenly_end_date) : null,
   }));
 
-  const [selectedCareType, setSelectedCareType] = React.useState(() => '');
-  const [selectedAddress, setSelectedAddress] = React.useState(() => '');
+  const [selectedCareType, setSelectedCareType] = React.useState(() => item ? item.suddenly_scenario : '');
+
+  const [selectedAddress, setSelectedAddress] = React.useState(() => item ? item.suddenly_location : '');
 
   const [orderData, setData] = React.useState('');
 
   const createSuddenlyRecord = async () => {
-    const response = await fetch('/api/base/createSuddenly', {
-      method: 'POST',
+    const response = await fetch('/api/base/updateSuddenly', {
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        orderId: '',
+        careTypeId: item.caretypeid,
         startDate: selectedRange.startDate,
         endDate: selectedRange.endDate,
         scenario: selectedCareType,
@@ -65,13 +81,12 @@ const ApplicationPage = () => {
     }
     const data = await response.json();
     setData(data.suddenly);
-    console.log(data.suddenly);
     localStorage.setItem('careTypeId', data.suddenly.id);
     localStorage.setItem('choosetype','suddenly');
   };
 
   const handleLastClick = () => {
-    router.push('/parent/create/'); // 替换 '/next-page' 为你想要跳转的路径
+    router.push('/parent/order/details/choose'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   const handleDateChange = (range) => {
@@ -123,6 +138,7 @@ const ApplicationPage = () => {
                 style={styles.dateInput}
                 onChange={(e) => handleDateChange({ ...selectedRange, startDate: e.target.value })}
                 lang="zh-TW"
+                defaultValue={item ? parseEditDate(item.suddenly_start_date) : ""}
               />
             </div>
 
@@ -135,9 +151,9 @@ const ApplicationPage = () => {
                 style={styles.dateInput}
                 onChange={(e) => handleDateChange({ ...selectedRange, endDate: e.target.value })}
                 lang="zh-TW"
+                defaultValue={item ? parseEditDate(item.suddenly_end_date) : ""}
               />
             </div>
-
             <div style={{width:'100%'}}>
               <CalendarRangePicker
                 startDate={selectedRange.startDate}
@@ -159,6 +175,7 @@ const ApplicationPage = () => {
                 id="gender"
                 label="選擇情境"
                 onChange={(e) => setSelectedCareType(e.target.value)}
+                defaultValue={item ? item.suddenly_scenario : ""}
                 InputProps={{
                   sx: {
                     borderRadius: '8px',
@@ -198,6 +215,7 @@ const ApplicationPage = () => {
                 labelId="gender-label"
                 id="gender"
                 label="定點選擇"
+                defaultValue={item ? item.suddenly_location : ""}
                 onChange={(e) => setSelectedAddress(e.target.value)}
                 MenuProps={{
                   PaperProps: {
@@ -266,6 +284,7 @@ const ApplicationPage = () => {
                 labelId="gender-label"
                 id="gender"
                 label="定點選擇"
+                defaultValue={item ? item.suddenly_location : ""}
                 onChange={(e) => setSelectedAddress(e.target.value)}
                 MenuProps={{
                   PaperProps: {

@@ -1,6 +1,5 @@
 import React from 'react';
 import { useRouter } from 'next/router';
-import { ButtonGroupProvider } from '@nextui-org/react';
 const ApplicationPage = () => {
   const router = useRouter();
 

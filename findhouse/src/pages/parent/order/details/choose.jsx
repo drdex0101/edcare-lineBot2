@@ -1,26 +1,28 @@
 import React from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import useStore from '../../../../lib/store'; // Adjust the path as necessary
+
 const ApplicationPage = () => {
   const router = useRouter();
+  const item = useStore((state) => state.item);
   // Set the item in the store when the component mounts
 
   const handleLastClick = () => {
-    router.push('/parent/create/'); // 替换 '/next-page' 为你想要跳转的路径
+    router.push('/parent/order/details/suddenly'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   const handleLongClick = () => {
-    router.push('/parent/create/long'); // 替换 '/next-page' 为你想要跳转的路径
+    router.push('/parent/order/details/long'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   return (
     <div style={styles.main}>  
         <div style={styles.header}> 
             <span style={styles.headerFont}>
-              申請成為家長
+            托育資料填寫
             </span>
             <button onClick={handleLastClick} style={styles.lastButton}>
-
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <g clip-path="url(#clip0_45_10396)">
                   <path d="M7.77223 12.9916L18.7822 12.9916C19.3322 12.9916 19.7822 12.5416 19.7822 11.9916C19.7822 11.4416 19.3322 10.9916 18.7822 10.9916L7.77223 10.9916L7.77223 9.20162C7.77223 8.75162 7.23223 8.53162 6.92223 8.85162L4.14223 11.6416C3.95223 11.8416 3.95223 12.1516 4.14223 12.3516L6.92223 15.1416C7.23223 15.4616 7.77223 15.2316 7.77223 14.7916L7.77223 12.9916V12.9916Z" fill="#074C5F"/>
@@ -48,7 +50,7 @@ const ApplicationPage = () => {
               </div>
               <div style={styles.buttonLayout}>
                 <Link href={{
-                  pathname: '/parent/create/suddenly',
+                  pathname: '/parent/order/details/suddenly',
                   query: { item: JSON.stringify(item) },
                 }} passHref>
                   <button style={styles.suddenlyBtn}>

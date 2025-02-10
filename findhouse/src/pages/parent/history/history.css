@@ -6,7 +6,7 @@
     height: 100%;
     background-color: #fff;
     gap: 10px;
-    padding: 0 20px 20px 20px;
+    width: 100%;
 }
 
 .history-header{
@@ -69,12 +69,13 @@
 
 .history-search-layout {
     display: flex;
-    width: 390px;
+    width: 100%;
     height: 100px;
     padding: 5px 15px;
     justify-content: center;
     align-items: center;
     gap: 10px;
+
 }
 
 .history-search-input {
