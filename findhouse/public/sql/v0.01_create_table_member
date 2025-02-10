@@ -15,3 +15,5 @@ CREATE TABLE member (
     UNIQUE (lineId),                 -- 確保 lineId 唯一
     UNIQUE (account),                -- 確保帳號唯一
     UNIQUE (email)                   -- 確保電子郵件唯一
+
+ALTER TABLE member ADD COLUMN collection VARCHAR []; -- 添加蒐藏陣列

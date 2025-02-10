@@ -23,11 +23,13 @@ export default async function handler(req, res) {
 
       const query = `
         SELECT 
-          id, memberId, experienment, age, kidCount, way, scenario, 
+          nanny.id AS nanny_id, memberId, experienment, age, kidCount, way, scenario, 
           environmentPic, serviceLocation, introduction, service, 
-          score, isShow, location, kycId, uploadId, created_ts
+          score, isShow, location, nanny.kycId, uploadId, nanny.created_ts,
+          k.name
         FROM nanny
-        WHERE id = $1;
+        LEFT JOIN kyc_info k ON nanny.kycId = k.id
+        WHERE nanny.id = $1;
       `;
       
       // Convert id to integer if it's a numeric string

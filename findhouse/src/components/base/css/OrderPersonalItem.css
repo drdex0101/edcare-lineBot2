@@ -1,0 +1,108 @@
+
+.order-layout-item{
+    display: flex;
+    width: 330px;
+    height: 110px;
+    padding: 12px 8px 12px 9px;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 8px;
+    border: 2px solid var(---Button-01, #FBDBD6);
+    background: var(---SurfaceContainer-Lowest, #FFF);
+}
+
+.order-layout-item-right-icon {
+    cursor: pointer;
+}
+
+.order-img {
+    width: 88px;
+    height: 88px;
+    flex-shrink: 0;
+}
+
+.order-layout-item-left{
+    display: flex;
+    width: 218px;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 15px;
+}
+
+.order-layout-item-left-content{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+.order-layout-item-left-img{
+    width: 88px;
+    height: 88px;
+    flex-shrink: 0;
+}
+
+.order-layout-item-right{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.order-layout-item-left-text{
+    color: #1E1E1E;
+    /* Line/bold/16pt */
+    font-family: "LINE Seed JP_TTF";
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.order-way-scene-layout{
+    display: flex;
+    gap: 5px;
+}
+
+.order-way{
+    display: flex;
+    padding: 1px 5px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border-radius: 20px;
+    background: var(---Button-02, linear-gradient(90deg, #FBC2EB 0%, #A6C1EE 100%));
+    color: var(---Outline-OnSurfaceVariant, #221E47);
+    text-align: center;
+    font-family: "LINE Seed JP_TTF";
+    font-size: 8px;
+    font-style: normal;
+    font-weight: 400;
+}
+
+.order-scene{
+    display: flex;
+    padding: 1px 5px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border-radius: 20px;
+    border: 1px solid var(---Button-02, #FBC2EB);
+    color: var(---Outline-OnSurfaceVariant, #221E47);
+    text-align: center;
+    font-family: "LINE Seed JP_TTF";
+    font-size: 8px;
+    font-style: normal;
+    font-weight: 400;
+}
+
+.order-normal-text{
+    color: var(---Surface-Black-25, #252525);
+
+    /* Line/medium/8pt */
+    font-family: "LINE Seed JP_TTF";
+    font-size: 8px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}

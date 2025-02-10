@@ -1,8 +1,16 @@
 import axios from 'axios';
-
+import { verifyToken } from '../../../utils/jwtUtils';
+import cookie from 'js-cookie';
 export default async function handler(req, res) {
   if (req.method === 'POST') {
-    const { userId, richMenuId } = req.body;
+    
+    const { richMenuId } = req.body;
+    const token = cookie.get('authToken');
+    const payload = await verifyToken(token);
+    if (!payload || payload.userId !== userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    const userId = payload.userId;
 
     try {
       // 綁定 Rich Menu 到用戶

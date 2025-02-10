@@ -4,6 +4,8 @@ import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import Pagination from '../../../components/base/pagenation';
 import SearchBar from '../../../components/base/SearchBar';
+import { verifyToken } from '../../../utils/jwtUtils';
+import cookie from 'js-cookie';
 
 const ApplicationPage = () => {
   const router = useRouter();
@@ -30,7 +32,10 @@ const ApplicationPage = () => {
   const fetchNannyInfoList = async (page, pageSize=5,  keywords) => {
     setIsLoading(true); // Set loading state to true while fetching data
     try {
-      const response = await fetch(`/api/nanny/getNannyInfoList?page=${page}&pageSize=${pageSize}&locations=${selectedLocations}&sort=${selectedSort}&keyword=${keywords}`, {
+      const token = cookie.get('authToken');
+      const payload = await verifyToken(token);
+      const userId = payload.userId;
+      const response = await fetch(`/api/nanny/getNannyInfoList?page=${page}&pageSize=${pageSize}&locations=${selectedLocations}&sort=${selectedSort}&keyword=${keywords}&userId=${userId}`, {
         method: 'GET',
         headers: {
           'Cache-Control': 'no-cache',
@@ -70,16 +75,11 @@ const ApplicationPage = () => {
 
   const fetchOrderInfo = async () => {
     setIsLoading(true);
-    let userId = null;
+    const token = cookie.get('authToken');
+    const payload = await verifyToken(token);
+    const userId = payload.userId;
 
     try {
-      const cookies = document.cookie.split('; ');
-      const userIdCookie = cookies.find(row => row.startsWith('userId='));
-      if (userIdCookie) {
-        userId = userIdCookie.split('=')[1];
-      } else {
-        throw new Error('userId not found in cookies');
-      }
 
       if (!userId) {
         throw new Error('Invalid userId');

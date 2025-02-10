@@ -1,11 +1,9 @@
 import React from 'react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 const ApplicationPage = () => {
   const router = useRouter();
-
-  const handleNextClick = () => {
-    router.push('/parent/create/suddenly'); // 替换 '/next-page' 为你想要跳转的路径
-  };
+  // Set the item in the store when the component mounts
 
   const handleLastClick = () => {
     router.push('/parent/create/'); // 替换 '/next-page' 为你想要跳转的路径
@@ -22,6 +20,7 @@ const ApplicationPage = () => {
               申請成為家長
             </span>
             <button onClick={handleLastClick} style={styles.lastButton}>
+
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <g clip-path="url(#clip0_45_10396)">
                   <path d="M7.77223 12.9916L18.7822 12.9916C19.3322 12.9916 19.7822 12.5416 19.7822 11.9916C19.7822 11.4416 19.3322 10.9916 18.7822 10.9916L7.77223 10.9916L7.77223 9.20162C7.77223 8.75162 7.23223 8.53162 6.92223 8.85162L4.14223 11.6416C3.95223 11.8416 3.95223 12.1516 4.14223 12.3516L6.92223 15.1416C7.23223 15.4616 7.77223 15.2316 7.77223 14.7916L7.77223 12.9916V12.9916Z" fill="#074C5F"/>
@@ -48,12 +47,20 @@ const ApplicationPage = () => {
                 <span style={styles.smallTitle}>選擇托育方式</span>
               </div>
               <div style={styles.buttonLayout}>
-                <button style={styles.suddenlyBtn} onClick={handleNextClick}>
-                  <span style={styles.typeFont}>臨時托育</span>
-                </button>
-                <button style={styles.longBtn} onClick={handleLongClick}>
-                  <span style={styles.typeFont}>長期托育</span>
-                </button>
+                <Link href={{
+                  pathname: '/parent/create/suddenly'
+                }} passHref>
+                  <button style={styles.suddenlyBtn}>
+                    <span style={styles.typeFont}>臨時托育</span>
+                  </button>
+                </Link>
+                <Link href={{
+                  pathname: '/parent/create/long'
+                }} passHref>
+                  <button style={styles.longBtn}>
+                    <span style={styles.typeFont}>長期托育</span>
+                  </button>
+                </Link>
               </div>
           </div>
         </div>

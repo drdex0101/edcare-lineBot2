@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import Select from '@mui/material/Select';
 import CalendarRangePicker from '../../../components/base/CalendarRangePicker';
-
 import { MenuItem, InputLabel, FormControl } from '@mui/material';
+
 
 const ApplicationPage = () => {
   const router = useRouter();
@@ -15,15 +15,33 @@ const ApplicationPage = () => {
     router.push('/parent/create/babyInfo'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
-  const [selectedRange, setSelectedRange] = React.useState({ startDate: null, endDate: null });
-  const [selectedCareType, setSelectedCareType] = React.useState('');
-  const [selectedAddress, setSelectedAddress] = React.useState('');
-  const [orderData, setData] = React.useState('');
-  // 添加 parseDate 函數定義
+  // Define parseDate function before using it
   const parseDate = (dateString) => {
     if (!dateString) return null;
     return new Date(dateString);
   };
+
+  const parseEditDate = (dateString) => {
+    if (!dateString) return null;
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+
+    const formattedDate = `${year}-${month}-${day}`;
+    return formattedDate;
+  };
+
+  // Initialize state with default values based on item
+  const [selectedRange, setSelectedRange] = React.useState(() => ({
+    startDate: null,
+    endDate: null,
+  }));
+
+  const [selectedCareType, setSelectedCareType] = React.useState(() => '');
+  const [selectedAddress, setSelectedAddress] = React.useState(() => '');
+
+  const [orderData, setData] = React.useState('');
 
   const createSuddenlyRecord = async () => {
     const response = await fetch('/api/base/createSuddenly', {
@@ -119,6 +137,7 @@ const ApplicationPage = () => {
                 lang="zh-TW"
               />
             </div>
+
             <div style={{width:'100%'}}>
               <CalendarRangePicker
                 startDate={selectedRange.startDate}
@@ -140,10 +159,8 @@ const ApplicationPage = () => {
                 id="gender"
                 label="選擇情境"
                 onChange={(e) => setSelectedCareType(e.target.value)}
-                defaultValue=""
                 InputProps={{
                   sx: {
-                    padding: '0px 16px',
                     borderRadius: '8px',
                     backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
                   },
@@ -181,7 +198,6 @@ const ApplicationPage = () => {
                 labelId="gender-label"
                 id="gender"
                 label="定點選擇"
-                defaultValue=""
                 onChange={(e) => setSelectedAddress(e.target.value)}
                 MenuProps={{
                   PaperProps: {
@@ -250,7 +266,6 @@ const ApplicationPage = () => {
                 labelId="gender-label"
                 id="gender"
                 label="定點選擇"
-                defaultValue=""
                 onChange={(e) => setSelectedAddress(e.target.value)}
                 MenuProps={{
                   PaperProps: {

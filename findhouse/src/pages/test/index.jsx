@@ -1,5 +1,6 @@
 import React from 'react';
-import Cookies from 'js-cookie';
+import { verifyToken } from '../../utils/jwtUtils';
+import cookie from 'js-cookie';
 const ApplicationPage = () => {
   const [kycInfoList, setKycInfoList] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);  // 新增加載狀態
@@ -23,8 +24,10 @@ const ApplicationPage = () => {
   };
 
   const changeRichMenu = async (richMenuId) => {
-    console.log('richMenuId:', Cookies.get('userId'))
     try {
+      const token = cookie.get('authToken');
+      const payload = await verifyToken(token);
+      const userId = payload.userId;
       const response = await fetch('/api/line/changeRichMenu', {
         method: 'POST',
         headers: {
@@ -32,7 +35,7 @@ const ApplicationPage = () => {
           'Authorization': `Bearer ${process.env.NEXT_PUBLIC_CHANNEL_ACCESS_TOKEN}`,
         },
         body: JSON.stringify({
-          userId: Cookies.get('userId'), 
+          userId: userId, 
           richMenuId: richMenuId
         }),
       });

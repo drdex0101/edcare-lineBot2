@@ -80,41 +80,47 @@ const ApplicationPage = () => {
   };
 
   const handleUpload = async (file, type) => {
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append('file', file);
-
-    try {
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const result = await res.json();
-      const resUpload = await fetch('/api/kycInfo/uploadImg', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          fileUrl: result.fileUrl,
-          type: type
-        })
-      });
-      const uploadResponse = await resUpload.json();
-      const uploadId = uploadResponse.uploadId.id;
-      if(type === 'ID Front'){
-        setFrontImg(uploadId);
-      }else if(type === 'ID Back'){
-        setBackImg(uploadId);
-      }else if(type === 'Head Icon'){
-        setHeadIcon(uploadId);
-      }
-    } catch (error) {
-      console.error('Upload error:', error);
-      setMessage('Upload failed.');
+    if (!file) {
+      console.error("No file selected");
+      return;
     }
+  
+    // ✅ **將 `file` 轉成 `Base64`**
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+  
+    reader.onloadend = async () => {
+      const base64String = reader.result.split(",")[1]; // 取得 Base64 內容
+  
+      try {
+        const res = await fetch("/api/kycInfo/uploadImg", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json", // 🚀 以 `JSON` 形式傳遞 Base64
+          },
+          body: JSON.stringify({ file: `data:image/png;base64,${base64String}` }), // ✅ 傳遞 `Base64`
+        });
+  
+        const result = await res.json();
+        console.log("Upload Response:", result);
+        const uploadId = result.uploadId; // 確保 API 返回的是 id 而不是物件
+  
+        if (type === "ID Front") {
+          setFrontImg(uploadId);
+        } else if (type === "ID Back") {
+          setBackImg(uploadId);
+        } else if (type === "Head Icon") {
+          setHeadIcon(uploadId);
+        }
+        if (result.success) {
+          console.log("Uploaded Image URL:", result.url);
+        } else {
+          console.error("Upload Failed:", result.message);
+        }
+      } catch (error) {
+        console.error("Upload Error:", error);
+      }
+    };
   };
 
   const handleFileChange = (e) => {

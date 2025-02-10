@@ -17,7 +17,6 @@ export default async function handler(req, res) {
       // Query to get the total count of nannies
       const totalCountQuery = `SELECT COUNT(*) FROM nanny;`;
       const totalCountResult = await client.query(totalCountQuery);
-      const totalCount = parseInt(totalCountResult.rows[0].count, 10);
 
       // Convert locations string to an array
       const locationsArray = locations ? locations.split(',') : [];
@@ -50,7 +49,7 @@ export default async function handler(req, res) {
       return res.status(200).json({ 
         success: true, 
         nannies: result.rows, 
-        totalCount: totalCount, // Total count of all records
+        totalCount: result.rowCount, // Total count of records in the current result
         pageCount: result.rowCount // Count of records in the current page
       });
     } catch (error) {
