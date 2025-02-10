@@ -48,16 +48,19 @@ const ApplicationPage = () => {
               </div>
               <div style={styles.buttonLayout}>
                 <Link href={{
-                  pathname: '/parent/create/suddenly',
-                  query: { item: JSON.stringify(item) },
+                  pathname: '/parent/create/suddenly'
                 }} passHref>
                   <button style={styles.suddenlyBtn}>
                     <span style={styles.typeFont}>臨時托育</span>
                   </button>
                 </Link>
-                <button style={styles.longBtn} onClick={handleLongClick}>
-                  <span style={styles.typeFont}>長期托育</span>
-                </button>
+                <Link href={{
+                  pathname: '/parent/create/long'
+                }} passHref>
+                  <button style={styles.longBtn}>
+                    <span style={styles.typeFont}>長期托育</span>
+                  </button>
+                </Link>
               </div>
           </div>
         </div>
