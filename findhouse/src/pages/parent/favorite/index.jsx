@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { styled } from '@mui/material/styles';
-import Switch from '@mui/material/Switch';
 import Pagination from '../../../components/base/pagenation';
 import SearchBar from '../../../components/base/SearchBar';
 import './favorite.css';

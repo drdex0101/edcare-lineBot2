@@ -5,7 +5,7 @@ import TextField from '@mui/material/TextField';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { setMemberId } from '../../features/member/memberSlice';
-import Cookies from 'js-cookie';
+import cookie from 'js-cookie';
 import { verifyToken } from '../../utils/jwtUtils';
 
 const ApplicationPage = () => {
@@ -17,15 +17,20 @@ const ApplicationPage = () => {
   };
 
   const handleNextClick = async () => {
-    const token = cookie.get('authToken');
-    const payload = await verifyToken(token);
-    const userId = payload.userId;
+    // Check if all fields are filled
+    const account = document.getElementById('account').value;
+    const phoneNumber = document.getElementById('cellphone').value;
+    const email = document.getElementById('email').value;
+
+    if (!account || !phoneNumber || !email) {
+      alert('請填寫所有必填欄位。');
+      return; // 終止函數執行
+    }
     
     const memberData = {
-      account: document.getElementById('account').value,
-      lineId: userId,
-      phoneNumber: document.getElementById('cellphone').value,
-      email: document.getElementById('email').value,
+      account: account,
+      phoneNumber: phoneNumber,
+      email: email,
       job: "保母"
     };
 
@@ -47,7 +52,6 @@ const ApplicationPage = () => {
 
     try {
       const response = await axios.post('/api/member/createMember', memberData);
-      console.log('Member created:', response.data);
       const memberId = response.data.member.id;
       dispatch(setMemberId(memberId)); 
       router.push('/nanny/upload');

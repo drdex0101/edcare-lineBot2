@@ -59,8 +59,10 @@ const ApplicationPage = () => {
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState(''); // 新增狀態以存儲檔案名稱
   const [headIcon, setHeadIcon] = useState(null);
+  const [headIconUrl, setHeadIconUrl] = useState(null);
   const [message, setMessage] = useState('');
   const [uploadedImages, setUploadedImages] = useState([]); // State to track uploaded images
+  const [uploadedEnvironmentImages, setUploadedEnvironmentImages] = useState([]); // State to track uploaded images
   const [selectedCareType, setSelectedCareType] = useState(null);
   const [address, setAddress] = useState('');
   const [selectedOptions, setSelectedOptions] = useState([]);
@@ -76,47 +78,35 @@ const ApplicationPage = () => {
   const handleUpload = async (file, type) => {
     if (!file) return;
 
-    const formData = new FormData();
-    formData.append('file', file);
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = async () => {
+    const base64String = reader.result.split(",")[1]; // 取得 Base64 內容
 
     try {
-        const res = await fetch('/api/upload', {
-            method: 'POST',
-            body: formData,
-        });
-
-        // Check if the response is OK
-        if (!res.ok) {
-            const errorText = await res.text(); // Get the full response text
-            console.error(`HTTP error! status: ${res.status}, response: ${errorText}`);
-            throw new Error(`HTTP error! status: ${res.status}`);
-        }
-
-        const result = await res.json();
-        console.log(result);
         const resUpload = await fetch('/api/kycInfo/uploadImg', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                fileUrl: result.fileUrl,
-                type: type
-            })
+             body: JSON.stringify({ file: `data:image/png;base64,${base64String}` }),
         });
         const uploadResponse = await resUpload.json();
-        const uploadId = uploadResponse.uploadId.id;
+        const uploadId = uploadResponse.id;
         if (type === 'environment') {
           setUploadedImages(prevImages => [...prevImages, uploadId]);
+          setUploadedEnvironmentImages(prevImages => [...prevImages, uploadResponse.url]);
         }
         else {
           setHeadIcon(uploadId);
+          setHeadIconUrl(uploadResponse.url);
         }
     } catch (error) {
         console.error('Upload error:', error);
         setMessage('Upload failed.');
     }
   };
+}
 
   const handleEnvironmentImageChange = (e) => {
     const files = Array.from(e.target.files);
@@ -257,7 +247,11 @@ const ApplicationPage = () => {
               id="file-input"
             />
             <label htmlFor="file-input" style={styles.avatorLayout}>
-              <span>上傳照片</span>
+              {headIconUrl ? (
+                <img src={headIconUrl} alt="Uploaded avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                <span>上傳照片</span>
+              )}
             </label>
           </div>
 
@@ -407,23 +401,33 @@ const ApplicationPage = () => {
 
             <div style={styles.iconLayout}>
               <div style={styles.fontLayout}>
-                <span style={styles.smallTitle}>上傳托育環境照</span>
-                <span style={styles.noticeTitle}>{`${uploadedImages.length}/6`}</span>
+                <div style={styles.titleLayout}>
+                  <span style={styles.smallTitle}>上傳托育環境照</span>
+                  <span style={styles.noticeTitle}>僅提供家長能更快認識保母。</span>
+                </div>
+                <div style={styles.imgCount}>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleEnvironmentImageChange}
+                    style={{ display: 'none' }}
+                    id="environment-file-input"
+                  />
+                  <label htmlFor="environment-file-input" style={styles.imgCount}>
+                    {uploadedEnvironmentImages.length > 0 ? (
+                      <img
+                        src={uploadedEnvironmentImages[uploadedEnvironmentImages.length - 1]}
+                        alt="Latest uploaded environment"
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
+                    ) : (
+                      <span></span>
+                    )}
+                  </label>
+                  <span style={styles.imgCountLayout}>{`${uploadedImages.length}/6`}</span>
+                </div>
               </div>
-            </div>
-
-            <div style={styles.uploadAvatorLayout}>
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handleEnvironmentImageChange}
-                style={{ display: 'none' }}
-                id="environment-file-input"
-              />
-              <label htmlFor="environment-file-input" style={styles.environmentLayout}>
-                <img></img>
-              </label>
             </div>
 
             <TextField
@@ -516,7 +520,33 @@ const styles = {
     fontSize: '10px',
     fontStyle: 'normal',
     fontWeight: '400',
-    lineHeight: 'normal'
+  },
+  imgCount: {
+    width: '100%',
+    height: '177px',
+    flexShrink: '0',
+    borderRadius: '10px',
+    background: '#EFF3F6',
+    position: 'relative',
+  },
+  imgCountLayout: {
+    display: 'inline-flex',
+    padding: '4px 12.774px 3.956px 11px',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: '4px',
+    borderRadius: '4px',
+    background: 'linear-gradient(81deg, #FBDBD6 10.58%, #D9DFF0 75.92%)',
+    color: 'var(---Outline-OnSurface, #252525)',
+    textAlign: 'center',
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: '8px',
+    fontStyle: 'normal',
+    fontWeight: '400',
+    lineHeight: 'normal',
+    position: 'absolute',
+    bottom: '10px',
+    right: '10px',
   },
   smallTitle: {
     color: 'var(---Surface-Black-25, #252525)',
@@ -530,7 +560,8 @@ const styles = {
     display:'flex',
     alignItems:'flex-start',
     width:'100%',
-    flexDirection:'column'
+    flexDirection:'column',
+    gap:'10px'
   },
   iconLayout: {
     display:'flex',
