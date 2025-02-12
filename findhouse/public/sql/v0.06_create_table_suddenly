@@ -18,3 +18,5 @@ CREATE TABLE long_term (
 
 ALTER TABLE suddenly ADD COLUMN id_type VARCHAR(50);
 ALTER TABLE long_term ADD COLUMN id_type VARCHAR(50);
+
+//order_id = nanny_id 如果為parent建單 order_id 為''

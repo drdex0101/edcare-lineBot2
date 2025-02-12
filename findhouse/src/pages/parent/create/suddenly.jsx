@@ -42,7 +42,7 @@ const ApplicationPage = () => {
   const [selectedAddress, setSelectedAddress] = React.useState(() => '');
 
   const [orderData, setData] = React.useState('');
-
+  
   const createSuddenlyRecord = async () => {
     const response = await fetch('/api/base/createSuddenly', {
       method: 'POST',

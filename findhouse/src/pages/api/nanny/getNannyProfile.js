@@ -40,15 +40,37 @@ export default async function handler(req, res) {
 
       const query = `
         SELECT 
-          nanny.id AS nanny_id, memberId, experienment, age, kidCount, way, scenario, 
-          environmentPic, serviceLocation, introduction, service, 
-          score, isShow, location, nanny.kycId, uploadId, nanny.created_ts,
-          k.name
+          nanny.id AS nanny_id, 
+          nanny.memberId, 
+          nanny.experienment, 
+          nanny.age, 
+          nanny.kidCount, 
+          nanny.way, 
+          nanny.environmentPic, 
+          nanny.serviceLocation, 
+          nanny.introduction, 
+          nanny.service, 
+          nanny.score, 
+          nanny.isShow, 
+          nanny.location, 
+          nanny.kycId, 
+          nanny.uploadId, 
+          nanny.created_ts,
+          k.name,
+          l.weekdays,
+          l.care_time as long_term_care_time,
+          s.start_date as suddenly_start_date,
+          s.end_date as suddenly_end_date,
+          s.care_time as suddenly_care_time,
+          s.location as suddenly_location,
+          s.scenario as suddenly_scenario,
+          COALESCE(s.scenario, l.scenario) AS scenario
         FROM nanny
         LEFT JOIN kyc_info k ON nanny.kycId = k.id
+        LEFT JOIN long_term l ON nanny.id::varchar = l.order_id
+        LEFT JOIN suddenly s ON nanny.id::varchar = s.order_id
         WHERE nanny.memberId = $1;
       `;
-      
       const result = await client.query(query, [memberId]);
 
       console.log('Nannies retrieved successfully:', result.rows);

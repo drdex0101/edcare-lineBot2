@@ -4,9 +4,10 @@ import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import Pagination from '../../../components/base/pagenation';
 import SearchBar from '../../../components/base/SearchBar';
-
+import useStore from '../../../lib/store';
 const ApplicationPage = () => {
   const router = useRouter();
+  const {setNannyInfo} = useStore();
   const [orderInfo, setOrderInfo] = useState([]);
   const [totalItem, setTotalItem] = useState(0);
   const [currentPage, setCurrentPage] = useState(0); // Track current page
@@ -39,6 +40,7 @@ const ApplicationPage = () => {
     }
     const data = await response.json();
     setNannyProfile(data.nannyProfile[0]);
+    setNannyInfo(data.nannyProfile[0]);
     setNannyProfileImg(await getImgUrl(data.nannyProfile[0].uploadid));
   }
 
@@ -108,7 +110,11 @@ const ApplicationPage = () => {
   };
 
   const handleNextClick = () => {
-    router.push('/nanny/create/choose'); // 替换 '/next-page' 为你想要跳转的路径
+    if (nannyProfile.way === 'suddenly') {
+      router.push('/nanny/create/suddenly'); // 替换 '/next-page' 为你想要跳转的路径
+    } else if (nannyProfile.way === 'longTerm') {
+      router.push('/nanny/create/longTerm'); // 替换 '/next-page' 为你想要跳转的路径
+    }
   };
 
   return (

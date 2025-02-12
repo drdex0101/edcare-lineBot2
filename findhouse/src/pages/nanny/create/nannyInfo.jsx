@@ -6,8 +6,47 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
 import { useState } from 'react';
+import useStore from '../../../lib/store';
+import { useEffect } from 'react';
+
+
 const ApplicationPage = () => {
   const router = useRouter();
+  const nannyInfo = useStore((state) => state.nannyInfo);
+  const [switchStates, setSwitchStates] = useState({
+    1: true, 2: true, 3: true, 4: true, 5: true, 6: true
+  });
+
+  useEffect(() => {
+    if (nannyInfo?.service) {
+      setSwitchStates({
+        1: nannyInfo.service.includes(1),
+        2: nannyInfo.service.includes(2),
+        3: nannyInfo.service.includes(3),
+        4: nannyInfo.service.includes(4),
+        5: nannyInfo.service.includes(5),
+        6: nannyInfo.service.includes(6),
+      });
+    }
+  }, [nannyInfo]); // **確保 `item` 更新後會同步 `switchStates`**
+
+  useEffect(() => {
+    if (nannyInfo) {
+      setSelectedCareType(nannyInfo.way);
+      setAddress(nannyInfo.location);
+      if (nannyInfo.uploadid) {
+        setHeadIcon(nannyInfo.uploadid);
+        setHeadIconUrl(getUrl(nannyInfo.uploadid));
+      }
+      if (nannyInfo.environmentPic && nannyInfo.environmentPic.length > 0) {
+        for (const picId of nannyInfo.environmentPic) {
+          const response2 = fetch(`/api/base/getImgUrl?id=${picId}`);
+          const data2 = response2.json();
+          uploadedEnvironmentImages.push(data2.url);
+        }
+      }
+    }
+  }, [nannyInfo]);
 
   const handleNextClick = async () => {
     const nannyData = {
@@ -20,7 +59,7 @@ const ApplicationPage = () => {
       environmentPic: [],
       serviceLocation: address,
       introduction: introduction,
-      service: selectedOptions,
+      service: Object.keys(switchStates).filter(key => switchStates[key]),
       score: '',
       isShow: true,
       location: address,
@@ -71,14 +110,18 @@ const ApplicationPage = () => {
   const [uploadedEnvironmentImages, setUploadedEnvironmentImages] = useState([]); // State to track uploaded images
   const [selectedCareType, setSelectedCareType] = useState(null);
   const [address, setAddress] = useState('');
-  const [selectedOptions, setSelectedOptions] = useState([]);
   const [introduction, setIntroduction] = useState('');
-
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setFile(file);
     setFileName(file?.name || '');
     handleUpload(file, 'avator'); // 指定文件类型
+  };
+
+  const getUrl = async (uploadId) => {
+    const response = await fetch(`/api/base/getImgUrl?uploadId=${uploadId}`);
+    const data = await response.json();
+    return (data.url);
   };
 
   const handleUpload = async (file, type) => {
@@ -127,14 +170,11 @@ const ApplicationPage = () => {
     });
   };
 
-  const handleSwitchChange = (optionId, isChecked) => {
-    setSelectedOptions(prevOptions => {
-      if (isChecked) {
-        return [...prevOptions, optionId];
-      } else {
-        return prevOptions.filter(id => id !== optionId);
-      }
-    });
+  const handleSwitchChange = (index, checked) => {
+    setSwitchStates((prev) => ({
+      ...prev,
+      [index]: checked,
+    }));
   };
 
   const handleCareTypeChange = (e) => {
@@ -192,6 +232,27 @@ const ApplicationPage = () => {
     }
 
     return response.json();
+  };
+
+  useEffect(() => {
+    // 初始化 state，對應的數字開啟
+    const initialStates = {};
+    for (let i = 1; i <= 6; i++) {
+      initialStates[i] = nannyInfo ? nannyInfo.service.includes(i.toString()) : false;
+    }
+    console.log(initialStates);
+  }, []);
+
+  const getLabel = (num) => {
+    const labels = {
+      1: "可接送小朋友",
+      2: "寶寶衣物清洗",
+      3: "製作副食品",
+      4: "可遠端查看育兒情形",
+      5: "可配合不使用3C育兒",
+      6: "可配合家長外出",
+    };
+    return labels[num];
   };
 
   return (
@@ -305,91 +366,24 @@ const ApplicationPage = () => {
               }}
             />
               
-            <div style={styles.hopeLayout}>
-              <div style={styles.componentLayout}>
-                <span>可接送小朋友</span>
-                <FormGroup>
-                  <FormControlLabel
-                    control={
-                      <IOSSwitch
-                        sx={{ m: 1 }}
-                        onChange={(e) => handleSwitchChange(1, e.target.checked)}
-                      />
-                    }
-                    style={{ marginRight: '0px' }}
-                  />
-                </FormGroup>
-              </div>
-              <div style={styles.componentLayout}>
-                <span>寶寶衣物清洗</span>
-                <FormGroup>
-                  <FormControlLabel
-                    control={
-                      <IOSSwitch
-                        sx={{ m: 1 }}
-                        onChange={(e) => handleSwitchChange(2, e.target.checked)}
-                      />
-                    }
-                    style={{ marginRight: '0px' }}
-                  />
-                </FormGroup>
-              </div>
-              <div style={styles.componentLayout}>
-                <span>製作副食品</span>
-                <FormGroup>
-                  <FormControlLabel
-                    control={
-                      <IOSSwitch
-                        sx={{ m: 1 }}
-                        onChange={(e) => handleSwitchChange(3, e.target.checked)}
-                      />
-                    }
-                    style={{ marginRight: '0px' }}
-                  />
-                </FormGroup>
-              </div>
-              <div style={styles.componentLayout}>
-                <span>可遠端查看育兒情形</span>
-                <FormGroup>
-                  <FormControlLabel
-                    control={
-                      <IOSSwitch
-                        sx={{ m: 1 }}
-                        onChange={(e) => handleSwitchChange(4, e.target.checked)}
-                      />
-                    }
-                    style={{ marginRight: '0px' }}
-                  />
-                </FormGroup>
-              </div>
-              <div style={styles.componentLayout}>
-                <span>可配合不使用3C育兒</span>
-                <FormGroup>
-                  <FormControlLabel
-                    control={
-                      <IOSSwitch
-                        sx={{ m: 1 }}
-                        onChange={(e) => handleSwitchChange(5, e.target.checked)}
-                      />
-                    }
-                    style={{ marginRight: '0px' }}
-                  />
-                </FormGroup>
-              </div>
-              <div style={{...styles.componentLayout, borderBottom: "none"}}>
-                <span>可配合家長外出</span>
-                <FormGroup>
-                  <FormControlLabel
-                    control={
-                      <IOSSwitch
-                        sx={{ m: 1 }}
-                        onChange={(e) => handleSwitchChange(6, e.target.checked)}
-                      />
-                    }
-                    style={{ marginRight: '0px' }}
-                  />
-                </FormGroup>
-              </div>
+              <div style={styles.hopeLayout}>
+              {[1, 2, 3, 4, 5, 6].map((num) => (
+                <div key={num} style={styles.componentLayout}>
+                  <span>{getLabel(num)}</span>
+                  <FormGroup>
+                    <FormControlLabel
+                      control={
+                        <IOSSwitch
+                          sx={{ m: 1 }}
+                          checked={!!switchStates[num]} // ✅ 確保 `checked` 不為 `undefined`
+                          onChange={(e) => handleSwitchChange(num, e.target.checked)}
+                        />
+                      }
+                      style={{ marginRight: "0px" }}
+                    />
+                  </FormGroup>
+                </div>
+              ))}
             </div>
 
             <div style={styles.iconLayout}>
