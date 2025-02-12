@@ -13,7 +13,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ success: false, message: `Method ${req.method} Not Allowed` });
   }
 
-  const { page = 1, pageSize = 10 } = req.query;
+  const { page = 1, pageSize = 10, keywords } = req.query;
   const token = req.cookies.authToken;
   const payload = await verifyToken(token);
   const userId = payload.userId;
@@ -22,7 +22,9 @@ export default async function handler(req, res) {
     return res.status(400).json({ success: false, message: 'ID parameter is required' });
   }
 
-  const offset = (parseInt(page) - 1) * parseInt(pageSize);
+  // Ensure page is at least 1
+  const currentPage = Math.max(1, parseInt(page));
+  const offset = (currentPage - 1) * parseInt(pageSize);
   const limit = parseInt(pageSize);
 
   try {
@@ -69,11 +71,12 @@ export default async function handler(req, res) {
         kyc_info k ON n.kycId = k.id
     WHERE 
         o.parentLineId = $1
+        AND o.nickname LIKE '%' || $4 || '%'
     ORDER BY created_ts DESC
       OFFSET $2 LIMIT $3;
       `;
 
-    const { rows } = await client.query(query, [userId, offset, limit]);
+    const { rows } = await client.query(query, [userId, offset, limit, keywords]);
 
     client.release();
 

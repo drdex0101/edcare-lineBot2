@@ -41,6 +41,12 @@ const ApplicationPage = () => {
         throw new Error('Failed to submit nanny data');
       }
       const data = await response.json();
+      console.log('API response data:', data); // 调试日志
+
+      if (!data.nanny || !data.nanny.id) {
+        throw new Error('Nanny ID is missing in the response');
+      }
+
       if (localStorage.getItem('way') === 'suddenly') {
         await createSuddenlyRecord(data.nanny.id, selectedCareType, address);
       }
@@ -119,7 +125,6 @@ const ApplicationPage = () => {
     files.forEach(file => {
       handleUpload(file, 'environment'); // Call handleUpload for each fil
     });
-    console.log(uploadedImages);
   };
 
   const handleSwitchChange = (optionId, isChecked) => {
@@ -155,18 +160,6 @@ const ApplicationPage = () => {
         scenario: localStorage.getItem('careScenario'),
         careTime: localStorage.getItem('longTermCareTime'),
         idType: 'nanny'
-      })
-    });
-
-    const response2 = await fetch('/api/base/createLongTern', {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        wayId: response.data.id,
-        way: 'suddenly', // 使用轉換後的數組
-        nannyId: nannyId
       })
     });
 

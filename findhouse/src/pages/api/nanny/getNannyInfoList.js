@@ -4,6 +4,10 @@ export default async function handler(req, res) {
   if (req.method === 'GET') {
     const { pageSize = 5, index = 0,locations,keyword,sort } = req.query; // Default values if not provided
 
+    // Ensure index is non-negative
+    const safeIndex = Math.max(0, parseInt(req.query.page, 10) || 0);
+
+
     const client = new Client({
       connectionString: process.env.POSTGRES_URL,
       ssl: {
@@ -43,7 +47,7 @@ export default async function handler(req, res) {
         ${orderByClause}  -- Add the order by clause if applicable
         LIMIT $3 OFFSET $4;
       `;
-      const result = await client.query(query, [locationsArray.length ? locationsArray : null, keyword, pageSize, index * pageSize]);
+      const result = await client.query(query, [locationsArray.length ? locationsArray : null, keyword, pageSize, safeIndex * pageSize]);
 
       console.log('Nannies retrieved successfully:', result.rows);
       return res.status(200).json({ 
