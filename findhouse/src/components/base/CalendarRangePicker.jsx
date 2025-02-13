@@ -3,10 +3,9 @@ import React, { useState, useEffect } from "react";
 const DAYS_OF_WEEK = ["日", "一", "二", "三", "四", "五", "六"];
 
 export default function CustomCalendar({ startDate, endDate }) {
-
   const parsedStartDate = startDate ? new Date(startDate) : null;
   const parsedEndDate = endDate ? new Date(endDate) : null;
-  const [currentDate, setCurrentDate] = useState(new Date(startDate));
+  const [currentDate, setCurrentDate] = useState(parsedStartDate || new Date());
   const [highlightedDates, setHighlightedDates] = useState([]); // 初始化為空陣列
   // 計算當月的所有天數
   const getDaysInMonth = (year, month) => {

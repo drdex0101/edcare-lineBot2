@@ -72,17 +72,8 @@ const ApplicationPage = () => {
 
   const fetchOrderInfo = async () => {
     setIsLoading(true);
-    const token = cookie.get('authToken');
-    const payload = await verifyToken(token);
-    const userId = payload.userId;
-
     try {
-
-      if (!userId) {
-        throw new Error('Invalid userId');
-      }
-
-      const response = await fetch(`/api/order/getOrderInfo?userId=${userId}`, {
+      const response = await fetch(`/api/order/getOrderInfo`, {
         method: 'GET',
         headers: {
           'Cache-Control': 'no-cache',
@@ -667,7 +658,8 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     backgroundColor: '#f8ecec',
-    height:'100vh'
+    height:'100vh',
+    width:'100%'
   },
   scoreLayout:{
     display:'flex',
@@ -676,12 +668,12 @@ const styles = {
   iconLayout:{
     height: '38px',
     alignSelf: 'stretch',
-    fill: 'var(---SurfaceContainer-High, #F5E5E5)'
+    fill: 'var(---SurfaceContainer-High, #F5E5E5)',
   },
   createButtonLayout:{
     display:'flex',
     flexDirection:'column',
-    gap:'5px'
+    gap:'5px',
   },
   createInfoLayout:{
     width:'100%',
@@ -714,7 +706,6 @@ const styles = {
     gap: '20px',
     alignSelf: 'stretch',
     width: '100%',
-    maxWidth: '680px',
     backgroundColor: '#fff',
     borderRadius: '0px 0px 40px 0px', // 左上、右上、右下、左下的圓角
   },
@@ -729,7 +720,6 @@ const styles = {
     alignItems: 'center',
     justifyContent:'center',
     width: '100%',
-    maxWidth: '600px',
     backgroundColor: '#f8ecec',
     borderRadius: '40px 0px 40px 0px', // 左上、右上、右下、左下的圓角
   },
@@ -770,18 +760,6 @@ const styles = {
     marginTop: '15px',
     marginBottom: '15px',
     color:'#E3838E',
-  },
-
-  lawLayout: {
-    display: 'flex',
-    width: '320px',
-    padding: '18.5px 18px 19.5px 17px',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: '20px',
-    border: '2px solid var(---Button-01, #FBDBD6)',
-    gap:'20px'
   },
   suddenlyBtn: {
     display: 'flex',

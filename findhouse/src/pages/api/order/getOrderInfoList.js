@@ -71,7 +71,7 @@ export default async function handler(req, res) {
         kyc_info k ON n.kycId = k.id
     WHERE 
         o.parentLineId = $1
-        AND o.nickname LIKE '%' || $4 || '%'
+        AND ($4::text IS NULL OR o.nickname LIKE '%' || $4 || '%')
     ORDER BY created_ts DESC
       OFFSET $2 LIMIT $3;
       `;

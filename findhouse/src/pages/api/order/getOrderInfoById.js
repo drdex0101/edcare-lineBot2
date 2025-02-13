@@ -45,6 +45,7 @@ export default async function handler(req, res) {
         o.isshow, 
         o.created_by,
         k.name,
+        n.environmentpic,
         l.weekdays,
         l.care_time as long_term_care_time,
         l.scenario as long_term_scenario,

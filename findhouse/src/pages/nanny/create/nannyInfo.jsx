@@ -16,65 +16,94 @@ const ApplicationPage = () => {
   const [switchStates, setSwitchStates] = useState({
     1: true, 2: true, 3: true, 4: true, 5: true, 6: true
   });
+  const [file, setFile] = useState(null);
+  const [fileName, setFileName] = useState(''); // 新增狀態以存儲檔案名稱
+  const [headIcon, setHeadIcon] = useState(null);
+  const [headIconUrl, setHeadIconUrl] = useState(null);
+  const [message, setMessage] = useState('');
+  const [uploadedImages, setUploadedImages] = useState([]); // State to track uploaded images
+  const [uploadedEnvironmentImages, setUploadedEnvironmentImages] = useState([]); // State to track uploaded images
+  const [selectedCareType, setSelectedCareType] = useState(null);
+  const [address, setAddress] = useState('');
+  const [introduction, setIntroduction] = useState('');
 
   useEffect(() => {
     if (nannyInfo?.service) {
       setSwitchStates({
-        1: nannyInfo.service.includes(1),
-        2: nannyInfo.service.includes(2),
-        3: nannyInfo.service.includes(3),
-        4: nannyInfo.service.includes(4),
-        5: nannyInfo.service.includes(5),
-        6: nannyInfo.service.includes(6),
+        1: nannyInfo.service.includes("1"),
+        2: nannyInfo.service.includes("2"),
+        3: nannyInfo.service.includes("3"),
+        4: nannyInfo.service.includes("4"),
+        5: nannyInfo.service.includes("5"),
+        6: nannyInfo.service.includes("6"),
       });
     }
   }, [nannyInfo]); // **確保 `item` 更新後會同步 `switchStates`**
 
   useEffect(() => {
     if (nannyInfo) {
-      setSelectedCareType(nannyInfo.way);
+      setSelectedCareType(nannyInfo.scenario);
       setAddress(nannyInfo.location);
+      setIntroduction(nannyInfo.introduction);
       if (nannyInfo.uploadid) {
         setHeadIcon(nannyInfo.uploadid);
         setHeadIconUrl(getUrl(nannyInfo.uploadid));
       }
-      if (nannyInfo.environmentPic && nannyInfo.environmentPic.length > 0) {
-        for (const picId of nannyInfo.environmentPic) {
-          const response2 = fetch(`/api/base/getImgUrl?id=${picId}`);
-          const data2 = response2.json();
-          uploadedEnvironmentImages.push(data2.url);
-        }
+      if (nannyInfo.environmentpic && nannyInfo.environmentpic.length > 0) {
+        const fetchImageUrls = async () => {
+          const urls = await Promise.all(
+            nannyInfo.environmentpic.map(async (picId) => {
+              const response = await fetch(`/api/base/getImgUrl?id=${picId}`);
+              const data = await response.json();
+              return data.url;
+            })
+          );
+          setUploadedEnvironmentImages(urls);
+        };
+        fetchImageUrls();
       }
     }
   }, [nannyInfo]);
 
   const handleNextClick = async () => {
     const nannyData = {
-      memberId: '',
-      experienment: 0,
-      age: 0,
-      kidCount: 0,
+      memberId: nannyInfo ? nannyInfo.memberId : '',
+      experienment: nannyInfo ? nannyInfo.experienment : '',
+      age: nannyInfo ? nannyInfo.age : '',
+      kidCount: nannyInfo ? nannyInfo.kidcount : '',
       way: localStorage.getItem('way'),
       scenario: selectedCareType,
-      environmentPic: [],
+      environmentPic: uploadedImages,
       serviceLocation: address,
-      introduction: introduction,
       service: Object.keys(switchStates).filter(key => switchStates[key]),
-      score: '',
+      score: nannyInfo ? nannyInfo.score : '',
       isShow: true,
       location: address,
-      kycId: 0,
-      uploadId: headIcon
+      kycId: nannyInfo ? nannyInfo.kycId : '',
+      introduction: introduction,
+      nannyId: nannyInfo ? nannyInfo.id : '',
     };
 
     try {
-      const response = await fetch('/api/nanny/createNanny', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(nannyData)
-      });
+      const response ='';
+      if (nannyInfo) {
+        const response = await fetch('/api/nanny/updateNannyProfile', {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(nannyData)
+        });
+      }
+      else {
+        const response = await fetch('/api/nanny/createNanny', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(nannyData)
+        });
+      }
 
       if (!response.ok) {
         throw new Error('Failed to submit nanny data');
@@ -101,16 +130,7 @@ const ApplicationPage = () => {
   const handleLastClick = () => {
     router.back(); // 替换 '/next-page' 为你想要跳转的路径
   };
-  const [file, setFile] = useState(null);
-  const [fileName, setFileName] = useState(''); // 新增狀態以存儲檔案名稱
-  const [headIcon, setHeadIcon] = useState(null);
-  const [headIconUrl, setHeadIconUrl] = useState(null);
-  const [message, setMessage] = useState('');
-  const [uploadedImages, setUploadedImages] = useState([]); // State to track uploaded images
-  const [uploadedEnvironmentImages, setUploadedEnvironmentImages] = useState([]); // State to track uploaded images
-  const [selectedCareType, setSelectedCareType] = useState(null);
-  const [address, setAddress] = useState('');
-  const [introduction, setIntroduction] = useState('');
+  
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setFile(file);
@@ -119,7 +139,7 @@ const ApplicationPage = () => {
   };
 
   const getUrl = async (uploadId) => {
-    const response = await fetch(`/api/base/getImgUrl?uploadId=${uploadId}`);
+    const response = await fetch(`/api/base/getImgUrl?id=${uploadId}`);
     const data = await response.json();
     return (data.url);
   };
@@ -412,7 +432,7 @@ const ApplicationPage = () => {
                       <span></span>
                     )}
                   </label>
-                  <span style={styles.imgCountLayout}>{`${uploadedImages.length}/6`}</span>
+                  <span style={styles.imgCountLayout}>{`${uploadedEnvironmentImages.length}/6`}</span>
                 </div>
               </div>
             </div>
@@ -422,9 +442,10 @@ const ApplicationPage = () => {
               id="phone-number"
               variant="outlined"
               label="自我介紹"
+              value={introduction}
+              onChange={(e) => setIntroduction(e.target.value)}
               multiline
               rows={4}
-              maxRows={4}
               InputProps={{
                 sx: {
                   padding: '0px 16px',

@@ -19,7 +19,6 @@ const ApplicationPage = () => {
         startDate: parseEditDate(nannyInfo.suddenly_start_date) || "", // 確保不是 `undefined`
         endDate: parseEditDate(nannyInfo.suddenly_end_date) || "",
       });
-
     }
   }, [nannyInfo]);
 

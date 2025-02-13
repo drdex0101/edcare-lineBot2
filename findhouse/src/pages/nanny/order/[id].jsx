@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ServiceSchedule from '../../../components/base/ServiceSchedule';
+import CalendarRangePicker from '../../../components/base/CalendarRangePicker';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import '../css/profile.css';
@@ -13,12 +14,24 @@ export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isActive, setIsActive] = useState(false);
+  const [selectedRange, setSelectedRange] = React.useState({ startDate: null, endDate: null });
+
   const handleSvgClick = () => {
     setIsActive(!isActive);
   };
   // 處理點擊圓點來跳轉到對應圖片
   const handleDotClick = (index) => {
     setCurrentImageIndex(index);
+  };
+
+  const parseEditDate = (dateString) => {
+    if (!dateString) return null;
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
+    return formattedDate;
   };
 
   useEffect(() => {
@@ -33,8 +46,8 @@ export default function ProfilePage() {
         setOrderInfo(data.orders[0]);
 
         // 如果有環境照片，則獲取每張照片的URL
-        if (data.orders[0].environmentPic.length > 0) {
-          for (const picId of data.orders[0].environmentPic) {
+        if (data.orders[0].environmentpic.length > 0) {
+          for (const picId of data.orders[0].environmentpic) {
             const response2 = await fetch(`/api/base/getImgUrl?id=${picId}`);
             const data2 = await response2.json();
             console.log("data2",data2.url);
@@ -45,6 +58,12 @@ export default function ProfilePage() {
           const response3 = await fetch(`/api/base/getImgUrl?id=${data.orders[0].uploadid}`);
           const data3 = await response3.json();
           setIconUrl(data3.url);
+        }
+        if(data.orders[0].choosetype === 'suddenly'){
+          setSelectedRange({
+            startDate: parseEditDate(data.orders[0].suddenly_start_date) || "", // 確保不是 `undefined`
+            endDate: parseEditDate(data.orders[0].suddenly_end_date) || "",
+          });
         }
       } catch (error) {
         console.error('Failed to fetch nanny info:', error);
@@ -140,9 +159,9 @@ export default function ProfilePage() {
             />
           </div>
           {/* 圓點指示器 */}
-          {orderInfo.environmentPic && orderInfo.environmentPic.length > 0 && (
+          {orderInfo.environmentpic && orderInfo.environmentpic.length > 0 && (
             <div className="dotsContainer">
-              {orderInfo.environmentPic.map((_, index) => (
+              {orderInfo.environmentpic.map((_, index) => (
                 <span
                   key={index}
                   className={`dot ${index === currentImageIndex ? 'active' : ''}`}
@@ -153,8 +172,20 @@ export default function ProfilePage() {
           )}
         </div>
 
-        <div style={{backgroundColor:'#F8ECEC'}}>
-          <ServiceSchedule></ServiceSchedule>
+        <div style={{marginBottom:'20px'}}>
+          {orderInfo.choosetype === 'suddenly' && selectedRange.startDate && selectedRange.endDate && (
+            <CalendarRangePicker
+                startDate={selectedRange.startDate}
+                endDate={selectedRange.endDate}
+                styles={{
+                  calendar: { maxWidth: "400px" },
+                  day: { width: "50px", height: "50px" },
+                }}
+              />
+          )}
+          {orderInfo.choosetype === 'longTerm' && (
+            <ServiceSchedule></ServiceSchedule>
+          )}
         </div>
 
             {/* Icon Navigation */}

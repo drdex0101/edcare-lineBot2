@@ -57,7 +57,7 @@ export default async function handler(req, res) {
         long_term l ON o.choosetype = 'long_term' AND o.caretypeid = l.id
     WHERE 
         o.parentLineId = $1 
-        AND ($4::text IS NULL OR o.nickname ILIKE $4::text)
+        AND ($4::text IS NULL OR o.nickname LIKE '%' || $4 || '%')
     ORDER BY 
         o.created_ts DESC
     OFFSET 
