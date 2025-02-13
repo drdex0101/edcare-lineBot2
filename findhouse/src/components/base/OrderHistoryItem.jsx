@@ -1,18 +1,26 @@
 import React from 'react';
 import './css/OrderHistoryItem.css'; // Ensure you have the corresponding CSS file
+import { useRouter } from 'next/router';
+import useStore from '../../lib/store';
 
 const OrderHistoryItem = ({
   name,
   way,
   scene,
-  orderNumber,
   createdTime,
   status,
   orderId,
-  handleClick,
+  item
 }) => {
+  const router = useRouter();
+  const setItem = useStore((state) => state.setItem);
+  const handleClick = () => {
+    setItem(item);
+    router.push(`/parent/order/details/choose`);
+  }
+  
   return (
-    <div className='order-history-list-item' onClick={() => handleClick(orderId)} key={orderId}>
+    <div className='order-history-list-item' onClick={() => handleClick()} >
       <div className='order-history-list-item-icon'>
         <img src='/icon/detailsIcon.png' alt='details-icon' />
       </div>

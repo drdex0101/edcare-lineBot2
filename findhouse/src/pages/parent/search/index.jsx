@@ -32,10 +32,7 @@ const ApplicationPage = () => {
   const fetchNannyInfoList = async (page, pageSize=5,  keywords) => {
     setIsLoading(true); // Set loading state to true while fetching data
     try {
-      const token = cookie.get('authToken');
-      const payload = await verifyToken(token);
-      const userId = payload.userId;
-      const response = await fetch(`/api/nanny/getNannyInfoList?page=${page}&pageSize=${pageSize}&locations=${selectedLocations}&sort=${selectedSort}&keyword=${keywords}&userId=${userId}`, {
+      const response = await fetch(`/api/nanny/getNannyInfoList?page=${page}&pageSize=${pageSize}&locations=${selectedLocations}&sort=${selectedSort}&keyword=${keywords}`, {
         method: 'GET',
         headers: {
           'Cache-Control': 'no-cache',

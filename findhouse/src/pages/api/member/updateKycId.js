@@ -39,7 +39,7 @@ export default async function handler(req, res) {
     }
   } else {
     // 不支援的 HTTP 方法
-    res.setHeader('Allow', ['POST']);
+    res.setHeader('Allow', ['PATCH']);
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }

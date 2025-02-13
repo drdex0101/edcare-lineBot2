@@ -68,7 +68,7 @@ export default function OrderPage() {
                             name={item.nickname} 
                             way={item.choosetype} 
                             scene={item.choosetype === 'suddenly' ? item.suddenly_scenario : item.long_term_scenario} 
-                            orderId={item.orderId} 
+                            orderId={item.id} 
                             createdTime={item.created_ts} 
                             item={item}
                         />
