@@ -6,7 +6,6 @@ import Select from '@mui/material/Select';
 import CalendarRangePicker from '../../../components/base/CalendarRangePicker';
 import { MenuItem, InputLabel, FormControl } from '@mui/material';
 
-
 const ApplicationPage = () => {
   const router = useRouter();
 
@@ -42,7 +41,7 @@ const ApplicationPage = () => {
   const [selectedAddress, setSelectedAddress] = React.useState(() => '');
 
   const [orderData, setData] = React.useState('');
-
+  
   const createSuddenlyRecord = async () => {
     const response = await fetch('/api/base/createSuddenly', {
       method: 'POST',

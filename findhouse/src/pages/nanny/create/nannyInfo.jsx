@@ -6,41 +6,115 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
 import { useState } from 'react';
+import useStore from '../../../lib/store';
+import { useEffect } from 'react';
+
+
 const ApplicationPage = () => {
   const router = useRouter();
+  const nannyInfo = useStore((state) => state.nannyInfo);
+  const [switchStates, setSwitchStates] = useState({
+    1: true, 2: true, 3: true, 4: true, 5: true, 6: true
+  });
+  const [file, setFile] = useState(null);
+  const [fileName, setFileName] = useState(''); // 新增狀態以存儲檔案名稱
+  const [headIcon, setHeadIcon] = useState(null);
+  const [headIconUrl, setHeadIconUrl] = useState(null);
+  const [message, setMessage] = useState('');
+  const [uploadedImages, setUploadedImages] = useState([]); // State to track uploaded images
+  const [uploadedEnvironmentImages, setUploadedEnvironmentImages] = useState([]); // State to track uploaded images
+  const [selectedCareType, setSelectedCareType] = useState(null);
+  const [address, setAddress] = useState('');
+  const [introduction, setIntroduction] = useState('');
+
+  useEffect(() => {
+    if (nannyInfo?.service) {
+      setSwitchStates({
+        1: nannyInfo.service.includes("1"),
+        2: nannyInfo.service.includes("2"),
+        3: nannyInfo.service.includes("3"),
+        4: nannyInfo.service.includes("4"),
+        5: nannyInfo.service.includes("5"),
+        6: nannyInfo.service.includes("6"),
+      });
+    }
+  }, [nannyInfo]); // **確保 `item` 更新後會同步 `switchStates`**
+
+  useEffect(() => {
+    if (nannyInfo) {
+      setSelectedCareType(nannyInfo.scenario);
+      setAddress(nannyInfo.location);
+      setIntroduction(nannyInfo.introduction);
+      if (nannyInfo.uploadid) {
+        setHeadIcon(nannyInfo.uploadid);
+        setHeadIconUrl(getUrl(nannyInfo.uploadid));
+      }
+      if (nannyInfo.environmentpic && nannyInfo.environmentpic.length > 0) {
+        const fetchImageUrls = async () => {
+          const urls = await Promise.all(
+            nannyInfo.environmentpic.map(async (picId) => {
+              const response = await fetch(`/api/base/getImgUrl?id=${picId}`);
+              const data = await response.json();
+              return data.url;
+            })
+          );
+          setUploadedEnvironmentImages(urls);
+        };
+        fetchImageUrls();
+      }
+    }
+  }, [nannyInfo]);
 
   const handleNextClick = async () => {
     const nannyData = {
-      memberId: '',
-      experienment: 0,
-      age: 0,
-      kidCount: 0,
+      memberId: nannyInfo ? nannyInfo.memberId : '',
+      experienment: nannyInfo ? nannyInfo.experienment : '',
+      age: nannyInfo ? nannyInfo.age : '',
+      kidCount: nannyInfo ? nannyInfo.kidcount : '',
       way: localStorage.getItem('way'),
       scenario: selectedCareType,
-      environmentPic: [],
+      environmentPic: uploadedImages,
       serviceLocation: address,
-      introduction: introduction,
-      service: selectedOptions,
-      score: '',
+      service: Object.keys(switchStates).filter(key => switchStates[key]),
+      score: nannyInfo ? nannyInfo.score : '',
       isShow: true,
       location: address,
-      kycId: 0,
-      uploadId: headIcon
+      kycId: nannyInfo ? nannyInfo.kycId : '',
+      introduction: introduction,
+      nannyId: nannyInfo ? nannyInfo.id : '',
     };
 
     try {
-      const response = await fetch('/api/nanny/createNanny', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(nannyData)
-      });
+      const response ='';
+      if (nannyInfo) {
+        const response = await fetch('/api/nanny/updateNannyProfile', {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(nannyData)
+        });
+      }
+      else {
+        const response = await fetch('/api/nanny/createNanny', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(nannyData)
+        });
+      }
 
       if (!response.ok) {
         throw new Error('Failed to submit nanny data');
       }
       const data = await response.json();
+      console.log('API response data:', data); // 调试日志
+
+      if (!data.nanny || !data.nanny.id) {
+        throw new Error('Nanny ID is missing in the response');
+      }
+
       if (localStorage.getItem('way') === 'suddenly') {
         await createSuddenlyRecord(data.nanny.id, selectedCareType, address);
       }
@@ -56,16 +130,7 @@ const ApplicationPage = () => {
   const handleLastClick = () => {
     router.back(); // 替换 '/next-page' 为你想要跳转的路径
   };
-  const [file, setFile] = useState(null);
-  const [fileName, setFileName] = useState(''); // 新增狀態以存儲檔案名稱
-  const [headIcon, setHeadIcon] = useState(null);
-  const [message, setMessage] = useState('');
-  const [uploadedImages, setUploadedImages] = useState([]); // State to track uploaded images
-  const [selectedCareType, setSelectedCareType] = useState(null);
-  const [address, setAddress] = useState('');
-  const [selectedOptions, setSelectedOptions] = useState([]);
-  const [introduction, setIntroduction] = useState('');
-
+  
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setFile(file);
@@ -73,50 +138,44 @@ const ApplicationPage = () => {
     handleUpload(file, 'avator'); // 指定文件类型
   };
 
+  const getUrl = async (uploadId) => {
+    const response = await fetch(`/api/base/getImgUrl?id=${uploadId}`);
+    const data = await response.json();
+    return (data.url);
+  };
+
   const handleUpload = async (file, type) => {
     if (!file) return;
 
-    const formData = new FormData();
-    formData.append('file', file);
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = async () => {
+    const base64String = reader.result.split(",")[1]; // 取得 Base64 內容
 
     try {
-        const res = await fetch('/api/upload', {
-            method: 'POST',
-            body: formData,
-        });
-
-        // Check if the response is OK
-        if (!res.ok) {
-            const errorText = await res.text(); // Get the full response text
-            console.error(`HTTP error! status: ${res.status}, response: ${errorText}`);
-            throw new Error(`HTTP error! status: ${res.status}`);
-        }
-
-        const result = await res.json();
-        console.log(result);
         const resUpload = await fetch('/api/kycInfo/uploadImg', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                fileUrl: result.fileUrl,
-                type: type
-            })
+             body: JSON.stringify({ file: `data:image/png;base64,${base64String}` }),
         });
         const uploadResponse = await resUpload.json();
-        const uploadId = uploadResponse.uploadId.id;
+        const uploadId = uploadResponse.id;
         if (type === 'environment') {
           setUploadedImages(prevImages => [...prevImages, uploadId]);
+          setUploadedEnvironmentImages(prevImages => [...prevImages, uploadResponse.url]);
         }
         else {
           setHeadIcon(uploadId);
+          setHeadIconUrl(uploadResponse.url);
         }
     } catch (error) {
         console.error('Upload error:', error);
         setMessage('Upload failed.');
     }
   };
+}
 
   const handleEnvironmentImageChange = (e) => {
     const files = Array.from(e.target.files);
@@ -129,17 +188,13 @@ const ApplicationPage = () => {
     files.forEach(file => {
       handleUpload(file, 'environment'); // Call handleUpload for each fil
     });
-    console.log(uploadedImages);
   };
 
-  const handleSwitchChange = (optionId, isChecked) => {
-    setSelectedOptions(prevOptions => {
-      if (isChecked) {
-        return [...prevOptions, optionId];
-      } else {
-        return prevOptions.filter(id => id !== optionId);
-      }
-    });
+  const handleSwitchChange = (index, checked) => {
+    setSwitchStates((prev) => ({
+      ...prev,
+      [index]: checked,
+    }));
   };
 
   const handleCareTypeChange = (e) => {
@@ -165,18 +220,6 @@ const ApplicationPage = () => {
         scenario: localStorage.getItem('careScenario'),
         careTime: localStorage.getItem('longTermCareTime'),
         idType: 'nanny'
-      })
-    });
-
-    const response2 = await fetch('/api/base/createLongTern', {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        wayId: response.data.id,
-        way: 'suddenly', // 使用轉換後的數組
-        nannyId: nannyId
       })
     });
 
@@ -209,6 +252,27 @@ const ApplicationPage = () => {
     }
 
     return response.json();
+  };
+
+  useEffect(() => {
+    // 初始化 state，對應的數字開啟
+    const initialStates = {};
+    for (let i = 1; i <= 6; i++) {
+      initialStates[i] = nannyInfo ? nannyInfo.service.includes(i.toString()) : false;
+    }
+    console.log(initialStates);
+  }, []);
+
+  const getLabel = (num) => {
+    const labels = {
+      1: "可接送小朋友",
+      2: "寶寶衣物清洗",
+      3: "製作副食品",
+      4: "可遠端查看育兒情形",
+      5: "可配合不使用3C育兒",
+      6: "可配合家長外出",
+    };
+    return labels[num];
   };
 
   return (
@@ -257,7 +321,11 @@ const ApplicationPage = () => {
               id="file-input"
             />
             <label htmlFor="file-input" style={styles.avatorLayout}>
-              <span>上傳照片</span>
+              {headIconUrl ? (
+                <img src={headIconUrl} alt="Uploaded avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                <span>上傳照片</span>
+              )}
             </label>
           </div>
 
@@ -318,112 +386,55 @@ const ApplicationPage = () => {
               }}
             />
               
-            <div style={styles.hopeLayout}>
-              <div style={styles.componentLayout}>
-                <span>可接送小朋友</span>
-                <FormGroup>
-                  <FormControlLabel
-                    control={
-                      <IOSSwitch
-                        sx={{ m: 1 }}
-                        onChange={(e) => handleSwitchChange(1, e.target.checked)}
-                      />
-                    }
-                    style={{ marginRight: '0px' }}
-                  />
-                </FormGroup>
-              </div>
-              <div style={styles.componentLayout}>
-                <span>寶寶衣物清洗</span>
-                <FormGroup>
-                  <FormControlLabel
-                    control={
-                      <IOSSwitch
-                        sx={{ m: 1 }}
-                        onChange={(e) => handleSwitchChange(2, e.target.checked)}
-                      />
-                    }
-                    style={{ marginRight: '0px' }}
-                  />
-                </FormGroup>
-              </div>
-              <div style={styles.componentLayout}>
-                <span>製作副食品</span>
-                <FormGroup>
-                  <FormControlLabel
-                    control={
-                      <IOSSwitch
-                        sx={{ m: 1 }}
-                        onChange={(e) => handleSwitchChange(3, e.target.checked)}
-                      />
-                    }
-                    style={{ marginRight: '0px' }}
-                  />
-                </FormGroup>
-              </div>
-              <div style={styles.componentLayout}>
-                <span>可遠端查看育兒情形</span>
-                <FormGroup>
-                  <FormControlLabel
-                    control={
-                      <IOSSwitch
-                        sx={{ m: 1 }}
-                        onChange={(e) => handleSwitchChange(4, e.target.checked)}
-                      />
-                    }
-                    style={{ marginRight: '0px' }}
-                  />
-                </FormGroup>
-              </div>
-              <div style={styles.componentLayout}>
-                <span>可配合不使用3C育兒</span>
-                <FormGroup>
-                  <FormControlLabel
-                    control={
-                      <IOSSwitch
-                        sx={{ m: 1 }}
-                        onChange={(e) => handleSwitchChange(5, e.target.checked)}
-                      />
-                    }
-                    style={{ marginRight: '0px' }}
-                  />
-                </FormGroup>
-              </div>
-              <div style={{...styles.componentLayout, borderBottom: "none"}}>
-                <span>可配合家長外出</span>
-                <FormGroup>
-                  <FormControlLabel
-                    control={
-                      <IOSSwitch
-                        sx={{ m: 1 }}
-                        onChange={(e) => handleSwitchChange(6, e.target.checked)}
-                      />
-                    }
-                    style={{ marginRight: '0px' }}
-                  />
-                </FormGroup>
-              </div>
+              <div style={styles.hopeLayout}>
+              {[1, 2, 3, 4, 5, 6].map((num) => (
+                <div key={num} style={styles.componentLayout}>
+                  <span>{getLabel(num)}</span>
+                  <FormGroup>
+                    <FormControlLabel
+                      control={
+                        <IOSSwitch
+                          sx={{ m: 1 }}
+                          checked={!!switchStates[num]} // ✅ 確保 `checked` 不為 `undefined`
+                          onChange={(e) => handleSwitchChange(num, e.target.checked)}
+                        />
+                      }
+                      style={{ marginRight: "0px" }}
+                    />
+                  </FormGroup>
+                </div>
+              ))}
             </div>
 
             <div style={styles.iconLayout}>
               <div style={styles.fontLayout}>
-                <span style={styles.smallTitle}>上傳托育環境照</span>
-                <span style={styles.noticeTitle}>{`${uploadedImages.length}/6`}</span>
+                <div style={styles.titleLayout}>
+                  <span style={styles.smallTitle}>上傳托育環境照</span>
+                  <span style={styles.noticeTitle}>僅提供家長能更快認識保母。</span>
+                </div>
+                <div style={styles.imgCount}>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleEnvironmentImageChange}
+                    style={{ display: 'none' }}
+                    id="environment-file-input"
+                  />
+                  <label htmlFor="environment-file-input" style={styles.imgCount}>
+                    {uploadedEnvironmentImages.length > 0 ? (
+                      <img
+                        src={uploadedEnvironmentImages[uploadedEnvironmentImages.length - 1]}
+                        alt="Latest uploaded environment"
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      />
+                    ) : (
+                      <span></span>
+                    )}
+                  </label>
+                  <span style={styles.imgCountLayout}>{`${uploadedEnvironmentImages.length}/6`}</span>
+                </div>
               </div>
-            </div>
-
-            <div style={styles.uploadAvatorLayout}>
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handleEnvironmentImageChange}
-                style={{ display: 'none' }}
-                id="environment-file-input"
-              />
-              <label htmlFor="environment-file-input" style={styles.environmentLayout}>
-                <img></img>
-              </label>
             </div>
 
             <TextField
@@ -431,9 +442,10 @@ const ApplicationPage = () => {
               id="phone-number"
               variant="outlined"
               label="自我介紹"
+              value={introduction}
+              onChange={(e) => setIntroduction(e.target.value)}
               multiline
               rows={4}
-              maxRows={4}
               InputProps={{
                 sx: {
                   padding: '0px 16px',
@@ -516,7 +528,33 @@ const styles = {
     fontSize: '10px',
     fontStyle: 'normal',
     fontWeight: '400',
-    lineHeight: 'normal'
+  },
+  imgCount: {
+    width: '100%',
+    height: '177px',
+    flexShrink: '0',
+    borderRadius: '10px',
+    background: '#EFF3F6',
+    position: 'relative',
+  },
+  imgCountLayout: {
+    display: 'inline-flex',
+    padding: '4px 12.774px 3.956px 11px',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: '4px',
+    borderRadius: '4px',
+    background: 'linear-gradient(81deg, #FBDBD6 10.58%, #D9DFF0 75.92%)',
+    color: 'var(---Outline-OnSurface, #252525)',
+    textAlign: 'center',
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: '8px',
+    fontStyle: 'normal',
+    fontWeight: '400',
+    lineHeight: 'normal',
+    position: 'absolute',
+    bottom: '10px',
+    right: '10px',
   },
   smallTitle: {
     color: 'var(---Surface-Black-25, #252525)',
@@ -530,7 +568,8 @@ const styles = {
     display:'flex',
     alignItems:'flex-start',
     width:'100%',
-    flexDirection:'column'
+    flexDirection:'column',
+    gap:'10px'
   },
   iconLayout: {
     display:'flex',

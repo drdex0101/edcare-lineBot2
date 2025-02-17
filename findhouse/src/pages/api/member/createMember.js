@@ -1,9 +1,13 @@
 import { Client } from 'pg';
-
+import { verifyToken } from '../../../utils/jwtUtils';
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     console.log('req.body', req.body);
-    const { account, lineId, phoneNumber, email, job } = req.body;
+    const token = req.cookies.authToken;
+    const payload = await verifyToken(token);
+    const userId = payload.userId;
+
+    const { account, phoneNumber, email, job } = req.body;
 
     // 創建 PostgreSQL 客戶端
     const client = new Client({
@@ -24,7 +28,7 @@ export default async function handler(req, res) {
         RETURNING *;
       `;
       console.log(query);
-      const values = [account, lineId, phoneNumber, email, job];
+      const values = [account, userId, phoneNumber, email, job];
       const result = await client.query(query, values);
 
       console.log('Member created successfully:', result.rows[0]);

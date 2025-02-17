@@ -6,9 +6,8 @@ const DAYS_OF_WEEK_CHINESE = ["日", "一", "二", "三", "四", "五", "六"];
 export default function CustomCalendar({ selectedWeekday }) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [highlightedDates, setHighlightedDates] = useState([]);
-  console.log(selectedWeekday);
   useEffect(() => {
-    if (typeof selectedWeekday === 'object' && Object.values(selectedWeekday).every(value => typeof value === 'boolean')) {
+      console.log(selectedWeekday);
       const currentYear = currentDate.getFullYear();
       const currentMonth = currentDate.getMonth();
       const totalDays = new Date(currentYear, currentMonth + 1, 0).getDate();
@@ -16,17 +15,14 @@ export default function CustomCalendar({ selectedWeekday }) {
       // 遍歷當月所有日期
       for (let i = 1; i <= totalDays; i++) {
         const date = new Date(currentYear, currentMonth, i);
-        console.log(selectedWeekday['monday']);
+        console.log(date.getDay());
         // 如果對應的星期幾為 true，就加入高亮清單
-        if (selectedWeekday[DAYS_OF_WEEK[date.getDay()]]) {
+        if (selectedWeekday.includes(date.getDay())) {
           range.push(i);
         }
       }
-      console.log(range);
       setHighlightedDates(range);
-    } else {
-      setHighlightedDates([]);
-    }
+      console.log(highlightedDates);
   }, [selectedWeekday, currentDate]);
 
   // 計算當月的所有天數

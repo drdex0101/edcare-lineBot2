@@ -5,20 +5,14 @@ import TextField from '@mui/material/TextField';
 import { useDispatch } from 'react-redux';
 import { setMemberId } from '../../features/member/memberSlice';
 import axios from 'axios';
-import Cookies from 'js-cookie';
-import { verifyToken } from '../../utils/jwtUtils';
 const ApplicationPage = () => {
   const router = useRouter();
   const dispatch = useDispatch(); // Redux 的 dispatch 函数
 
   const handleNextClick = async () => {
-    const token = Cookies.get('authToken');
-    const payload = await verifyToken(token);
-    const userId = payload.userId;
     
     const memberData = {
       accountName: document.getElementById('account').value,
-      lineId: userId,
       phoneNumber: document.getElementById('cellphone').value,
       email: document.getElementById('email').value,
       job: document.getElementById('job').value,

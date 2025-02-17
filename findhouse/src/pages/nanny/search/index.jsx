@@ -4,11 +4,10 @@ import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import Pagination from '../../../components/base/pagenation';
 import SearchBar from '../../../components/base/SearchBar';
-import { verifyToken } from '../../../utils/jwtUtils';
-import cookie from 'js-cookie';
-
+import useStore from '../../../lib/store';
 const ApplicationPage = () => {
   const router = useRouter();
+  const {setNannyInfo} = useStore();
   const [orderInfo, setOrderInfo] = useState([]);
   const [totalItem, setTotalItem] = useState(0);
   const [currentPage, setCurrentPage] = useState(0); // Track current page
@@ -19,22 +18,43 @@ const ApplicationPage = () => {
   const [locationCount, setLocationCount] = useState(0); // 新增狀態以追蹤選擇的地區數量
   const [orderCurrentPage, setOrderCurrentPage] = useState(1);
   const [isShow, setIsShow] = useState(true);
+  const [selectedRegion, setSelectedRegion] = useState(true);
+  const [selectedLocations, setSelectedLocations] = useState(true);
+  const [nannyProfile, setNannyProfile] = useState([]);
+  const [nannyProfileImg, setNannyProfileImg] = useState('');
 
   const handleFilterChange = (region, locations,sorts) => {
     setSelectedRegion(region);
     setSelectedLocations(locations);
     setSelectedSort(sorts);
-    fetchOrderInfoList(currentPage, pageSize); // Fetch nanny info with updated filters
+    fetchOrderInfoList(currentPage, pageSize, keywords); // Fetch nanny info with updated filters
   };
 
-  const fetchOrderInfoList = async (page = 0, pageSize = 5) => {
+  const fetchNannyProfile = async () => {
+    const response = await fetch(`/api/nanny/getNannyProfile`, {
+      method: 'GET',
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const data = await response.json();
+    setNannyProfile(data.nannyProfile[0]);
+    setNannyInfo(data.nannyProfile[0]);
+    setNannyProfileImg(await getImgUrl(data.nannyProfile[0].uploadid));
+  }
+
+  const getImgUrl = async (id) => {
+    const response = await fetch(`/api/base/getImgUrl?id=${id}`);
+    const data = await response.json();
+    return data.url;
+  }
+
+  const fetchOrderInfoList = async (page = 0, pageSize = 5,keywords) => {
     setIsLoading(true); // Set loading state to true while fetching data
 
-    const token = cookie.get('authToken');
-    const payload = await verifyToken(token);
-    const userId = payload.userId;
     try {
-      const response = await fetch(`/api/order/getOrderInfoList?page=${page}&pageSize=${pageSize}&userId=${userId}`, {
+      const response = await fetch(`/api/order/getOrderInfoList?page=${page}&pageSize=${pageSize}&keywords=${keywords}`, {
         method: 'GET',
         headers: {
           'Cache-Control': 'no-cache',
@@ -76,14 +96,13 @@ const ApplicationPage = () => {
     }
   };
 
-  // Log orderInfo whenever it changes
   useEffect(() => {
-    console.log(orderInfo);
-  }, [orderInfo]);
+    fetchOrderInfoList(currentPage, pageSize,keywords); // Fetch data when the page is loaded or currentPage changes
+  }, [currentPage,keywords]);
 
   useEffect(() => {
-    fetchOrderInfoList(currentPage, pageSize); // Fetch data when the page is loaded or currentPage changes
-  }, [currentPage]);
+    fetchNannyProfile();
+  }, []);
 
   const handlePageChange = (page) => {
     console.log('page:',page)
@@ -91,7 +110,11 @@ const ApplicationPage = () => {
   };
 
   const handleNextClick = () => {
-    router.push('/nanny/create/choose'); // 替换 '/next-page' 为你想要跳转的路径
+    if (nannyProfile.way === 'suddenly') {
+      router.push('/nanny/create/suddenly'); // 替换 '/next-page' 为你想要跳转的路径
+    } else if (nannyProfile.way === 'longTerm') {
+      router.push('/nanny/create/longTerm'); // 替换 '/next-page' 为你想要跳转的路径
+    }
   };
 
   return (
@@ -101,10 +124,25 @@ const ApplicationPage = () => {
       ) : (
         <>
           <div style={styles.header}>
-            <div style={styles.createInfoLayout} onClick={handleNextClick}>
-              <span style={styles.headerFont}>
-                + 建立托育資料
-              </span>
+            <div style={styles.createInfoLayout}>
+              <div style={styles.headIcon}>
+                <img src={nannyProfileImg || '/nannyIcon.png'} alt="Nanny Profile" />
+              </div>
+              <div style={styles.nannyInfoLayout}>
+                <span style={styles.headerFont}>{nannyProfile.name}</span>
+                <div style={styles.wayLayout}>
+                  <div style={styles.wayStyle}>{nannyProfile.way === 'suddenly' ? '臨時托育' : 
+                                nannyProfile.way === 'longTerm' ? '長期托育' : ''}</div>
+                  <div style={styles.scenarioStyle}>{nannyProfile.scenario}</div>
+                </div>
+                <span style={styles.headSubTitle}>
+                  托育時間:<br/>
+                  ㄧ、二、三、四、五、六、日
+                </span>
+              </div>
+              {!isShow && (
+                <div style={styles.overlay}></div> // Add overlay when isShow is false
+              )}
             </div>
             <div style={styles.createButtonLayout}>
               <div style={styles.iconLayout} onClick={handleNextClick}>
@@ -163,7 +201,7 @@ const ApplicationPage = () => {
                     style={styles.nannyItem} 
                     onClick={() => {
                       if (order.id) {
-                        router.push(`/nanny/profile/${order.id}`);
+                        router.push(`/nanny/order/${order.id}`);
                       } else {
                         console.error('Order ID not found');
                       }
@@ -175,8 +213,13 @@ const ApplicationPage = () => {
                       </div>
                       <div style={styles.nannyFontLayout}>
                         <div style={styles.nannyNameFont}>{order.nickname}</div>
-                        <div style={styles.nannySubInfo}>{order.choosetype === 'suddenly' ? '臨時托育' : 
-                               order.choosetype === 'longTerm' ? '長期托育' : ''}</div>
+                        <div style={styles.wayLayout}>
+                          <div style={styles.wayStyle}>{order.choosetype === 'suddenly' ? '臨時托育' : 
+                                order.choosetype === 'longTerm' ? '長期托育' : ''}</div>
+                          <div style={styles.scenarioStyle}>
+                              在宅
+                          </div>
+                        </div>
                       </div>
                     </div>
                     <div style={styles.scoreLayout}>
@@ -285,14 +328,6 @@ const styles = {
     fontStyle: 'normal',
     fontWeight: '700',
     linHeight: 'normal'
-  },
-  nannySubInfo:{
-    color: 'var(---Outline-OnSurface, #252525)',
-    fontFamily: "LINE Seed JP_TTF",
-    fontSize: '11px',
-    fontStyle: 'normal',
-    fontWeight: '400',
-    lineHeight: 'normal'
   },
   nannyNameFont:{
     color: 'var(---Outline-OnSurface, #252525)',
@@ -435,17 +470,28 @@ const styles = {
     flexDirection:'column',
     gap:'5px'
   },
+  nannyInfoLayout: {
+    display: 'flex',
+    width: '110px',
+    height: '82px',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '6px',
+    flexShrink: '0',
+  },
+  headIcon:{
+    width: '87.772px',
+    height: '87.772px',
+    flexShrink: '0',
+    backgroundColor: '#E3838E',
+    borderRadius: '50%',
+  },
   createInfoLayout:{
     display: 'flex',
-    height: '85px',
-    padding: '28.5px 38.5px 27.5px 39.5px',
-    justifyContent: 'center',
+    width: '218px',
     alignItems: 'center',
-    borderRadius: '12px',
-    border: '2px dashed var(---Primary-Container, #F3CCD4)',
-    background: 'var(---SurfaceContainer-Lowest, #FFF)',
-    gap:'8px',
-    pointer:'cursor'
+    gap: '15px',
+    justifyContent: 'center',
   },
   header: {
     display: 'flex',
@@ -453,17 +499,66 @@ const styles = {
     alignItems: 'center',
     width: '100%',
     maxWidth: '600px',
-    // marginBottom: '20px',
-    padding: '10px',
-    paddingLeft: '50px',
-    paddingRight: '50px',
+    height: '147px',
+    padding: '15px 38px',
+    gap: '20px',
+    alignSelf: 'stretch',
     backgroundColor: '#fff',
     borderRadius: '0px 0px 40px 0px', // 左上、右上、右下、左下的圓角
   },
+  headSubTitle:{
+    color: 'var(---Surface-Black-25, #252525)',
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: '8px',
+    fontStyle: 'normal',
+    fontWeight: '400',
+    lineHeight: 'normal',
+  },
+  scenarioStyle:{
+    display: 'flex',
+    padding: '1px 5px',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: '10px',
+    borderRadius: '20px',
+    border: '1px solid var(---Button-02, #FBC2EB)',
+    color: 'var(---Outline-OnSurfaceVariant, #221E47)',
+    textAlign: 'center',
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: '8px',
+    fontStyle: 'normal',
+    fontWeight: '400',
+    lineHeight: 'normal',
+  },
+  wayStyle:{
+    display: 'flex',
+    padding: '1px 5px',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: '10px',
+    borderRadius: '20px',
+    background: 'linear-gradient(81deg, #FBDBD6 10.58%, #D9DFF0 75.92%)',
+    color: 'var(---Outline-OnSurfaceVariant, #221E47)',
+    textAlign: 'center',
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: '8px',
+    fontStyle: 'normal',
+    fontWeight: '400',
+    lineHeight: 'normal',
+  },
+  wayLayout:{
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: '4px',
+    alignSelf: 'stretch',
+  },
   headerFont: {
-    fontSize: '24px',
-    fontWeight: 'bold',
-    color:'#E3838E',
+    color: '#1E1E1E',
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: '16px',
+    fontStyle: 'normal',
+    fontWeight: '700',
+    lineHeight: 'normal',
   },
   contentLayout: {
     display: 'flex',

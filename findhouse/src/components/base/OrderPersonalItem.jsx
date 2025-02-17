@@ -3,7 +3,6 @@ import React from 'react';
 import './css/OrderPersonalItem.css'; // Ensure you have the corresponding CSS file
 import Link from 'next/link';
 import useStore from '../../lib/store';
-import { useEffect } from 'react';
 const OrderPersonalItem = ({
   name,
   scene,

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './history.css';
 import Pagination from '../../../components/base/pagenation';
-import SearchBar from '../../../components/base/SearchBar';
+import SearchBarSortOnly from '../../../components/base/SearchBarSortOnly';
 import OrderHistoryItem from '../../../components/base/OrderHistoryItem';
 import { useRouter } from 'next/router';
 export default function HistoryPage() {
@@ -9,14 +9,20 @@ export default function HistoryPage() {
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(10);
   const [historyList, setHistoryList] = useState([]);
+  const [selectedSort, setSelectedSort] = useState(null);
   const router = useRouter();
   const handlePageChange = (newPage) => {
     setPage(newPage);
   };
 
+  const handleFilterChange = (sorts) => {
+    setSelectedSort(sorts);
+    fetchHistoryList(); // Fetch nanny info with updated filters
+  };
+
   const fetchHistoryList = async () => {
     try {
-      const response = await fetch(`/api/order/getHistoryList?page=${page}&pageSize=10&keyword=${keywords}`);
+      const response = await fetch(`/api/order/getHistoryList?page=${page}&pageSize=10&keyword=${keywords}&sort=${selectedSort}`);
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
@@ -68,7 +74,11 @@ export default function HistoryPage() {
                     onChange={(e) => setKeywords(e.target.value)}
                   ></input>
             </div>
-            <SearchBar keyword={keywords}></SearchBar>
+            <SearchBarSortOnly 
+            keyword={keywords} // 將關鍵字傳遞給子組件
+            setKeyword={setKeywords} // 傳遞更新函數
+            onChange={handleFilterChange} // 傳遞選擇變更的處理函數
+            />
         </div>
 
         <div className='history-body-content'>

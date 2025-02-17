@@ -3,9 +3,35 @@ import { useRouter } from 'next/router';
 import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import CalendarRangePicker from '../../../components/base/CalendarRangePicker';
+import useStore from '../../../lib/store';
+import { useEffect } from 'react';
 
 const ApplicationPage = () => {
   const router = useRouter();
+  const nannyInfo = useStore((state) => state.nannyInfo);
+
+  useEffect(() => {
+  }, [nannyInfo]);
+
+  useEffect(() => {
+    if (nannyInfo) {
+      setSelectedRange({
+        startDate: parseEditDate(nannyInfo.suddenly_start_date) || "", // 確保不是 `undefined`
+        endDate: parseEditDate(nannyInfo.suddenly_end_date) || "",
+      });
+    }
+  }, [nannyInfo]);
+
+  const parseEditDate = (dateString) => {
+    if (!dateString) return null;
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+
+    const formattedDate = `${year}-${month}-${day}`;
+    return formattedDate;
+  };
 
   const handleNextClick = () => {
     // 保存日期到 localStorage
@@ -16,7 +42,7 @@ const ApplicationPage = () => {
   };
 
   const handleLastClick = () => {
-    router.push('/nanny/create/'); // 替换 '/next-page' 为你想要跳转的路径
+    router.push('/nanny/create/choose'); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   const [selectedRange, setSelectedRange] = React.useState({ startDate: null, endDate: null });
@@ -75,6 +101,7 @@ const ApplicationPage = () => {
                 style={styles.dateInput}
                 onChange={(e) => handleDateChange({ ...selectedRange, startDate: e.target.value })}
                 lang="zh-TW"
+                defaultValue={nannyInfo ? parseEditDate(nannyInfo.suddenly_start_date) : ""}
               />
             </div>
 
@@ -87,6 +114,7 @@ const ApplicationPage = () => {
                 style={styles.dateInput}
                 onChange={(e) => handleDateChange({ ...selectedRange, endDate: e.target.value })}
                 lang="zh-TW"
+                defaultValue={nannyInfo ? parseEditDate(nannyInfo.suddenly_end_date) : ""}
               />
             </div>
             <div style={{width:'100%'}}>

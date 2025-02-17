@@ -13,7 +13,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ success: false, message: `Method ${req.method} Not Allowed` });
   }
 
-  const { page = 1, pageSize = 10 } = req.query;
+  const { page = 1, pageSize = 10, keyword, sort } = req.query;
   const token = req.cookies.authToken;
   const payload = await verifyToken(token);
   const userId = payload.userId;
@@ -22,8 +22,17 @@ export default async function handler(req, res) {
     return res.status(400).json({ success: false, message: 'ID parameter is required' });
   }
 
-  const offset = (parseInt(page) - 1) * parseInt(pageSize);
+  // Ensure page is at least 1
+  const currentPage = Math.max(1, parseInt(page));
+  const offset = (currentPage - 1) * parseInt(pageSize);
   const limit = parseInt(pageSize);
+
+  let orderByClause = '';
+  if (sort === 'time') {
+    orderByClause = 'o.created_ts DESC';
+  } else if (sort === 'rating') {
+    orderByClause = 'o.rank DESC';
+  }
 
   try {
     const client = await pool.connect();
@@ -46,6 +55,7 @@ export default async function handler(req, res) {
         o.intro, 
         o.isshow, 
         o.created_by,
+        n.score,
         k.name,
         l.weekdays,
         l.care_time as long_term_care_time,
@@ -69,11 +79,27 @@ export default async function handler(req, res) {
         kyc_info k ON n.kycId = k.id
     WHERE 
         o.parentLineId = $1
-    ORDER BY created_ts DESC
-      OFFSET $2 LIMIT $3;
+        AND ($4::text IS NULL OR o.nickname ILIKE '%' || $4::text || '%')
+    ORDER BY 
+        $5
+    OFFSET 
+        $2 
+    LIMIT 
+        $3;
       `;
 
-    const { rows } = await client.query(query, [userId, offset, limit]);
+
+      const parameterizedQuery = query
+      .replace('$1', `'${userId}'`)
+      .replace('$2', offset)
+      .replace('$3', limit)
+      .replace('$4', keyword ? `'${keyword}'` : 'NULL')
+      .replace('$5', orderByClause);
+
+    // Log the constructed query
+    console.log('Executing query with parameters:', parameterizedQuery);
+
+    const { rows } = await client.query(query, [userId, offset, limit, keyword, orderByClause]);
 
     client.release();
 
