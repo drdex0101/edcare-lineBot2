@@ -5,8 +5,6 @@ import TextField from '@mui/material/TextField';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { setMemberId } from '../../features/member/memberSlice';
-import cookie from 'js-cookie';
-import { verifyToken } from '../../utils/jwtUtils';
 
 const ApplicationPage = () => {
   const router = useRouter();

@@ -16,6 +16,12 @@ const ApplicationPage = () => {
   };
 
   const handleNextClick = () => {
+
+    if (selectedDays.length === 0 || !selectedCareTime || !selectedScenario) {
+      alert('請填寫所有必填欄位。');
+      return;
+    }
+
     localStorage.setItem('way', 'longTerm');
     localStorage.setItem('longTermDays',selectedDays);
     localStorage.setItem('longTermCareType', selectedCareTime);

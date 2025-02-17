@@ -30,28 +30,72 @@ const ApplicationPage = () => {
   };
 
   const createBabyRecord = async () => {
-    const response = await fetch('/api/order/createOrder', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        parentLineId: Cookies.get('userId'),
-        nannyid: '',
-        status: 'create',
-        choosetype: localStorage.getItem('choosetype'),
-        orderstatus: 'on',
-        caretypeid: localStorage.getItem('careTypeId'),
-        nickname: babyName,
-        gender: babyGender,
-        birthday: selectedDate,
-        rank: babyBirthOrder,
-        hope: selectedOptions,
-        intro: babyHope,
-        isshow: true,
-        created_by: localStorage.getItem('account'),
-      })
-    });
+    const babyRecordData = {
+      parentLineId: Cookies.get('userId'),
+      nannyid: '',
+      status: 'create',
+      choosetype: localStorage.getItem('choosetype'),
+      orderstatus: 'on',
+      caretypeid: localStorage.getItem('careTypeId'),
+      nickname: babyName,
+      gender: babyGender,
+      birthday: selectedDate,
+      rank: babyBirthOrder,
+      hope: selectedOptions,
+      intro: babyHope,
+      isshow: true,
+      created_by: localStorage.getItem('account'),
+    };
+  
+    // **必填欄位檢查**
+    const requiredFields = {
+      parentLineId: '家長 Line ID',
+      choosetype: '選擇類型',
+      caretypeid: '照護類型 ID',
+      nickname: '寶寶姓名',
+      gender: '寶寶性別',
+      birthday: '寶寶生日',
+      rank: '寶寶排行',
+      hope: '照護期望',
+      created_by: '建立者帳號',
+    };
+  
+    // 找出未填寫的欄位
+    const missingFields = Object.entries(requiredFields)
+      .filter(([key]) => !babyRecordData[key] || babyRecordData[key].length === 0)
+      .map(([_, label]) => label);
+  
+    if (missingFields.length > 0) {
+      alert(`請填寫以下必填欄位：\n${missingFields.join('\n')}`);
+      return; // 終止函數執行
+    }
+  
+    // **檢查生日格式（應為 YYYY-MM-DD 或有效日期）**
+    if (!selectedDate || isNaN(new Date(selectedDate).getTime())) {
+      alert('請選擇有效的寶寶生日（格式：YYYY-MM-DD）。');
+      return;
+    }
+  
+    try {
+      const response = await fetch('/api/order/createOrder', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(babyRecordData),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP 錯誤！狀態碼: ${response.status}`);
+      }
+  
+      const responseData = await response.json();
+      console.log('訂單建立成功:', responseData);
+      alert('訂單建立成功！');
+    } catch (error) {
+      console.error('訂單建立失敗:', error);
+      alert('提交失敗，請稍後再試');
+    }
   };
 
   const handleSwitchChange = (optionId, isChecked) => {
