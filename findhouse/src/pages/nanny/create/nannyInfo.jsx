@@ -65,7 +65,10 @@ const ApplicationPage = () => {
     }
   }, [nannyInfo]);
 
+  
+
   const handleNextClick = async () => {
+
     const nannyData = {
       memberId: nannyInfo ? nannyInfo.memberId : '',
       experienment: nannyInfo ? nannyInfo.experienment : '',
@@ -83,6 +86,23 @@ const ApplicationPage = () => {
       introduction: introduction,
       nannyId: nannyInfo ? nannyInfo.id : '',
     };
+
+    // 必填欄位列表
+    const requiredFields = {
+      scenario: '托育情境',
+      serviceLocation: '服務地點',
+      introduction: '自我介紹',
+    };
+  
+    // 檢查是否有未填寫的欄位
+    const missingFields = Object.entries(requiredFields)
+      .filter(([key]) => !nannyData[key] || nannyData[key].length === 0)
+      .map(([_, label]) => label);
+  
+    if (missingFields.length > 0) {
+      alert(`請填寫以下必填欄位：\n${missingFields.join('\n')}`);
+      return; // 終止函數執行
+    }
 
     try {
       const response ='';
@@ -322,7 +342,7 @@ const ApplicationPage = () => {
             />
             <label htmlFor="file-input" style={styles.avatorLayout}>
               {headIconUrl ? (
-                <img src={headIconUrl} alt="Uploaded avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <img src={headIconUrl || '/headIconNanny.png' } alt="Uploaded avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               ) : (
                 <span>上傳照片</span>
               )}

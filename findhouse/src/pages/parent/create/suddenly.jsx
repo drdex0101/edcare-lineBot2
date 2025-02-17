@@ -10,6 +10,10 @@ const ApplicationPage = () => {
   const router = useRouter();
 
   const handleNextClick = async () => {
+    if (!selectedRange.startDate || !selectedRange.endDate) {
+      alert('請填寫所有必填欄位。');
+      return;
+    }
     await createSuddenlyRecord();
     router.push('/parent/create/babyInfo'); // 替换 '/next-page' 为你想要跳转的路径
   };
@@ -43,6 +47,7 @@ const ApplicationPage = () => {
   const [orderData, setData] = React.useState('');
   
   const createSuddenlyRecord = async () => {
+
     const response = await fetch('/api/base/createSuddenly', {
       method: 'POST',
       headers: {

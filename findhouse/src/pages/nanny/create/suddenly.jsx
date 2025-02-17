@@ -34,6 +34,12 @@ const ApplicationPage = () => {
   };
 
   const handleNextClick = () => {
+
+    if (!selectedRange.startDate || !selectedRange.endDate) {
+      alert('請填寫所有必填欄位。');
+      return;
+    }
+
     // 保存日期到 localStorage
     localStorage.setItem('suddenlyStartDate', selectedRange.startDate?.toISOString());
     localStorage.setItem('suddenlyEndDate', selectedRange.endDate?.toISOString());

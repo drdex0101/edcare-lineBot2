@@ -15,7 +15,6 @@ const ApplicationPage = () => {
   const router = useRouter();
   const [file, setFile] = useState(null);
   const [fileBack, setFileBack] = useState(null);
-  const [message, setMessage] = useState('');
   const [selectedDate, setSelectedDate] = useState();
   const [frontImg, setFrontImg] = useState(null);
   const [backImg, setBackImg] = useState(null);
@@ -24,6 +23,7 @@ const ApplicationPage = () => {
   const memberId = useSelector((state) => state.member.memberId);
 
   const handleNextClick = async () => {
+
     const kycInfoData = {
       name: document.getElementById('name').value,
       identityCard: document.getElementById('identityCard').value,
@@ -37,6 +37,42 @@ const ApplicationPage = () => {
       iconUploadId: headIcon,
       status: 'pending'
     };
+
+    // **必填欄位檢查**
+    const requiredFields = {
+      name: '姓名',
+      identityCard: '身分證字號',
+      gender: '性別',
+      birthday: '生日',
+      address: '戶籍地址',
+      communicateAddress: '通訊地址',
+      identityFrontUploadId: '身分證正面照片',
+      identityBackUploadId: '身分證反面照片',
+      iconUploadId: '頭像照片'
+    };
+
+    const missingFields = Object.entries(requiredFields)
+      .filter(([key]) => !kycInfoData[key] || kycInfoData[key].length === 0)
+      .map(([_, label]) => label);
+
+    if (missingFields.length > 0) {
+      alert(`請填寫以下必填欄位：\n${missingFields.join('\n')}`);
+      return; // 終止函數執行
+    }
+
+    // **身分證格式檢查（台灣身分證格式 A123456789）**
+    const taiwanIdPattern = /^[A-Z][12]\d{8}$/;
+    if (!taiwanIdPattern.test(kycInfoData.identityCard)) {
+      alert('請輸入有效的台灣身分證字號（例如：A123456789）。');
+      return;
+    }
+
+    // **生日格式檢查（應為 YYYY-MM-DD 或 Date 物件）**
+    if (!selectedDate || isNaN(new Date(selectedDate).getTime())) {
+      alert('請選擇有效的生日日期（格式：YYYY-MM-DD）。');
+      return;
+    }
+
     try {
       const response = await fetch('/api/kycInfo/createKycInfo', {
         method: 'POST',
@@ -207,6 +243,7 @@ const ApplicationPage = () => {
                     id="name"
                     label="真實姓名"
                     variant="outlined"
+                    required
                     InputProps={{
                       sx: {
                         padding: '0px 16px',
@@ -235,6 +272,7 @@ const ApplicationPage = () => {
                     id="identityCard"
                     label="身分證字號"
                     variant="outlined"
+                    required
                     InputProps={{
                       sx: {
                         padding: '0px 16px',
@@ -265,6 +303,7 @@ const ApplicationPage = () => {
                       labelId="gender-label"
                       id="gender"
                       value={gender}
+                      required
                       onChange={handleGenderChange}
                       label="性別"
                       sx={{
@@ -290,6 +329,7 @@ const ApplicationPage = () => {
                   <DatePicker
                     label="生日"
                     value={selectedDate}
+                    required
                     onChange={(newValue) => setSelectedDate(newValue)}
                     renderInput={(params) => <TextField {...params} />}
                     disableFuture
@@ -323,6 +363,7 @@ const ApplicationPage = () => {
                     id="address"
                     label="戶籍地址"
                     variant="outlined"
+                    required
                     InputProps={{
                       sx: {
                         padding: '0px 16px',
@@ -351,6 +392,7 @@ const ApplicationPage = () => {
                     id="communicateAddress"
                     label="通訊地址"
                     variant="outlined"
+                    required
                     InputProps={{
                       sx: {
                         padding: '0px 16px',
@@ -379,6 +421,7 @@ const ApplicationPage = () => {
                     id="welfareCertNo"
                     label="居家式托育服務登記書號"
                     variant="outlined"
+                    required
                     InputProps={{
                       sx: {
                         padding: '0px 16px',
@@ -412,7 +455,7 @@ const ApplicationPage = () => {
                     <span style={styles.mainCode}>證件照正面</span>
                     <input type="file" onChange={handleFileChange} style={{ display: 'none' }} id="file-upload" />
                     <div style={styles.imgLayout} onClick={() => document.getElementById('file-upload').click()}>
-                      <img src="/ID-f.png" alt="Description of image F" style={styles.imgSize}/>
+                      <img src="/ID-f.png" alt="Description of image F" style={styles.imgSize} required/>
                     </div>
                     {fileName && <span>{fileName}</span>} {/* 顯示檔案名稱 */}
                     <div style={styles.imgBtnLayout}>
@@ -439,7 +482,7 @@ const ApplicationPage = () => {
                     <span style={styles.mainCode}>證件照反面</span>
                     <input type="file" onChange={handleFileChangeBack} style={{ display: 'none' }} id="file-backend" />
                     <div style={styles.imgLayout} onClick={() => document.getElementById('file-backend').click()}>
-                      <img src="/ID-B.png" alt="Description of image F" />
+                      <img src="/ID-B.png" alt="Description of image F" style={styles.imgSize} required/>
                     </div>
                     {fileNameBack && <span>{fileNameBack}</span>} {/* 顯示檔案名稱 */}
                     <div style={styles.imgBtnLayout}>
