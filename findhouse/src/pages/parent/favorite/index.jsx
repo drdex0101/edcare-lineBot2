@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Pagination from '../../../components/base/pagenation';
-import SearchBar from '../../../components/base/SearchBar';
+import SearchBarSortOnly from '../../../components/base/SearchBarSortOnly';
 import './favorite.css';
+
 const ApplicationPage = () => {
   const router = useRouter();
   const [nannyInfo, setNannyInfo] = useState([]);
@@ -12,8 +13,6 @@ const ApplicationPage = () => {
   const pageSize = 5;
   const [isLoading, setIsLoading] = useState(true);
   const [keywords, setKeywords] = useState('');
-  const [selectedRegion, setSelectedRegion] = useState(null);
-  const [selectedLocations, setSelectedLocations] = useState([]);
   const [selectedSort, setSelectedSort] = useState('time'); // 新增狀態以追蹤選擇的排序
   const [orderImages, setOrderImages] = useState({});
   const [careTypeData, setCareTypeData] = useState(null);
@@ -24,11 +23,11 @@ const ApplicationPage = () => {
   const indexOfLastItem = orderCurrentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentOrders = orderInfo.slice(indexOfFirstItem, indexOfLastItem);
-  const [locationCount, setLocationCount] = useState(0); // 新增狀態以追蹤選擇的地區數量
-  const fetchNannyInfoList = async (page, pageSize=5,  keywords) => {
+
+  const fetchNannyInfoList = async (page, pageSize=5,  keywords, selectedSort) => {
     setIsLoading(true); // Set loading state to true while fetching data
     try {
-      const response = await fetch(`/api/nanny/getNannyInfoList?page=${page}&pageSize=${pageSize}&locations=${selectedLocations}&sort=${selectedSort}&keyword=${keywords}`, {
+      const response = await fetch(`/api/nanny/getNannyInfoList?page=${page}&pageSize=${pageSize}&sort=${selectedSort}&keyword=${keywords}`, {
         method: 'GET',
         headers: {
           'Cache-Control': 'no-cache',
@@ -168,12 +167,9 @@ useEffect(() => {
     setCurrentPage(page); // Update currentPage when a new page is selected
   };
 
-  const handleFilterChange = (region, locations, sorts, locationCount) => {
-    setSelectedRegion(region);
-    setSelectedLocations(locations);
+  const handleFilterChange = (sorts) => {
     setSelectedSort(sorts);
-    fetchNannyInfoList(currentPage, pageSize, keywords); // Fetch nanny info with updated filters
-    setLocationCount(locationCount); // 新增狀態以追蹤選擇的地區數量
+    fetchNannyInfoList(currentPage, pageSize, keywords,selectedSort); // Fetch nanny info with updated filters
   };
 
   return (
@@ -219,7 +215,7 @@ useEffect(() => {
                             onChange={(e) => setKeywords(e.target.value)}
                         ></input>
                         </div>
-                        <SearchBar 
+                        <SearchBarSortOnly 
                         keyword={keywords} // 將關鍵字傳遞給子組件
                         setKeyword={setKeywords} // 傳遞更新函數
                         onChange={handleFilterChange} // 傳遞選擇變更的處理函數
@@ -228,22 +224,6 @@ useEffect(() => {
                 </div>
                 <div style={{ backgroundColor: '#f8ecec', width: '100%', display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
                 <div style={styles.nannyItemLayout}>
-                <div style={styles.searchLayout}>
-                    <div style={styles.searchTypeLayout}>
-                    <span style={styles.searchFont}>地區: {locationCount}</span>
-                    </div>
-                    {selectedSort && (
-                    <div style={styles.searchTypeLayout}>
-                        <span style={styles.searchFont}>
-                        {selectedSort === 'time' 
-                            ? '上架時間（新 ⭢ 舊）' 
-                            : selectedSort === 'rating' 
-                            ? '保母評價(5 ⭢ 0)' 
-                            : ''}
-                        </span>
-                    </div>
-                    )}
-                </div>
                     {nannyInfo.map((nanny, index) => (
                     <div 
                         key={index} 

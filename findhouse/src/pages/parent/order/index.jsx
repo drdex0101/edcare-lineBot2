@@ -1,21 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import './order.css';
-import SearchBar from '../../../components/base/SearchBar'; 
+import SearchBarSortOnly from '../../../components/base/SearchBarSortOnly'; 
 import OrderPersonalItem from '../../../components/base/OrderPersonalItem';
 import Pagination from '../../../components/base/pagenation';
 export default function OrderPage() {
     const [keywords, setKeywords] = useState('');
     const [orderList, setOrderList] = useState([]);
     const [totalCount, setTotalCount] = useState(0);
+    const [selectedSort, setSelectedSort] = useState(null);
     const getOrderList = async () => {
-        const response = await fetch('/api/order/getOrderInfoList?page=1&pageSize=4');
+        const response = await fetch(`/api/order/getOrderInfoList?page=1&pageSize=4&sort=${selectedSort}&keyword=${keywords}`);
         const data = await response.json();
         setOrderList(data.orders);
         setTotalCount(data.totalCount);
     }
     useEffect(() => {
         getOrderList();
-    }, []);
+    }, [keywords]);
+
+    const handleFilterChange = (sorts) => {
+        setSelectedSort(sorts);
+        getOrderList(); // Fetch nanny info with updated filters
+      };
 
   return (
     <div className="order-main">
@@ -57,7 +63,7 @@ export default function OrderPage() {
                 onChange={(e) => setKeywords(e.target.value)}
                 ></input>
             </div>
-            <SearchBar />
+            <SearchBarSortOnly onChange={handleFilterChange}/>
         </div>
         <div className="order-layout">
         <div className='order-history-list'>

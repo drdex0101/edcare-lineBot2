@@ -13,7 +13,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ success: false, message: `Method ${req.method} Not Allowed` });
   }
 
-  const { page = 1, pageSize = 10, keyword = null } = req.query;
+  const { page = 1, pageSize = 10, keyword = null, sort = null } = req.query;
   const token = req.cookies.authToken;
   const payload = await verifyToken(token);
   const userId = payload.userId;
@@ -24,6 +24,13 @@ export default async function handler(req, res) {
 
   const offset = (parseInt(page) - 1) * parseInt(pageSize);
   const limit = parseInt(pageSize);
+
+  let orderByClause = '';
+  if (sort === 'time') {
+    orderByClause = 'o.created_ts DESC';
+  } else if (sort === 'rating') {
+    orderByClause = 'o.rank DESC';
+  }
 
   try {
     const client = await pool.connect();
@@ -47,6 +54,7 @@ export default async function handler(req, res) {
         o.intro, 
         o.isshow, 
         o.created_by,
+        n.score,
         COALESCE(s.scenario, l.scenario) AS scenario,
         COUNT(*) OVER() AS totalCount
     FROM 
@@ -55,18 +63,20 @@ export default async function handler(req, res) {
         suddenly s ON o.choosetype = 'suddenly' AND o.caretypeid = s.id
     LEFT JOIN 
         long_term l ON o.choosetype = 'long_term' AND o.caretypeid = l.id
+    LEFT JOIN 
+        nanny n ON o.nannyid = n.id
     WHERE 
         o.parentLineId = $1 
-        AND ($4::text IS NULL OR o.nickname LIKE '%' || $4 || '%')
+        AND ($4::text IS NULL OR o.nickname ILIKE '%' || $4::text || '%')
     ORDER BY 
-        o.created_ts DESC
+        $5
     OFFSET 
         $2 
     LIMIT 
         $3;
     `;
 
-    const { rows } = await client.query(query, [userId, offset, limit, keyword]);
+    const { rows } = await client.query(query, [userId, offset, limit, keyword, orderByClause]);
 
     client.release();
 
