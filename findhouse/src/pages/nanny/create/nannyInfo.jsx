@@ -343,9 +343,9 @@ const ApplicationPage = () => {
             />
             <label htmlFor="file-input" style={styles.avatorLayout}>
               {headIconUrl ? (
-                <img src={headIconUrl || '/headIconNanny.png' } alt="Uploaded avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <img src={headIconUrl} alt="Uploaded avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               ) : (
-                <span>上傳照片</span>
+                <img src={'/headIconNanny.png' } alt="Uploaded avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               )}
             </label>
           </div>
