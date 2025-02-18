@@ -115,6 +115,7 @@ const ApplicationPage = () => {
     } else if (nannyProfile.way === 'longTerm') {
       router.push('/nanny/create/longTerm'); // 替换 '/next-page' 为你想要跳转的路径
     }
+    router.push('/nanny/create/choose');
   };
 
   return (
@@ -475,7 +476,7 @@ const styles = {
     width: '110px',
     height: '82px',
     flexDirection: 'column',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     gap: '6px',
     flexShrink: '0',
   },

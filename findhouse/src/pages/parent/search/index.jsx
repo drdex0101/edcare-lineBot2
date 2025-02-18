@@ -4,11 +4,11 @@ import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import Pagination from '../../../components/base/pagenation';
 import SearchBar from '../../../components/base/SearchBar';
-import { verifyToken } from '../../../utils/jwtUtils';
-import cookie from 'js-cookie';
+import useStore from '../../../lib/store';
 
 const ApplicationPage = () => {
   const router = useRouter();
+  const { setItem } = useStore();
   const [nannyInfo, setNannyInfo] = useState([]);
   const [orderInfo, setOrderInfo] = useState([]);
   const [totalItem, setTotalItem] = useState(0);
@@ -29,6 +29,8 @@ const ApplicationPage = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentOrders = orderInfo.slice(indexOfFirstItem, indexOfLastItem);
   const [locationCount, setLocationCount] = useState(0); // 新增狀態以追蹤選擇的地區數量
+  const [currentOrderCareType, setCurrentOrderCareType] = useState(null);
+
   const fetchNannyInfoList = async (page, pageSize=5,  keywords) => {
     setIsLoading(true); // Set loading state to true while fetching data
     try {
@@ -73,7 +75,7 @@ const ApplicationPage = () => {
   const fetchOrderInfo = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/order/getOrderInfo`, {
+      const response = await fetch(`/api/order/getOrderInfoList`, {
         method: 'GET',
         headers: {
           'Cache-Control': 'no-cache',
@@ -87,8 +89,10 @@ const ApplicationPage = () => {
 
       const data = await response.json();
       if (data) {
-        setOrderInfo(data.nannies);
-        const imagePromises = data.nannies.map(async (order) => {
+        setOrderInfo(data.orders);
+        setItem(data.orders[0])
+        setCurrentOrderCareType(data.orders[0].choosetype)
+        const imagePromises = data.orders.map(async (order) => {
           if (order.uploadId) {
             const imgResponse = await fetch(`/api/base/getImgUrl?id=${order.uploadId}`);
             const imgData = await imgResponse.json();
@@ -105,12 +109,12 @@ const ApplicationPage = () => {
           }
         });
         setOrderImages(imageMap);
-        if (data.nannies[0].choosetype === 'suddenly') {
-          const careTypeResponse = await fetch(`/api/base/getSuddenly?id=${data.nannies[0].caretypeid}`);
+        if (data.orders[0].choosetype === 'suddenly') {
+          const careTypeResponse = await fetch(`/api/base/getSuddenly?id=${data.orders[0].caretypeid}`);
           const careTypeDatas = await careTypeResponse.json();
           setCareTypeData(careTypeDatas.data);
-        } else if (data.nannies[0].choosetype === 'longTerm') {
-          const careTypeResponse = await fetch(`/api/base/getLongTern?id=${data.nannies[0].caretypeid}`);
+        } else if (data.orders[0].choosetype === 'longTerm') {
+          const careTypeResponse = await fetch(`/api/base/getLongTern?id=${data.orders[0].caretypeid}`);
           const careTypeDatas = await careTypeResponse.json();
           setCareTypeData(careTypeDatas.data);
         }
@@ -162,8 +166,14 @@ useEffect(() => {
     setCurrentPage(page); // Update currentPage when a new page is selected
   };
 
-  const handleNextClick = () => {
-    router.push('/parent/create/choose'); // 替换 '/next-page' 为你想要跳转的路径
+  const handleNextClick = (careType) => {
+    console.log(careType);
+    if(careType === 'suddenly'){
+      router.push('/parent/order/details/suddenly'); // 替换 '/next-page' 为你想要跳转的路径
+    }else if(careType === 'longTerm'){
+      router.push('/parent/order/details/longTerm'); // 替换 '/next-page' 为你想要跳转的路径
+    }
+    router.push('/parent/create/choose');
   };
 
   const handleFilterChange = (region, locations, sorts, locationCount) => {
@@ -244,7 +254,11 @@ useEffect(() => {
                     {Array.from({ length: Math.ceil(orderInfo.length / itemsPerPage) }, (_, i) => (
                       <span
                         key={i}
-                        onClick={() => handleOrderPageChange(i + 1)}
+                        onClick={() => {
+                          handleOrderPageChange(i + 1);
+                          setItem(orderInfo)
+                          setCurrentOrderCareType(orderInfo[i].choosetype)
+                        }}
                         style={{
                           width: '7px',
                           height: '7px',
@@ -265,7 +279,7 @@ useEffect(() => {
               )}
             </div>
             <div style={styles.createButtonLayout}>
-              <div style={styles.iconLayout} onClick={handleNextClick}>
+              <div style={styles.iconLayout} onClick={() => handleNextClick(currentOrderCareType)}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 38 38" fill="none">
                   <rect width="38" height="38" rx="4" fill="#F5E5E5"/>
                   <path d="M26.0231 9C25.2613 9 24.4994 9.29013 23.9179 9.87171L22.6843 11.1053L26.8949 15.3158L28.1284 14.0822C29.2905 12.9201 29.2905 11.0349 28.1284 9.87171C27.5468 9.29013 26.785 9 26.0231 9ZM21.1053 12.6842L9 24.7895V29H13.2106L25.3159 16.8947L21.1053 12.6842Z" fill="#E3838E"/>

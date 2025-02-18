@@ -10,7 +10,6 @@ import useStore from '../../../../lib/store';
 const ApplicationPage = () => {
   const router = useRouter();
   const item = useStore((state) => state.item);
-
   useEffect(() => {
   }, [item]);
 
