@@ -26,7 +26,7 @@ const ApplicationPage = () => {
   };
 
   const handleLastClick = () => {
-    router.push('/parent/create/suddenly'); 
+    router.back(); 
   };
 
   const createBabyRecord = async () => {

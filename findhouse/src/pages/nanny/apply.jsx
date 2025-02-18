@@ -11,7 +11,7 @@ const ApplicationPage = () => {
   const dispatch = useDispatch(); // Redux 的 dispatch 函数
 
   const handleLastClick = () => {
-    router.push('/nanny/'); // 替换 '/next-page' 为你想要跳转的路径
+    router.back(); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   const handleNextClick = async () => {
