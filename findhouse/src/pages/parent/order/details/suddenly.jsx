@@ -10,7 +10,6 @@ import useStore from '../../../../lib/store';
 const ApplicationPage = () => {
   const router = useRouter();
   const item = useStore((state) => state.item);
-
   useEffect(() => {
   }, [item]);
 
@@ -86,7 +85,7 @@ const ApplicationPage = () => {
   };
 
   const handleLastClick = () => {
-    router.push('/parent/order/details/choose'); // 替换 '/next-page' 为你想要跳转的路径
+    router.back(); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   const handleDateChange = (range) => {

@@ -12,7 +12,6 @@ import dayjs from "dayjs";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 import { MenuItem, InputLabel, FormControl } from '@mui/material';
-import Cookies from 'js-cookie';
 import useStore from '../../../../lib/store';
 
 const ApplicationPage = () => {
@@ -58,7 +57,7 @@ const ApplicationPage = () => {
   };
 
   const handleLastClick = () => {
-    router.push('/parent/order/details/suddenly'); 
+    router.back(); 
   };
 
   const updateBabyRecord = async () => {

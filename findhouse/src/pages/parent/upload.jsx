@@ -64,7 +64,7 @@ const ApplicationPage = () => {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ userId: Cookies.get('userId'), richMenuId: 'richmenu-307b8975e551ebd54362c688b7cb9e54' })
+        body: JSON.stringify({ userId: Cookies.get('userId'), richMenuId: 'richmenu-8b422169ec368afe84f3d1cbb9c143ca' })
       });
       router.push('/parent/create/choose');
     } catch (error) {
@@ -76,7 +76,7 @@ const ApplicationPage = () => {
   const [fileNameBack, setFileNameBack] = useState(''); // 新增狀態以存儲檔案名稱
 
   const handleLastClick = () => {
-    router.push('/parent/verify/'); // 替换 '/next-page' 为你想要跳转的路径
+    router.back(); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   const handleUpload = async (file, type) => {

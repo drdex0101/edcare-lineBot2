@@ -146,9 +146,7 @@ const ApplicationPage = () => {
           setFrontImg(uploadId);
         } else if (type === "ID Back") {
           setBackImg(uploadId);
-        } else if (type === "Head Icon") {
-          setHeadIcon(uploadId);
-        }
+        } 
         if (result.success) {
           console.log("Uploaded Image URL:", result.url);
         } else {
@@ -572,13 +570,6 @@ const styles = {
     justifyContent:'center',
     padding:'20px',
     gap:'20px'
-  },
-  headIconLayout: {
-    maxHeight: '120px',
-    alignSelf: 'stretch',
-    boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.25)',
-    backgroundColor:'#FFF',
-    maxWidth:'90px'
   },
   imgLayout: {
     maxHeight: '180px',

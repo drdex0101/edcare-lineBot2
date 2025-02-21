@@ -6,7 +6,7 @@ const ApplicationPage = () => {
   // Set the item in the store when the component mounts
 
   const handleLastClick = () => {
-    router.push('/parent/create/'); // 替换 '/next-page' 为你想要跳转的路径
+    router.back(); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   const handleLongClick = () => {
