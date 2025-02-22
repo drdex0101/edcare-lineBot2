@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./css/SearchBar.css";
 
-export default function FilterButton({ onChange }) {
+export default function FilterButton({ onChange, locationCount, selectedSort: propSelectedSort, selectedRegion: propSelectedRegion, selectedLocations: propSelectedLocations }) {
   const [isFilterOpen, setIsFilterOpen] = useState(false); // 控制篩選框顯示
-  const [selectedLocations, setSelectedLocations] = useState([]); // 已選地區
-  const [selectedRegion, setSelectedRegion] = useState(null); // 當前選擇的區域
-  const [selectedSort, setSelectedSort] = useState(null); // 新增狀態以追蹤選擇的排序
+  const [selectedLocations, setSelectedLocations] = useState(propSelectedLocations || []); // 已選地區
+  const [selectedRegion, setSelectedRegion] = useState(propSelectedRegion || ""); // 當前選擇的區域
+  const [selectedSort, setSelectedSort] = useState(propSelectedSort || "time"); // 預設為 "time"
   const filterPopupRef = useRef(null);
   const filterButtonRef = useRef(null);
 
@@ -17,27 +17,46 @@ export default function FilterButton({ onChange }) {
     "麥寮生活圈": ["麥寮", "崙背", "褒忠", "東勢", "台西"],
   };
 
+  // 監聽 props 變更，確保 state 更新
+  useEffect(() => {
+    setSelectedLocations(propSelectedLocations || []);
+    setSelectedRegion(propSelectedRegion || "");
+    setSelectedSort(propSelectedSort || "time");
+  }, [propSelectedLocations, propSelectedRegion, propSelectedSort]);
+
+  // 處理點擊篩選框外部時關閉 & 清空篩選條件
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (
+        filterPopupRef.current &&
+        filterButtonRef.current &&
+        !filterPopupRef.current.contains(event.target) &&
+        !filterButtonRef.current.contains(event.target)
+      ) {
+        resetFilters(); // 點擊外部時清空選項
+        setIsFilterOpen(false);
+      }
+    };
+
+    document.addEventListener("click", handleOutsideClick);
+    return () => document.removeEventListener("click", handleOutsideClick);
+  }, []);
+
   // 切換篩選框顯示
   const toggleFilterPopup = () => {
     setIsFilterOpen(!isFilterOpen);
   };
 
-  // 處理點擊篩選框外部時關閉
-  const handleOutsideClick = (event) => {
-    if (
-      filterPopupRef.current &&
-      filterButtonRef.current &&
-      !filterPopupRef.current.contains(event.target) &&
-      !filterButtonRef.current.contains(event.target)
-    ) {
-      setIsFilterOpen(false);
-    }
+  // 清空篩選條件
+  const resetFilters = () => {
+    setSelectedRegion("");
+    setSelectedLocations([]);
+    setSelectedSort("time");
   };
 
   // 選擇區域，更新選擇的地區
   const handleRegionClick = (region) => {
-    setSelectedRegion(region); // 設定當前選擇的區域
-    setSelectedLocations([]); // 清空已選地區
+    setSelectedRegion(region);
   };
 
   // 切換地區選擇
@@ -51,13 +70,8 @@ export default function FilterButton({ onChange }) {
 
   // 切換排序選擇
   const toggleSort = (sortType) => {
-    setSelectedSort(sortType); // 設定當前選擇的排序
+    setSelectedSort(sortType);
   };
-
-  useEffect(() => {
-    document.addEventListener("click", handleOutsideClick);
-    return () => document.removeEventListener("click", handleOutsideClick);
-  }, []);
 
   return (
     <div className="filter-container">
@@ -104,10 +118,7 @@ export default function FilterButton({ onChange }) {
             {selectedRegion && (
               <div className="filter-group">
                 {regions[selectedRegion].map((location, index) => (
-                  <label
-                    className="filter-checkbox"
-                    key={index}
-                  >
+                  <label className="filter-checkbox" key={index}>
                     {location}
                     <input 
                       type="checkbox" 
@@ -120,25 +131,34 @@ export default function FilterButton({ onChange }) {
             )}
           </div>
           <div className="filter-header">
-                <span>排序</span>
+            <span>排序</span>
           </div>
           <div className="filter-sort-layout">
             <div 
               className={`filter-sort-font ${selectedSort === 'time' ? '' : 'filter-sort-font-none'}`} 
               onClick={() => toggleSort('time')}
-              onChange={() => toggleSort('time')}
             >
               上架時間（新 ⭢ 舊）
             </div>
             <div 
               className={`filter-sort-font ${selectedSort === 'rating' ? '' : 'filter-sort-font-none'}`} 
               onClick={() => toggleSort('rating')}
-              onChange={() => toggleSort('rating')}
             >
               保母評價( 5 ⭢ 0 )
             </div>
           </div>
-          <button onClick={() => onChange(selectedRegion, selectedLocations, selectedSort, selectedLocations.length)}>搜尋</button>
+          <div className="filter-footer">
+            <span>已選擇 {selectedLocations.length} 個地區</span>
+            <button 
+              onClick={() => {
+                console.log("傳遞的 selectedLocations:", selectedLocations); // Debug
+                onChange(selectedRegion, [...selectedLocations], selectedSort); 
+                setIsFilterOpen(false); 
+              }}
+            >
+              搜尋
+            </button>
+          </div>
         </div>
       )}
     </div>

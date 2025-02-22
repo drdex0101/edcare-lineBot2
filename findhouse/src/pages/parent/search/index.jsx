@@ -176,13 +176,16 @@ useEffect(() => {
     router.push('/parent/create/choose');
   };
 
-  const handleFilterChange = (region, locations, sorts, locationCount) => {
+  const handleFilterChange = (region, locations, sorts) => {
+    console.log("接收到的 locations:", locations); // Debug
+  
     setSelectedRegion(region);
-    setSelectedLocations(locations);
+    setSelectedLocations([...locations]); // 確保 locations 為新陣列
     setSelectedSort(sorts);
-    fetchNannyInfoList(currentPage, pageSize); // Fetch nanny info with updated filters
-    setLocationCount(locationCount); // 新增狀態以追蹤選擇的地區數量
+    
+    fetchNannyInfoList(currentPage, pageSize, keywords); 
   };
+  
 
   const handleVisibilityToggle = async () => {
     try {
@@ -328,6 +331,10 @@ useEffect(() => {
                   keyword={keywords} // 將關鍵字傳遞給子組件
                   setKeyword={setKeywords} // 傳遞更新函數
                   onChange={handleFilterChange} // 傳遞選擇變更的處理函數
+                  locationCount={locationCount}
+                  selectedSort={selectedSort}
+                  selectedRegion={selectedRegion}
+                  selectedLocations={selectedLocations}
                 />
               </div>
               <div style={styles.titleLayout}>
@@ -337,7 +344,7 @@ useEffect(() => {
               <div style={styles.nannyItemLayout}>
               <div style={styles.searchLayout}>
                 <div style={styles.searchTypeLayout}>
-                  <span style={styles.searchFont}>地區: {locationCount}</span>
+                  <span style={styles.searchFont}>地區: {selectedLocations.length}</span>
                 </div>
                 {selectedSort && (
                   <div style={styles.searchTypeLayout}>
