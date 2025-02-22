@@ -147,6 +147,21 @@ export default function ProfilePage() {
               </span>
           </div>
         </div>
+        <div className="profile-location">
+          <span className="location-subTitle">
+            {orderInfo.choosetype === 'suddenly' 
+              ? orderInfo.suddenly_location 
+              : orderInfo.scenario === 'infantCareCenter'
+                ? orderInfo.long_term_location
+                : orderInfo.long_term_location?.map((location, index) => (
+                    <span key={index}>
+                      {location}
+                      {index < orderInfo.long_term_location.length - 1 ? '、' : ''}
+                    </span>
+                  ))
+            }
+          </span>
+        </div>
 
           {/* 圖片輪播區域 */}
         <div className="imageSection">

@@ -1,4 +1,30 @@
+.profile-location {
+  display: flex;
+padding: 2px 66px;
+align-items: center;
+gap: 18px;
+align-self: stretch;
+margin-top: 10px;
+background: #FFF;
+}
+.location-subTitle {
+  display: flex;
+  padding: 0px 11px 0px 12px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+  border: 1px solid var(---Primary-Container, #F3CCD4);
+  background: var(---SurfaceContainer-Lowest, #FFF);
+  color: var(---Primary-Primary, #E3838E);
+  text-align: center;
 
+  /* Line/bold/14pt */
+  font-family: "LINE Seed JP_TTF";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
     .introSection {
       display: flex;
       height: 454px;

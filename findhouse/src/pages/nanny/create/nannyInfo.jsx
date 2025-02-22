@@ -69,7 +69,6 @@ const ApplicationPage = () => {
   
 
   const handleNextClick = async () => {
-
     const nannyData = {
       memberId: nannyInfo ? nannyInfo.memberId : '',
       experienment: nannyInfo ? nannyInfo.experienment : '',
@@ -78,7 +77,7 @@ const ApplicationPage = () => {
       way: localStorage.getItem('way'),
       scenario: selectedCareType,
       environmentPic: uploadedImages,
-      serviceLocation: selectedAddress,
+      serviceLocation: selectedCareType === '在宅托育' ? address : selectedAddress,
       service: Object.keys(switchStates).filter(key => switchStates[key]),
       score: nannyInfo ? nannyInfo.score : '',
       isShow: true,
