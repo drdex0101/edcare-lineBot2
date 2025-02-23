@@ -382,7 +382,11 @@ const ApplicationPage = () => {
                     <span style={styles.mainCode}>證件照正面</span>
                     <input type="file" onChange={handleFileChange} style={{ display: 'none' }} id="file-upload" />
                     <div style={styles.imgLayout} onClick={() => document.getElementById('file-upload').click()}>
-                      <img src="/ID-f.png" alt="Description of image F" style={styles.imgSize}/>
+                      {frontImg ? (
+                        <img src="/uploadSuccess.png" alt="Description of image F" style={styles.imgSize}/>
+                      ) : (
+                        <img src="/ID-f.png" alt="Description of image F" style={styles.imgSize}/>
+                      )}
                     </div>
                     {fileName && <span>{fileName}</span>} {/* 顯示檔案名稱 */}
                     <div style={styles.imgBtnLayout}>
@@ -409,7 +413,11 @@ const ApplicationPage = () => {
                     <span style={styles.mainCode}>證件照反面</span>
                     <input type="file" onChange={handleFileChangeBack} style={{ display: 'none' }} id="file-backend" />
                     <div style={styles.imgLayout} onClick={() => document.getElementById('file-backend').click()}>
-                      <img src="/ID-B.png" alt="身分證反面圖片" style={styles.imgSize}/>
+                      {backImg ? (
+                        <img src="/uploadSuccess.png" alt="Description of image F" style={styles.imgSize}/>
+                      ) : (
+                        <img src="/ID-B.png" alt="身分證反面圖片" style={styles.imgSize}/>
+                      )}
                     </div>
                     {fileNameBack && <span>{fileNameBack}</span>} {/* 顯示檔案名稱 */}
                     <div style={styles.imgBtnLayout}>

@@ -3,7 +3,6 @@ import { store } from "../app/store";
 import ScrollToTop from "../components/common/ScrollTop";
 import Seo from "../components/common/seo";
 import "../index.scss";
-import { SessionProvider } from "next-auth/react"
 if (typeof window !== "undefined") {
   require("bootstrap/dist/js/bootstrap");
 }

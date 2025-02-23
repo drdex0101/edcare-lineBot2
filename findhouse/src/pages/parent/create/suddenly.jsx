@@ -42,12 +42,10 @@ const ApplicationPage = () => {
   }));
 
   const [selectedCareType, setSelectedCareType] = React.useState(() => '');
-  const [selectedAddress, setSelectedAddress] = React.useState(() => '');
-
+  const [selectedAddress, setSelectedAddress] = React.useState(() => []);
   const [orderData, setData] = React.useState('');
   
   const createSuddenlyRecord = async () => {
-
     const response = await fetch('/api/base/createSuddenly', {
       method: 'POST',
       headers: {
@@ -58,7 +56,7 @@ const ApplicationPage = () => {
         startDate: selectedRange.startDate,
         endDate: selectedRange.endDate,
         scenario: selectedCareType,
-        location: selectedAddress,
+        location: selectedAddress.join(','),
         careTime: '',
         idType: 'parent'
       })
@@ -267,15 +265,17 @@ const ApplicationPage = () => {
               <InputLabel id="gender-label">托育地區</InputLabel>
               <Select
                 required
+                multiple
                 labelId="gender-label"
                 id="gender"
                 label="定點選擇"
+                value={selectedAddress}
                 onChange={(e) => setSelectedAddress(e.target.value)}
                 MenuProps={{
                   PaperProps: {
                     style: {
-                      maxHeight: 24 * 7, // 48px * 3 (每個項目高度) + 8px (padding)
-                      overflowY: 'auto',     // 啟用滾動條
+                      maxHeight: 24 * 7,
+                      overflowY: 'auto',
                     },
                   },
                 }}

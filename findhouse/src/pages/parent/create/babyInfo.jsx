@@ -21,8 +21,7 @@ const ApplicationPage = () => {
   const [babyBirthOrder, setBabyBirthOrder] = useState('');
   const [babyHope, setBabyHope] = useState('');
   const handleNextClick = () => {
-    createBabyRecord();
-    router.push('/parent/search'); 
+    createBabyRecord(); 
   };
 
   const handleLastClick = () => {
@@ -92,6 +91,7 @@ const ApplicationPage = () => {
       const responseData = await response.json();
       console.log('訂單建立成功:', responseData);
       alert('訂單建立成功！');
+      router.push('/parent/search');
     } catch (error) {
       console.error('訂單建立失敗:', error);
       alert('提交失敗，請稍後再試');
