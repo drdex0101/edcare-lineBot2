@@ -1,5 +1,35 @@
 .filter-container {
     position: relative;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .filter-search-container {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+  }
+
+  .filter-button-search {
+    display: flex;
+    height: 40px;
+    padding: 8px 52px 8px 12px;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    border-radius: 100px;
+    border: 1px solid #EBEBEB;
+    background: #FBFBFB;
+    color: #999;
+    /* Line/medium/16pt */
+    font-family: "LINE Seed JP_TTF";
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
   }
   
   .filter-button {
@@ -155,8 +185,13 @@
   
   .filter-footer {
     display: flex;
-    justify-content: space-between;
-    gap: 8px;
+    padding: 8px 16px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+    align-self: stretch;
+    border-radius: 8px;
+    opacity: 0.8;
   }
   
   .filter-apply {

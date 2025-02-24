@@ -30,8 +30,6 @@ export default async function handler(req, res) {
   let orderByClause = '';
   if (sort === 'time') {
     orderByClause = 'o.created_ts DESC';
-  } else if (sort === 'rating') {
-    orderByClause = 'o.rank DESC';
   }
 
   try {
