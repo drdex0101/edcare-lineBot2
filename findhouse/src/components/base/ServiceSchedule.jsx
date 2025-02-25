@@ -5,9 +5,7 @@ export default function ServiceSchedule() {
 
   const toggleSlot = (index) => {
     setActiveSlots((prev) =>
-      prev.includes(index)
-        ? prev.filter((i) => i !== index)
-        : [...prev, index]
+      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index],
     );
   };
 
@@ -16,14 +14,14 @@ export default function ServiceSchedule() {
       <span className="header1">服務時段</span>
       <div className="schedule-container">
         <div className="days">
-          {["","日", "一", "二", "三", "四", "五", "六"].map((day) => (
+          {["", "日", "一", "二", "三", "四", "五", "六"].map((day) => (
             <div key={day} className="day">
               {day}
             </div>
           ))}
         </div>
         <div className="time-slots">
-          {["6:00", "中午", "18:00","24:00"].map((label, rowIndex) => (
+          {["6:00", "中午", "18:00", "24:00"].map((label, rowIndex) => (
             <>
               <div key={label} className="time-label">
                 {label}

@@ -1,7 +1,7 @@
-import React from 'react';
-import Rating from '@mui/material/Rating';
+import React from "react";
+import Rating from "@mui/material/Rating";
 
-const RatingComponent = ({ score, size = 'medium' }) => {
+const RatingComponent = ({ score, size = "medium" }) => {
   return (
     <Rating
       name="read-only"

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 const Pagination = ({ totalItems, pageSize, currentPage, onPageChange }) => {
   const totalPages = Math.ceil(totalItems / pageSize);
@@ -14,10 +14,10 @@ const Pagination = ({ totalItems, pageSize, currentPage, onPageChange }) => {
         <button
           key={i}
           onClick={() => handlePageClick(i)}
-          className={`page-button ${currentPage === i ? 'active' : ''}`}
+          className={`page-button ${currentPage === i ? "active" : ""}`}
         >
           {i}
-        </button>
+        </button>,
       );
     }
     return pages;
@@ -72,7 +72,7 @@ const Pagination = ({ totalItems, pageSize, currentPage, onPageChange }) => {
   );
 };
 
-const App = ({ totalItems,keyword }) => {
+const App = ({ totalItems, keyword }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 5; // Example page size
 

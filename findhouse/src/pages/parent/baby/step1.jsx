@@ -1,24 +1,48 @@
-import React, { useState } from 'react';
-import { useRouter } from 'next/router';
+import React, { useState } from "react";
+import { useRouter } from "next/router";
 
 export default function CareListPage() {
   const router = useRouter();
   // Example data for the care records
   const careData = [
-    { name: '王保母', experience: '6年 3月 托育經驗', rating: 4.8, imgSrc: '/assets/images/resource/error.png' },
-    { name: '王保母', experience: '6年 3月 托育經驗', rating: 4.8, imgSrc: '/assets/images/resource/error.png' },
-    { name: '王保母', experience: '6年 3月 托育經驗', rating: 4.8, imgSrc: '/assets/images/resource/error.png' },
-    { name: '王保母', experience: '6年 3月 托育經驗', rating: 4.8, imgSrc: '/assets/images/resource/error.png' },
-    { name: '王保母', experience: '6年 3月 托育經驗', rating: 4.8, imgSrc: '/assets/images/resource/error.png' },
+    {
+      name: "王保母",
+      experience: "6年 3月 托育經驗",
+      rating: 4.8,
+      imgSrc: "/assets/images/resource/error.png",
+    },
+    {
+      name: "王保母",
+      experience: "6年 3月 托育經驗",
+      rating: 4.8,
+      imgSrc: "/assets/images/resource/error.png",
+    },
+    {
+      name: "王保母",
+      experience: "6年 3月 托育經驗",
+      rating: 4.8,
+      imgSrc: "/assets/images/resource/error.png",
+    },
+    {
+      name: "王保母",
+      experience: "6年 3月 托育經驗",
+      rating: 4.8,
+      imgSrc: "/assets/images/resource/error.png",
+    },
+    {
+      name: "王保母",
+      experience: "6年 3月 托育經驗",
+      rating: 4.8,
+      imgSrc: "/assets/images/resource/error.png",
+    },
   ];
 
-   // Handle form submission
-   const handleSubmit = (e) => {
+  // Handle form submission
+  const handleSubmit = (e) => {
     e.preventDefault();
     // Navigate to the next step
-    router.push('/parent/longTernStep2');
+    router.push("/parent/longTernStep2");
   };
-
 
   return (
     <div className="container">
@@ -40,9 +64,8 @@ export default function CareListPage() {
         }
 
         .subTitle {
-            font-size:
+          font-size:;
         }
-
       `}</style>
     </div>
   );

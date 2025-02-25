@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "format": "prettier --write \"**/*.+(jsx|json)\""
   },
   "dependencies": {
     "@coreui/icons": "^3.0.1",
@@ -40,6 +41,7 @@
     "next-cloudinary": "^6.16.0",
     "pg": "^8.11.3",
     "photoswipe": "^5.4.2",
+    "prettier": "^3.5.2",
     "prop-types": "^15.8.1",
     "react": "18.2.0",
     "react-chartjs-2": "^5.0.1",

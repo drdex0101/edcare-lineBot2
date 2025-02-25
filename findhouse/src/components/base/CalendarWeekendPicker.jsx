@@ -1,28 +1,36 @@
 import React, { useState, useEffect } from "react";
 
-const DAYS_OF_WEEK = ["sunday","monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+const DAYS_OF_WEEK = [
+  "sunday",
+  "monday",
+  "tuesday",
+  "wednesday",
+  "thursday",
+  "friday",
+  "saturday",
+];
 const DAYS_OF_WEEK_CHINESE = ["日", "一", "二", "三", "四", "五", "六"];
 
 export default function CustomCalendar({ selectedWeekday }) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [highlightedDates, setHighlightedDates] = useState([]);
   useEffect(() => {
-      console.log(selectedWeekday);
-      const currentYear = currentDate.getFullYear();
-      const currentMonth = currentDate.getMonth();
-      const totalDays = new Date(currentYear, currentMonth + 1, 0).getDate();
-      const range = [];
-      // 遍歷當月所有日期
-      for (let i = 1; i <= totalDays; i++) {
-        const date = new Date(currentYear, currentMonth, i);
-        console.log(date.getDay());
-        // 如果對應的星期幾為 true，就加入高亮清單
-        if (selectedWeekday.includes(date.getDay())) {
-          range.push(i);
-        }
+    console.log(selectedWeekday);
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth();
+    const totalDays = new Date(currentYear, currentMonth + 1, 0).getDate();
+    const range = [];
+    // 遍歷當月所有日期
+    for (let i = 1; i <= totalDays; i++) {
+      const date = new Date(currentYear, currentMonth, i);
+      console.log(date.getDay());
+      // 如果對應的星期幾為 true，就加入高亮清單
+      if (selectedWeekday.includes(date.getDay())) {
+        range.push(i);
       }
-      setHighlightedDates(range);
-      console.log(highlightedDates);
+    }
+    setHighlightedDates(range);
+    console.log(highlightedDates);
   }, [selectedWeekday, currentDate]);
 
   // 計算當月的所有天數
@@ -49,14 +57,17 @@ export default function CustomCalendar({ selectedWeekday }) {
     return days;
   };
 
-  const days = getDaysInMonth(currentDate.getFullYear(), currentDate.getMonth());
+  const days = getDaysInMonth(
+    currentDate.getFullYear(),
+    currentDate.getMonth(),
+  );
 
   // 切換月份
   const handleMonthChange = (direction) => {
     const newDate = new Date(
       currentDate.getFullYear(),
       currentDate.getMonth() + direction,
-      1
+      1,
     );
     setCurrentDate(newDate);
   };
@@ -69,9 +80,9 @@ export default function CustomCalendar({ selectedWeekday }) {
           &lt;
         </button>
         <span style={styles.monthTitle}>
-          {currentDate.toLocaleString('zh-TW', {
-            year: 'numeric',
-            month: 'long',
+          {currentDate.toLocaleString("zh-TW", {
+            year: "numeric",
+            month: "long",
           })}
         </span>
         <button style={styles.navButton} onClick={() => handleMonthChange(1)}>
@@ -166,6 +177,7 @@ const styles = {
     backgroundColor: "#e0f7fa",
     color: "#000",
     fontWeight: "bold",
-    background: 'var(--Button-01, linear-gradient(81deg, #FBDBD6 10.58%, #D9DFF0 75.92%))'
+    background:
+      "var(--Button-01, linear-gradient(81deg, #FBDBD6 10.58%, #D9DFF0 75.92%))",
   },
 };
