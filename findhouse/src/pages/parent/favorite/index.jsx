@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import Pagination from '../../../components/base/pagenation';
 import SearchBarSortOnly from '../../../components/base/SearchBarSortOnly';
 import './favorite.css';
-
+import LoadingAnimation from '../../../components/base/loading';
 const ApplicationPage = () => {
   const router = useRouter();
   const [nannyInfo, setNannyInfo] = useState([]);
@@ -175,7 +175,7 @@ useEffect(() => {
   return (
     <div style={styles.main}>
       {isLoading ? (
-        <div style={styles.spinner}>Loading...</div>
+        <LoadingAnimation />
       ) : (
         <>
             <div style={styles.headerSetting}>
