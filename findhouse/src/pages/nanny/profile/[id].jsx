@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import RatingComponent from "../../../components/nanny/rating";
 import "../css/profile.css";
+import Loading from "../../../components/base/loading";
 export default function ProfilePage() {
   const router = useRouter();
   const { id } = router.query;
@@ -44,7 +45,7 @@ export default function ProfilePage() {
         }
         if (data.nannies[0].uploadid) {
           const response3 = await fetch(
-            `/api/base/getImgUrl?id=${data.nannies[0].uploadid}`,
+            `/api/base/getImgUrl?id=${data.nannies[0].uploadid}`
           );
           const data3 = await response3.json();
           setIconUrl(data3.url);
@@ -52,6 +53,7 @@ export default function ProfilePage() {
       } catch (error) {
         console.error("Failed to fetch nanny info:", error);
       }
+      setIsLoading(false);
     };
 
     fetchNannyInfo();
@@ -76,6 +78,24 @@ export default function ProfilePage() {
 
   return (
     <div className="container">
+      {isLoading && (
+        <div
+          style={{
+            position: "fixed", // 確保 Loading 覆蓋整個畫面
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(255, 255, 255, 0.8)", // 透明度
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999, // 確保 Loading 在最上層
+          }}
+        >
+          <Loading />
+        </div>
+      )}
       <div className="nanny-header">
         <svg
           xmlns="http://www.w3.org/2000/svg"

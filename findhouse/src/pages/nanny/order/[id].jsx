@@ -4,6 +4,7 @@ import CalendarRangePicker from "../../../components/base/CalendarRangePicker";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import "../css/profile.css";
+import Loading from "../../../components/base/loading";
 export default function ProfilePage() {
   const router = useRouter();
   const { id } = router.query;
@@ -70,6 +71,7 @@ export default function ProfilePage() {
             endDate: parseEditDate(data.orders[0].suddenly_end_date) || "",
           });
         }
+        setIsLoading(false);
       } catch (error) {
         console.error("Failed to fetch nanny info:", error);
       }
@@ -97,6 +99,24 @@ export default function ProfilePage() {
 
   return (
     <div className="container">
+      {isLoading && (
+        <div
+          style={{
+            position: "fixed", // 確保 Loading 覆蓋整個畫面
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(255, 255, 255, 0.8)", // 透明度
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999, // 確保 Loading 在最上層
+          }}
+        >
+          <Loading />
+        </div>
+      )}
       <div className="nanny-header">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -184,7 +204,7 @@ export default function ProfilePage() {
             {orderInfo.choosetype === "suddenly"
               ? orderInfo.suddenly_location
               : orderInfo.scenario === "infantCareCenter"
-                ? orderInfo.long_term_location
+                ? orderInfo.long_term_location.slice(0, 6)
                 : orderInfo.long_term_location?.map((location, index) => (
                     <span key={index}>
                       {location}

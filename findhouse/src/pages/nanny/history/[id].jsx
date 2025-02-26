@@ -3,11 +3,11 @@
 import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
 import "./historyId.css";
-
+import Loading from "../../../components/base/loading";
 export default function HistoryId() {
   const [orderInfo, setOrderInfo] = useState(null);
   const router = useRouter();
-
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     if (!router.isReady) return; // 等待路由准备完毕
     const { id } = router.query;
@@ -15,6 +15,7 @@ export default function HistoryId() {
   }, [router.isReady]);
 
   const fetchOrderInfo = async (id) => {
+    setIsLoading(true);
     try {
       const response = await fetch(`/api/order/getOrderInfoById?id=${id}`);
       const data = await response.json();
@@ -24,6 +25,7 @@ export default function HistoryId() {
       } else {
         console.error("API 响应中缺少 'orders' 属性:", data);
       }
+      setIsLoading(false);
     } catch (error) {
       console.error("获取订单信息时出错:", error);
     }
@@ -31,6 +33,24 @@ export default function HistoryId() {
 
   return (
     <div className="history-main">
+      {isLoading && (
+        <div
+          style={{
+            position: "fixed", // 確保 Loading 覆蓋整個畫面
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(255, 255, 255, 0.8)", // 透明度
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999, // 確保 Loading 在最上層
+          }}
+        >
+          <Loading />
+        </div>
+      )}
       <div className="history-header">
         <svg
           xmlns="http://www.w3.org/2000/svg"

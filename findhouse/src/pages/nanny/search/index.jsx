@@ -5,7 +5,7 @@ import Switch from "@mui/material/Switch";
 import Pagination from "../../../components/base/pagenation";
 import SearchBar from "../../../components/base/SearchBar";
 import useStore from "../../../lib/store";
-import Loading from "../../../components/base/Loading";
+import Loading from "../../../components/base/loading";
 const ApplicationPage = () => {
   const router = useRouter();
   const { setNannyInfo } = useStore();
@@ -32,6 +32,7 @@ const ApplicationPage = () => {
   };
 
   const fetchNannyProfile = async () => {
+    setIsLoading(true);
     const response = await fetch(`/api/nanny/getNannyProfile`, {
       method: "GET",
     });
@@ -43,6 +44,7 @@ const ApplicationPage = () => {
     setNannyProfile(data.nannyProfile[0]);
     setNannyInfo(data.nannyProfile[0]);
     setNannyProfileImg(await getImgUrl(data.nannyProfile[0].uploadid));
+    setIsLoading(false);
   };
 
   const getImgUrl = async (id) => {
@@ -127,9 +129,24 @@ const ApplicationPage = () => {
 
   return (
     <div style={styles.main}>
-      {isLoading ? (
-        <Loading />
-      ) : (
+      {isLoading && (
+        <div
+          style={{
+            position: "fixed", // 確保 Loading 覆蓋整個畫面
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(255, 255, 255, 0.8)", // 透明度
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999, // 確保 Loading 在最上層
+          }}
+        >
+          <Loading />
+        </div>
+      )}
         <>
           <div style={styles.header}>
             <div style={styles.createInfoLayout}>
@@ -408,7 +425,6 @@ const ApplicationPage = () => {
             </div>
           </div>
         </>
-      )}
     </div>
   );
 };

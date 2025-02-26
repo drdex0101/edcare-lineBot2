@@ -5,12 +5,14 @@ import SearchBarSortOnly from "../../../components/base/SearchBarSortOnly";
 import OrderHistoryItem from "../../../components/base/OrderHistoryItem";
 import SettingForParent from "../../../components/base/SettingForParent";
 import { useRouter } from "next/router";
+import Loading from "../../../components/base/loading";
 export default function HistoryPage() {
   const [keywords, setKeywords] = useState("");
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(10);
   const [historyList, setHistoryList] = useState([]);
   const [selectedSort, setSelectedSort] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const handlePageChange = (newPage) => {
     setPage(newPage);
@@ -22,9 +24,10 @@ export default function HistoryPage() {
   };
 
   const fetchHistoryList = async () => {
+    setIsLoading(true);
     try {
       const response = await fetch(
-        `/api/order/getHistoryList?page=${page}&pageSize=10&keyword=${keywords}&sort=${selectedSort}`,
+        `/api/order/getHistoryList?page=${page}&pageSize=10&keyword=${keywords}&sort=${selectedSort}`
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -32,6 +35,7 @@ export default function HistoryPage() {
       const data = await response.json();
       setTotal(data.totalCount);
       setHistoryList(data.orders);
+      setIsLoading(false);
     } catch (error) {
       console.error("Failed to fetch history list:", error);
     }
@@ -47,6 +51,24 @@ export default function HistoryPage() {
 
   return (
     <div className="history-main">
+      {isLoading && (
+        <div
+          style={{
+            position: "fixed", // 確保 Loading 覆蓋整個畫面
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(255, 255, 255, 0.8)", // 透明度
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999, // 確保 Loading 在最上層
+          }}
+        >
+          <Loading />
+        </div>
+      )}
       <div className="history-header">
         <img
           src="/icon/arrowForward.svg"

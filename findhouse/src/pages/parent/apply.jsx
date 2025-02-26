@@ -5,10 +5,12 @@ import TextField from "@mui/material/TextField";
 import { useDispatch } from "react-redux";
 import { setMemberId } from "../../features/member/memberSlice";
 import axios from "axios";
+import Loading from "../../components/base/loading";
+import { useState } from "react";
 const ApplicationPage = () => {
   const router = useRouter();
   const dispatch = useDispatch(); // Redux 的 dispatch 函数
-
+  const [isLoading, setIsLoading] = useState(false);
   const handleNextClick = async () => {
     const memberData = {
       accountName: document.getElementById("account").value,
@@ -18,6 +20,7 @@ const ApplicationPage = () => {
     };
     console.log(memberData);
     try {
+      setIsLoading(true);
       const response = await axios.post("/api/member/createMember", memberData);
       const memberId = response.data.member.id; // 獲取返回的 memberId
       dispatch(setMemberId(memberId)); // 保存到 Redux Store
@@ -33,6 +36,10 @@ const ApplicationPage = () => {
 
   return (
     <div style={styles.main}>
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <>
       <div style={styles.header}>
         <span style={styles.headerFont}>申請成為家長</span>
         <button onClick={handleLastClick} style={styles.lastButton}>
@@ -232,6 +239,8 @@ const ApplicationPage = () => {
           </div>
         </div>
       </div>
+      </>
+      )}
     </div>
   );
 };

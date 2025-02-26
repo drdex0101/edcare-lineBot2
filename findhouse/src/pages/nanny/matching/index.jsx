@@ -1,12 +1,32 @@
 import React, { useState } from "react";
 import "./matching.css";
 import Pagination from "../../../components/base/pagenation";
+import Loading from "../../../components/base/loading";
 export default function HistoryPage() {
   const [totalCount, setTotalCount] = useState(0);
   const [historyList, setHistoryList] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   return (
     <div className="matching-main">
+      {isLoading && (
+        <div
+          style={{
+            position: "fixed", // 確保 Loading 覆蓋整個畫面
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(255, 255, 255, 0.8)", // 透明度
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999, // 確保 Loading 在最上層
+          }}
+        >
+          <Loading />
+        </div>
+      )}
       <div className="matching-header">
         <svg
           xmlns="http://www.w3.org/2000/svg"

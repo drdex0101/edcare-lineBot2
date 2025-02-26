@@ -6,7 +6,7 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setMemberId } from "../../features/member/memberSlice";
 import { useState } from "react";
-import Loading from "../../components/base/Loading";
+import Loading from "../../components/base/loading";
 
 const ApplicationPage = () => {
   const router = useRouter();
@@ -65,166 +65,181 @@ const ApplicationPage = () => {
 
   return (
     <div style={styles.main}>
-      {isLoading ? (
-        <Loading />
-      ) : (
-        <>
-          <div style={styles.header}>
-            <span style={styles.headerFont}>申請成為保母</span>
-            <button onClick={handleLastClick} style={styles.lastButton}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-          >
-            <g clip-path="url(#clip0_45_10396)">
-              <path
-                d="M7.77223 12.9916L18.7822 12.9916C19.3322 12.9916 19.7822 12.5416 19.7822 11.9916C19.7822 11.4416 19.3322 10.9916 18.7822 10.9916L7.77223 10.9916L7.77223 9.20162C7.77223 8.75162 7.23223 8.53162 6.92223 8.85162L4.14223 11.6416C3.95223 11.8416 3.95223 12.1516 4.14223 12.3516L6.92223 15.1416C7.23223 15.4616 7.77223 15.2316 7.77223 14.7916L7.77223 12.9916V12.9916Z"
-                fill="#074C5F"
+      {isLoading && (
+        <div
+          style={{
+            position: "fixed", // 確保 Loading 覆蓋整個畫面
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(255, 255, 255, 0.8)", // 透明度
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999, // 確保 Loading 在最上層
+          }}
+        >
+          <Loading />
+        </div>
+      )}
+
+      <>
+        <div style={styles.header}>
+          <span style={styles.headerFont}>申請成為保母</span>
+          <button onClick={handleLastClick} style={styles.lastButton}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <g clip-path="url(#clip0_45_10396)">
+                <path
+                  d="M7.77223 12.9916L18.7822 12.9916C19.3322 12.9916 19.7822 12.5416 19.7822 11.9916C19.7822 11.4416 19.3322 10.9916 18.7822 10.9916L7.77223 10.9916L7.77223 9.20162C7.77223 8.75162 7.23223 8.53162 6.92223 8.85162L4.14223 11.6416C3.95223 11.8416 3.95223 12.1516 4.14223 12.3516L6.92223 15.1416C7.23223 15.4616 7.77223 15.2316 7.77223 14.7916L7.77223 12.9916V12.9916Z"
+                  fill="#074C5F"
+                />
+              </g>
+              <defs>
+                <clipPath id="clip0_45_10396">
+                  <rect width="24" height="24" fill="white" />
+                </clipPath>
+              </defs>
+            </svg>
+          </button>
+        </div>
+        <div
+          style={{
+            backgroundColor: "white",
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <div style={styles.contentLayout}>
+            <div style={styles.rollerLayout}>
+              <div style={styles.roller}></div>
+              <div style={styles.rollerActive}></div>
+              <div style={styles.roller}></div>
+              <div style={styles.roller}></div>
+              <div style={styles.roller}></div>
+            </div>
+            <div style={styles.subTitleLayout}>
+              <span style={styles.subTitle}>會員資料填寫</span>
+            </div>
+            <Box
+              component="form"
+              sx={{
+                display: "flex",
+                width: "320px",
+                padding: "18.5px 18px 19.5px 17px",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                borderRadius: "20px",
+                gap: "20px",
+              }}
+              noValidate
+              autoComplete="off"
+            >
+              <TextField
+                id="account"
+                label="帳號名稱"
+                placeholder="a123456"
+                variant="outlined"
+                InputProps={{
+                  sx: {
+                    padding: "0px 16px",
+                    borderRadius: "8px",
+                    backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
+                  },
+                }}
+                sx={{
+                  alignSelf: "stretch",
+                  borderRadius: "8px",
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: "var(--OutLine-OutLine, #78726D)",
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "#E3838E",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#E3838E",
+                    },
+                  },
+                }}
               />
-            </g>
-            <defs>
-              <clipPath id="clip0_45_10396">
-                <rect width="24" height="24" fill="white" />
-              </clipPath>
-            </defs>
-          </svg>
-        </button>
-      </div>
-      <div
-        style={{
-          backgroundColor: "white",
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <div style={styles.contentLayout}>
-          <div style={styles.rollerLayout}>
-            <div style={styles.roller}></div>
-            <div style={styles.rollerActive}></div>
-            <div style={styles.roller}></div>
-            <div style={styles.roller}></div>
-            <div style={styles.roller}></div>
-          </div>
-          <div style={styles.subTitleLayout}>
-            <span style={styles.subTitle}>會員資料填寫</span>
-          </div>
-          <Box
-            component="form"
-            sx={{
-              display: "flex",
-              width: "320px",
-              padding: "18.5px 18px 19.5px 17px",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              borderRadius: "20px",
-              gap: "20px",
-            }}
-            noValidate
-            autoComplete="off"
-          >
-            <TextField
-              id="account"
-              label="帳號名稱"
-              placeholder="a123456"
-              variant="outlined"
-              InputProps={{
-                sx: {
-                  padding: "0px 16px",
-                  borderRadius: "8px",
-                  backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
-                },
-              }}
-              sx={{
-                alignSelf: "stretch",
-                borderRadius: "8px",
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: "var(--OutLine-OutLine, #78726D)",
-                  },
-                  "&:hover fieldset": {
-                    borderColor: "#E3838E",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "#E3838E",
-                  },
-                },
-              }}
-            />
 
-            <TextField
-              id="cellphone"
-              label="常用電話"
-              variant="outlined"
-              placeholder="0912345678"
-              InputProps={{
-                sx: {
-                  padding: "0px 16px",
+              <TextField
+                id="cellphone"
+                label="常用電話"
+                variant="outlined"
+                placeholder="0912345678"
+                InputProps={{
+                  sx: {
+                    padding: "0px 16px",
+                    borderRadius: "8px",
+                    backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
+                  },
+                }}
+                sx={{
+                  alignSelf: "stretch",
                   borderRadius: "8px",
-                  backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
-                },
-              }}
-              sx={{
-                alignSelf: "stretch",
-                borderRadius: "8px",
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: "var(--OutLine-OutLine, #78726D)",
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: "var(--OutLine-OutLine, #78726D)",
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "#E3838E",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#E3838E",
+                    },
                   },
-                  "&:hover fieldset": {
-                    borderColor: "#E3838E",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "#E3838E",
-                  },
-                },
-              }}
-            />
+                }}
+              />
 
-            <TextField
-              id="email"
-              label="聯絡信箱"
-              variant="outlined"
-              placeholder="apple@gmail.com"
-              InputProps={{
-                sx: {
-                  padding: "0px 16px",
+              <TextField
+                id="email"
+                label="聯絡信箱"
+                variant="outlined"
+                placeholder="apple@gmail.com"
+                InputProps={{
+                  sx: {
+                    padding: "0px 16px",
+                    borderRadius: "8px",
+                    backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
+                  },
+                }}
+                sx={{
+                  alignSelf: "stretch",
                   borderRadius: "8px",
-                  backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
-                },
-              }}
-              sx={{
-                alignSelf: "stretch",
-                borderRadius: "8px",
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: "var(--OutLine-OutLine, #78726D)",
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: "var(--OutLine-OutLine, #78726D)",
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "#E3838E",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#E3838E",
+                    },
                   },
-                  "&:hover fieldset": {
-                    borderColor: "#E3838E",
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: "#E3838E",
-                  },
-                },
-              }}
-            />
-          </Box>
+                }}
+              />
+            </Box>
 
-          <div style={styles.buttonLayout}>
-            <button style={styles.nextBtn} onClick={handleNextClick}>
-              下一步
-            </button>
+            <div style={styles.buttonLayout}>
+              <button style={styles.nextBtn} onClick={handleNextClick}>
+                下一步
+              </button>
             </div>
           </div>
         </div>
       </>
-      )}
     </div>
   );
 };

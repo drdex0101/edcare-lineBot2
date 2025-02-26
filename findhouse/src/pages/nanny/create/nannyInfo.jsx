@@ -9,7 +9,9 @@ import { useState } from "react";
 import useStore from "../../../lib/store";
 import { useEffect } from "react";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
-import Loading from "../../../components/base/Loading";
+import Loading from "../../../components/base/loading";
+import { useState } from "react";
+
 const ApplicationPage = () => {
   const router = useRouter();
   const nannyInfo = useStore((state) => state.nannyInfo);
@@ -28,7 +30,7 @@ const ApplicationPage = () => {
   const [message, setMessage] = useState("");
   const [uploadedImages, setUploadedImages] = useState([]); // State to track uploaded images
   const [uploadedEnvironmentImages, setUploadedEnvironmentImages] = useState(
-    [],
+    []
   ); // State to track uploaded images
   const [selectedCareType, setSelectedCareType] = useState(null);
   const [address, setAddress] = useState("");
@@ -66,7 +68,7 @@ const ApplicationPage = () => {
               const response = await fetch(`/api/base/getImgUrl?id=${picId}`);
               const data = await response.json();
               return data.url;
-            }),
+            })
           );
           setUploadedEnvironmentImages(urls);
         };
@@ -173,6 +175,7 @@ const ApplicationPage = () => {
   };
 
   const handleUpload = async (file, type) => {
+    setIsLoading(true);
     if (!file) return;
 
     const reader = new FileReader();
@@ -202,6 +205,7 @@ const ApplicationPage = () => {
           setHeadIcon(uploadId);
           setHeadIconUrl(uploadResponse.url);
         }
+        setIsLoading(false);
       } catch (error) {
         console.error("Upload error:", error);
         setMessage("Upload failed.");
@@ -311,6 +315,24 @@ const ApplicationPage = () => {
 
   return (
     <div style={styles.main}>
+      {isLoading && (
+        <div
+          style={{
+            position: "fixed", // 確保 Loading 覆蓋整個畫面
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(255, 255, 255, 0.8)", // 透明度
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999, // 確保 Loading 在最上層
+          }}
+        >
+          <Loading />
+        </div>
+      )}
       <div style={styles.header}>
         <span style={styles.headerFont}>編輯保母資料</span>
         <button onClick={handleLastClick} style={styles.lastButton}>
@@ -586,7 +608,7 @@ const ApplicationPage = () => {
                       <img
                         src={
                           uploadedEnvironmentImages[
-                          uploadedEnvironmentImages.length - 1
+                            uploadedEnvironmentImages.length - 1
                           ]
                         }
                         alt="Latest uploaded environment"
