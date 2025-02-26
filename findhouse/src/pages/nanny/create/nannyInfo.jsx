@@ -9,7 +9,7 @@ import { useState } from "react";
 import useStore from "../../../lib/store";
 import { useEffect } from "react";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
-
+import Loading from "../../../components/base/Loading";
 const ApplicationPage = () => {
   const router = useRouter();
   const nannyInfo = useStore((state) => state.nannyInfo);
@@ -34,6 +34,7 @@ const ApplicationPage = () => {
   const [address, setAddress] = useState("");
   const [introduction, setIntroduction] = useState("");
   const [selectedAddress, setSelectedAddress] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (nannyInfo?.service) {
@@ -49,6 +50,7 @@ const ApplicationPage = () => {
   }, [nannyInfo]); // **確保 `item` 更新後會同步 `switchStates`**
 
   useEffect(() => {
+    setIsLoading(true);
     if (nannyInfo) {
       setSelectedCareType(nannyInfo.scenario);
       setAddress(nannyInfo.location);
@@ -70,6 +72,7 @@ const ApplicationPage = () => {
         };
         fetchImageUrls();
       }
+      setIsLoading(false);
     }
   }, [nannyInfo]);
 
@@ -111,6 +114,7 @@ const ApplicationPage = () => {
     }
 
     try {
+      setIsLoading(true);
       const response = "";
       if (nannyInfo) {
         const response = await fetch("/api/nanny/updateNannyProfile", {
@@ -582,7 +586,7 @@ const ApplicationPage = () => {
                       <img
                         src={
                           uploadedEnvironmentImages[
-                            uploadedEnvironmentImages.length - 1
+                          uploadedEnvironmentImages.length - 1
                           ]
                         }
                         alt="Latest uploaded environment"

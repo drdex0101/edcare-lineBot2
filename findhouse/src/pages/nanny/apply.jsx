@@ -5,6 +5,8 @@ import TextField from "@mui/material/TextField";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setMemberId } from "../../features/member/memberSlice";
+import { useState } from "react";
+import Loading from "../../components/base/Loading";
 
 const ApplicationPage = () => {
   const router = useRouter();
@@ -13,6 +15,8 @@ const ApplicationPage = () => {
   const handleLastClick = () => {
     router.back(); // 替换 '/next-page' 为你想要跳转的路径
   };
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleNextClick = async () => {
     // Check if all fields are filled
@@ -49,6 +53,7 @@ const ApplicationPage = () => {
     }
 
     try {
+      setIsLoading(true);
       const response = await axios.post("/api/member/createMember", memberData);
       const memberId = response.data.member.id;
       dispatch(setMemberId(memberId));
@@ -60,9 +65,13 @@ const ApplicationPage = () => {
 
   return (
     <div style={styles.main}>
-      <div style={styles.header}>
-        <span style={styles.headerFont}>申請成為保母</span>
-        <button onClick={handleLastClick} style={styles.lastButton}>
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <>
+          <div style={styles.header}>
+            <span style={styles.headerFont}>申請成為保母</span>
+            <button onClick={handleLastClick} style={styles.lastButton}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -211,9 +220,11 @@ const ApplicationPage = () => {
             <button style={styles.nextBtn} onClick={handleNextClick}>
               下一步
             </button>
+            </div>
           </div>
         </div>
-      </div>
+      </>
+      )}
     </div>
   );
 };

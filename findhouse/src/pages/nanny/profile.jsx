@@ -3,10 +3,12 @@ import ServiceSchedule from "../../components/base/ServiceSchedule";
 import { useParams } from "react-router-dom";
 import RatingComponent from "../../components/nanny/rating";
 import "./css/profile.css";
+import Loading from "../../components/base/Loading";
 export default function ProfilePage() {
   const { id } = useParams();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [nannyInfo, setNannyInfo] = useState("");
+
   const [images, setImages] = useState([
     "/assets/images/resource/error.png",
     "/assets/images/resource/error.png",
@@ -63,12 +65,16 @@ export default function ProfilePage() {
 
   return (
     <div className="container">
-      <div className="nanny-header">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="18"
-          viewBox="0 0 20 18"
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <>
+          <div className="nanny-header">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="18"
+              viewBox="0 0 20 18"
           fill="none"
         >
           <path
@@ -297,6 +303,8 @@ export default function ProfilePage() {
           </div>
         </div>
       )}
+    </>
+    )}
     </div>
   );
 }

@@ -5,12 +5,12 @@ import Switch from "@mui/material/Switch";
 import CalendarRangePicker from "../../../components/base/CalendarRangePicker";
 import useStore from "../../../lib/store";
 import { useEffect } from "react";
-
+import Loading from "../../../components/base/Loading";
 const ApplicationPage = () => {
   const router = useRouter();
   const nannyInfo = useStore((state) => state.nannyInfo);
-
-  useEffect(() => {}, [nannyInfo]);
+  const [isLoading, setIsLoading] = useState(false);
+  useEffect(() => { }, [nannyInfo]);
 
   useEffect(() => {
     if (nannyInfo) {
@@ -37,6 +37,7 @@ const ApplicationPage = () => {
       alert("請填寫所有必填欄位。");
       return;
     }
+    setIsLoading(true);
 
     // 保存日期到 localStorage
     localStorage.setItem(
@@ -76,108 +77,114 @@ const ApplicationPage = () => {
 
   return (
     <div style={styles.main}>
-      <div style={styles.header}>
-        <span style={styles.headerFont}>編輯保母資料</span>
-        <button onClick={handleLastClick} style={styles.lastButton}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-          >
-            <g clip-path="url(#clip0_45_10396)">
-              <path
-                d="M7.77223 12.9916L18.7822 12.9916C19.3322 12.9916 19.7822 12.5416 19.7822 11.9916C19.7822 11.4416 19.3322 10.9916 18.7822 10.9916L7.77223 10.9916L7.77223 9.20162C7.77223 8.75162 7.23223 8.53162 6.92223 8.85162L4.14223 11.6416C3.95223 11.8416 3.95223 12.1516 4.14223 12.3516L6.92223 15.1416C7.23223 15.4616 7.77223 15.2316 7.77223 14.7916L7.77223 12.9916V12.9916Z"
-                fill="#074C5F"
-              />
-            </g>
-            <defs>
-              <clipPath id="clip0_45_10396">
-                <rect width="24" height="24" fill="white" />
-              </clipPath>
-            </defs>
-          </svg>
-        </button>
-      </div>
-      <div
-        style={{
-          backgroundColor: "white",
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-        }}
-      >
-        <div style={styles.contentLayout}>
-          <div style={styles.rollerLayout}>
-            <div style={styles.rollerActive}></div>
-            <div style={styles.rollerActive}></div>
-            <div style={styles.roller}></div>
-          </div>
-          <div style={styles.titleLayout}>
-            <span style={styles.subTitle}>托育資料填寫</span>
-            <span style={styles.smallTitle}>臨時托育</span>
-          </div>
-          <div style={styles.buttonLayout}>
-            <div style={styles.inputField}>
-              <input
-                type="date"
-                id="datepicker1"
-                name="startDate"
-                min="2023-01-01"
-                style={styles.dateInput}
-                onChange={(e) =>
-                  handleDateChange({
-                    ...selectedRange,
-                    startDate: e.target.value,
-                  })
-                }
-                lang="zh-TW"
-                defaultValue={
-                  nannyInfo ? parseEditDate(nannyInfo.suddenly_start_date) : ""
-                }
-              />
-            </div>
-
-            <div style={styles.inputField}>
-              <input
-                type="date"
-                id="datepicker2"
-                name="endDate"
-                min="2023-01-01"
-                style={styles.dateInput}
-                onChange={(e) =>
-                  handleDateChange({
-                    ...selectedRange,
-                    endDate: e.target.value,
-                  })
-                }
-                lang="zh-TW"
-                defaultValue={
-                  nannyInfo ? parseEditDate(nannyInfo.suddenly_end_date) : ""
-                }
-              />
-            </div>
-            <div style={{ width: "100%" }}>
-              <CalendarRangePicker
-                startDate={selectedRange.startDate}
-                endDate={selectedRange.endDate}
-                onDateChange={handleDateChange}
-                locale="zh-TW"
-                styles={{
-                  calendar: { maxWidth: "400px" },
-                  day: { width: "50px", height: "50px" },
-                }}
-              />
-            </div>
-          </div>
-          <div style={styles.buttonLayout}>
-            <button style={styles.nextBtn} onClick={handleNextClick}>
-              確認送出
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <>
+          <div style={styles.header}>
+            <span style={styles.headerFont}>編輯保母資料</span>
+            <button onClick={handleLastClick} style={styles.lastButton}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <g clip-path="url(#clip0_45_10396)">
+                  <path
+                    d="M7.77223 12.9916L18.7822 12.9916C19.3322 12.9916 19.7822 12.5416 19.7822 11.9916C19.7822 11.4416 19.3322 10.9916 18.7822 10.9916L7.77223 10.9916L7.77223 9.20162C7.77223 8.75162 7.23223 8.53162 6.92223 8.85162L4.14223 11.6416C3.95223 11.8416 3.95223 12.1516 4.14223 12.3516L6.92223 15.1416C7.23223 15.4616 7.77223 15.2316 7.77223 14.7916L7.77223 12.9916V12.9916Z"
+                    fill="#074C5F"
+                  />
+                </g>
+                <defs>
+                  <clipPath id="clip0_45_10396">
+                    <rect width="24" height="24" fill="white" />
+                  </clipPath>
+                </defs>
+              </svg>
             </button>
           </div>
-        </div>
-      </div>
+          <div
+            style={{
+              backgroundColor: "white",
+              width: "100%",
+              display: "flex",
+              justifyContent: "center",
+            }}
+          >
+            <div style={styles.contentLayout}>
+              <div style={styles.rollerLayout}>
+                <div style={styles.rollerActive}></div>
+                <div style={styles.rollerActive}></div>
+                <div style={styles.roller}></div>
+              </div>
+              <div style={styles.titleLayout}>
+                <span style={styles.subTitle}>托育資料填寫</span>
+                <span style={styles.smallTitle}>臨時托育</span>
+              </div>
+              <div style={styles.buttonLayout}>
+                <div style={styles.inputField}>
+                  <input
+                    type="date"
+                    id="datepicker1"
+                    name="startDate"
+                    min="2023-01-01"
+                    style={styles.dateInput}
+                    onChange={(e) =>
+                      handleDateChange({
+                        ...selectedRange,
+                        startDate: e.target.value,
+                      })
+                    }
+                    lang="zh-TW"
+                    defaultValue={
+                      nannyInfo ? parseEditDate(nannyInfo.suddenly_start_date) : ""
+                    }
+                  />
+                </div>
+
+                <div style={styles.inputField}>
+                  <input
+                    type="date"
+                    id="datepicker2"
+                    name="endDate"
+                    min="2023-01-01"
+                    style={styles.dateInput}
+                    onChange={(e) =>
+                      handleDateChange({
+                        ...selectedRange,
+                        endDate: e.target.value,
+                      })
+                    }
+                    lang="zh-TW"
+                    defaultValue={
+                      nannyInfo ? parseEditDate(nannyInfo.suddenly_end_date) : ""
+                    }
+                  />
+                </div>
+                <div style={{ width: "100%" }}>
+                  <CalendarRangePicker
+                    startDate={selectedRange.startDate}
+                    endDate={selectedRange.endDate}
+                    onDateChange={handleDateChange}
+                    locale="zh-TW"
+                    styles={{
+                      calendar: { maxWidth: "400px" },
+                      day: { width: "50px", height: "50px" },
+                    }}
+                  />
+                </div>
+              </div>
+              <div style={styles.buttonLayout}>
+                <button style={styles.nextBtn} onClick={handleNextClick}>
+                  確認送出
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

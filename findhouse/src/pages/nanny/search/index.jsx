@@ -5,6 +5,7 @@ import Switch from "@mui/material/Switch";
 import Pagination from "../../../components/base/pagenation";
 import SearchBar from "../../../components/base/SearchBar";
 import useStore from "../../../lib/store";
+import Loading from "../../../components/base/Loading";
 const ApplicationPage = () => {
   const router = useRouter();
   const { setNannyInfo } = useStore();
@@ -127,7 +128,7 @@ const ApplicationPage = () => {
   return (
     <div style={styles.main}>
       {isLoading ? (
-        <div style={styles.spinner}>Loading...</div>
+        <Loading />
       ) : (
         <>
           <div style={styles.header}>
