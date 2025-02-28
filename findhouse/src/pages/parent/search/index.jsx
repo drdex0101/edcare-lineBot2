@@ -5,6 +5,7 @@ import Switch from "@mui/material/Switch";
 import Pagination from "../../../components/base/pagenation";
 import SearchBar from "../../../components/base/SearchBar";
 import useStore from "../../../lib/store";
+import Loading from "../../../components/base/loading";
 
 const ApplicationPage = () => {
   const router = useRouter();
@@ -30,6 +31,7 @@ const ApplicationPage = () => {
   const currentOrders = orderInfo.slice(indexOfFirstItem, indexOfLastItem);
   const [locationCount, setLocationCount] = useState(0); // 新增狀態以追蹤選擇的地區數量
   const [currentOrderCareType, setCurrentOrderCareType] = useState(null);
+  const { orderId,setOrderId } = useStore();
 
   const fetchNannyInfoList = async (page, pageSize = 5, keywords) => {
     setIsLoading(true); // Set loading state to true while fetching data
@@ -94,6 +96,7 @@ const ApplicationPage = () => {
       const data = await response.json();
       if (data) {
         setOrderInfo(data.orders);
+        setOrderId(data.orders[0].id);
         setItem(data.orders[0]);
         setCurrentOrderCareType(data.orders[0].choosetype);
         const imagePromises = data.orders.map(async (order) => {
@@ -167,10 +170,14 @@ const ApplicationPage = () => {
   const handleOrderPageChange = (page) => {
     console.log("page:", page);
     setOrderCurrentPage(page); // Update currentPage when a new page is selected
+    setOrderId(orderInfo[page-1].id);
+    console.log("orderId:", orderId);
   };
   const handlePageChange = (page) => {
     console.log("page:", page);
     setCurrentPage(page); // Update currentPage when a new page is selected
+    setOrderId(orderInfo[page-1].id);
+    console.log("orderId:", orderId);
   };
 
   const handleNextClick = (careType) => {
@@ -199,7 +206,7 @@ const ApplicationPage = () => {
       const currentIsShow = isShow === null ? true : isShow;
 
       const response = await fetch(
-        `/api/order/updateIsShow?isShow=${!currentIsShow}&id=${orderInfo[orderCurrentPage].id}`,
+        `/api/order/updateIsShow?isShow=${!currentIsShow}&id=${orderInfo[orderCurrentPage-1].id}`,
         {
           method: "PATCH",
           headers: {
@@ -221,7 +228,7 @@ const ApplicationPage = () => {
   return (
     <div style={styles.main}>
       {isLoading ? (
-        <div style={styles.spinner}>Loading...</div>
+        <Loading /> 
       ) : (
         <>
           <div style={styles.header}>
@@ -545,6 +552,7 @@ const styles = {
   paginationContainer: {
     display: "flex",
     justifyContent: "center",
+    zIndex: "2",
   },
   timeFont: {
     color: "var(---Surface-Black-25, #252525)",

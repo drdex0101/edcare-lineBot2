@@ -5,6 +5,8 @@ const useStore = create((set) => ({
   setItem: (newItem) => set({ item: newItem }),
   nannyInfo: null, // Add the new state
   setNannyInfo: (newNannyInfo) => set({ nannyInfo: newNannyInfo }), 
+  orderId: null,
+  setOrderId: (newOrderId) => set({ orderId: newOrderId }),
 }));
 
 export default useStore;

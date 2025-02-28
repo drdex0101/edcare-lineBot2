@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import RatingComponent from "../../components/nanny/rating";
 import "./css/profile.css";
 import Loading from "../../components/base/loading";
+
 export default function ProfilePage() {
   const { id } = useParams();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);

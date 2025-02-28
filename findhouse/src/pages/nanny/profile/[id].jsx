@@ -5,9 +5,11 @@ import { useEffect } from "react";
 import RatingComponent from "../../../components/nanny/rating";
 import "../css/profile.css";
 import Loading from "../../../components/base/loading";
+import useStore from "../../../lib/store";
 export default function ProfilePage() {
   const router = useRouter();
   const { id } = router.query;
+  const { orderId } = useStore();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [nannyInfo, setNannyInfo] = useState({});
   const [urls, setUrls] = useState([]);
@@ -70,6 +72,18 @@ export default function ProfilePage() {
 
   const handleBookingClick = () => {
     setIsModalOpen(true);
+  };
+
+  const handleBooking = async () => {
+    const response = await fetch(`/api/order/matchByParent`, {
+      method: 'PATCH',
+      body: JSON.stringify({ id, orderId }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    const data = await response.json();
+    setIsModalOpen(false);
   };
 
   const handleCloseModal = () => {
@@ -373,7 +387,9 @@ export default function ProfilePage() {
               <button className="cancelBtn" onClick={handleCloseModal}>
                 取消
               </button>
-              <button className="confirmBtn">確認</button>
+              <button className="confirmBtn" onClick={handleBooking}>
+                確認
+              </button>
             </div>
           </div>
         </div>
