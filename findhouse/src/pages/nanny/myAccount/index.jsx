@@ -3,7 +3,7 @@ import "./myAccount.css";
 import Pagination from "../../../components/base/pagenation";
 import OrderHistoryItem from "../../../components/base/OrderHistoryItem";
 import { useRouter } from "next/router";
-import Loading from "../../../components/base/loading";
+import Loading from "../../../components/base/Loading";
 export default function DetailsPage() {
   const router = useRouter();
   const [historyList, setHistoryList] = useState([]);

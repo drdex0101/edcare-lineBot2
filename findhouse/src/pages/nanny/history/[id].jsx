@@ -3,7 +3,7 @@
 import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
 import "./historyId.css";
-import Loading from "../../../components/base/loading";
+import Loading from "../../../components/base/Loading";
 export default function HistoryId() {
   const [orderInfo, setOrderInfo] = useState(null);
   const router = useRouter();

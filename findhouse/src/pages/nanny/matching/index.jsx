@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./matching.css";
 import Pagination from "../../../components/base/pagenation";
-import Loading from "../../../components/base/loading";
+import Loading from "../../../components/base/Loading";
 export default function HistoryPage() {
   const [totalCount, setTotalCount] = useState(0);
   const [historyList, setHistoryList] = useState([]);

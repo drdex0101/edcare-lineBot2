@@ -6,7 +6,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import Select from "@mui/material/Select";
 import CalendarWeekendPicker from "../../../components/base/CalendarWeekendPicker";
-import Loading from "../../../components/base/loading";
+import Loading from "../../../components/base/Loading";
 import { MenuItem, InputLabel, FormControl } from "@mui/material";
 
 const ApplicationPage = () => {
