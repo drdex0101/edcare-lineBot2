@@ -18,8 +18,8 @@ export default async function handler(req, res) {
 
       // 使用參數化查詢更新資料
       const query = `
-        UPDATE orderInfo
-        SET isShow = $1,
+        UPDATE orderinfo
+        SET isshow = $1,
             update_ts = NOW()
         WHERE id = $2 
         RETURNING *;

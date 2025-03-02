@@ -1,10 +1,13 @@
 import { Client } from 'pg';
+import { verifyToken } from '../../../utils/jwtUtils';
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
-    const { id } = req.query;
-    
-    if (!id) {
+    const token = req.cookies.authToken;
+    const payload = await verifyToken(token);
+    const userId = payload.userId;
+      
+    if (!userId) {
       return res.status(400).json({ 
         success: false, 
         message: 'ID parameter is required' 
@@ -23,14 +26,20 @@ export default async function handler(req, res) {
 
       const query = `
         SELECT 
-          account, line_id, cellphone, email, job, created_ts
+          member.account, 
+          member.line_id, 
+          member.cellphone, 
+          member.email, 
+          member.job, 
+          member.created_ts,
+          kyc_info.name
         FROM member
-        WHERE id = $1;
+        JOIN kyc_info ON member.kyc_id::bigint = kyc_info.id::bigint
+        WHERE member.line_id = $1;
       `;
       
       // Convert id to integer if it's a numeric string
-      const memberId = parseInt(id, 10);
-      const result = await client.query(query, [memberId]);
+      const result = await client.query(query, [userId]);
 
       console.log('Nannies retrieved successfully:', result.rows);
       return res.status(200).json({ 

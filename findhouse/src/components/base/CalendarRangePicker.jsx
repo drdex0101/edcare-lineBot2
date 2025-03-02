@@ -31,7 +31,10 @@ export default function CustomCalendar({ startDate, endDate }) {
     return days;
   };
 
-  const days = getDaysInMonth(currentDate.getFullYear(), currentDate.getMonth());
+  const days = getDaysInMonth(
+    currentDate.getFullYear(),
+    currentDate.getMonth(),
+  );
   useEffect(() => {
     // 只有當日期真的改變時才更新 highlightedDates
     if (parsedStartDate instanceof Date && parsedEndDate instanceof Date) {
@@ -42,17 +45,21 @@ export default function CustomCalendar({ startDate, endDate }) {
 
       // 如果日期範圍與當前月份有重疊才進行更新
       if (parsedStartDate <= endTime && parsedEndDate >= startTime) {
-        const rangeStart = new Date(Math.max(parsedStartDate.getTime(), startTime.getTime()));
-        const rangeEnd = new Date(Math.min(parsedEndDate.getTime(), endTime.getTime()));
-        
+        const rangeStart = new Date(
+          Math.max(parsedStartDate.getTime(), startTime.getTime()),
+        );
+        const rangeEnd = new Date(
+          Math.min(parsedEndDate.getTime(), endTime.getTime()),
+        );
+
         const range = [];
         const startDay = rangeStart.getDate();
         const endDay = rangeEnd.getDate();
-        
+
         for (let i = startDay; i <= endDay; i++) {
           range.push(i);
         }
-        
+
         // 比較新舊值，只有在真正需要更新時才設置新的狀態
         if (JSON.stringify(range) !== JSON.stringify(highlightedDates)) {
           setHighlightedDates(range);
@@ -70,7 +77,7 @@ export default function CustomCalendar({ startDate, endDate }) {
     const newDate = new Date(
       currentDate.getFullYear(),
       currentDate.getMonth() + direction,
-      1
+      1,
     );
     setCurrentDate(newDate);
   };
@@ -83,9 +90,9 @@ export default function CustomCalendar({ startDate, endDate }) {
           &lt;
         </button>
         <span style={styles.monthTitle}>
-          {currentDate.toLocaleString('zh-TW', {
-            year: 'numeric',
-            month: 'long',
+          {currentDate.toLocaleString("zh-TW", {
+            year: "numeric",
+            month: "long",
           })}
         </span>
         <button style={styles.navButton} onClick={() => handleMonthChange(1)}>
@@ -180,6 +187,7 @@ const styles = {
     backgroundColor: "#e0f7fa",
     color: "#000",
     fontWeight: "bold",
-    background: 'var(---Button-01, linear-gradient(81deg, #FBDBD6 10.58%, #D9DFF0 75.92%))'
+    background:
+      "var(---Button-01, linear-gradient(81deg, #FBDBD6 10.58%, #D9DFF0 75.92%))",
   },
 };

@@ -1,0 +1,206 @@
+.history-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 0 25px;
+}
+
+.history-header {
+    display: flex;
+    height: 50px;
+    padding: 8px 25px;
+    justify-content: space-between;
+    align-items: center;
+    align-self: stretch;
+}
+
+.history-body-header{
+    display: flex;
+    width: 100%;
+    height: 97px;
+    padding: 30px 124px;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background-color: #FFFF;
+    border-radius: 0px 0 30px 0;
+}
+
+.history-body-header-title{
+    color: var(---OutLine-OnSurfaceVariant, #504B49);
+    text-align: center;
+    /* Line/bold/24pt */
+    font-family: "LINE Seed JP_TTF";
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    width: 100px;
+}
+
+.order-info-layout{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.about-baby-layout {
+    display: flex;
+    width: 350px;
+    padding: 30px 20px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: radial-gradient(146.13% 118.42% at 50% -15.5%, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.00) 99.59%), linear-gradient(127deg, rgba(250, 250, 250, 0.50) 10.47%, rgba(255, 255, 255, 0.50) 88.86%);
+    box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(10px);
+}
+
+.sub-title-font{
+    color: var(---OutLine-OnSurfaceVariant, #504B49);
+    text-align: center;
+    font-family: "LINE Seed JP_TTF";
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.about-baby-img-layout{
+    display: flex;
+    height: 181px;
+    flex-direction: column;
+    align-items: center;
+    align-self: stretch;
+    gap: 25px;
+    width: 100%;
+    color: var(---Surface-Black-25, #252525);
+    text-align: center;
+    /* Line/bold/18pt */
+    font-family: "LINE Seed JP_TTF";
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.baby-name-font {
+    color: var(---Surface-Black-25, #252525);
+    font-family: "LINE Seed JP_TTF";
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.about-baby-img-background{
+    display: flex;
+    width: 113.056px;
+    height: 113.056px;
+    padding: 7.708px;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    border-radius: 77.083px;
+    background: var(---Secondary-Blue, #BCE8F7);
+}
+
+.title-font {
+    color: var(---Surface-Black-25, #252525);
+    text-align: left;
+    align-self: stretch;
+    font-family: "LINE Seed JP_TTF";
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.status-layout {
+    display: flex;
+    width: 350px;
+    padding: 30px 20px;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: radial-gradient(146.13% 118.42% at 50% -15.5%, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.00) 99.59%), linear-gradient(127deg, rgba(250, 250, 250, 0.50) 10.47%, rgba(255, 255, 255, 0.50) 88.86%);
+    box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(10px);
+}
+
+.status-process-layout{
+    display: flex;
+    width: 272px;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+}
+
+.status-process-on{
+    height: 6px;
+    align-self: stretch;
+    border-radius: 2px;
+    background: var(---Primary-Primary, #E3838E);
+}
+
+.status-process-off{
+    height: 6px;
+    align-self: stretch;
+    border-radius: 2px;
+    background: var(---SurfaceContainer-High, #F5E5E5);
+}
+
+.status-process-font-on{
+    color: var(---Surface-Black-25, #252525);
+    /* Line/medium/11pt */
+    font-family: "LINE Seed JP_TTF";
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.status-process-font-off{
+    color: var(---SurfaceContainer-High, #F5E5E5);
+    /* Line/medium/11pt */
+    font-family: "LINE Seed JP_TTF";
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.about-nanny {
+    display: flex;
+    width: 350px;
+    padding: 30px 20px;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: radial-gradient(146.13% 118.42% at 50% -15.5%, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.00) 99.59%), linear-gradient(127deg, rgba(250, 250, 250, 0.50) 10.47%, rgba(255, 255, 255, 0.50) 88.86%);
+    box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(10px);
+}
+
+.about-nanny-font-layout{
+    display: flex;
+    width: 100%;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 20px;
+}
+
+
+

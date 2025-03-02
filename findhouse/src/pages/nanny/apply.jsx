@@ -1,326 +1,367 @@
-import React from 'react';
-import { useRouter } from 'next/router';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import axios from 'axios';
-import { useDispatch } from 'react-redux';
-import { setMemberId } from '../../features/member/memberSlice';
+import React from "react";
+import { useRouter } from "next/router";
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { setMemberId } from "../../features/member/memberSlice";
+import { useState } from "react";
+import Loading from "../../components/base/Loading";
 
 const ApplicationPage = () => {
   const router = useRouter();
   const dispatch = useDispatch(); // Redux 的 dispatch 函数
 
   const handleLastClick = () => {
-    router.push('/nanny/'); // 替换 '/next-page' 为你想要跳转的路径
+    router.back(); // 替换 '/next-page' 为你想要跳转的路径
   };
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleNextClick = async () => {
     // Check if all fields are filled
-    const account = document.getElementById('account').value;
-    const phoneNumber = document.getElementById('cellphone').value;
-    const email = document.getElementById('email').value;
+    const account = document.getElementById("account").value;
+    const phoneNumber = document.getElementById("cellphone").value;
+    const email = document.getElementById("email").value;
 
     if (!account || !phoneNumber || !email) {
-      alert('請填寫所有必填欄位。');
+      alert("請填寫所有必填欄位。");
       return; // 終止函數執行
     }
-    
+
     const memberData = {
       account: account,
       phoneNumber: phoneNumber,
       email: email,
-      job: "保母"
+      job: "保母",
     };
 
     // 驗證手機號碼格式（假設為台灣的手機號碼格式）
     const phonePattern = /^09\d{8}$/;
     if (!phonePattern.test(memberData.phoneNumber)) {
-      console.error('Invalid phone number format:', memberData.phoneNumber);
-      alert('請輸入有效的手機號碼（例如：0912345678）。');
+      console.error("Invalid phone number format:", memberData.phoneNumber);
+      alert("請輸入有效的手機號碼（例如：0912345678）。");
       return; // 終止函數執行
     }
 
     // 驗證電子郵件格式
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(memberData.email)) {
-      console.error('Invalid email format:', memberData.email);
-      alert('請輸入有效的電子郵件地址。');
+      console.error("Invalid email format:", memberData.email);
+      alert("請輸入有效的電子郵件地址。");
       return; // 終止函數執行
     }
 
     try {
-      const response = await axios.post('/api/member/createMember', memberData);
+      setIsLoading(true);
+      const response = await axios.post("/api/member/createMember", memberData);
       const memberId = response.data.member.id;
-      dispatch(setMemberId(memberId)); 
-      router.push('/nanny/upload');
+      dispatch(setMemberId(memberId));
+      router.push("/nanny/upload");
     } catch (error) {
-      console.error('Error creating member:', error);
+      console.error("Error creating member:", error);
     }
   };
 
   return (
-    <div style={styles.main}>  
-        <div style={styles.header}> 
-            <span style={styles.headerFont}>
-              申請成為保母
-            </span>
-            <button onClick={handleLastClick} style={styles.lastButton}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <g clip-path="url(#clip0_45_10396)">
-                  <path d="M7.77223 12.9916L18.7822 12.9916C19.3322 12.9916 19.7822 12.5416 19.7822 11.9916C19.7822 11.4416 19.3322 10.9916 18.7822 10.9916L7.77223 10.9916L7.77223 9.20162C7.77223 8.75162 7.23223 8.53162 6.92223 8.85162L4.14223 11.6416C3.95223 11.8416 3.95223 12.1516 4.14223 12.3516L6.92223 15.1416C7.23223 15.4616 7.77223 15.2316 7.77223 14.7916L7.77223 12.9916V12.9916Z" fill="#074C5F"/>
-                </g>
-                <defs>
-                  <clipPath id="clip0_45_10396">
-                    <rect width="24" height="24" fill="white"/>
-                  </clipPath>
-                </defs>
-              </svg>
-            </button>
+    <div style={styles.main}>
+      {isLoading && (
+        <div
+          style={{
+            position: "fixed", // 確保 Loading 覆蓋整個畫面
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(255, 255, 255, 0.8)", // 透明度
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999, // 確保 Loading 在最上層
+          }}
+        >
+          <Loading />
         </div>
-        <div style={{ backgroundColor: 'white', width: '100%',display: 'flex',justifyContent:'center', alignItems: 'center' }}>
+      )}
+
+      <>
+        <div style={styles.header}>
+          <span style={styles.headerFont}>申請成為保母</span>
+          <button onClick={handleLastClick} style={styles.lastButton}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <g clip-path="url(#clip0_45_10396)">
+                <path
+                  d="M7.77223 12.9916L18.7822 12.9916C19.3322 12.9916 19.7822 12.5416 19.7822 11.9916C19.7822 11.4416 19.3322 10.9916 18.7822 10.9916L7.77223 10.9916L7.77223 9.20162C7.77223 8.75162 7.23223 8.53162 6.92223 8.85162L4.14223 11.6416C3.95223 11.8416 3.95223 12.1516 4.14223 12.3516L6.92223 15.1416C7.23223 15.4616 7.77223 15.2316 7.77223 14.7916L7.77223 12.9916V12.9916Z"
+                  fill="#074C5F"
+                />
+              </g>
+              <defs>
+                <clipPath id="clip0_45_10396">
+                  <rect width="24" height="24" fill="white" />
+                </clipPath>
+              </defs>
+            </svg>
+          </button>
+        </div>
+        <div
+          style={{
+            backgroundColor: "white",
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           <div style={styles.contentLayout}>
-              <div style={styles.rollerLayout}>
-                <div style={styles.roller}></div>
-                <div style={styles.rollerActive}></div>
-                <div style={styles.roller}></div>
-                <div style={styles.roller}></div>
-                <div style={styles.roller}></div>
-              </div>
-              <div style={styles.subTitleLayout}>
-                <span style={styles.subTitle}>會員資料填寫</span>
-              </div>
-              <Box
-                  component="form"
-                  sx={{
-                    display: 'flex',
-                    width: '320px',
-                    padding: '18.5px 18px 19.5px 17px',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    borderRadius: '20px',
-                    gap: '20px'
-                  }}
-                  noValidate
-                  autoComplete="off"
-                >
-                  <TextField
-                    id="account"
-                    label="帳號名稱"
-                    placeholder="a123456"
-                    variant="outlined"
-                    InputProps={{
-                      sx: {
-                        padding: '0px 16px',
-                        borderRadius: '8px',
-                        backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
-                      },
-                    }}
-                    sx={{
-                      alignSelf: 'stretch',
-                      borderRadius: '8px',
-                      '& .MuiOutlinedInput-root': {
-                        '& fieldset': {
-                          borderColor: 'var(--OutLine-OutLine, #78726D)',
-                        },
-                        '&:hover fieldset': {
-                          borderColor: '#E3838E',
-                        },
-                        '&.Mui-focused fieldset': {
-                          borderColor: '#E3838E',
-                        },
-                      },
-                    }}
-                  />
-
-                  <TextField
-                    id="cellphone"
-                    label="常用電話"
-                    variant="outlined"
-                    placeholder="0912345678"
-                    InputProps={{
-                      sx: {
-                        padding: '0px 16px',
-                        borderRadius: '8px',
-                        backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
-                      },
-                    }}
-                    sx={{
-                      alignSelf: 'stretch',
-                      borderRadius: '8px',
-                      '& .MuiOutlinedInput-root': {
-                        '& fieldset': {
-                          borderColor: 'var(--OutLine-OutLine, #78726D)',
-                        },
-                        '&:hover fieldset': {
-                          borderColor: '#E3838E',
-                        },
-                        '&.Mui-focused fieldset': {
-                          borderColor: '#E3838E',
-                        },
-                      },
-                    }}
-                  />
-
-                  <TextField
-                    id="email"
-                    label="聯絡信箱"
-                    variant="outlined"
-                    placeholder="apple@gmail.com"
-                    InputProps={{
-                      sx: {
-                        padding: '0px 16px',
-                        borderRadius: '8px',
-                        backgroundColor: 'var(--SurfaceContainer-Lowest, #FFF)'
-                      },
-                    }}
-                    sx={{
-                      alignSelf: 'stretch',
-                      borderRadius: '8px',
-                      '& .MuiOutlinedInput-root': {
-                        '& fieldset': {
-                          borderColor: 'var(--OutLine-OutLine, #78726D)',
-                        },
-                        '&:hover fieldset': {
-                          borderColor: '#E3838E',
-                        },
-                        '&.Mui-focused fieldset': {
-                          borderColor: '#E3838E',
-                        },
-                      },
-                    }}
-                  />
-                </Box>
-
-              <div style={styles.buttonLayout}>
-                <button style={styles.nextBtn} onClick={handleNextClick}>
-                  下一步
-                </button>
-              </div>
+            <div style={styles.rollerLayout}>
+              <div style={styles.roller}></div>
+              <div style={styles.rollerActive}></div>
+              <div style={styles.roller}></div>
+              <div style={styles.roller}></div>
+              <div style={styles.roller}></div>
             </div>
+            <div style={styles.subTitleLayout}>
+              <span style={styles.subTitle}>會員資料填寫</span>
+            </div>
+            <Box
+              component="form"
+              sx={{
+                display: "flex",
+                width: "320px",
+                padding: "18.5px 18px 19.5px 17px",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                borderRadius: "20px",
+                gap: "20px",
+              }}
+              noValidate
+              autoComplete="off"
+            >
+              <TextField
+                id="account"
+                label="帳號名稱"
+                placeholder="a123456"
+                variant="outlined"
+                InputProps={{
+                  sx: {
+                    padding: "0px 16px",
+                    borderRadius: "8px",
+                    backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
+                  },
+                }}
+                sx={{
+                  alignSelf: "stretch",
+                  borderRadius: "8px",
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: "var(--OutLine-OutLine, #78726D)",
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "#E3838E",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#E3838E",
+                    },
+                  },
+                }}
+              />
+
+              <TextField
+                id="cellphone"
+                label="常用電話"
+                variant="outlined"
+                placeholder="0912345678"
+                InputProps={{
+                  sx: {
+                    padding: "0px 16px",
+                    borderRadius: "8px",
+                    backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
+                  },
+                }}
+                sx={{
+                  alignSelf: "stretch",
+                  borderRadius: "8px",
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: "var(--OutLine-OutLine, #78726D)",
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "#E3838E",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#E3838E",
+                    },
+                  },
+                }}
+              />
+
+              <TextField
+                id="email"
+                label="聯絡信箱"
+                variant="outlined"
+                placeholder="apple@gmail.com"
+                InputProps={{
+                  sx: {
+                    padding: "0px 16px",
+                    borderRadius: "8px",
+                    backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
+                  },
+                }}
+                sx={{
+                  alignSelf: "stretch",
+                  borderRadius: "8px",
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: "var(--OutLine-OutLine, #78726D)",
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "#E3838E",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#E3838E",
+                    },
+                  },
+                }}
+              />
+            </Box>
+
+            <div style={styles.buttonLayout}>
+              <button style={styles.nextBtn} onClick={handleNextClick}>
+                下一步
+              </button>
+            </div>
+          </div>
         </div>
+      </>
     </div>
   );
 };
 
 const styles = {
   buttonLayout: {
-    display:'flex',
-    flexDirection:'column',
-    gap:'10px'
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px",
   },
   imgLayout: {
-    height: '180px',
-    alignSelf: 'stretch',
-    boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.25)'
+    height: "180px",
+    alignSelf: "stretch",
+    boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
   },
   inputField: {
-    display: 'flex',
-    padding: '0px 16px',
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    gap: '12px',
-    alignSelf: 'stretch',
-    borderRadius: '8px',
-    border: '1px solid var(---OutLine-OutLine, #78726D)',
-    background: 'var(---SurfaceContainer-Lowest, #FFF)'
+    display: "flex",
+    padding: "0px 16px",
+    flexDirection: "column",
+    alignItems: "flex-start",
+    gap: "12px",
+    alignSelf: "stretch",
+    borderRadius: "8px",
+    border: "1px solid var(---OutLine-OutLine, #78726D)",
+    background: "var(---SurfaceContainer-Lowest, #FFF)",
   },
   lastButton: {
-    border:'none',
-    backgroundColor:'#FFF'
+    border: "none",
+    backgroundColor: "#FFF",
   },
-  buttonLayout:{
-    width:'100%',
-    display:'flex',
-    justifyContent:'flex-end',
-    marginTop:'12px'
+  buttonLayout: {
+    width: "100%",
+    display: "flex",
+    justifyContent: "flex-end",
+    marginTop: "12px",
   },
-  subTitleLayout:{
-    width:'100%',
-    display:'flex',
-    justifyContent:'flex-start',
-    backgroundColor: '#f8ecec',
+  subTitleLayout: {
+    width: "100%",
+    display: "flex",
+    justifyContent: "flex-start",
+    backgroundColor: "#f8ecec",
   },
   main: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    height: '100vh', // 占满整个视口高度
-    backgroundColor: '#f8ecec',
-    marginBottom:'28px'
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    height: "100vh", // 占满整个视口高度
+    backgroundColor: "#f8ecec",
+    marginBottom: "28px",
   },
   header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%',
-    maxWidth: '600px',
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    maxWidth: "600px",
     // marginBottom: '20px',
-    padding: '10px',
-    backgroundColor: '#fff',
-    borderRadius: '0px 0px 40px 0px', // 左上、右上、右下、左下的圓角
+    padding: "10px",
+    backgroundColor: "#fff",
+    borderRadius: "0px 0px 40px 0px", // 左上、右上、右下、左下的圓角
   },
   headerFont: {
-    fontSize: '24px',
-    fontWeight: 'bold',
-    color:'#E3838E',
+    fontSize: "24px",
+    fontWeight: "bold",
+    color: "#E3838E",
   },
   contentLayout: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    width: '100%',
-    maxWidth: '600px',
-    backgroundColor: '#f8ecec',
-    paddingLeft:'35px',
-    paddingRight:'35px',
-    paddingTop: '20px',
-    borderRadius: '40px 0px 0px 0px', // 左上、右上、右下、左下的圓角
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    width: "100%",
+    maxWidth: "600px",
+    backgroundColor: "#f8ecec",
+    paddingLeft: "35px",
+    paddingRight: "35px",
+    paddingTop: "20px",
+    borderRadius: "40px 0px 0px 0px", // 左上、右上、右下、左下的圓角
   },
   rollerLayout: {
-    display: 'flex',
-    justifyContent: 'center',
-    marginBottom: '20px',
+    display: "flex",
+    justifyContent: "center",
+    marginBottom: "20px",
   },
   roller: {
-    width: '42px',
-    height: '6px',
-    borderRadius: '2px',
-    backgroundColor: '#FFF',
-    margin: '0 5px',
+    width: "42px",
+    height: "6px",
+    borderRadius: "2px",
+    backgroundColor: "#FFF",
+    margin: "0 5px",
   },
   rollerActive: {
-    width: '42px',
-    height: '6px',
-    borderRadius: '2px',
-    backgroundColor: 'var(---Primary-Primary, #E3838E)',
-    margin: '0 5px',
+    width: "42px",
+    height: "6px",
+    borderRadius: "2px",
+    backgroundColor: "var(---Primary-Primary, #E3838E)",
+    margin: "0 5px",
   },
   subTitle: {
-    fontSize: '18px',
-    fontWeight: 'bold',
-    marginTop: '15px',
-    marginBottom: '15px',
-    color:'#E3838E',
+    fontSize: "18px",
+    fontWeight: "bold",
+    marginTop: "15px",
+    marginBottom: "15px",
+    color: "#E3838E",
   },
   lawLayout: {
-    display: 'flex',
-    width: '320px',
-    padding: '18.5px 18px 19.5px 17px',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: '20px',
-    border: '2px solid var(---Button-01, #FBDBD6)',
-    gap:'20px'
+    display: "flex",
+    width: "320px",
+    padding: "18.5px 18px 19.5px 17px",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: "20px",
+    border: "2px solid var(---Button-01, #FBDBD6)",
+    gap: "20px",
   },
   nextBtn: {
-    padding: '10px 20px',
-    backgroundColor: 'var(---Primary-Primary, #E3838E)',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer',
+    padding: "10px 20px",
+    backgroundColor: "var(---Primary-Primary, #E3838E)",
+    color: "#fff",
+    border: "none",
+    borderRadius: "5px",
+    cursor: "pointer",
   },
 };
 

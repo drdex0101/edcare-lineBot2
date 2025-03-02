@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
-import { useRouter } from 'next/router';
+import React, { useState } from "react";
+import { useRouter } from "next/router";
 
 export default function UploadPage() {
   const router = useRouter(); // To handle navigation to the next step
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [careType, setCareType] = useState('臨時托育');
-  const [center, setCenter] = useState('露梅托私立童心托嬰中心');
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [careType, setCareType] = useState("臨時托育");
+  const [center, setCenter] = useState("露梅托私立童心托嬰中心");
 
   // Function to handle form submission and navigate to next step
   const handleNextStep = (e) => {
     e.preventDefault();
-    router.push('/parent/confirmation'); // Update with the next page's route
+    router.push("/parent/confirmation"); // Update with the next page's route
   };
 
   return (
