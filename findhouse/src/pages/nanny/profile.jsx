@@ -3,7 +3,7 @@ import ServiceSchedule from "../../components/base/ServiceSchedule";
 import { useParams } from "react-router-dom";
 import RatingComponent from "../../components/nanny/rating";
 import "./css/profile.css";
-import Loading from "../../components/base/loading";
+import Loading from "../../components/base/Loading";
 
 export default function ProfilePage() {
   const { id } = useParams();

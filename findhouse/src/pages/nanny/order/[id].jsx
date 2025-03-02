@@ -4,7 +4,7 @@ import CalendarRangePicker from "../../../components/base/CalendarRangePicker";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import "../css/profile.css";
-import Loading from "../../../components/base/loading";
+import Loading from "../../../components/base/Loading";
 export default function ProfilePage() {
   const router = useRouter();
   const { id } = router.query;

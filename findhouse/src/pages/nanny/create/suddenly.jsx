@@ -6,7 +6,7 @@ import CalendarRangePicker from "../../../components/base/CalendarRangePicker";
 import useStore from "../../../lib/store";
 import { useEffect } from "react";
 import { useState } from "react";
-import Loading from "../../../components/base/loading";
+import Loading from "../../../components/base/Loading";
 const ApplicationPage = () => {
   const router = useRouter();
   const nannyInfo = useStore((state) => state.nannyInfo);

@@ -5,7 +5,7 @@ import OrderPersonalItem from "../../../components/base/OrderPersonalItem";
 import Pagination from "../../../components/base/pagenation";
 import { useRouter } from "next/router";
 import SettingForParent from "../../../components/base/SettingForParent";
-import Loading from "../../../components/base/loading";
+import Loading from "../../../components/base/Loading";
 export default function OrderPage() {
   const router = useRouter();
   const [keywords, setKeywords] = useState("");
