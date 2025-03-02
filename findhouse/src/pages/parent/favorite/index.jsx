@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import Pagination from "../../../components/base/pagenation";
 import SearchBarSortOnly from "../../../components/base/SearchBarSortOnly";
 import "./favorite.css";
-import LoadingAnimation from "../../../components/base/loading";
+import LoadingAnimation from "../../../components/base/Loading";
 const ApplicationPage = () => {
   const router = useRouter();
   const [nannyInfo, setNannyInfo] = useState([]);

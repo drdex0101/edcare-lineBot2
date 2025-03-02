@@ -10,7 +10,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import Cookies from "js-cookie";
-import Loading from "../../components/base/loading";
+import Loading from "../../components/base/Loading";
 
 const ApplicationPage = () => {
   const router = useRouter();

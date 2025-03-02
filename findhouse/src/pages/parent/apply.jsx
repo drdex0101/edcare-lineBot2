@@ -5,7 +5,7 @@ import TextField from "@mui/material/TextField";
 import { useDispatch } from "react-redux";
 import { setMemberId } from "../../features/member/memberSlice";
 import axios from "axios";
-import Loading from "../../components/base/loading";
+import Loading from "../../components/base/Loading";
 import { useState } from "react";
 const ApplicationPage = () => {
   const router = useRouter();
