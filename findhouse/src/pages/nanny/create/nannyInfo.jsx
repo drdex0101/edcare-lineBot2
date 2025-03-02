@@ -10,7 +10,6 @@ import useStore from "../../../lib/store";
 import { useEffect } from "react";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import Loading from "../../../components/base/loading";
-import { useState } from "react";
 
 const ApplicationPage = () => {
   const router = useRouter();
@@ -37,6 +36,7 @@ const ApplicationPage = () => {
   const [introduction, setIntroduction] = useState("");
   const [selectedAddress, setSelectedAddress] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [response, setResponse] = useState(null);
 
   useEffect(() => {
     if (nannyInfo?.service) {
@@ -74,28 +74,28 @@ const ApplicationPage = () => {
         };
         fetchImageUrls();
       }
-      setIsLoading(false);
     }
+    setIsLoading(false);
   }, [nannyInfo]);
 
   const handleNextClick = async () => {
     const nannyData = {
       memberId: nannyInfo ? nannyInfo.memberId : "",
-      experienment: nannyInfo ? nannyInfo.experienment : "",
-      age: nannyInfo ? nannyInfo.age : "",
-      kidCount: nannyInfo ? nannyInfo.kidcount : "",
+      experienment: nannyInfo ? nannyInfo.experienment : null,
+      age: nannyInfo ? nannyInfo.age : null,
+      kidCount: nannyInfo ? nannyInfo.kidcount : null,
       way: localStorage.getItem("way"),
       scenario: selectedCareType,
       environmentPic: uploadedImages,
       serviceLocation:
-        selectedCareType === "在宅托育" ? address : selectedAddress,
+      selectedCareType === "在宅托育" ? address : selectedAddress,
       service: Object.keys(switchStates).filter((key) => switchStates[key]),
       score: nannyInfo ? nannyInfo.score : "",
       isShow: true,
       location: address,
-      kycId: nannyInfo ? nannyInfo.kycId : "",
+      kycId: nannyInfo ? nannyInfo.kycId : null,
       introduction: introduction,
-      nannyId: nannyInfo ? nannyInfo.id : "",
+      nannyId: nannyInfo ? nannyInfo.nanny_id : null,
     };
 
     // 必填欄位列表
@@ -117,7 +117,6 @@ const ApplicationPage = () => {
 
     try {
       setIsLoading(true);
-      const response = "";
       if (nannyInfo) {
         const response = await fetch("/api/nanny/updateNannyProfile", {
           method: "PATCH",
@@ -126,6 +125,14 @@ const ApplicationPage = () => {
           },
           body: JSON.stringify(nannyData),
         });
+
+        if (response.ok) {
+          const data = await response.json();
+          setResponse(data);
+          console.log(data);
+        } else {
+          console.error('请求失败，状态码：', response.status);
+        }
       } else {
         const response = await fetch("/api/nanny/createNanny", {
           method: "POST",
@@ -134,23 +141,22 @@ const ApplicationPage = () => {
           },
           body: JSON.stringify(nannyData),
         });
-      }
 
-      if (!response.ok) {
-        throw new Error("Failed to submit nanny data");
-      }
-      const data = await response.json();
-      console.log("API response data:", data); // 调试日志
-
-      if (!data.nanny || !data.nanny.id) {
-        throw new Error("Nanny ID is missing in the response");
+        if (response.ok) {
+          let data = await response.json();
+          setResponse(data);
+          console.log(data);
+        } else {
+          console.error("請求失敗：", response.status);
+        }
       }
 
       if (localStorage.getItem("way") === "suddenly") {
-        await createSuddenlyRecord(data.nanny.id, selectedCareType, address);
+        await createSuddenlyRecord(response.nanny.id, selectedCareType, address);
       } else if (localStorage.getItem("way") === "longTerm") {
-        await createLongTermRecord(data.nanny.id);
+        await createLongTermRecord(response.nanny.id);
       }
+      setIsLoading(false);
       router.push("/nanny/finish");
     } catch (error) {
       console.error("Error submitting nanny data:", error);

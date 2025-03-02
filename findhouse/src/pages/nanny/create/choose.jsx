@@ -1,18 +1,30 @@
 import React from "react";
 import { useRouter } from "next/router";
+import useStore from "../../../lib/store";
 const ApplicationPage = () => {
   const router = useRouter();
+  const nannyInfo = useStore((state) => state.nannyInfo);
 
   const handleNextClick = () => {
-    router.push("/nanny/create/suddenly"); // 替换 '/next-page' 为你想要跳转的路径
+    if (nannyInfo) {
+      nannyInfo.way = "suddenly";
+      router.push("/nanny/create/suddenly");
+    } else {
+      router.push("/nanny/create/suddenly"); 
+    }
   };
 
   const handleLastClick = () => {
-    router.back(); // 替换 '/next-page' 为你想要跳转的路径
+    router.back(); 
   };
 
   const handleLongClick = () => {
-    router.push("/nanny/create/long"); // 替换 '/next-page' 为你想要跳转的路径
+    if (nannyInfo) {
+      nannyInfo.way = "longTerm";
+      router.push("/nanny/create/long");
+    } else {
+      router.push("/nanny/create/long"); 
+    }
   };
 
   return (

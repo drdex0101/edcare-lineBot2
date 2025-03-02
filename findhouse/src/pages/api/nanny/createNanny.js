@@ -4,7 +4,7 @@ export default async function handler(req, res) {
   if (req.method === 'POST') {
     console.log('req.body', req.body);
     const { 
-      account,          // 用作 memberId
+      memberId,
       experienment,
       age,
       kidCount,
@@ -48,7 +48,7 @@ export default async function handler(req, res) {
       `;
       console.log(query);
       const values = [
-        '',        // memberId
+        memberId,       // memberId
         experienment,
         age,
         kidCount,

@@ -49,7 +49,6 @@ const ApplicationPage = () => {
       communicateAddress: "通訊地址",
       identityFrontUploadId: "身分證正面照片",
       identityBackUploadId: "身分證反面照片",
-      iconUploadId: "頭像照片",
     };
 
     const missingFields = Object.entries(requiredFields)

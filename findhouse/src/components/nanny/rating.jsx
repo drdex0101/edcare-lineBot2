@@ -5,7 +5,7 @@ const RatingComponent = ({ score, size = "medium" }) => {
   return (
     <Rating
       name="read-only"
-      value={score}
+      value={parseFloat(score)}
       precision={0.1}
       readOnly
       size={size}

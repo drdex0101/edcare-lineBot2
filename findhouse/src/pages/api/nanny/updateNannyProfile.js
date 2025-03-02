@@ -4,7 +4,7 @@ export default async function handler(req, res) {
   if (req.method === 'PATCH') {
     console.log('req.body', req.body);
     const { 
-      account,          // 用作 memberId
+      memberId,          // 用作 memberId
       experienment,
       age,
       kidCount,
@@ -55,7 +55,7 @@ export default async function handler(req, res) {
         RETURNING *;
       `;
       const values = [
-        '',        // memberId
+        memberId,        // memberId
         experienment,
         age,
         kidCount,
@@ -73,8 +73,8 @@ export default async function handler(req, res) {
         nannyId
       ];
       const result = await client.query(query, values);
-
-      console.log('Nanny created successfully:', result.rows[0]);
+      console.log('values', values);
+      console.log('Nanny updated successfully:', result.rows[0]);
       return res.status(201).json({ success: true, nanny: result.rows[0] });
     } catch (error) {
       console.error('Database error:', error);

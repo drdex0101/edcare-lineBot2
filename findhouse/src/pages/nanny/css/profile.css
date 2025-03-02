@@ -353,6 +353,23 @@ background: #FFF;
     border-radius: 10px;
   }
 
+  .imageCounter {
+    display: inline-flex;
+    padding: 4px 11px 3.956px 11px;
+    justify-content: center;
+    align-items: flex-end;
+    border-radius: 4px;
+    background: var(---Button-01, linear-gradient(81deg, #FBDBD6 10.58%, #D9DFF0 75.92%));
+    color: var(---Outline-OnSurface, #252525);
+    text-align: center;
+    /* Line/medium/8pt */
+    font-family: "LINE Seed JP_TTF";
+    font-size: 8px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
+  
   .iconNav {
     display: flex;
     height: 108px;
@@ -394,7 +411,16 @@ background: #FFF;
   .fontSpan {
     color: var(---Primary-Primary, #E3838E);
     text-align: center;
-    /* Line/medium/8pt */
+    font-family: "LINE Seed JP_TTF";
+    font-size: 8px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
+
+  .fontSpan-default {
+    color: var(---Outline-OnSurface, #F2F2F2);
+    text-align: center;
     font-family: "LINE Seed JP_TTF";
     font-size: 8px;
     font-style: normal;
