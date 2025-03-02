@@ -5,7 +5,7 @@ import SearchBarSortOnly from "../../../components/base/SearchBarSortOnly";
 import OrderHistoryItem from "../../../components/base/OrderHistoryItem";
 import SettingForParent from "../../../components/base/SettingForParent";
 import { useRouter } from "next/router";
-import Loading from "../../../components/base/loading";
+import Loading from "../../../components/base/Loading";
 export default function HistoryPage() {
   const [keywords, setKeywords] = useState("");
   const [page, setPage] = useState(1);

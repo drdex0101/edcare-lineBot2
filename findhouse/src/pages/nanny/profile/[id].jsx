@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import RatingComponent from "../../../components/nanny/rating";
 import "../css/profile.css";
-import Loading from "../../../components/base/loading";
+import Loading from "../../../components/base/Loading";
 import useStore from "../../../lib/store";
 export default function ProfilePage() {
   const router = useRouter();

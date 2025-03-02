@@ -6,7 +6,7 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setMemberId } from "../../features/member/memberSlice";
 import { useState } from "react";
-import Loading from "../../components/base/loading";
+import Loading from "../../components/base/Loading";
 
 const ApplicationPage = () => {
   const router = useRouter();

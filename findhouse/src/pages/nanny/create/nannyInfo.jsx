@@ -9,7 +9,7 @@ import { useState } from "react";
 import useStore from "../../../lib/store";
 import { useEffect } from "react";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
-import Loading from "../../../components/base/loading";
+import Loading from "../../../components/base/Loading";
 
 const ApplicationPage = () => {
   const router = useRouter();

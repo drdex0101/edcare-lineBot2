@@ -4,7 +4,7 @@ import Pagination from "../../../components/base/pagenation";
 import SearchBarSortOnly from "../../../components/base/SearchBarSortOnly";
 import "./favorite.css";
 import SettingForNanny from "../../../components/base/SettingForNanny";
-import Loading from "../../../components/base/loading";
+import Loading from "../../../components/base/Loading";
 const ApplicationPage = () => {
   const router = useRouter();
   const [nannyInfo, setNannyInfo] = useState([]);
