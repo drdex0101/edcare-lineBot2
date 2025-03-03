@@ -21,17 +21,13 @@ const OrderHistoryItem = ({
     router.push(`/parent/order/details/choose`);
   };
 
-  useEffect( async () => {
+  useEffect(async () => {
     if (way === "suddenly") {
-      const careTypeResponse = await fetch(
-        `/api/base/getSuddenly?id=${scene}`,
-      );
+      const careTypeResponse = await fetch(`/api/base/getSuddenly?id=${scene}`);
       const careTypeDatas = await careTypeResponse.json();
       setCareTypeData(careTypeDatas.data);
     } else if (way === "longTerm") {
-      const careTypeResponse = await fetch(
-        `/api/base/getLongTern?id=${scene}`,
-      );
+      const careTypeResponse = await fetch(`/api/base/getLongTern?id=${scene}`);
       const careTypeDatas = await careTypeResponse.json();
       setCareTypeData(careTypeDatas.data);
     }
@@ -46,10 +42,14 @@ const OrderHistoryItem = ({
         <span className="name-font">{name}</span>
         <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
           <div className="wayLayout">
-            <span className="normalFont">{way=="suddenly" ? "臨時托育" : "長期托育"}</span>
+            <span className="normalFont">
+              {way == "suddenly" ? "臨時托育" : "長期托育"}
+            </span>
           </div>
           <div className="sceneLayout">
-            <span className="normalFont">{careTypeData.scenario === "home" ? "在宅" : "到宅"}</span>
+            <span className="normalFont">
+              {careTypeData.scenario === "home" ? "在宅" : "到宅"}
+            </span>
           </div>
         </div>
       </div>

@@ -31,7 +31,7 @@ const ApplicationPage = () => {
   const currentOrders = orderInfo.slice(indexOfFirstItem, indexOfLastItem);
   const [locationCount, setLocationCount] = useState(0); // 新增狀態以追蹤選擇的地區數量
   const [currentOrderCareType, setCurrentOrderCareType] = useState(null);
-  const { orderId,setOrderId } = useStore();
+  const { orderId, setOrderId } = useStore();
 
   const fetchNannyInfoList = async (page, pageSize = 5, keywords) => {
     setIsLoading(true); // Set loading state to true while fetching data
@@ -170,13 +170,13 @@ const ApplicationPage = () => {
   const handleOrderPageChange = (page) => {
     console.log("page:", page);
     setOrderCurrentPage(page); // Update currentPage when a new page is selected
-    setOrderId(orderInfo[page-1].id);
+    setOrderId(orderInfo[page - 1].id);
     console.log("orderId:", orderId);
   };
   const handlePageChange = (page) => {
     console.log("page:", page);
     setCurrentPage(page); // Update currentPage when a new page is selected
-    setOrderId(orderInfo[page-1].id);
+    setOrderId(orderInfo[page - 1].id);
     console.log("orderId:", orderId);
   };
 
@@ -206,7 +206,7 @@ const ApplicationPage = () => {
       const currentIsShow = isShow === null ? true : isShow;
 
       const response = await fetch(
-        `/api/order/updateIsShow?isShow=${!currentIsShow}&id=${orderInfo[orderCurrentPage-1].id}`,
+        `/api/order/updateIsShow?isShow=${!currentIsShow}&id=${orderInfo[orderCurrentPage - 1].id}`,
         {
           method: "PATCH",
           headers: {
@@ -228,7 +228,7 @@ const ApplicationPage = () => {
   return (
     <div style={styles.main}>
       {isLoading ? (
-        <Loading /> 
+        <Loading />
       ) : (
         <>
           <div style={styles.header}>

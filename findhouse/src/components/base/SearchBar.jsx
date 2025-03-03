@@ -7,7 +7,7 @@ export default function FilterButton({
   selectedSort: propSelectedSort,
   selectedRegion: propSelectedRegion,
   selectedLocations: propSelectedLocations,
-  from
+  from,
 }) {
   const [isFilterOpen, setIsFilterOpen] = useState(false); // 控制篩選框顯示
   const [selectedLocations, setSelectedLocations] = useState(
@@ -61,10 +61,10 @@ export default function FilterButton({
   const toggleLocation = (location) => {
     setSelectedLocations((prev) => {
       const updatedLocations = prev.includes(location)
-        ? prev.filter((loc) => loc !== location) 
-        : [...prev, location]; 
+        ? prev.filter((loc) => loc !== location)
+        : [...prev, location];
 
-      console.log("selectedLocations:", updatedLocations); 
+      console.log("selectedLocations:", updatedLocations);
       setSelectedLocations(updatedLocations);
       return updatedLocations;
     });
@@ -148,9 +148,9 @@ export default function FilterButton({
               <div
                 className={`filter-sort-font ${selectedSort === "rating" ? "" : "filter-sort-font-none"}`}
                 onClick={() => toggleSort("rating")}
-            >
-              保母評價( 5 ⭢ 0 )
-            </div>
+              >
+                保母評價( 5 ⭢ 0 )
+              </div>
             )}
           </div>
           <div className="filter-footer">
