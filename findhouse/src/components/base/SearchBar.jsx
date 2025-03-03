@@ -7,6 +7,7 @@ export default function FilterButton({
   selectedSort: propSelectedSort,
   selectedRegion: propSelectedRegion,
   selectedLocations: propSelectedLocations,
+  from
 }) {
   const [isFilterOpen, setIsFilterOpen] = useState(false); // 控制篩選框顯示
   const [selectedLocations, setSelectedLocations] = useState(
@@ -27,30 +28,17 @@ export default function FilterButton({
     麥寮生活圈: ["麥寮", "崙背", "褒忠", "東勢", "台西"],
   };
 
+  const handleChange = () => {
+    onChange(selectedRegion, selectedLocations, selectedSort);
+    setIsFilterOpen(false);
+  };
+
   // 監聽 props 變更，確保 state 更新
   useEffect(() => {
     setSelectedLocations(propSelectedLocations || []);
     setSelectedRegion(propSelectedRegion || "");
     setSelectedSort(propSelectedSort || "time");
   }, [propSelectedLocations, propSelectedRegion, propSelectedSort]);
-
-  // 處理點擊篩選框外部時關閉 & 清空篩選條件
-  useEffect(() => {
-    const handleOutsideClick = (event) => {
-      if (
-        filterPopupRef.current &&
-        filterButtonRef.current &&
-        !filterPopupRef.current.contains(event.target) &&
-        !filterButtonRef.current.contains(event.target)
-      ) {
-        resetFilters(); // 點擊外部時清空選項
-        setIsFilterOpen(false);
-      }
-    };
-
-    document.addEventListener("click", handleOutsideClick);
-    return () => document.removeEventListener("click", handleOutsideClick);
-  }, []);
 
   // 切換篩選框顯示
   const toggleFilterPopup = () => {
@@ -71,12 +59,15 @@ export default function FilterButton({
 
   // 切換地區選擇
   const toggleLocation = (location) => {
-    setSelectedLocations(
-      (prev) =>
-        prev.includes(location)
-          ? prev.filter((loc) => loc !== location) // 如果已選中，則移除
-          : [...prev, location], // 如果未選中，則添加
-    );
+    setSelectedLocations((prev) => {
+      const updatedLocations = prev.includes(location)
+        ? prev.filter((loc) => loc !== location) 
+        : [...prev, location]; 
+
+      console.log("selectedLocations:", updatedLocations); 
+      setSelectedLocations(updatedLocations);
+      return updatedLocations;
+    });
   };
 
   // 切換排序選擇
@@ -153,20 +144,20 @@ export default function FilterButton({
             >
               上架時間（新 ⭢ 舊）
             </div>
-            <div
-              className={`filter-sort-font ${selectedSort === "rating" ? "" : "filter-sort-font-none"}`}
-              onClick={() => toggleSort("rating")}
+            {from !== "nanny" && (
+              <div
+                className={`filter-sort-font ${selectedSort === "rating" ? "" : "filter-sort-font-none"}`}
+                onClick={() => toggleSort("rating")}
             >
               保母評價( 5 ⭢ 0 )
             </div>
+            )}
           </div>
           <div className="filter-footer">
             <button
               className="filter-button-search"
               onClick={() => {
-                console.log("傳遞的 selectedLocations:", selectedLocations); // Debug
-                onChange(selectedRegion, [...selectedLocations], selectedSort);
-                setIsFilterOpen(false);
+                handleChange();
               }}
             >
               <svg

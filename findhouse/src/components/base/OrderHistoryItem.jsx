@@ -2,6 +2,7 @@ import React from "react";
 import "./css/OrderHistoryItem.css"; // Ensure you have the corresponding CSS file
 import { useRouter } from "next/router";
 import useStore from "../../lib/store";
+import { useState, useEffect } from "react";
 
 const OrderHistoryItem = ({
   name,
@@ -14,10 +15,27 @@ const OrderHistoryItem = ({
 }) => {
   const router = useRouter();
   const setItem = useStore((state) => state.setItem);
+  const [careTypeData, setCareTypeData] = useState([]);
   const handleClick = () => {
     setItem(item);
     router.push(`/parent/order/details/choose`);
   };
+
+  useEffect( async () => {
+    if (way === "suddenly") {
+      const careTypeResponse = await fetch(
+        `/api/base/getSuddenly?id=${scene}`,
+      );
+      const careTypeDatas = await careTypeResponse.json();
+      setCareTypeData(careTypeDatas.data);
+    } else if (way === "longTerm") {
+      const careTypeResponse = await fetch(
+        `/api/base/getLongTern?id=${scene}`,
+      );
+      const careTypeDatas = await careTypeResponse.json();
+      setCareTypeData(careTypeDatas.data);
+    }
+  }, []);
 
   return (
     <div className="order-history-list-item" onClick={() => handleClick()}>
@@ -28,10 +46,10 @@ const OrderHistoryItem = ({
         <span className="name-font">{name}</span>
         <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
           <div className="wayLayout">
-            <span className="normalFont">{way}</span>
+            <span className="normalFont">{way=="suddenly" ? "臨時托育" : "長期托育"}</span>
           </div>
           <div className="sceneLayout">
-            <span className="normalFont">{scene}</span>
+            <span className="normalFont">{careTypeData.scenario === "home" ? "在宅" : "到宅"}</span>
           </div>
         </div>
       </div>

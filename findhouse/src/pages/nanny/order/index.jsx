@@ -11,29 +11,73 @@ export default function OrderPage() {
   const [keywords, setKeywords] = useState("");
   const [orderList, setOrderList] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
-  const [selectedSort, setSelectedSort] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const getOrderList = async () => {
-    setIsLoading(true);
-    const response = await fetch(
-      `/api/order/getOrderInfoList?page=1&pageSize=4&sort=${selectedSort}&keyword=${keywords}`
-    );
-    const data = await response.json();
-    setOrderList(data.orders);
-    setTotalCount(data.totalCount);
-    setIsLoading(false);
-  };
+  const [nannyProfile, setNannyProfile] = useState([]);
+  const [nannyInfo, setNannyInfo] = useState(null);
+  const [nannyProfileImg, setNannyProfileImg] = useState(null);
+  const [isShow, setIsShow] = useState(false);
   useEffect(() => {
-    getOrderList();
-  }, [keywords]);
-
-  const handleFilterChange = (sorts) => {
-    setSelectedSort(sorts);
-    getOrderList(); // Fetch nanny info with updated filters
-  };
+    fetchNannyProfile();
+  }, []);
 
   const handleToCreate = async () => {
     router.push("/nanny/create");
+  };
+
+  const handleNextClick = () => {
+    if (nannyProfile.way === "suddenly") {
+      router.push("/nanny/create/suddenly"); // 替换 '/next-page' 为你想要跳转的路径
+    } else if (nannyProfile.way === "longTerm") {
+      router.push("/nanny/create/long"); // 替换 '/next-page' 为你想要跳转的路径
+    }
+    router.push("/nanny/create/choose");
+  };
+
+  const handleVisibilityToggle = async () => {
+    try {
+      // Default to true if isShow is null
+      const currentIsShow = isShow === null ? true : isShow;
+
+      const response = await fetch(
+        `/api/order/updateIsShow?isShow=${!currentIsShow}&id=${orderInfo[orderCurrentPage].id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to update visibility");
+      }
+
+      setIsShow(!currentIsShow);
+    } catch (error) {
+      console.error("Error updating visibility:", error);
+    }
+  };
+
+  const getImgUrl = async (id) => {
+    const response = await fetch(`/api/base/getImgUrl?id=${id}`);
+    const data = await response.json();
+    return data.url;
+  };
+
+  const fetchNannyProfile = async () => {
+    setIsLoading(true);
+    const response = await fetch(`/api/nanny/getNannyProfile`, {
+      method: "GET",
+    });
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    const data = await response.json();
+    setNannyProfile(data.nannyProfile[0]);
+    setNannyInfo(data.nannyProfile[0]);
+    setNannyProfileImg(await getImgUrl(data.nannyProfile[0].uploadid));
+    setIsLoading(false);
   };
 
   return (
@@ -72,103 +116,100 @@ export default function OrderPage() {
           </svg>
           <SettingForParent />
         </div>
-        <div className="order-body-header" onClick={handleToCreate}>
+        <div
+          className={`order-body-header ${nannyProfile.length === 0 ? "disabled" : ""}`}
+          onClick={nannyProfile.length > 0 ? handleToCreate : undefined}
+        >
           <div className="order-body-header-left">
             <span className="left-font">建立托育資料</span>
           </div>
-          <div className="order-body-header-right">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="38"
-              height="39"
-              viewBox="0 0 38 39"
-              fill="none"
-            >
-              <rect y="0.5" width="38" height="38" rx="4" fill="#F2F2F2" />
-              <path
-                d="M26.0231 9.5C25.2613 9.5 24.4994 9.79013 23.9179 10.3717L22.6843 11.6053L26.8949 15.8158L28.1284 14.5822C29.2905 13.4201 29.2905 11.5349 28.1284 10.3717C27.5468 9.79013 26.785 9.5 26.0231 9.5ZM21.1053 13.1842L9 25.2895V29.5H13.2106L25.3159 17.3947L21.1053 13.1842Z"
-                fill="#CCCCCC"
-              />
-            </svg>
-
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="19"
-              viewBox="0 0 24 19"
-              fill="none"
-            >
-              <path
-                d="M23.8209 8.681C22.9429 6.761 19.4999 0.5 11.9999 0.5C4.49987 0.5 1.05687 6.761 0.178871 8.681C0.0610095 8.9383 0 9.21799 0 9.501C0 9.78401 0.0610095 10.0637 0.178871 10.321C1.05687 12.239 4.49987 18.5 11.9999 18.5C19.4999 18.5 22.9429 12.239 23.8209 10.319C23.9385 10.062 23.9994 9.78265 23.9994 9.5C23.9994 9.21735 23.9385 8.93801 23.8209 8.681ZM11.9999 15.5C10.8132 15.5 9.65315 15.1481 8.66645 14.4888C7.67976 13.8295 6.91072 12.8925 6.45659 11.7961C6.00247 10.6997 5.88365 9.49334 6.11516 8.32946C6.34667 7.16557 6.91812 6.09647 7.75723 5.25736C8.59635 4.41824 9.66544 3.8468 10.8293 3.61529C11.9932 3.38378 13.1996 3.5026 14.296 3.95672C15.3923 4.41085 16.3294 5.17988 16.9887 6.16658C17.648 7.15327 17.9999 8.31331 17.9999 9.5C17.9983 11.0908 17.3656 12.616 16.2408 13.7409C15.1159 14.8658 13.5907 15.4984 11.9999 15.5Z"
-                fill="#CCCCCC"
-              />
-              <path
-                d="M12 13.5C14.2091 13.5 16 11.7091 16 9.5C16 7.29086 14.2091 5.5 12 5.5C9.79086 5.5 8 7.29086 8 9.5C8 11.7091 9.79086 13.5 12 13.5Z"
-                fill="#CCCCCC"
-              />
-            </svg>
-          </div>
         </div>
-
-        <div className="order-search-layout">
-          <div className="search-input">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-            >
-              <path
-                d="M8.94286 3C10.519 3 12.0306 3.62612 13.1451 4.74062C14.2596 5.85512 14.8857 7.36671 14.8857 8.94286C14.8857 10.4149 14.3463 11.768 13.4594 12.8103L13.7063 13.0571H14.4286L19 17.6286L17.6286 19L13.0571 14.4286V13.7063L12.8103 13.4594C11.768 14.3463 10.4149 14.8857 8.94286 14.8857C7.36671 14.8857 5.85512 14.2596 4.74062 13.1451C3.62612 12.0306 3 10.519 3 8.94286C3 7.36671 3.62612 5.85512 4.74062 4.74062C5.85512 3.62612 7.36671 3 8.94286 3V3ZM8.94286 4.82857C6.65714 4.82857 4.82857 6.65714 4.82857 8.94286C4.82857 11.2286 6.65714 13.0571 8.94286 13.0571C11.2286 13.0571 13.0571 11.2286 13.0571 8.94286C13.0571 6.65714 11.2286 4.82857 8.94286 4.82857Z"
-                fill="#999999"
-              />
-            </svg>
-            <input
-              style={{ border: "none" }}
-              placeholder="搜尋暱稱"
-              value={keywords || ""}
-              onChange={(e) => setKeywords(e.target.value)}
-            ></input>
-          </div>
-          <SearchBarSortOnly onChange={handleFilterChange} />
-        </div>
-        <div className="order-layout">
-          <div className="order-history-list">
-            {orderList && orderList.length > 0 ? (
-              orderList.map((item, index) => (
-                <OrderPersonalItem
-                  key={index}
-                  name={item.nickname}
-                  way={item.choosetype}
-                  scene={
-                    item.choosetype === "suddenly"
-                      ? item.suddenly_scenario
-                      : item.long_term_scenario
-                  }
-                  orderId={item.id}
-                  createdTime={item.created_ts}
-                  item={item}
+        <div className="profile-layout">
+          <div className="profile-layout-left">
+            <div className="profile-layout-left-img">
+                <img
+                  src={nannyProfileImg || "/nannyIcon.png"}
+                  alt="Nanny Profile"
                 />
-              ))
-            ) : (
-              <>
-                <div className="no-order">
-                  <img
-                    src={"/orderCreate.png"}
-                    alt="no-order"
-                    className="no-order-img"
-                  />
-                  <span className="no-order-font">
-                    尚無資料
-                    <br />
-                    趕緊建立托育資料吧！
-                  </span>
+            </div>
+            <div className="nannyInfoLayout">
+                <span className="name-font">{nannyProfile.name ?? ""}</span>
+                <div className="wayLayout">
+                  <div className="wayStyle">
+                    {nannyProfile.way === "suddenly"
+                      ? "臨時托育"
+                      : nannyProfile.way === "longTerm"
+                        ? "長期托育"
+                        : ""}
+                  </div>
+                  <div className="scenarioStyle">
+                    {nannyProfile.scenario}
+                  </div>
                 </div>
-              </>
-            )}
-            <Pagination totalItems={totalCount} pageSize={4} />
+                <span className="headSubTitle">
+                  托育時間:
+                  <br />
+                  ㄧ、二、三、四、五、六、日
+                </span>
+              </div>
+              {!isShow && (
+                <div className="overlay"></div> // Add overlay when isShow is false
+              )}
           </div>
+          <div className="createButtonLayout">
+              <div className="iconLayout" onClick={handleNextClick}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="38"
+                  height="38"
+                  viewBox="0 0 38 38"
+                  fill="none"
+                >
+                  <rect width="38" height="38" rx="4" fill="#F5E5E5" />
+                  <path
+                    d="M26.0231 9C25.2613 9 24.4994 9.29013 23.9179 9.87171L22.6843 11.1053L26.8949 15.3158L28.1284 14.0822C29.2905 12.9201 29.2905 11.0349 28.1284 9.87171C27.5468 9.29013 26.785 9 26.0231 9ZM21.1053 12.6842L9 24.7895V29H13.2106L25.3159 16.8947L21.1053 12.6842Z"
+                    fill="#E3838E"
+                  />
+                </svg>
+              </div>
+              <div className="iconLayout" onClick={handleVisibilityToggle}>
+                {isShow ? (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="38"
+                    height="38"
+                    viewBox="0 0 38 38"
+                    fill="none"
+                  >
+                    <rect width="38" height="38" rx="4" fill="#F5E5E5" />
+                    <path
+                      d="M30.8209 18.2351C29.8547 16.2781 28.4397 14.5436 26.6759 13.1543L29.7079 10.3225L28.2929 9L24.9999 12.0728C23.1772 11.0881 21.1054 10.5776 18.9999 10.5943C11.4999 10.5943 8.05687 16.4419 7.17887 18.2351C7.06101 18.4754 7 18.7366 7 19.0009C7 19.2653 7.06101 19.5265 7.17887 19.7668C8.14501 21.7237 9.56009 23.4583 11.3239 24.8476L8.29287 27.6794L9.70687 29L12.9999 25.9272C14.8225 26.9119 16.8944 27.4224 18.9999 27.4057C26.4999 27.4057 29.9429 21.5581 30.8209 19.7649C30.9385 19.5249 30.9994 19.264 30.9994 19C30.9994 18.736 30.9385 18.4751 30.8209 18.2351ZM12.9999 19C12.998 17.9713 13.2998 16.9621 13.8721 16.0832C14.4445 15.2043 15.2652 14.4899 16.244 14.0183C17.2229 13.5468 18.322 13.3364 19.4206 13.4104C20.5191 13.4844 21.5745 13.8398 22.4709 14.4376L21.0189 15.7937C20.4093 15.4504 19.7117 15.2674 18.9999 15.2641C17.939 15.2641 16.9216 15.6577 16.1714 16.3583C15.4213 17.0589 14.9999 18.0092 14.9999 19C15.0034 19.6648 15.1993 20.3164 15.5669 20.8857L14.1149 22.2418C13.3898 21.2965 12.9999 20.1628 12.9999 19ZM18.9999 24.6038C17.7548 24.6038 16.541 24.2396 15.5289 23.5624L16.9809 22.2063C17.5904 22.5496 18.2881 22.7326 18.9999 22.7359C20.0607 22.7359 21.0782 22.3423 21.8283 21.6417C22.5784 20.941 22.9999 19.9908 22.9999 19C22.9964 18.3352 22.8005 17.6836 22.4329 17.1143L23.8849 15.7582C24.5249 16.5953 24.9055 17.5811 24.9847 18.6071C25.0639 19.6331 24.8386 20.6596 24.3338 21.5739C23.8289 22.4881 23.0639 23.2546 22.1229 23.7891C21.1819 24.3237 20.1013 24.6056 18.9999 24.6038Z"
+                      fill="#E3838E"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="38"
+                    height="38"
+                    viewBox="0 0 38 38"
+                    fill="none"
+                  >
+                    <rect width="38" height="38" rx="4" fill="#F5E5E5" />
+                    <g transform="translate(7, 10)">
+                      <path
+                        d="M23.8209 8.181C22.9429 6.261 19.4999 0 11.9999 0C4.49987 0 1.05687 6.261 0.178871 8.181C0.0610095 8.4383 0 8.71799 0 9.001C0 9.28401 0.0610095 9.5637 0.178871 9.821C1.05687 11.739 4.49987 18 11.9999 18C19.4999 18 22.9429 11.739 23.8209 9.819C23.9385 9.56199 23.9994 9.28265 23.9994 9C23.9994 8.71735 23.9385 8.43801 23.8209 8.181ZM11.9999 15C10.8132 15 9.65315 14.6481 8.66645 13.9888C7.67976 13.3295 6.91072 12.3925 6.45659 11.2961C6.00247 10.1997 5.88365 8.99334 6.11516 7.82946C6.34667 6.66557 6.91812 5.59647 7.75723 4.75736C8.59635 3.91824 9.66544 3.3468 10.8293 3.11529C11.9932 2.88378 13.1996 3.0026 14.296 3.45672C15.3923 3.91085 16.3294 4.67988 16.9887 5.66658C17.648 6.65327 17.9999 7.81331 17.9999 9C17.9983 10.5908 17.3656 12.116 16.2408 13.2409C15.1159 14.3658 13.5907 14.9984 11.9999 15Z"
+                        fill="#E3838E"
+                      />
+                      <path
+                        d="M12 13C14.2091 13 16 11.2091 16 9C16 6.79086 14.2091 5 12 5C9.79086 5 8 6.79086 8 9C8 11.2091 9.79086 13 12 13Z"
+                        fill="#E3838E"
+                      />
+                    </g>
+                  </svg>
+                )}
+              </div>
+            </div>
         </div>
       </>
     </div>

@@ -13,7 +13,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ success: false, message: `Method ${req.method} Not Allowed` });
   }
 
-  const { page = 1, pageSize = 10, keyword, sort } = req.query;
+  const { page = 1, pageSize = 10, keywords, sort } = req.query;
   const token = req.cookies.authToken;
   const payload = await verifyToken(token);
   const userId = payload.userId;
@@ -30,6 +30,9 @@ export default async function handler(req, res) {
   let orderByClause = '';
   if (sort === 'time') {
     orderByClause = 'o.created_ts DESC';
+  }
+  if (sort === 'rating') {
+    orderByClause = 'n.score DESC';
   }
 
   try {
@@ -65,25 +68,25 @@ export default async function handler(req, res) {
         s.scenario as suddenly_scenario,
         COALESCE(s.scenario, l.scenario) AS scenario,
         COUNT(*) OVER() AS totalCount
-    FROM 
-        orderinfo o
-    LEFT JOIN 
-        suddenly s ON o.choosetype = 'suddenly' AND o.caretypeid = s.id
-    LEFT JOIN 
-        long_term l ON o.choosetype = 'long_term' AND o.caretypeid = l.id
-    LEFT JOIN 
-        nanny n ON o.nannyid = n.id
-    LEFT JOIN 
-        kyc_info k ON n.kycId = k.id
-    WHERE 
-        o.parentLineId = $1
-        AND ($4::text IS NULL OR o.nickname ILIKE '%' || $4::text || '%')
-    ORDER BY 
-        $5
-    OFFSET 
-        $2 
-    LIMIT 
-        $3;
+        FROM 
+            orderinfo o
+        LEFT JOIN 
+            suddenly s ON o.choosetype = 'suddenly' AND o.caretypeid = s.id
+        LEFT JOIN 
+            long_term l ON o.choosetype = 'long_term' AND o.caretypeid = l.id
+        LEFT JOIN 
+            nanny n ON o.nannyid = n.id
+        LEFT JOIN 
+            kyc_info k ON n.kycId = k.id
+        WHERE 
+            o.parentLineId = $1
+            AND ($4::text IS NULL OR o.nickname ILIKE '%' || $4::text || '%')
+        ORDER BY 
+            $5
+        OFFSET 
+            $2 
+        LIMIT 
+            $3;
       `;
 
 
@@ -91,13 +94,13 @@ export default async function handler(req, res) {
       .replace('$1', `'${userId}'`)
       .replace('$2', offset)
       .replace('$3', limit)
-      .replace('$4', keyword ? `'${keyword}'` : 'NULL')
+      .replace('$4', keywords ? `'${keywords}'` : 'NULL')
       .replace('$5', orderByClause);
 
     // Log the constructed query
     console.log('Executing query with parameters:', parameterizedQuery);
 
-    const { rows } = await client.query(query, [userId, offset, limit, keyword, orderByClause]);
+    const { rows } = await client.query(query, [userId, offset, limit, keywords, orderByClause]);
 
     client.release();
 
