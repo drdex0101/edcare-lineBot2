@@ -13,10 +13,12 @@ export default async function handler(req, res) {
     return res.status(405).json({ success: false, message: `Method ${req.method} Not Allowed` });
   }
 
-  const { page = 1, pageSize = 10, keywords, sort } = req.query;
+  const { page = 1, pageSize = 10, keywords, sort, locations } = req.query;
   const token = req.cookies.authToken;
   const payload = await verifyToken(token);
   const userId = payload.userId;
+
+  console.log('locations:',locations);
   
   if (!userId) {
     return res.status(400).json({ success: false, message: 'ID parameter is required' });
@@ -37,7 +39,8 @@ export default async function handler(req, res) {
 
   try {
     const client = await pool.connect();
-
+    const locationArray = locations ? locations.split(",") : null;
+    console.log('locationArray:',locationArray);
     const query = `
        SELECT 
         o.id,

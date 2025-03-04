@@ -1,15 +1,19 @@
 import { Client } from 'pg';
+import verifyToken from '@/utils/verifyToken';
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     console.log('req.body', req.body);
     const { 
-        nannyId,          // 用作 memberId
         weekdays,
         scenario,
         careTime,
         idType
     } = req.body;
+
+    const token = req.cookies.authToken;
+    const payload = await verifyToken(token);
+    const nannyId = payload.userId;
 
     const client = new Client({
       connectionString: process.env.POSTGRES_URL,

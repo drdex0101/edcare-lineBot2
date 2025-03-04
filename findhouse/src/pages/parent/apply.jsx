@@ -19,6 +19,31 @@ const ApplicationPage = () => {
       job: document.getElementById("job").value,
     };
     console.log(memberData);
+    const account = document.getElementById("account").value;
+    const phoneNumber = document.getElementById("cellphone").value;
+    const email = document.getElementById("email").value;
+
+    if (!account || !phoneNumber || !email || !job) {
+      alert("請填寫所有必填欄位。");
+      return; // 終止函數執行
+    }
+
+    // 驗證手機號碼格式（假設為台灣的手機號碼格式）
+    const phonePattern = /^09\d{8}$/;
+    if (!phonePattern.test(memberData.phoneNumber)) {
+      console.error("Invalid phone number format:", memberData.phoneNumber);
+      alert("請輸入有效的手機號碼（例如：0912345678）。");
+      return; // 終止函數執行
+    }
+
+    // 驗證電子郵件格式
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(memberData.email)) {
+      console.error("Invalid email format:", memberData.email);
+      alert("請輸入有效的電子郵件地址。");
+      return; // 終止函數執行
+    }
+    
     try {
       setIsLoading(true);
       const response = await axios.post("/api/member/createMember", memberData);

@@ -266,7 +266,13 @@ const ApplicationPage = () => {
                                 ? "長期托育"
                                 : ""}
                           </div>
-                          <div style={styles.screen}>{order.scenario}</div>
+                          <div style={styles.screen}>
+                            {order.scenario === "home"
+                              ? "到宅托育"
+                              : order.scenario === "infantCareCenter"
+                                ? "定點托育"
+                                : ""}
+                          </div>
                         </div>
                         <div
                           style={{

@@ -253,9 +253,9 @@ const ApplicationPage = () => {
   const fetchOrderInfoList = async (
     page = 0,
     pageSize = 5,
-    keywords,
-    searchLocation,
-    sort,
+    keywords="",
+    searchLocation="",
+    sort="time",
   ) => {
     setIsLoading(true); // Set loading state to true while fetching data
 
