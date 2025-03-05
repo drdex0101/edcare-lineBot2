@@ -9,7 +9,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import Cookies from "js-cookie";
 import Loading from "../../components/base/Loading";
 
 const ApplicationPage = () => {
@@ -47,8 +46,8 @@ const ApplicationPage = () => {
       birthday: "生日",
       address: "戶籍地址",
       communicateAddress: "通訊地址",
-      //identityFrontUploadId: "身分證正面照片",
-      //identityBackUploadId: "身分證反面照片",
+      identityFrontUploadId: "身分證正面照片",
+      identityBackUploadId: "身分證反面照片",
     };
 
     const missingFields = Object.entries(requiredFields)
@@ -102,8 +101,7 @@ const ApplicationPage = () => {
         },
 
         body: JSON.stringify({
-          userId: Cookies.get("userId"),
-          richMenuId: "richmenu-307b8975e551ebd54362c688b7cb9e54",
+          richMenuId: "richmenu-8b422169ec368afe84f3d1cbb9c143ca" //待審核
         }),
       });
       router.push("/nanny/create/choose");
