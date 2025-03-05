@@ -1,4 +1,4 @@
-import { Client } from 'pg';
+import getClient from '../../../utils/getClient';
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
@@ -11,12 +11,7 @@ export default async function handler(req, res) {
       });
     }
 
-    const client = new Client({
-      connectionString: process.env.POSTGRES_URL,
-      ssl: {
-        rejectUnauthorized: false,
-      },
-    });
+    const client = getClient();
 
     try {
       await client.connect();

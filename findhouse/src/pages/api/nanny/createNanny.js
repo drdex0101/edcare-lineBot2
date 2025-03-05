@@ -1,4 +1,4 @@
-import { Client } from 'pg';
+import getClient from '../../../utils/getClient';
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
@@ -21,12 +21,7 @@ export default async function handler(req, res) {
       uploadId
     } = req.body;
 
-    const client = new Client({
-      connectionString: process.env.POSTGRES_URL,
-      ssl: {
-        rejectUnauthorized: false,
-      },
-    });
+    const client = getClient();
 
     try {
       await client.connect();

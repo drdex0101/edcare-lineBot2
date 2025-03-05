@@ -1,5 +1,6 @@
-import { Client } from 'pg';
+import getClient from '../../../utils/getClient';
 import { verifyToken } from '../../../utils/jwtUtils';
+
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     console.log('req.body', req.body);
@@ -10,12 +11,7 @@ export default async function handler(req, res) {
     const { account, phoneNumber, email, job } = req.body;
 
     // 創建 PostgreSQL 客戶端
-    const client = new Client({
-      connectionString: process.env.POSTGRES_URL,
-      ssl: {
-        rejectUnauthorized: false, // 如果你在 Vercel 上運行，通常需要這個設定
-      },
-    });
+    const client = getClient();
 
     try {
       // 連接資料庫
