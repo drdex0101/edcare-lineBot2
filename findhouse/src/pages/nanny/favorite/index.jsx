@@ -5,6 +5,8 @@ import SearchBarSortOnly from "../../../components/base/SearchBarSortOnly";
 import "./favorite.css";
 import SettingForNanny from "../../../components/base/SettingForNanny";
 import Loading from "../../../components/base/Loading";
+import dynamic from 'next/dynamic';
+
 const ApplicationPage = () => {
   const router = useRouter();
   const [nannyInfo, setNannyInfo] = useState([]);
@@ -23,6 +25,13 @@ const ApplicationPage = () => {
   // 計算目前頁面的資料
   const indexOfLastItem = orderCurrentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+
+  // Add this check for client-side rendering
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const icons = {
     1: {
@@ -251,6 +260,8 @@ const ApplicationPage = () => {
   };
 
   useEffect(() => {
+    if (!isMounted) return; // Only run on client-side
+
     let isCancelled = false;
 
     const fetchData = async () => {
@@ -270,9 +281,9 @@ const ApplicationPage = () => {
     fetchData();
 
     return () => {
-      isCancelled = true; // 在組件卸載時取消請求
+      isCancelled = true;
     };
-  }, [currentPage, keywords]); // 監聽關鍵依賴變數
+  }, [currentPage, keywords, isMounted]); // Add isMounted to dependencies
 
   const handlePageChange = (page) => {
     console.log("page:", page);
@@ -914,4 +925,6 @@ const styles = {
   },
 };
 
-export default ApplicationPage;
+export default dynamic(() => Promise.resolve(ApplicationPage), {
+  ssr: false
+});
