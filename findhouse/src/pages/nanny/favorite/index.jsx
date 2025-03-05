@@ -23,7 +23,6 @@ const ApplicationPage = () => {
   // 計算目前頁面的資料
   const indexOfLastItem = orderCurrentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentOrders = orderInfo.slice(indexOfFirstItem, indexOfLastItem);
 
   const icons = {
     1: {

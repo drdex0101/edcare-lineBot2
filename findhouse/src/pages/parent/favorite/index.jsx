@@ -6,25 +6,24 @@ import "./favorite.css";
 import LoadingAnimation from "../../../components/base/Loading";
 const ApplicationPage = () => {
   const router = useRouter();
-  const [nannyInfo, setNannyInfo] = useState([]);
-  const [orderInfo, setOrderInfo] = useState([]);
   const [totalItem, setTotalItem] = useState(0);
   const [currentPage, setCurrentPage] = useState(0); // Track current page
   const pageSize = 5;
   const [isLoading, setIsLoading] = useState(true);
   const [keywords, setKeywords] = useState("");
   const [selectedSort, setSelectedSort] = useState("time"); // 新增狀態以追蹤選擇的排序
-  const [orderImages, setOrderImages] = useState({});
-  const [careTypeData, setCareTypeData] = useState(null);
-  const [isShow, setIsShow] = useState(true);
   const [orderCurrentPage, setOrderCurrentPage] = useState(1);
+  const [favoriteList, setFavoriteList] = useState([]);
   const itemsPerPage = 1; // 每頁顯示 1 筆
   // 計算目前頁面的資料
   const indexOfLastItem = orderCurrentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentOrders = orderInfo.slice(indexOfFirstItem, indexOfLastItem);
 
-  const fetchNannyInfoList = async (
+  const handleFetchClick = () => {
+    fetchFavoriteList(currentPage, pageSize, keywords);
+  };
+
+  const fetchFavoriteList = async (
     page,
     pageSize = 5,
     keywords,
@@ -33,7 +32,7 @@ const ApplicationPage = () => {
     setIsLoading(true); // Set loading state to true while fetching data
     try {
       const response = await fetch(
-        `/api/nanny/getNannyInfoList?page=${page}&pageSize=${pageSize}&sort=${selectedSort}&keyword=${keywords}`,
+        `/api/favorite/getFavoriteListByParent?page=${page}&pageSize=${pageSize}&sort=${selectedSort}&keyword=${keywords}&type=parent`,
         {
           method: "GET",
           headers: {
@@ -46,22 +45,8 @@ const ApplicationPage = () => {
         throw new Error("Network response was not ok");
       }
       const data = await response.json();
-
-      // Add image loading for nannies
-      const nannyImagePromises = data.nannies.map(async (nanny) => {
-        if (nanny.uploadid) {
-          const imgResponse = await fetch(
-            `/api/base/getImgUrl?id=${nanny.uploadid}`,
-          );
-          const imgData = await imgResponse.json();
-          return { ...nanny, image: imgData.url };
-        }
-        return nanny;
-      });
-
-      const nanniesWithImages = await Promise.all(nannyImagePromises);
-      setNannyInfo(nanniesWithImages);
-      setTotalItem(data.totalCount);
+      setFavoriteList(data.favorite);
+      setTotalItem(data.favorite.length);
     } catch (error) {
       console.error("Error fetching nanny info:", error);
     } finally {
@@ -69,96 +54,18 @@ const ApplicationPage = () => {
     }
   };
 
-  const handleFetchClick = () => {
-    fetchNannyInfoList(currentPage, pageSize, keywords);
-    fetchOrderInfo();
-  };
-
-  const fetchOrderInfo = async () => {
-    setIsLoading(true);
-    let userId = null;
-
-    try {
-      const cookies = document.cookie.split("; ");
-      const userIdCookie = cookies.find((row) => row.startsWith("userId="));
-      if (userIdCookie) {
-        userId = userIdCookie.split("=")[1];
-      } else {
-        throw new Error("userId not found in cookies");
-      }
-
-      if (!userId) {
-        throw new Error("Invalid userId");
-      }
-
-      const response = await fetch(`/api/order/getOrderInfo?userId=${userId}`, {
-        method: "GET",
-        headers: {
-          "Cache-Control": "no-cache",
-          Pragma: "no-cache",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Network response was not ok: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      if (data) {
-        setOrderInfo(data.nannies);
-        const imagePromises = data.nannies.map(async (order) => {
-          if (order.uploadId) {
-            const imgResponse = await fetch(
-              `/api/base/getImgUrl?id=${order.uploadId}`,
-            );
-            const imgData = await imgResponse.json();
-            return { orderId: order.id, imageUrl: imgData.url };
-          }
-          return null;
-        });
-
-        const images = await Promise.all(imagePromises);
-        const imageMap = {};
-        images.forEach((img) => {
-          if (img) {
-            imageMap[img.orderId] = img.imageUrl;
-          }
-        });
-        setOrderImages(imageMap);
-        if (data.nannies[0].choosetype === "suddenly") {
-          const careTypeResponse = await fetch(
-            `/api/base/getSuddenly?id=${data.nannies[0].caretypeid}`,
-          );
-          const careTypeDatas = await careTypeResponse.json();
-          setCareTypeData(careTypeDatas.data);
-        } else if (data.nannies[0].choosetype === "longTerm") {
-          const careTypeResponse = await fetch(
-            `/api/base/getLongTern?id=${data.nannies[0].caretypeid}`,
-          );
-          const careTypeDatas = await careTypeResponse.json();
-          setCareTypeData(careTypeDatas.data);
-        }
-      } else {
-        throw new Error("No order information found in the response");
-      }
-    } catch (error) {
-      console.error("Error fetching order info:", error.message);
-    } finally {
-      setIsLoading(false);
-    }
+  const getImgUrl = (imgId) => {
+    return `/api/upload/getImgUrl?imgId=${imgId}`;
   };
 
   useEffect(() => {
     let isCancelled = false;
-
     const fetchData = async () => {
       try {
         setIsLoading(true);
         if (!isCancelled) {
-          await fetchNannyInfoList(currentPage, pageSize, keywords);
-          await fetchOrderInfo();
+          await fetchFavoriteList(currentPage, pageSize, keywords);
           setIsLoading(true);
-          setIsShow(orderInfo.isShow);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -181,7 +88,7 @@ const ApplicationPage = () => {
 
   const handleFilterChange = (sorts) => {
     setSelectedSort(sorts);
-    fetchNannyInfoList(currentPage, pageSize, keywords, selectedSort); // Fetch nanny info with updated filters
+    fetchFavoriteList(currentPage, pageSize, keywords, selectedSort); // Fetch nanny info with updated filters
   };
 
   return (
@@ -285,35 +192,35 @@ const ApplicationPage = () => {
               }}
             >
               <div style={styles.nannyItemLayout}>
-                {nannyInfo.map((nanny, index) => (
+                {favoriteList.map((favorite, index) => (
                   <div
                     key={index}
                     style={styles.nannyItem}
                     onClick={() => {
-                      if (nanny.id) {
-                        router.push(`/nanny/profile/${nanny.id}`);
+                      if (favorite.id) {
+                        router.push(`/nanny/profile/${favorite.id}`);
                       } else {
-                        console.error("Nanny ID not found");
+                        console.error("favorite ID not found");
                       }
                     }}
                   >
                     <div style={styles.rightPart}>
                       <div>
                         <img
-                          src={orderImages.image || "/nannyIcon.jpg"}
+                          src={favorite.uploadId ? getImgUrl(favorite.uploadId) : "/nannyIcon.jpg" }
                           style={styles.nannyIcon}
                           alt="Nanny Icon"
                         />
                       </div>
                       <div style={styles.nannyFontLayout}>
-                        <div style={styles.nannyNameFont}>{nanny.account}</div>
+                        <div style={styles.nannyNameFont}>{favorite.account}</div>
                         <div style={styles.nannySubInfo}>
-                          托育經驗: {nanny.experienment} 年
+                          托育經驗: {favorite.experienment} 年
                         </div>
                       </div>
                     </div>
                     <div style={styles.scoreLayout}>
-                      <span style={styles.scoreFont}>{nanny.rating}</span>
+                      <span style={styles.scoreFont}>{favorite.score}</span>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"
@@ -348,7 +255,6 @@ const ApplicationPage = () => {
                     pageSize={pageSize}
                     currentPage={currentPage}
                     onPageChange={handlePageChange}
-                    fetchNannyInfoList={fetchNannyInfoList}
                   />
                 )}
               </div>

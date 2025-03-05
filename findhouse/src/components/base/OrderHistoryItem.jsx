@@ -18,7 +18,7 @@ const OrderHistoryItem = ({
   const [careTypeData, setCareTypeData] = useState([]);
   const handleClick = () => {
     setItem(item);
-    router.push(`/parent/order/details/choose`);
+    router.push(`/parent/history/${orderId}`);
   };
 
   const fetchCareTypeData = async () => {

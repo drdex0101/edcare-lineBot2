@@ -53,7 +53,7 @@ export default function ProfilePage() {
       `/api/favorite/getIsFavorite?itemId=${id}&&type=${"nanny"}`,
     );
     const data = await response.json();
-    if (data.favorite != null) {
+    if (data.favorite.length > 0) {
       setIsFavorite(true);
     }
   };

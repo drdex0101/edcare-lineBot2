@@ -17,12 +17,42 @@ export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isActive, setIsActive] = useState(false);
-  const handleSvgClick = () => {
-    setIsActive(!isActive);
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  const handleSvgClick = async () => {
+    try {
+      if (isFavorite) {
+        setIsFavorite(false);
+        await fetch(`/api/favorite/deleteFavorite`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ itemId: id, type: "parent" }),
+        });
+      } else {
+        setIsFavorite(true);
+        await fetch(`/api/favorite/createFavorite`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ itemId: id, type: "parent" }),
+        });
+      }
+    } catch (error) {
+      console.error("Error handling favorite:", error);
+    }
   };
   // 處理點擊圓點來跳轉到對應圖片
   const handleDotClick = (index) => {
     setCurrentImageIndex(index);
+  };
+
+  const getIsFavorite = async () => {
+    const response = await fetch(
+      `/api/favorite/getIsFavorite?itemId=${id}&&type=${"parent"}`,
+    );
+    const data = await response.json();
+    if (data.favorite.length > 0) {
+      setIsFavorite(true);
+    }
   };
 
   useEffect(() => {
@@ -30,7 +60,6 @@ export default function ProfilePage() {
       setIsLoading(true);
       if (!router.isReady) return; // 等待路由準備就緒
       if (!id) return;
-      alert(id);
 
       try {
         const response = await fetch(`/api/nanny/getNannyInfo?id=${id}`);
@@ -53,6 +82,7 @@ export default function ProfilePage() {
           const data3 = await response3.json();
           setIconUrl(data3.url);
         }
+        getIsFavorite();
       } catch (error) {
         console.error("Failed to fetch nanny info:", error);
       }
@@ -309,14 +339,14 @@ export default function ProfilePage() {
           onClick={() => router.back()}
         />
         <svg
-          className={`svg-icon ${isActive ? "active" : ""}`}
+          className={`svg-icon ${isFavorite ? "active" : ""}`}
           xmlns="http://www.w3.org/2000/svg"
           width="20"
           height="18"
           viewBox="0 0 20 18"
           fill="none"
           onClick={handleSvgClick}
-          style={{ cursor: "pointer", fill: isActive ? "#E3838E" : "none" }}
+          style={{ cursor: "pointer", fill: isFavorite ? "#E3838E" : "none" }}
         >
           <path
             d="M10 4.17381C8 -0.52063 1 -0.0206299 1 5.9794C1 11.9794 10 16.9796 10 16.9796C10 16.9796 19 11.9794 19 5.9794C19 -0.0206299 12 -0.52063 10 4.17381Z"
