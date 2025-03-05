@@ -1,16 +1,11 @@
-import { Client } from 'pg';
+import getClient from '../../../utils/getClient';
 
 export default async function handler(req, res) {
   if (req.method === 'PATCH') {
     const { kycId, memberId } = req.body;
 
     // 創建 PostgreSQL 客戶端
-    const client = new Client({
-      connectionString: process.env.POSTGRES_URL,
-      ssl: {
-        rejectUnauthorized: false, // 如果你在 Vercel 上運行，通常需要這個設定
-      },
-    });
+    const client = getClient();
 
     try {
       // 連接資料庫
