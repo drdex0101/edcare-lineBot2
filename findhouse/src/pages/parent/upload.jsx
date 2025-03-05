@@ -36,8 +36,8 @@ const ApplicationPage = () => {
       address: document.getElementById("address").value,
       communicateAddress: document.getElementById("communicateAddress").value,
       welfareCertNo: null,
-      identityFrontUploadId: frontImg,
-      identityBackUploadId: backImg,
+      //identityFrontUploadId: frontImg,
+      //identityBackUploadId: backImg,
       iconUploadId: null,
       status: "pending",
     };
