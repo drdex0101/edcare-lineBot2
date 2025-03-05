@@ -68,8 +68,7 @@ const ApplicationPage = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userId: Cookies.get("userId"),
-          richMenuId: "richmenu-48f0c719cfbfc92dd6ea5b8ce10b6cb3",
+          richMenuId: "richmenu-8b422169ec368afe84f3d1cbb9c143ca",
         }),
       });
       router.push("/parent/create/choose");
