@@ -9,12 +9,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import Cookies from "js-cookie";
 import Loading from "../../components/base/Loading";
 
 const ApplicationPage = () => {
   const router = useRouter();
-  const [file, setFile] = useState(null);
+  const [fileFront, setFileFront] = useState(null);
   const [fileBack, setFileBack] = useState(null);
   const [message, setMessage] = useState("");
   const [frontImg, setFrontImg] = useState(null);
@@ -36,8 +35,8 @@ const ApplicationPage = () => {
       address: document.getElementById("address").value,
       communicateAddress: document.getElementById("communicateAddress").value,
       welfareCertNo: null,
-      //identityFrontUploadId: frontImg,
-      //identityBackUploadId: backImg,
+      identityFrontUploadId: frontImg,
+      identityBackUploadId: backImg,
       iconUploadId: null,
       status: "pending",
     };
@@ -86,14 +85,15 @@ const ApplicationPage = () => {
 
   const handleUpload = async (file, type) => {
     setIsLoading(true);
-    if (!file) {
-      console.error("No file selected");
-      setIsLoading(false);
-      return;
-    }
-  
     const formData = new FormData();
-    formData.append("file", file);
+
+    if (type === "ID Front") {
+      formData.append("file", fileFront);
+    } else if (type === "ID Back") {
+      formData.append("file", fileBack);
+    } 
+
+
   
     try {
       const res = await fetch("/api/kycInfo/uploadImg", {
@@ -127,13 +127,15 @@ const ApplicationPage = () => {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    setFile(file);
+    console.log("file", file);
+    setFileFront(file);
     setFileName(file?.name || "");
     handleUpload(file, "ID Front"); // 指定文件类型
   };
 
   const handleFileChangeBack = (e) => {
     const file = e.target.files[0];
+    console.log("file", file);
     setFileBack(file);
     setFileNameBack(file?.name || "");
     handleUpload(file, "ID Back"); // 指定文件类型
