@@ -29,7 +29,7 @@ const ApplicationPage = () => {
   const [message, setMessage] = useState("");
   const [uploadedImages, setUploadedImages] = useState([]); // State to track uploaded images
   const [uploadedEnvironmentImages, setUploadedEnvironmentImages] = useState(
-    []
+    [],
   ); // State to track uploaded images
   const [selectedCareType, setSelectedCareType] = useState(null);
   const [address, setAddress] = useState("");
@@ -68,7 +68,7 @@ const ApplicationPage = () => {
               const response = await fetch(`/api/base/getImgUrl?id=${picId}`);
               const data = await response.json();
               return data.url;
-            })
+            }),
           );
           setUploadedEnvironmentImages(urls);
         };
@@ -88,7 +88,7 @@ const ApplicationPage = () => {
       scenario: selectedCareType,
       environmentPic: uploadedImages,
       serviceLocation:
-      selectedCareType === "在宅托育" ? address : selectedAddress,
+        selectedCareType === "在宅托育" ? address : selectedAddress,
       service: Object.keys(switchStates).filter((key) => switchStates[key]),
       score: nannyInfo ? nannyInfo.score : "",
       isShow: true,
@@ -131,7 +131,7 @@ const ApplicationPage = () => {
           setResponse(data);
           console.log(data);
         } else {
-          console.error('请求失败，状态码：', response.status);
+          console.error("请求失败，状态码：", response.status);
         }
       } else {
         const response = await fetch("/api/nanny/createNanny", {
@@ -152,7 +152,11 @@ const ApplicationPage = () => {
       }
 
       if (localStorage.getItem("way") === "suddenly") {
-        await createSuddenlyRecord(response.nanny.id, selectedCareType, address);
+        await createSuddenlyRecord(
+          response.nanny.id,
+          selectedCareType,
+          address,
+        );
       } else if (localStorage.getItem("way") === "longTerm") {
         await createLongTermRecord(response.nanny.id);
       }

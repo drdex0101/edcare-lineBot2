@@ -27,7 +27,7 @@ export default function HistoryPage() {
     setIsLoading(true);
     try {
       const response = await fetch(
-        `/api/order/getHistoryList?page=${page}&pageSize=10&keyword=${keywords}&sort=${selectedSort}`
+        `/api/order/getHistoryList?page=${page}&pageSize=10&keyword=${keywords}&sort=${selectedSort}`,
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");

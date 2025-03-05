@@ -43,11 +43,11 @@ const ApplicationPage = () => {
     // 保存日期到 localStorage
     localStorage.setItem(
       "suddenlyStartDate",
-      selectedRange.startDate?.toISOString()
+      selectedRange.startDate?.toISOString(),
     );
     localStorage.setItem(
       "suddenlyEndDate",
-      selectedRange.endDate?.toISOString()
+      selectedRange.endDate?.toISOString(),
     );
 
     router.push("/nanny/create/nannyInfo");

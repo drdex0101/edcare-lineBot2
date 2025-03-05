@@ -68,9 +68,9 @@ const ApplicationPage = () => {
       }
       if (status == "通過") {
         if (job == "保母") {
-          changeRichMenu("richmenu-80140f174c84df860ab6e4b2f1382634");
+          changeRichMenu("richmenu-307b8975e551ebd54362c688b7cb9e54");
         } else {
-          changeRichMenu("richmenu-dbfe9df32ebd1e9aba105ca6fc996955");
+          changeRichMenu("richmenu-48f0c719cfbfc92dd6ea5b8ce10b6cb3");
         }
       }
       window.location.reload();

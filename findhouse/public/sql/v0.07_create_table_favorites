@@ -2,6 +2,6 @@ CREATE TABLE favorites (
     id BIGSERIAL PRIMARY KEY,  -- 自動遞增 ID
     user_id VARCHAR NOT NULL,  -- 用戶 ID
     item_id VARCHAR NOT NULL,  -- 收藏的項目 ID
+    type VARCHAR NOT NULL, -- 儲存的身分 parent or nanny
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 收藏時間
-    UNIQUE (user_id, item_id)  -- 避免重複收藏
 );

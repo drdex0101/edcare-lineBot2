@@ -20,12 +20,60 @@ const ApplicationPage = () => {
   const [babyGender, setBabyGender] = useState("");
   const [babyBirthOrder, setBabyBirthOrder] = useState("");
   const [babyHope, setBabyHope] = useState("");
+  const [selectedCareType, setSelectedCareType] = useState(null);
   const handleNextClick = () => {
     createBabyRecord();
   };
 
   const handleLastClick = () => {
     router.back();
+  };
+
+  const createLongTermRecord = async (nannyId) => {
+    const weekdaysString = localStorage.getItem("longTermDays");
+    const weekdaysArray = weekdaysString.split(",").map(Number); // 將字串轉換成數字數組
+
+    const response = await fetch("/api/base/createLongTern", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        weekdays: weekdaysArray, // 使用轉換後的數組
+        scenario: localStorage.getItem("careScenario"),
+        careTime: localStorage.getItem("longTermCareTime"),
+        idType: "parent",
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to insert data into long_term table");
+    }
+
+    return response.json();
+  };
+
+  const createSuddenlyRecord = async (nannyId, selectedCareType, address) => {
+    const response = await fetch("/api/base/createSuddenly", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        startDate: localStorage.getItem("suddenlyStartDate"),
+        endDate: localStorage.getItem("suddsuddenlyEndDate"),
+        scenario: selectedCareType,
+        location: address,
+        careTime: "",
+        idType: "parent",
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to insert data into suddenly table");
+    }
+
+    return response.json();
   };
 
   const createBabyRecord = async () => {
@@ -48,7 +96,6 @@ const ApplicationPage = () => {
 
     // **必填欄位檢查**
     const requiredFields = {
-      parentLineId: "家長 Line ID",
       choosetype: "選擇類型",
       caretypeid: "照護類型 ID",
       nickname: "寶寶姓名",
@@ -56,7 +103,6 @@ const ApplicationPage = () => {
       birthday: "寶寶生日",
       rank: "寶寶排行",
       hope: "照護期望",
-      created_by: "建立者帳號",
     };
 
     // 找出未填寫的欄位
@@ -93,6 +139,17 @@ const ApplicationPage = () => {
       const responseData = await response.json();
       console.log("訂單建立成功:", responseData);
       alert("訂單建立成功！");
+
+      if (localStorage.getItem("way") === "suddenly") {
+        await createSuddenlyRecord(
+          response.nanny.id,
+          selectedCareType,
+          address,
+        );
+      } else if (localStorage.getItem("way") === "longTerm") {
+        await createLongTermRecord(response.nanny.id);
+      }
+
       router.push("/parent/search");
     } catch (error) {
       console.error("訂單建立失敗:", error);

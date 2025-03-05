@@ -10,12 +10,12 @@ const ApplicationPage = () => {
       nannyInfo.way = "suddenly";
       router.push("/nanny/create/suddenly");
     } else {
-      router.push("/nanny/create/suddenly"); 
+      router.push("/nanny/create/suddenly");
     }
   };
 
   const handleLastClick = () => {
-    router.back(); 
+    router.back();
   };
 
   const handleLongClick = () => {
@@ -23,7 +23,7 @@ const ApplicationPage = () => {
       nannyInfo.way = "longTerm";
       router.push("/nanny/create/long");
     } else {
-      router.push("/nanny/create/long"); 
+      router.push("/nanny/create/long");
     }
   };
 
