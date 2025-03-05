@@ -1,5 +1,5 @@
 import { Client } from 'pg';
-import verifyToken from '@/utils/verifyToken';
+import { verifyToken } from '../../../utils/jwtUtils';
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
@@ -10,7 +10,6 @@ export default async function handler(req, res) {
         careTime,
         idType
     } = req.body;
-
     const token = req.cookies.authToken;
     const payload = await verifyToken(token);
     const nannyId = payload.userId;

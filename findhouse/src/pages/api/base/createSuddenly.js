@@ -1,5 +1,5 @@
 import { Client } from 'pg';
-import verifyToken from '@/utils/verifyToken';
+import { verifyToken } from '../../../utils/jwtUtils';
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
