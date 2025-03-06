@@ -36,7 +36,7 @@ const ApplicationPage = () => {
   const [introduction, setIntroduction] = useState("");
   const [selectedAddress, setSelectedAddress] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [response, setResponse] = useState(null);
+  const [responseNannyData, setResponseNannyData] = useState(null);
 
   useEffect(() => {
     if (nannyInfo?.service) {
@@ -128,7 +128,7 @@ const ApplicationPage = () => {
 
         if (response.ok) {
           const data = await response.json();
-          setResponse(data);
+          setResponseNannyData(data.nanny);
           console.log(data);
         } else {
           console.error("请求失败，状态码：", response.status);
@@ -144,8 +144,9 @@ const ApplicationPage = () => {
 
         if (response.ok) {
           let data = await response.json();
-          setResponse(data);
-          console.log(data);
+          setResponseNannyData(data.nanny);
+          console.log(data.nanny.id);
+          setIsLoading(false);
         } else {
           console.error("請求失敗：", response.status);
         }
@@ -153,12 +154,12 @@ const ApplicationPage = () => {
 
       if (localStorage.getItem("way") === "suddenly") {
         await createSuddenlyRecord(
-          response.nanny.id,
+          responseNannyData.id,
           selectedCareType,
           address,
         );
       } else if (localStorage.getItem("way") === "longTerm") {
-        await createLongTermRecord(response.nanny.id);
+        await createLongTermRecord(responseNannyData.id);
       }
       setIsLoading(false);
       router.push("/nanny/finish");
@@ -186,41 +187,42 @@ const ApplicationPage = () => {
 
   const handleUpload = async (file, type) => {
     setIsLoading(true);
-    if (!file) return;
+    const formData = new FormData();
+    console.log("file:", file);
+    formData.append("file", file);
 
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = async () => {
-      const base64String = reader.result.split(",")[1]; // 取得 Base64 內容
-
-      try {
-        const resUpload = await fetch("/api/kycInfo/uploadImg", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            file: `data:image/png;base64,${base64String}`,
-          }),
-        });
-        const uploadResponse = await resUpload.json();
-        const uploadId = uploadResponse.id;
-        if (type === "environment") {
-          setUploadedImages((prevImages) => [...prevImages, uploadId]);
-          setUploadedEnvironmentImages((prevImages) => [
-            ...prevImages,
-            uploadResponse.url,
-          ]);
-        } else {
-          setHeadIcon(uploadId);
-          setHeadIconUrl(uploadResponse.url);
-        }
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Upload error:", error);
-        setMessage("Upload failed.");
+  
+    try {
+      const res = await fetch("/api/kycInfo/uploadImg", {
+        method: "POST",
+        body: formData,
+      });
+  
+      const result = await res.json();
+      console.log("Upload Response:", result);
+      const uploadId = result.uploadId; // 确保 API 返回的是 id 而不是对象
+  
+      if (type === "environment") {
+        setUploadedImages((prevImages) => [...prevImages, uploadId]);
+        setUploadedEnvironmentImages((prevImages) => [
+          ...prevImages,
+          result.url,
+        ]);
+      } else {
+        setHeadIcon(uploadId);
+        setHeadIconUrl(result.url);
       }
-    };
+  
+      if (result.success) {
+        console.log("Uploaded Image URL:", result.url);
+      } else {
+        console.error("Upload Failed:", result.message);
+      }
+    } catch (error) {
+      console.error("Upload Error:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleEnvironmentImageChange = (e) => {
@@ -650,7 +652,7 @@ const ApplicationPage = () => {
               rows={4}
               InputProps={{
                 sx: {
-                  padding: "0px 16px",
+                  padding: "16px 16px",
                   borderRadius: "8px",
                   backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
                 },

@@ -1,18 +1,15 @@
-import { verifyToken } from '../../../utils/jwtUtils';
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     
-    const { richMenuId } = req.body;
-    const token = req.cookies.authToken;
-    const userId = await verifyToken(token);
-    console.log('userId:', token);
+    const { richMenuId,lineId } = req.body;
+
     if (!userId) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
     try {
       // 綁定 Rich Menu 到用戶
-      const response = await fetch(`https://api.line.me/v2/bot/user/${userId}/richmenu/${richMenuId}`, {
+      const response = await fetch(`https://api.line.me/v2/bot/user/${lineId}/richmenu/${richMenuId}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${process.env.NEXT_PUBLIC_CHANNEL_ACCESS_TOKEN}`,  // 確保 Token 正確

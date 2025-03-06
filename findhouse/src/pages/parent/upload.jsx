@@ -143,7 +143,7 @@ const ApplicationPage = () => {
   };
 
   const handleClearFront = () => {
-    setFile(null);
+    setFileFront(null);
     setFileName("");
     setFrontImg(null);
     // 清空 file input

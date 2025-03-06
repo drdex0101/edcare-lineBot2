@@ -23,7 +23,7 @@ const ApplicationPage = () => {
     }
   };
 
-  const changeRichMenu = async (richMenuId) => {
+  const changeRichMenu = async (richMenuId,lineId) => {
     try {
       const token = cookie.get("authToken");
       const payload = await verifyToken(token);
@@ -35,7 +35,7 @@ const ApplicationPage = () => {
           Authorization: `Bearer ${process.env.NEXT_PUBLIC_CHANNEL_ACCESS_TOKEN}`,
         },
         body: JSON.stringify({
-          userId: userId,
+          userId: lineId,
           richMenuId: richMenuId,
         }),
       });
@@ -68,9 +68,9 @@ const ApplicationPage = () => {
       }
       if (status == "通過") {
         if (job == "保母") {
-          changeRichMenu("richmenu-307b8975e551ebd54362c688b7cb9e54");
+          changeRichMenu("richmenu-307b8975e551ebd54362c688b7cb9e54",lineId);
         } else {
-          changeRichMenu("richmenu-48f0c719cfbfc92dd6ea5b8ce10b6cb3");
+          changeRichMenu("richmenu-48f0c719cfbfc92dd6ea5b8ce10b6cb3",lineId);
         }
       }
       window.location.reload();

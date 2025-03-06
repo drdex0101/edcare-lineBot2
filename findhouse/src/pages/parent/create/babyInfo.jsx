@@ -301,9 +301,6 @@ const ApplicationPage = () => {
                 onChange={handleDateChange}
                 renderInput={(params) => <TextField {...params} />}
                 disableFuture
-                shouldDisableDate={(date) =>
-                  date.day() === 0 || date.day() === 6
-                } // 禁用週末
                 InputProps={{
                   sx: {
                     padding: "0px 16px",
@@ -481,7 +478,7 @@ const ApplicationPage = () => {
               maxRows={4}
               InputProps={{
                 sx: {
-                  padding: "0px 16px",
+                  padding: "16px 16px",
                   borderRadius: "8px",
                   backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
                 },

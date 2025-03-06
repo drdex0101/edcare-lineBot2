@@ -377,6 +377,7 @@ const ApplicationPage = () => {
                 <InputLabel id="gender-label">托育地區</InputLabel>
                 <Select
                   required
+                  multiple
                   labelId="gender-label"
                   id="gender"
                   label="定點選擇"
