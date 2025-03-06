@@ -150,7 +150,7 @@ const ApplicationPage = () => {
         await createLongTermRecord(response.nanny.id);
       }
 
-      router.push("/parent/search");
+      router.push("/parent/finish");
     } catch (error) {
       console.error("訂單建立失敗:", error);
       alert("提交失敗，請稍後再試");

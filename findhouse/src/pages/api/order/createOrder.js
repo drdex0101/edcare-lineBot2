@@ -6,7 +6,6 @@ export default async function handler(req, res) {
   if (req.method === 'POST') {
     console.log('req.body', req.body);
     const { 
-      parentLineId, 
       nannyid: rawNannyId, 
       status, choosetype, orderstatus, 
       caretypeid, nickname, gender, birthday, 
@@ -14,6 +13,10 @@ export default async function handler(req, res) {
     } = req.body;
 
     const nannyid = (rawNannyId === "" ? null : rawNannyId);
+
+    const token = req.cookies.authToken;
+    const payload = await verifyToken(token);
+    const parentLineId = payload.userId;
     
     // 創建 PostgreSQL 客戶端
     const client = getClient();
