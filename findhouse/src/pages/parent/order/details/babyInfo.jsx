@@ -50,12 +50,7 @@ const ApplicationPage = () => {
   const [babyHope, setBabyHope] = useState(item ? item.intro : "");
 
   const handleNextClick = () => {
-    const result = updateBabyRecord();
-    if (result.success) {
-      router.push("/parent/order");
-    } else {
-      alert("更新失敗");
-    }
+    updateBabyRecord();
   };
 
   const handleLastClick = () => {
@@ -85,6 +80,13 @@ const ApplicationPage = () => {
         created_by: localStorage.getItem("account"),
       }),
     });
+    const result = await response.json();
+    console.log(result);
+    if (result.success) {
+      router.push("/parent/search");
+    } else {
+      alert("更新失敗");
+    }
   };
 
   const handleSwitchChange = (index, checked) => {
@@ -351,7 +353,7 @@ const ApplicationPage = () => {
               maxRows={4}
               InputProps={{
                 sx: {
-                  padding: "0px 16px",
+                  padding: "16px 16px",
                   borderRadius: "8px",
                   backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
                 },

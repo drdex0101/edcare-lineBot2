@@ -1,5 +1,5 @@
 import getClient from '../../../utils/getClient';
-
+import { verifyToken } from '../../../utils/jwtUtils';
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     console.log('req.body', req.body);
@@ -22,6 +22,9 @@ export default async function handler(req, res) {
     } = req.body;
 
     const client = getClient();
+    const token = req.cookies.authToken;
+    const payload = await verifyToken(token);
+    const userId = payload.userId;
 
     try {
       await client.connect();
