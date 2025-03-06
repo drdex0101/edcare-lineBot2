@@ -1,15 +1,20 @@
 import multer from 'multer';
 import { v2 as cloudinary } from 'cloudinary';
 import getClient from '../../../utils/getClient';
-// 设置 multer 存储为内存存储
+
 const upload = multer({ storage: multer.memoryStorage() });
 
-// 禁用默认的 bodyParser，以使用 multer 处理 multipart/form-data
 export const config = {
   api: {
     bodyParser: false,
   },
 };
+
+cloudinary.config({
+  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
+  api_secret: process.env.NEXT_PUBLIC_CLOUDINARY_API_SECRET,
+});
 
 export default function handler(req, res) {
   if (req.method === 'POST') {
