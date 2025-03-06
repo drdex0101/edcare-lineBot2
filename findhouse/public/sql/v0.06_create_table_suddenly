@@ -4,7 +4,7 @@ CREATE TABLE suddenly (
     start_date DATE,
     end_date DATE,
     scenario VARCHAR(100),
-    location VARCHAR(255),
+    location VARCHAR[],
     care_time VARCHAR(50)
 );
 

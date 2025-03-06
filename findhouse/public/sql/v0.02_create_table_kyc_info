@@ -1,5 +1,5 @@
 CREATE TABLE kyc_info (
-    id BIGSERIAL PRIMARY KEY,                  -- 流水號 (主鍵，自動遞增)
+    id BIGSERIAL PRIMARY KEKY,                  -- 流水號 (主鍵，自動遞增)
     address VARCHAR(255),                      -- 戶籍地址
     communicateAddress VARCHAR(255),           -- 通訊地址
     identityFrontUploadId BIGINT,     -- 身分證正面上傳ID

@@ -1,11 +1,12 @@
+import { verifyToken } from '../../../utils/jwtUtils';
+
 export default async function handler(req, res) {
   if (req.method === 'POST') {
+    const token = req.cookies.authToken;
+    const payload = await verifyToken(token);
+    const lineId = payload.userId;
     
-    const { richMenuId,lineId } = req.body;
-
-    if (!userId) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
+    const { richMenuId } = req.body;
 
     try {
       // 綁定 Rich Menu 到用戶

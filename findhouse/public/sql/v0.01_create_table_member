@@ -1,5 +1,5 @@
 CREATE TABLE member (
-    id BIGSERIAL , -- 會員ID (主鍵，自動遞增)
+    id BIGSERIAL PRIMARY , -- 會員ID (主鍵，自動遞增)
     line_id VARCHAR,        -- 會員UUID
     account VARCHAR,       -- 帳號
     cellphone VARCHAR,      -- 手機
