@@ -86,13 +86,12 @@ const ApplicationPage = () => {
   const handleUpload = async (file, type) => {
     setIsLoading(true);
     const formData = new FormData();
-
+    console.log("file:", file);
     if (type === "ID Front") {
-      formData.append("file", fileFront);
+      formData.append("file", file);
     } else if (type === "ID Back") {
-      formData.append("file", fileBack);
-    } 
-
+      formData.append("file", file);
+    }
 
   
     try {
@@ -127,7 +126,6 @@ const ApplicationPage = () => {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    console.log("file", file);
     setFileFront(file);
     setFileName(file?.name || "");
     handleUpload(file, "ID Front"); // 指定文件类型
@@ -135,7 +133,6 @@ const ApplicationPage = () => {
 
   const handleFileChangeBack = (e) => {
     const file = e.target.files[0];
-    console.log("file", file);
     setFileBack(file);
     setFileNameBack(file?.name || "");
     handleUpload(file, "ID Back"); // 指定文件类型

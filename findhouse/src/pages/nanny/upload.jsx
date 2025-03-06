@@ -56,6 +56,7 @@ const ApplicationPage = () => {
 
     if (missingFields.length > 0) {
       alert(`請填寫以下必填欄位：\n${missingFields.join("\n")}`);
+      setIsLoading(false);
       return; // 終止函數執行
     }
 
@@ -63,12 +64,14 @@ const ApplicationPage = () => {
     const taiwanIdPattern = /^[A-Z][12]\d{8}$/;
     if (!taiwanIdPattern.test(kycInfoData.identityCard)) {
       alert("請輸入有效的台灣身分證字號（例如：A123456789）。");
+      setIsLoading(false);
       return;
     }
 
     // **生日格式檢查（應為 YYYY-MM-DD 或 Date 物件）**
     if (!selectedDate || isNaN(new Date(selectedDate).getTime())) {
       alert("請選擇有效的生日日期（格式：YYYY-MM-DD）。");
+      setIsLoading(false);
       return;
     }
 
@@ -119,48 +122,41 @@ const ApplicationPage = () => {
 
   const handleUpload = async (file, type) => {
     setIsLoading(true);
-    if (!file) {
-      console.error("No file selected");
-      return;
+    const formData = new FormData();
+    console.log("file:", file);
+    if (type === "ID Front") {
+      formData.append("file", file);
+    } else if (type === "ID Back") {
+      formData.append("file", file);
     }
 
-    // ✅ **將 `file` 轉成 `Base64`**
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-
-    reader.onloadend = async () => {
-      const base64String = reader.result.split(",")[1]; // 取得 Base64 內容
-
-      try {
-        const res = await fetch("/api/kycInfo/uploadImg", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json", // 🚀 以 `JSON` 形式傳遞 Base64
-          },
-          body: JSON.stringify({
-            file: `data:image/png;base64,${base64String}`,
-          }), // ✅ 傳遞 `Base64`
-        });
-
-        const result = await res.json();
-        console.log("Upload Response:", result);
-        const uploadId = result.uploadId; // 確保 API 返回的是 id 而不是物件
-
-        if (type === "ID Front") {
-          setFrontImg(uploadId);
-        } else if (type === "ID Back") {
-          setBackImg(uploadId);
-        }
-        if (result.success) {
-          console.log("Uploaded Image URL:", result.url);
-        } else {
-          console.error("Upload Failed:", result.message);
-        }
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Upload Error:", error);
+  
+    try {
+      const res = await fetch("/api/kycInfo/uploadImg", {
+        method: "POST",
+        body: formData,
+      });
+  
+      const result = await res.json();
+      console.log("Upload Response:", result);
+      const uploadId = result.uploadId; // 确保 API 返回的是 id 而不是对象
+  
+      if (type === "ID Front") {
+        setFrontImg(uploadId);
+      } else if (type === "ID Back") {
+        setBackImg(uploadId);
       }
-    };
+  
+      if (result.success) {
+        console.log("Uploaded Image URL:", result.url);
+      } else {
+        console.error("Upload Failed:", result.message);
+      }
+    } catch (error) {
+      console.error("Upload Error:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleFileChange = (e) => {
