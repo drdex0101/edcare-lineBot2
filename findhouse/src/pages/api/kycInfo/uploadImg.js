@@ -47,7 +47,7 @@ export default function handler(req, res) {
         stream.end(req.file.buffer);
 
       } catch (error) {
-        res.status(500).json({ success: false, message: '文件上传失败。' });
+        res.status(500).json({ success: false, message: error });
       }
     });
   } else {
