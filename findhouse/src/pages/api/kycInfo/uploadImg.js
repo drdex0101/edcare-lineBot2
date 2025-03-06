@@ -1,61 +1,56 @@
-import { v2 as cloudinary } from "cloudinary";
-import { Pool } from 'pg'; // 引入 PostgreSQL 客戶端
+import multer from 'multer';
+import { v2 as cloudinary } from 'cloudinary';
+import getClient from '../../../utils/getClient';
+// 设置 multer 存储为内存存储
+const upload = multer({ storage: multer.memoryStorage() });
 
-// 設定 Cloudinary
-cloudinary.config({
-  cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
-  api_secret: process.env.NEXT_PUBLIC_CLOUDINARY_API_SECRET,
-});
+// 禁用默认的 bodyParser，以使用 multer 处理 multipart/form-data
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 
-// 設定 PostgreSQL 連接池
-const pool = new Pool({
-  connectionString: process.env.POSTGRES_URL,
-  ssl: { rejectUnauthorized: false },
-});
+export default function handler(req, res) {
+  if (req.method === 'POST') {
+    const client = getClient();
+    client.connect();
 
+    upload.single('file')(req, res, async (err) => {
+      if (err) {
+        return res.status(500).json({ success: false, message: '文件上传失败。' });
+      }
 
-export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ success: false, message: "Method Not Allowed" });
-  }
+      try {
+        const stream = cloudinary.uploader.upload_stream(
+          { resource_type: 'auto' },
+          async (error, result) => {
+            if (error) {
+              return res.status(500).json({ success: false, message: '上传到 Cloudinary 时出错。' });
+            }
+            const insertQuery = `
+              INSERT INTO upload (type, upload_url, created_ts, update_ts)
+              VALUES ($1, $2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+              RETURNING id;
+            `;
+            const values = ['image/jpeg', result.secure_url];
+            const result2 = await client.query(insertQuery, values);
+            const newId = result2.rows[0].id;
 
-  try {
-    const { file } = req.body; // ✅ 直接從 `req.body` 讀取 `file`
-    if (!file) {
-      return res.status(400).json({ success: false, message: "No file uploaded" });
-    }
+            res.status(200).json({ 
+              success: true,
+              url: result.secure_url,
+              uploadId: newId,
+             });
+          }
+        );
+        stream.end(req.file.buffer);
 
-    console.log("Uploading file to Cloudinary...");
-
-    // **將 Base64 圖片直接上傳**
-    const uploadResponse = await cloudinary.uploader.upload(file, {
-      folder: "uploads",
-      resource_type: "auto",
+      } catch (error) {
+        res.status(500).json({ success: false, message: '文件上传失败。' });
+      }
     });
-
-    console.log("Cloudinary Upload Response:", uploadResponse);
-
-    // **插入資料到資料庫**
-    const insertQuery = `
-      INSERT INTO upload (type, upload_url, created_ts, update_ts) 
-      VALUES ($1, $2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-      RETURNING id; -- 返回新插入的 ID
-    `;
-
-    const values = ['image/jpeg', uploadResponse.secure_url]; // 使用 Cloudinary 的 URL
-    const result = await pool.query(insertQuery, values); // 執行插入操作
-    const newId = result.rows[0].id;
-    await pool.query(insertQuery, values); // 執行插入操作
-
-    return res.status(201).json({
-      success: true,
-      up: uploadResponse.public_id,
-      url: uploadResponse.secure_url,
-      uploadId:newId
-    });
-  } catch (error) {
-    console.error("Upload Error:", error);
-    return res.status(500).json({ success: false, message: "Upload failed" });
+  } else {
+    res.status(405).json({ success: false, message: '方法不被允许。' });
   }
 }
