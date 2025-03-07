@@ -5,7 +5,8 @@ CREATE TABLE suddenly (
     end_date DATE,
     scenario VARCHAR(100),
     location VARCHAR[],
-    care_time VARCHAR(50)
+    care_time VARCHAR(50),
+    id_type VARCHAR(50)
 );
 
 CREATE TABLE long_term (
@@ -13,7 +14,8 @@ CREATE TABLE long_term (
     order_id VARCHAR(50),
     weekdays VARCHAR[], -- 星期 (array of days)
     scenario VARCHAR(100), -- 情境
-    care_time VARCHAR(50) -- 托育時間
+    care_time VARCHAR(50), -- 托育時間
+    id_type VARCHAR(50)
 );
 
 ALTER TABLE suddenly ADD COLUMN id_type VARCHAR(50);
