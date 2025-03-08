@@ -11,6 +11,8 @@ const useStore = create((set) => ({
   setMemberInfo: (newMemberInfo) => set({ memberInfo: newMemberInfo }),
   kycData: null,
   setKycData: (newKycData) => set({ kycData: newKycData }),
+  memberId: null,
+  setMemberId: (newMemberId) => set({ memberId: newMemberId }),
 }));
 
 export default useStore;

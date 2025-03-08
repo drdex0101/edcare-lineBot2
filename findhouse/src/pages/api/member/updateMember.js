@@ -31,7 +31,6 @@ export default async function handler(req, res) {
       console.error('Database error:', error);
       res.status(500).json({ error: 'Database error' });
     } finally {
-      // 關閉連接
       await client.end();
     }
   } else {

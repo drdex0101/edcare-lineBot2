@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import { useDispatch } from "react-redux";
-import { setMemberId } from "../../features/member/memberSlice";
 import axios from "axios";
 import Loading from "../../components/base/Loading";
 import { useState } from "react";
@@ -15,6 +14,7 @@ const ApplicationPage = () => {
   const dispatch = useDispatch(); // Redux 的 dispatch 函数
   const [isLoading, setIsLoading] = useState(false);
   const { memberInfo, setMemberInfo } = useStore();
+  const { memberId, setMemberId } = useStore();
   const accountName = decodeURIComponent(Cookies.get('displayName'));
 
 
@@ -31,55 +31,71 @@ const ApplicationPage = () => {
 
   const handleNextClick = async () => {
     const memberData = {
-      memberId: memberInfo.id,
+      memberId: memberInfo?.id,
       accountName: accountName,
-      phoneNumber: document.getElementById("cellphone").value,
+      cellphone: document.getElementById("cellphone").value,
       email: document.getElementById("email").value,
       job: document.getElementById("job").value,
     };
     setMemberInfo(memberData);
     const account = document.getElementById("account").value;
-    const phoneNumber = document.getElementById("cellphone").value;
+    const cellphone = document.getElementById("cellphone").value;
     const email = document.getElementById("email").value;
 
-    if (!account || !phoneNumber || !email || !job) {
+    if (!account || !cellphone || !email || !job) {
       alert("請填寫所有必填欄位。");
-      return; // 終止函數執行
+      return;
     }
 
     // 驗證手機號碼格式（假設為台灣的手機號碼格式）
     const phonePattern = /^09\d{8}$/;
-    if (!phonePattern.test(memberData.phoneNumber)) {
-      console.error("Invalid phone number format:", memberData.phoneNumber);
+    if (!phonePattern.test(memberData.cellphone)) {
       alert("請輸入有效的手機號碼（例如：0912345678）。");
-      return; // 終止函數執行
+      return;
     }
 
     // 驗證電子郵件格式
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(memberData.email)) {
-      console.error("Invalid email format:", memberData.email);
       alert("請輸入有效的電子郵件地址。");
-      return; // 終止函數執行
+      return;
     }
     
     try {
       setIsLoading(true);
-      if (memberInfo.id) {
-        const response = await fetch("/api/member/createMember", {
+      let response;
+      if (memberId == null) {
+        response = await fetch("/api/member/createMember", {
           method: "POST",
+          headers: {
+            'Content-Type': 'application/json'
+          },
           body: JSON.stringify(memberData),
         });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        const memberId = data.member.id; // 獲取返回的 memberId
+        (setMemberId(memberId)); // 保存到 Redux Store
+      } else {
+        response = await fetch("/api/member/updateMember", {
+          method: "PATCH",
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(memberData),
+        });
+      }
+      if (!response.ok) {
+        alert("申請失敗，請重新嘗試。");
       }
       else {
-        const response = await fetch("/api/member/updateMember", {
-          method: "PATCH",
-          body: JSON.stringify(memberData),
-        });
+        router.push("/parent/verify");
       }
-      const memberId = response.data.member.id; // 獲取返回的 memberId
-      setMemberId(memberId); // 保存到 Redux Store
-      router.push("/parent/verify");
+      setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
       alert("申請失敗，請重新嘗試。");
@@ -89,6 +105,13 @@ const ApplicationPage = () => {
 
   const handleLastClick = () => {
     router.back(); // 替换 '/next-page' 为你想要跳转的路径
+  };
+
+  const handleInputChange = (field) => (event) => {
+    setMemberInfo({
+      ...memberInfo,
+      [field]: event.target.value
+    });
   };
 
   return (
@@ -198,6 +221,7 @@ const ApplicationPage = () => {
                       backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
                     },
                   }}
+                  onChange={handleInputChange('cellphone')}
                   value={memberInfo?.cellphone}
                   sx={{
                     alignSelf: "stretch",
@@ -220,7 +244,8 @@ const ApplicationPage = () => {
                   id="job"
                   label="職業"
                   variant="outlined"
-                  value={memberInfo?.job}
+                  value={memberInfo?.job || ''}
+                  onChange={handleInputChange('job')}
                   InputProps={{
                     sx: {
                       padding: "0px 16px",
@@ -249,7 +274,8 @@ const ApplicationPage = () => {
                   id="email"
                   label="聯絡信箱"
                   variant="outlined"
-                  value={memberInfo?.email}
+                  value={memberInfo?.email || ''}
+                  onChange={handleInputChange('email')}
                   InputProps={{
                     sx: {
                       padding: "0px 16px",
