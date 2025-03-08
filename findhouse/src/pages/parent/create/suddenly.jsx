@@ -35,8 +35,9 @@ const ApplicationPage = () => {
   const [orderData, setData] = React.useState("");
 
   const createSuddenlyRecord = async () => {
-
-    const locationArray = Array.isArray(selectedAddress) ? selectedAddress : [selectedAddress];
+    const locationArray = Array.isArray(selectedAddress)
+      ? selectedAddress
+      : [selectedAddress];
 
     const response = await fetch("/api/base/createSuddenly", {
       method: "POST",
@@ -124,40 +125,46 @@ const ApplicationPage = () => {
           </div>
           <div style={styles.buttonLayout}>
             <div style={styles.buttonLayout}>
-              <div style={styles.inputField}>
-                <input
-                  type="date"
-                  id="datepicker1"
-                  name="startDate"
-                  min="2023-01-01"
-                  style={styles.dateInput}
-                  onChange={(e) =>
-                    handleDateChange({
-                      ...selectedRange,
-                      startDate: e.target.value,
-                    })
-                  }
-                  lang="zh-TW"
-                />
+              <div style={styles.dateLayout}>
+                <label style={styles.dateLabel}>開始日期</label>
+                <div style={styles.inputField}>
+                  <input
+                    type="date"
+                    id="datepicker1"
+                    name="startDate"
+                    min="2023-01-01"
+                    style={styles.dateInput}
+                    onChange={(e) =>
+                      handleDateChange({
+                        ...selectedRange,
+                        startDate: e.target.value,
+                      })
+                    }
+                    placeholder="請選擇開始日期"
+                    lang="zh-TW"
+                  />
+                </div>
               </div>
-
-              <div style={styles.inputField}>
-                <input
-                  type="date"
-                  id="datepicker2"
-                  name="endDate"
-                  min="2023-01-01"
-                  style={styles.dateInput}
-                  onChange={(e) =>
-                    handleDateChange({
-                      ...selectedRange,
-                      endDate: e.target.value,
-                    })
-                  }
-                  lang="zh-TW"
-                />
+              <div style={styles.dateLayout}>
+                <label style={styles.dateLabel}>結束日期</label>
+                <div style={styles.inputField}>
+                  <input
+                    type="date"
+                    id="datepicker2"
+                    name="endDate"
+                    min="2023-01-01"
+                    style={styles.dateInput}
+                    onChange={(e) =>
+                      handleDateChange({
+                        ...selectedRange,
+                        endDate: e.target.value,
+                      })
+                    }
+                    placeholder="請選擇結束日期"
+                    lang="zh-TW"
+                  />
+                </div>
               </div>
-
               <div style={{ width: "100%" }}>
                 <CalendarRangePicker
                   startDate={selectedRange.startDate}
@@ -664,6 +671,38 @@ const ApplicationPage = () => {
 };
 
 const styles = {
+  inputContainer: {
+    position: "relative",
+    display: "inline-block",
+    width: "100%",
+  },
+
+  dateInput: {
+    width: "100%",
+    padding: "10px 5px",
+    fontSize: "16px",
+    boxSizing: "border-box",
+  },
+
+  floatingLabel: {
+    position: "absolute",
+    top: "50%",
+    left: "10px",
+    transform: "translateY(-50%)",
+    transition: "0.2s ease all",
+    color: "#aaa",
+    pointerEvents: "none",
+  },
+  dateInput: {
+    "&:focus + floatingLabel, &:not(:placeholder-shown) + floatingLabel": {
+      top: 0,
+      left: 5,
+      fontSize: "12px",
+      color: "#555",
+      background: "#fff",
+      padding: "0 2px", // Fixed padding syntax
+    },
+  },
   address: {
     color: "var(---Surface-Black-25, #252525)",
     fontFamily: "LINE Seed JP_TTF",
@@ -758,6 +797,12 @@ const styles = {
     alignSelf: "stretch",
     boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
     backgroundColor: "#FFF",
+  },
+  dateLayout: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px",
+    width: "100%",
   },
   inputField: {
     padding: "25px 14px",

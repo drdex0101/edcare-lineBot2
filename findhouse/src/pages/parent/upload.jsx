@@ -45,7 +45,7 @@ const ApplicationPage = () => {
       status: "pending",
     };
     try {
-      if (kycData.id) {
+      if (kycData!=null) {
         try{
           setIsLoading(true);
           const response = await fetch("/api/kycInfo/updateKycInfo", {
@@ -118,14 +118,11 @@ const ApplicationPage = () => {
     } else if (type === "ID Back") {
       formData.append("file", file);
     }
-
-  
     try {
       const res = await fetch("/api/kycInfo/uploadImg", {
         method: "POST",
         body: formData,
       });
-  
       const result = await res.json();
       console.log("Upload Response:", result);
       const uploadId = result.uploadId; // 确保 API 返回的是 id 而不是对象
