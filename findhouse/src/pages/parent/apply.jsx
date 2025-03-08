@@ -64,7 +64,10 @@ const ApplicationPage = () => {
           "Content-Type": "application/json",
         }
       });
-      if (isMemberExist.length === 0) {
+      const memberExistData = await isMemberExist.json();
+      console.log(memberExistData.member);
+      let response;
+      if (memberExistData.member.length === 0) {
         response = await fetch("/api/member/createMember", {
           method: "POST",
           headers: {
@@ -89,11 +92,7 @@ const ApplicationPage = () => {
           body: JSON.stringify(memberData),
         });
       }
-      if (!response.success) {
-        alert("申請失敗，請重新嘗試。");
-      } else {
-        router.push("/parent/verify");
-      }
+      router.push("/parent/verify");
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);

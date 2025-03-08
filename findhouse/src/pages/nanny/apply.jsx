@@ -83,10 +83,7 @@ const ApplicationPage = () => {
         const data = await response.json();
         const memberId = data.member.id; // 獲取返回的 memberId
         setMemberId(memberId); // 保存到 Redux Store
-        if (!response.ok) {
-          alert("申請失敗，請重新嘗試。");
-          setIsLoading(false);
-        }
+        
         router.push("/nanny/verify");
       } else {
         response = await fetch("/api/member/updateMember", {
@@ -127,7 +124,7 @@ const ApplicationPage = () => {
       ) : (
         <>
           <div style={styles.header}>
-            <span style={styles.headerFont}>申請成為家長</span>
+            <span style={styles.headerFont}>申請成為保母</span>
             <button onClick={handleLastClick} style={styles.lastButton}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
