@@ -84,7 +84,7 @@ const ApplicationPage = () => {
         const memberId = data.member.id; // 獲取返回的 memberId
         setMemberId(memberId); // 保存到 Redux Store
         
-        router.push("/nanny/verify");
+        router.push("/nanny/upload");
       } else {
         response = await fetch("/api/member/updateMember", {
           method: "PATCH",
