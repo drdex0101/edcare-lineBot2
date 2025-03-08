@@ -108,7 +108,7 @@ const ApplicationPage = () => {
     // 找出未填寫的欄位
     const missingFields = Object.entries(requiredFields)
       .filter(
-        ([key]) => !babyRecordData[key] || babyRecordData[key].length === 0,
+        ([key]) => !babyRecordData[key] || babyRecordData[key].length === 0
       )
       .map(([_, label]) => label);
 
@@ -144,7 +144,7 @@ const ApplicationPage = () => {
         await createSuddenlyRecord(
           response.nanny.id,
           selectedCareType,
-          address,
+          address
         );
       } else if (localStorage.getItem("choosetype") === "longTerm") {
         await createLongTermRecord(response.nanny.id);
@@ -222,6 +222,8 @@ const ApplicationPage = () => {
             <div style={styles.rollerActive}></div>
             <div style={styles.rollerActive}></div>
             <div style={styles.rollerActive}></div>
+            <div style={styles.rollerActive}></div>
+            <div style={styles.roller}></div>
           </div>
           <div style={styles.titleLayout}>
             <span style={styles.subTitle}>托育資料填寫</span>

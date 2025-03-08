@@ -1,4 +1,4 @@
-import { useEffect , React} from "react";
+import { useEffect, React } from "react";
 import { useRouter } from "next/router";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -7,7 +7,7 @@ import axios from "axios";
 import Loading from "../../components/base/Loading";
 import { useState } from "react";
 import useStore from "../../lib/store";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 
 const ApplicationPage = () => {
   const router = useRouter();
@@ -15,8 +15,7 @@ const ApplicationPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { memberInfo, setMemberInfo } = useStore();
   const { memberId, setMemberId } = useStore();
-  const accountName = decodeURIComponent(Cookies.get('displayName'));
-
+  const accountName = decodeURIComponent(Cookies.get("displayName"));
 
   useEffect(() => {
     const fetchMemberInfo = async () => {
@@ -60,7 +59,7 @@ const ApplicationPage = () => {
       alert("請輸入有效的電子郵件地址。");
       return;
     }
-    
+
     try {
       setIsLoading(true);
       let response;
@@ -68,31 +67,30 @@ const ApplicationPage = () => {
         response = await fetch("/api/member/createMember", {
           method: "POST",
           headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json",
           },
           body: JSON.stringify(memberData),
         });
-        
+
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        
+
         const data = await response.json();
         const memberId = data.member.id; // 獲取返回的 memberId
-        (setMemberId(memberId)); // 保存到 Redux Store
+        setMemberId(memberId); // 保存到 Redux Store
       } else {
         response = await fetch("/api/member/updateMember", {
           method: "PATCH",
           headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json",
           },
           body: JSON.stringify(memberData),
         });
       }
       if (!response.ok) {
         alert("申請失敗，請重新嘗試。");
-      }
-      else {
+      } else {
         router.push("/parent/verify");
       }
       setIsLoading(false);
@@ -110,7 +108,7 @@ const ApplicationPage = () => {
   const handleInputChange = (field) => (event) => {
     setMemberInfo({
       ...memberInfo,
-      [field]: event.target.value
+      [field]: event.target.value,
     });
   };
 
@@ -156,7 +154,7 @@ const ApplicationPage = () => {
           >
             <div style={styles.contentLayout}>
               <div style={styles.rollerLayout}>
-                <div style={styles.roller}></div>
+                <div style={styles.rollerActive}></div>
                 <div style={styles.rollerActive}></div>
                 <div style={styles.roller}></div>
                 <div style={styles.roller}></div>
@@ -221,7 +219,7 @@ const ApplicationPage = () => {
                       backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
                     },
                   }}
-                  onChange={handleInputChange('cellphone')}
+                  onChange={handleInputChange("cellphone")}
                   value={memberInfo?.cellphone}
                   sx={{
                     alignSelf: "stretch",
@@ -244,8 +242,8 @@ const ApplicationPage = () => {
                   id="job"
                   label="職業"
                   variant="outlined"
-                  value={memberInfo?.job || ''}
-                  onChange={handleInputChange('job')}
+                  value={memberInfo?.job || ""}
+                  onChange={handleInputChange("job")}
                   InputProps={{
                     sx: {
                       padding: "0px 16px",
@@ -274,8 +272,8 @@ const ApplicationPage = () => {
                   id="email"
                   label="聯絡信箱"
                   variant="outlined"
-                  value={memberInfo?.email || ''}
-                  onChange={handleInputChange('email')}
+                  value={memberInfo?.email || ""}
+                  onChange={handleInputChange("email")}
                   InputProps={{
                     sx: {
                       padding: "0px 16px",
