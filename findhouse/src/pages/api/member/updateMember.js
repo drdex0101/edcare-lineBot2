@@ -1,15 +1,9 @@
 import getClient from '../../../utils/getClient';
-import { verifyToken } from '../../../utils/jwtUtils';
-import useStore from '../../../lib/store';
+
 export default async function handler(req, res) {
-  if (req.method === 'POST') {
-    console.log('req.body', req.body);
+  if (req.method === 'PATCH') {
+    const { cellphone, email, job, memberId } = req.body;
 
-    const token = req.cookies.authToken;
-    const payload = await verifyToken(token);
-    const userId = payload.userId;
-
-    const { accountName, phoneNumber, email, job } = req.body;
     // 創建 PostgreSQL 客戶端
     const client = getClient();
 
@@ -17,14 +11,18 @@ export default async function handler(req, res) {
       // 連接資料庫
       await client.connect();
 
-      // 使用參數化查詢插入資料
+      // 使用參數化查詢更新資料
       const query = `
-        INSERT INTO member (account, line_id, cellphone, email, job, created_ts)
-        VALUES ($1, $2, $3, $4, $5, NOW())
+        UPDATE member
+        SET cellphone = $1,
+            email = $2,
+            job = $3,
+            update_ts = NOW()
+        WHERE id = $4
         RETURNING *;
       `;
-      console.log(query);
-      const values = [accountName, userId, phoneNumber, email, job];
+      const values = [cellphone, email, job, memberId];
+
       const result = await client.query(query, values);
 
       console.log('Member created successfully:', result.rows[0]);
@@ -38,7 +36,7 @@ export default async function handler(req, res) {
     }
   } else {
     // 不支援的 HTTP 方法
-    res.setHeader('Allow', ['POST']);
+    res.setHeader('Allow', ['PATCH']);
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }

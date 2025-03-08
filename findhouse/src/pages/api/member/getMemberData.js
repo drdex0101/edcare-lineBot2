@@ -7,6 +7,7 @@ export default async function handler(req, res) {
     const accountName = req.cookies.accountName;
     const payload = await verifyToken(token);
     const userId = payload.userId;
+    console.log(userId);
       
     if (!userId) {
       return res.status(400).json({ 
@@ -22,14 +23,12 @@ export default async function handler(req, res) {
 
       const query = `
         SELECT 
-          member.account, 
+          member.account,
           member.cellphone, 
           member.email, 
           member.job, 
-          member.created_ts,
-          kyc_info.name
+          member.created_ts
         FROM member
-        JOIN kyc_info ON member.kyc_id::bigint = kyc_info.id::bigint
         WHERE member.line_id = $1;
       `;
       
@@ -37,6 +36,7 @@ export default async function handler(req, res) {
       const result = await client.query(query, [userId]);
 
       console.log('memberInfo retrieved successfully:', result.rows);
+      console.log('userId', userId);
       return res.status(200).json({ 
         success: true, 
         member: result.rows, 

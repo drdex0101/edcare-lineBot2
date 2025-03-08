@@ -7,6 +7,10 @@ const useStore = create((set) => ({
   setNannyInfo: (newNannyInfo) => set({ nannyInfo: newNannyInfo }), 
   orderId: null,
   setOrderId: (newOrderId) => set({ orderId: newOrderId }),
+  memberInfo: null,
+  setMemberInfo: (newMemberInfo) => set({ memberInfo: newMemberInfo }),
+  kycData: null,
+  setKycData: (newKycData) => set({ kycData: newKycData }),
 }));
 
 export default useStore;
