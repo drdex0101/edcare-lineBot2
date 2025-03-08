@@ -64,7 +64,7 @@ const ApplicationPage = () => {
       }
       if (status == "通過") {
         if (job == "保母") {
-          changeRichMenu("richmenu-307b8975e551ebd54362c688b7cb9e54");
+          changeRichMenu("richmenu-3adb9975aee0c695e08c99ef572d4008");
         } else {
           changeRichMenu("richmenu-48f0c719cfbfc92dd6ea5b8ce10b6cb3");
         }
