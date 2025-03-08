@@ -146,11 +146,11 @@ const ApplicationPage = () => {
           selectedCareType,
           address
         );
+        router.push("/parent/finish");
       } else if (localStorage.getItem("choosetype") === "longTerm") {
         await createLongTermRecord(response.nanny.id);
+        router.push("/parent/finish");
       }
-
-      router.push("/parent/finish");
     } catch (error) {
       console.error("訂單建立失敗:", error);
       alert("提交失敗，請稍後再試");

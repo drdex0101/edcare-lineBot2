@@ -93,7 +93,7 @@ const ApplicationPage = () => {
             richMenuId: "richmenu-bd0843b93a53c3df760bbd95c7871e23",
           }),
         });
-        router.push("/parent/create/choose");
+        router.push("/parent/create/");
       }
     } catch (error) {
       setIsLoading(false);
