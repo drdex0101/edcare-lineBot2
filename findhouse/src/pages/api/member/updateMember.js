@@ -30,9 +30,7 @@ export default async function handler(req, res) {
     } catch (error) {
       console.error('Database error:', error);
       res.status(500).json({ error: 'Database error' });
-    } finally {
-      await client.end();
-    }
+    } 
   } else {
     // 不支援的 HTTP 方法
     res.setHeader('Allow', ['PATCH']);
