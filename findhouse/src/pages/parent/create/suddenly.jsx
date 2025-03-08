@@ -24,17 +24,6 @@ const ApplicationPage = () => {
     return new Date(dateString);
   };
 
-  const parseEditDate = (dateString) => {
-    if (!dateString) return null;
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const day = date.getDate().toString().padStart(2, "0");
-
-    const formattedDate = `${year}-${month}-${day}`;
-    return formattedDate;
-  };
-
   // Initialize state with default values based on item
   const [selectedRange, setSelectedRange] = React.useState(() => ({
     startDate: null,
@@ -46,6 +35,9 @@ const ApplicationPage = () => {
   const [orderData, setData] = React.useState("");
 
   const createSuddenlyRecord = async () => {
+
+    const locationArray = Array.isArray(selectedAddress) ? selectedAddress : [selectedAddress];
+
     const response = await fetch("/api/base/createSuddenly", {
       method: "POST",
       headers: {
@@ -56,7 +48,7 @@ const ApplicationPage = () => {
         startDate: selectedRange.startDate,
         endDate: selectedRange.endDate,
         scenario: selectedCareType,
-        location: selectedAddress.join(","),
+        location: locationArray,
         careTime: "",
         idType: "parent",
       }),

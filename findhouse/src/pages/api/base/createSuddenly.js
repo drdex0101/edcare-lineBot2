@@ -1,4 +1,4 @@
-import { Client } from 'pg';
+import getClient from '../../../utils/getClient';
 import { verifyToken } from '../../../utils/jwtUtils';
 
 export default async function handler(req, res) {
@@ -17,12 +17,7 @@ export default async function handler(req, res) {
     const payload = await verifyToken(token);
     const nannyId = payload.userId;
 
-    const client = new Client({
-      connectionString: process.env.POSTGRES_URL,
-      ssl: {
-        rejectUnauthorized: false,
-      },
-    });
+    const client = getClient();
 
     try {
       await client.connect();

@@ -381,7 +381,7 @@ const ApplicationPage = () => {
                   labelId="gender-label"
                   id="gender"
                   label="定點選擇"
-                  defaultValue={item ? item.suddenly_location : ""}
+                  defaultValue={item ? item.suddenly_location : []}
                   onChange={(e) => setSelectedAddress(e.target.value)}
                   MenuProps={{
                     PaperProps: {

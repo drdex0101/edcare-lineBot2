@@ -23,11 +23,8 @@ const ApplicationPage = () => {
     }
   };
 
-  const changeRichMenu = async (richMenuId,lineId) => {
+  const changeRichMenu = async (richMenuId) => {
     try {
-      const token = cookie.get("authToken");
-      const payload = await verifyToken(token);
-      const userId = payload.userId;
       const response = await fetch("/api/line/changeRichMenu", {
         method: "POST",
         headers: {
@@ -35,7 +32,6 @@ const ApplicationPage = () => {
           Authorization: `Bearer ${process.env.NEXT_PUBLIC_CHANNEL_ACCESS_TOKEN}`,
         },
         body: JSON.stringify({
-          userId: lineId,
           richMenuId: richMenuId,
         }),
       });
@@ -68,12 +64,12 @@ const ApplicationPage = () => {
       }
       if (status == "通過") {
         if (job == "保母") {
-          changeRichMenu("richmenu-307b8975e551ebd54362c688b7cb9e54",lineId);
+          changeRichMenu("richmenu-307b8975e551ebd54362c688b7cb9e54");
         } else {
-          changeRichMenu("richmenu-48f0c719cfbfc92dd6ea5b8ce10b6cb3",lineId);
+          changeRichMenu("richmenu-48f0c719cfbfc92dd6ea5b8ce10b6cb3");
         }
       }
-      window.location.reload();
+      //window.location.reload();
     } catch (err) {
       console.error("Error updating status:", err);
       setError(err.message);

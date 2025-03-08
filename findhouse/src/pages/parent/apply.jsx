@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect , React} from "react";
 import { useRouter } from "next/router";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -7,18 +7,37 @@ import { setMemberId } from "../../features/member/memberSlice";
 import axios from "axios";
 import Loading from "../../components/base/Loading";
 import { useState } from "react";
+import useStore from "../../lib/store";
+import Cookies from 'js-cookie';
+
 const ApplicationPage = () => {
   const router = useRouter();
   const dispatch = useDispatch(); // Redux 的 dispatch 函数
   const [isLoading, setIsLoading] = useState(false);
+  const { memberInfo, setMemberInfo } = useStore();
+  const accountName = decodeURIComponent(Cookies.get('displayName'));
+
+
+  useEffect(() => {
+    const fetchMemberInfo = async () => {
+      setIsLoading(true);
+      const response = await axios.get("/api/member/getMemberData");
+      setMemberInfo(response.data.member[0]);
+      console.log(memberInfo);
+      setIsLoading(false);
+    };
+    fetchMemberInfo();
+  }, []);
+
   const handleNextClick = async () => {
     const memberData = {
-      accountName: document.getElementById("account").value,
+      memberId: memberInfo.id,
+      accountName: accountName,
       phoneNumber: document.getElementById("cellphone").value,
       email: document.getElementById("email").value,
       job: document.getElementById("job").value,
     };
-    console.log(memberData);
+    setMemberInfo(memberData);
     const account = document.getElementById("account").value;
     const phoneNumber = document.getElementById("cellphone").value;
     const email = document.getElementById("email").value;
@@ -46,11 +65,24 @@ const ApplicationPage = () => {
     
     try {
       setIsLoading(true);
-      const response = await axios.post("/api/member/createMember", memberData);
+      if (memberInfo.id) {
+        const response = await fetch("/api/member/createMember", {
+          method: "POST",
+          body: JSON.stringify(memberData),
+        });
+      }
+      else {
+        const response = await fetch("/api/member/updateMember", {
+          method: "PATCH",
+          body: JSON.stringify(memberData),
+        });
+      }
       const memberId = response.data.member.id; // 獲取返回的 memberId
-      dispatch(setMemberId(memberId)); // 保存到 Redux Store
+      setMemberId(memberId); // 保存到 Redux Store
       router.push("/parent/verify");
     } catch (error) {
+      setIsLoading(false);
+      alert("申請失敗，請重新嘗試。");
       console.error("Error creating member:", error);
     }
   };
@@ -129,6 +161,7 @@ const ApplicationPage = () => {
                   id="account"
                   label="帳號名稱"
                   variant="outlined"
+                  disabled
                   InputProps={{
                     sx: {
                       padding: "0px 16px",
@@ -136,6 +169,7 @@ const ApplicationPage = () => {
                       backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
                     },
                   }}
+                  value={accountName}
                   sx={{
                     alignSelf: "stretch",
                     borderRadius: "8px",
@@ -164,6 +198,7 @@ const ApplicationPage = () => {
                       backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
                     },
                   }}
+                  value={memberInfo?.cellphone}
                   sx={{
                     alignSelf: "stretch",
                     borderRadius: "8px",
@@ -185,6 +220,7 @@ const ApplicationPage = () => {
                   id="job"
                   label="職業"
                   variant="outlined"
+                  value={memberInfo?.job}
                   InputProps={{
                     sx: {
                       padding: "0px 16px",
@@ -213,6 +249,7 @@ const ApplicationPage = () => {
                   id="email"
                   label="聯絡信箱"
                   variant="outlined"
+                  value={memberInfo?.email}
                   InputProps={{
                     sx: {
                       padding: "0px 16px",

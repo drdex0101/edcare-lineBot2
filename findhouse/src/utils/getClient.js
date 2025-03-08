@@ -1,7 +1,7 @@
-import { Client } from 'pg';
+import { Pool } from 'pg';
 
 export default function getClient() {
-  return new Client({
+  return new Pool({
     connectionString: process.env.POSTGRES_URL,
     ssl: { rejectUnauthorized: false },
   });

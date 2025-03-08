@@ -10,6 +10,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import Loading from "../../components/base/Loading";
+import useStore from "../../lib/store";
 
 const ApplicationPage = () => {
   const router = useRouter();
@@ -23,6 +24,7 @@ const ApplicationPage = () => {
   const [selectedDate, setSelectedDate] = useState();
   const memberId = useSelector((state) => state.member.memberId);
   const [isLoading, setIsLoading] = useState(false);
+  const { kycData, setKycData } = useStore();
 
   const handleNextClick = async () => {
     setIsLoading(true);
@@ -37,41 +39,65 @@ const ApplicationPage = () => {
       welfareCertNo: null,
       identityFrontUploadId: frontImg,
       identityBackUploadId: backImg,
+      frontImg: frontImg ,
+      backImg: backImg ,
       iconUploadId: null,
       status: "pending",
     };
     try {
-      const response = await fetch("/api/kycInfo/createKycInfo", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(kycInfoData),
-      });
-      const kycData = await response.json();
-      const kycId = kycData.member.id; // 獲取返回的 kycId
-      const kycInfoUpdateData = {
-        kycId: kycId,
-        memberId: memberId,
-      };
-      const response2 = await fetch("/api/member/updateKycId", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(kycInfoUpdateData),
-      });
-      await fetch("/api/line/changeRichMenu", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          richMenuId: "richmenu-8b422169ec368afe84f3d1cbb9c143ca",
-        }),
-      });
-      router.push("/parent/create/choose");
+      if (kycData.id) {
+        try{
+          setIsLoading(true);
+          const response = await fetch("/api/kycInfo/updateKycInfo", {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(kycInfoData),
+          });
+          router.push("/parent/create/choose");
+        } catch (error) {
+          alert("更新失敗，請重新嘗試。");
+          console.error("Error updating kyc info:", error);
+          setIsLoading(false);
+          router.push("/parent/create/choose");
+        }
+      } else {
+        const response = await fetch("/api/kycInfo/createKycInfo", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(kycInfoData),
+        });
+        const kycData = await response.json();
+        const kycId = kycData.member.id; // 獲取返回的 kycId
+        const kycInfoUpdateData = {
+          kycId: kycId,
+          memberId: memberId,
+        };
+        setKycData(kycData);
+        const response2 = await fetch("/api/member/updateKycId", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(kycInfoUpdateData),
+        });
+        await fetch("/api/line/changeRichMenu", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            richMenuId: "richmenu-8b422169ec368afe84f3d1cbb9c143ca",
+          }),
+        });
+        router.push("/parent/create/choose");
+      }
     } catch (error) {
+      setIsLoading(false);
+      alert("申請失敗，請重新嘗試。");
       console.error("Error creating member:", error);
     }
   };
@@ -115,9 +141,23 @@ const ApplicationPage = () => {
       if (result.success) {
         console.log("Uploaded Image URL:", result.url);
       } else {
+        setIsLoading(false);
+        alert("上傳失敗，請重新嘗試。");
+        if (type === "ID Front") {
+          setFileName("");
+        } else if (type === "ID Back") {
+          setFileNameBack("");
+        }
         console.error("Upload Failed:", result.message);
       }
     } catch (error) {
+      setIsLoading(false);
+      alert("上傳失敗，請重新嘗試。");
+      if (type === "ID Front") {
+        setFrontImg(null);
+      } else if (type === "ID Back") {
+        setBackImg(null);
+      }
       console.error("Upload Error:", error);
     } finally {
       setIsLoading(false);
@@ -240,6 +280,7 @@ const ApplicationPage = () => {
               id="name"
               label="真實姓名"
               variant="outlined"
+              value={kycData?.name}
               InputProps={{
                 sx: {
                   padding: "0px 16px",
@@ -267,6 +308,7 @@ const ApplicationPage = () => {
             <TextField
               id="identityCard"
               label="身分證字號"
+              value={kycData?.identityCard} 
               variant="outlined"
               InputProps={{
                 sx: {
@@ -297,7 +339,7 @@ const ApplicationPage = () => {
               <Select
                 labelId="gender-label"
                 id="gender"
-                value={gender}
+                value={kycData?.gender}
                 onChange={handleGenderChange}
                 label="性別"
                 sx={{
@@ -322,7 +364,7 @@ const ApplicationPage = () => {
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 label="生日"
-                value={selectedDate}
+                value={kycData?.birthday}
                 onChange={(newValue) => setSelectedDate(newValue)}
                 renderInput={(params) => <TextField {...params} />}
                 views={["year", "month", "day"]}
@@ -355,6 +397,7 @@ const ApplicationPage = () => {
             <TextField
               id="address"
               label="戶籍地址"
+              value={kycData?.address}
               variant="outlined"
               InputProps={{
                 sx: {
@@ -382,6 +425,7 @@ const ApplicationPage = () => {
             <TextField
               id="communicateAddress"
               label="通訊地址"
+              value={kycData?.communicateAddress}
               variant="outlined"
               InputProps={{
                 sx: {
@@ -426,7 +470,7 @@ const ApplicationPage = () => {
                 style={styles.imgLayout}
                 onClick={() => document.getElementById("file-upload").click()}
               >
-                {frontImg ? (
+                {kycData?.identityFrontUploadId || frontImg ? (
                   <img
                     src="/uploadSuccess.png"
                     alt="Description of image F"
@@ -440,7 +484,6 @@ const ApplicationPage = () => {
                   />
                 )}
               </div>
-              {fileName && <span>{fileName}</span>} {/* 顯示檔案名稱 */}
               <div style={styles.imgBtnLayout}>
                 <button
                   style={styles.uploadBtn}
@@ -502,7 +545,7 @@ const ApplicationPage = () => {
                 style={styles.imgLayout}
                 onClick={() => document.getElementById("file-backend").click()}
               >
-                {backImg ? (
+                {kycData?.identityBackUploadId || backImg ? (
                   <img
                     src="/uploadSuccess.png"
                     alt="Description of image B"
@@ -516,7 +559,6 @@ const ApplicationPage = () => {
                   />
                 )}
               </div>
-              {fileNameBack && <span>{fileNameBack}</span>} {/* 顯示檔案名稱 */}
               <div style={styles.imgBtnLayout}>
                 <button
                   style={styles.uploadBtn}
