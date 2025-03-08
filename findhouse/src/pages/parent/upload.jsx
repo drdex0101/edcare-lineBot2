@@ -39,14 +39,14 @@ const ApplicationPage = () => {
       welfareCertNo: null,
       identityFrontUploadId: frontImg,
       identityBackUploadId: backImg,
-      frontImg: frontImg ,
-      backImg: backImg ,
+      frontImg: frontImg,
+      backImg: backImg,
       iconUploadId: null,
       status: "pending",
     };
     try {
-      if (kycData!=null) {
-        try{
+      if (kycData != null) {
+        try {
           setIsLoading(true);
           const response = await fetch("/api/kycInfo/updateKycInfo", {
             method: "PATCH",
@@ -126,7 +126,7 @@ const ApplicationPage = () => {
       const result = await res.json();
       console.log("Upload Response:", result);
       const uploadId = result.uploadId; // 确保 API 返回的是 id 而不是对象
-  
+
       if (type === "ID Front") {
         setFrontImg(uploadId);
       } else if (type === "ID Back") {
@@ -134,7 +134,7 @@ const ApplicationPage = () => {
       } else if (type === "Head Icon") {
         setHeadIcon(uploadId);
       }
-  
+
       if (result.success) {
         console.log("Uploaded Image URL:", result.url);
       } else {
@@ -252,8 +252,8 @@ const ApplicationPage = () => {
       >
         <div style={styles.contentLayout}>
           <div style={styles.rollerLayout}>
-            <div style={styles.roller}></div>
-            <div style={styles.roller}></div>
+            <div style={styles.rollerActive}></div>
+            <div style={styles.rollerActive}></div>
             <div style={styles.rollerActive}></div>
             <div style={styles.roller}></div>
             <div style={styles.roller}></div>
@@ -305,7 +305,7 @@ const ApplicationPage = () => {
             <TextField
               id="identityCard"
               label="身分證字號"
-              value={kycData?.identityCard} 
+              value={kycData?.identityCard}
               variant="outlined"
               InputProps={{
                 sx: {

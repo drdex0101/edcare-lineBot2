@@ -46,7 +46,7 @@ const ApplicationPage = () => {
       }),
     });
 
-    if (!response.ok) {
+    if (!response.success) {
       throw new Error("Failed to insert data into long_term table");
     }
 
@@ -69,7 +69,7 @@ const ApplicationPage = () => {
       }),
     });
 
-    if (!response.ok) {
+    if (!response.success) {
       throw new Error("Failed to insert data into suddenly table");
     }
 
@@ -108,7 +108,7 @@ const ApplicationPage = () => {
     // 找出未填寫的欄位
     const missingFields = Object.entries(requiredFields)
       .filter(
-        ([key]) => !babyRecordData[key] || babyRecordData[key].length === 0,
+        ([key]) => !babyRecordData[key] || babyRecordData[key].length === 0
       )
       .map(([_, label]) => label);
 
@@ -140,13 +140,13 @@ const ApplicationPage = () => {
       console.log("訂單建立成功:", responseData);
       alert("訂單建立成功！");
 
-      if (localStorage.getItem("way") === "suddenly") {
+      if (localStorage.getItem("choosetype") === "suddenly") {
         await createSuddenlyRecord(
           response.nanny.id,
           selectedCareType,
-          address,
+          address
         );
-      } else if (localStorage.getItem("way") === "longTerm") {
+      } else if (localStorage.getItem("choosetype") === "longTerm") {
         await createLongTermRecord(response.nanny.id);
       }
 
@@ -222,6 +222,8 @@ const ApplicationPage = () => {
             <div style={styles.rollerActive}></div>
             <div style={styles.rollerActive}></div>
             <div style={styles.rollerActive}></div>
+            <div style={styles.rollerActive}></div>
+            <div style={styles.roller}></div>
           </div>
           <div style={styles.titleLayout}>
             <span style={styles.subTitle}>托育資料填寫</span>
@@ -368,6 +370,7 @@ const ApplicationPage = () => {
             </FormControl>
 
             <div style={styles.hopeLayout}>
+              <label style={styles.hopeLabel}>托育服務期望</label>
               <div style={styles.componentLayout}>
                 <span>可接送小朋友</span>
                 <FormGroup>
