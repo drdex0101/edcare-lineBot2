@@ -1,0 +1,61 @@
+.outlineBorder {
+    display: flex;
+    padding: 26px 30px;
+    align-items: center;
+    gap: 10px;
+    flex: 1 0 0;
+    border-radius: 20px;
+    border: 2px solid var(---Button-01, #FBDBD6);
+    background: #FFF;
+    margin-top: 42px;
+}
+.flexColumn {
+    display: flex;
+    flex-direction: column;
+    min-width: 204px;
+}
+.outlineTitle {
+    color: var(---Surface-Black-25, #252525);
+    /* Line/bold/14pt */
+    font-family: "LINE Seed JP_TTF";
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+.secondTitle {
+    color: #000;
+    /* Line/bold/12pt */
+    font-family: "LINE Seed JP_TTF";
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+.secondSubTitle {
+    color: #000;
+    /* Line/medium/12pt */
+    font-family: "LINE Seed JP_TTF";
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+.flexColumnSecond {
+    display: flex;
+    flex-direction: column;
+    max-width: 250px;
+    gap:4px
+}
+.outlineBorderSecond {
+    display: flex;
+    padding: 26px 30px;
+    align-items: center;
+    gap: 25px;
+    flex: 1 0 0;
+    border-radius: 20px;
+    border: 2px solid var(---Button-01, #FBDBD6);
+    background: #FFF;
+    margin-top: 42px;
+    flex-direction: column;
+}

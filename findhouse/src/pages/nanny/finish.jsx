@@ -8,10 +8,17 @@ const ApplicationPage = () => {
     router.back(); // 替换 '/next-page' 为你想要跳转的路径
   };
 
+  const path = router.pathname;
+  const pageName = path.includes('/parent') 
+    ? "申請成為家長" 
+    : path.includes('/nanny') 
+      ? "申請成為保母" 
+      : "申請家長";
+
   return (
     <div style={styles.main}>
       <div style={styles.header}>
-        <span style={styles.headerFont}>申請成為保母</span>
+        <span style={styles.headerFont}>{pageName}</span>
         <button onClick={handleLastClick} style={styles.lastButton}>
           <svg
             xmlns="http://www.w3.org/2000/svg"

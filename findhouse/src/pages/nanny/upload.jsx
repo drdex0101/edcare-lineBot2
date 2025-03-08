@@ -104,7 +104,7 @@ const ApplicationPage = () => {
         },
 
         body: JSON.stringify({
-          richMenuId: "richmenu-8b422169ec368afe84f3d1cbb9c143ca" //待審核
+          richMenuId: "richmenu-bd0843b93a53c3df760bbd95c7871e23" //待審核
         }),
       });
       router.push("/nanny/create/choose");

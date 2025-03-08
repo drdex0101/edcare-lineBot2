@@ -1,5 +1,6 @@
 import React from "react";
 import { useRouter } from "next/router";
+import "./css/finish.css";
 const ApplicationPage = () => {
   const router = useRouter();
 
@@ -7,10 +8,17 @@ const ApplicationPage = () => {
     router.back(); // 替换 '/next-page' 为你想要跳转的路径
   };
 
+  const path = router.pathname;
+  const pageName = path.includes('/parent') 
+    ? "申請成為家長" 
+    : path.includes('/nanny') 
+      ? "申請成為保母" 
+      : "申請家長";
+
   return (
     <div style={styles.main}>
       <div style={styles.header}>
-        <span style={styles.headerFont}>申請成為家長</span>
+        <span style={styles.headerFont}>{pageName}</span>
         <button onClick={handleLastClick} style={styles.lastButton}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -33,89 +41,80 @@ const ApplicationPage = () => {
           </svg>
         </button>
       </div>
-      <div style={styles.contentLayout}>
-        <div style={styles.rollerLayout}>
-          <div style={styles.roller}></div>
-          <div style={styles.roller}></div>
-          <div style={styles.roller}></div>
-          <div style={styles.roller}></div>
-          <div style={styles.rollerActive}></div>
+      <div
+        style={{
+          backgroundColor: "white",
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          width: "100%",
+        }}
+      >
+        <div style={styles.contentLayout}>
+          <div style={styles.rollerLayout}>
+            <div style={styles.rollerActive}></div>
+            <div style={styles.rollerActive}></div>
+            <div style={styles.rollerActive}></div>
+            <div style={styles.rollerActive}></div>
+            <div style={styles.rollerActive}></div>
+          </div>
+          <div className="outlineBorder">
+            <div className="flexColumn">
+              <span className="outlineTitle">您的資料已完成，</span>
+              <span className="outlineTitle">請稍等資料審核。</span>
+            </div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="31"
+              height="30"
+              viewBox="0 0 31 30"
+              fill="none"
+            >
+              <circle cx="15.5" cy="15" r="15" fill="#F5E5E5" />
+              <path
+                d="M12.1637 19.8949L8.5146 16.0678C8.10798 15.6414 7.46157 15.6414 7.05496 16.0678C6.64835 16.4943 6.64835 17.1722 7.05496 17.5987L11.4234 22.1802C11.8301 22.6066 12.4869 22.6066 12.8935 22.1802L23.945 10.6006C24.3517 10.1742 24.3517 9.49627 23.945 9.06983C23.5384 8.64339 22.892 8.64339 22.4854 9.06983L12.1637 19.8949Z"
+                fill="#E3838E"
+              />
+            </svg>
+          </div>
+          <div className="outlineBorderSecond">
+            <div className="flexColumnSecond">
+              <span className="secondTitle">我需要完成哪些步驟？</span>
+              <span className="secondSubTitle">
+                除了完整填寫資料外，您還需要驗證您的手機號碼，送出資料後可進行驗證流程。
+              </span>
+            </div>
+            <div className="flexColumnSecond">
+              <span className="secondTitle">什麼時候會通過審核？</span>
+              <span className="secondSubTitle">
+                審核時間約2~3天的時間，我們會撥電話給您做身分確認與審核。
+              </span>
+            </div>
+            <div className="flexColumnSecond">
+              <span className="secondTitle">我可以修改資料嗎？</span>
+              <span className="secondSubTitle">
+                可以的，您送出資料後，可以在此頁進入修改申請資料頁面，若您有修改手機號碼，必須重新驗證。
+              </span>
+            </div>
+          </div>
         </div>
-      </div>
-      <div style={styles.contentFontLayout}>
-        <span style={styles.subTitle}>身分驗證中</span>
       </div>
     </div>
   );
 };
 
 const styles = {
-  imgLayout: {
-    maxWidth: "320px",
-    height: "180px",
-    alignSelf: "stretch",
-    boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-    background: "#FFF",
-  },
-  mainCode: {
-    color: "var(---Surface-Black-25, #252525)",
-    fontFamily: "LINE Seed JP_TTF",
-    fontSize: "16px",
-    fontStyle: "normal",
-    fontWeight: "700",
-    lineHeight: "normal",
-  },
-  subCode: {
-    color: "var(---Surface-Black-25, #252525)",
-    fontFamily: "LINE Seed JP_TTF",
-    fontSize: "12px",
-    fontStyle: "normal",
-    fontWeight: "700",
-    lineHeight: "normal",
-    gap: "12px",
-  },
-  uplaodLayput: {
-    display: "flex",
-    flexDirection: "column",
-  },
-  buttonLayout: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "10px",
-    marginTop: "35px",
-  },
-  imgLayout: {
-    height: "180px",
-    alignSelf: "stretch",
-    boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-  },
-  inputField: {
-    display: "flex",
-    padding: "0px 16px",
-    flexDirection: "column",
-    alignItems: "flex-start",
-    gap: "12px",
-    alignSelf: "stretch",
-    borderRadius: "8px",
-    border: "1px solid var(---OutLine-OutLine, #78726D)",
-    background: "var(---SurfaceContainer-Lowest, #FFF)",
-  },
   lastButton: {
     border: "none",
     backgroundColor: "#FFF",
-  },
-  subTitleLayout: {
-    width: "100%",
-    display: "flex",
-    justifyContent: "flex-start",
-    backgroundColor: "#FBDBD6",
   },
   main: {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     height: "100vh", // 占满整个视口高度
-    backgroundColor: "#FBDBD6",
+    backgroundColor: "#f8ecec",
   },
   header: {
     display: "flex",
@@ -123,9 +122,10 @@ const styles = {
     alignItems: "center",
     width: "100%",
     maxWidth: "600px",
-    marginBottom: "20px",
+    // marginBottom: '20px',
     padding: "10px",
     backgroundColor: "#fff",
+    borderRadius: "0px 0px 40px 0px", // 左上、右上、右下、左下的圓角
   },
   headerFont: {
     fontSize: "24px",
@@ -138,17 +138,11 @@ const styles = {
     alignItems: "center",
     width: "100%",
     maxWidth: "600px",
-    backgroundColor: "#FBDBD6",
-    height: "100%",
-  },
-  contentFontLayout: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    width: "100%",
-    maxWidth: "600px",
-    backgroundColor: "#FBDBD6",
-    height: "100%",
+    backgroundColor: "#f8ecec",
+    paddingLeft: "35px",
+    paddingRight: "35px",
+    paddingTop: "20px",
+    borderRadius: "40px 0px 0px 0px", // 左上、右上、右下、左下的圓角
   },
   rollerLayout: {
     display: "flex",
@@ -170,10 +164,13 @@ const styles = {
     margin: "0 5px",
   },
   subTitle: {
-    fontSize: "24px",
-    marginBottom: "10px",
+    fontSize: "18px",
+    fontWeight: "bold",
+    marginTop: "15px",
+    marginBottom: "15px",
     color: "#E3838E",
   },
+
   lawLayout: {
     display: "flex",
     width: "320px",
@@ -183,16 +180,33 @@ const styles = {
     alignItems: "center",
     borderRadius: "20px",
     border: "2px solid var(---Button-01, #FBDBD6)",
-    background: "#FFF",
     gap: "20px",
   },
-  nextBtn: {
-    padding: "10px 20px",
-    backgroundColor: "var(---Primary-Primary, #E3838E)",
-    color: "#fff",
+  suddenlyBtn: {
+    display: "flex",
+    width: "320px",
+    height: "130px",
+    padding: "16px 12px",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "8px",
+    background: "var(---Primary-Primary, #E3838E)",
     border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
+    borderRadius: "12px",
+  },
+  longBtn: {
+    display: "flex",
+    width: "320px",
+    height: "130px",
+    padding: "16px 12px",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "8px",
+    background: "var(---Primary-Primary, #F3CCD4)",
+    border: "none",
+    borderRadius: "12px",
   },
 };
 
