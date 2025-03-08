@@ -2,6 +2,7 @@ import React from "react";
 import { useRouter } from "next/router";
 import "./css/finish.css";
 const ApplicationPage = () => {
+  const router = useRouter();
   const path = router.pathname;
   const pageName = path.includes("/parent")
     ? "申請成為家長"
