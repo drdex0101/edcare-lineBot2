@@ -2,7 +2,6 @@ import { useEffect, React } from "react";
 import { useRouter } from "next/router";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
-import { useDispatch } from "react-redux";
 import axios from "axios";
 import Loading from "../../components/base/Loading";
 import { useState } from "react";
@@ -11,20 +10,17 @@ import Cookies from "js-cookie";
 
 const ApplicationPage = () => {
   const router = useRouter();
-  const dispatch = useDispatch(); // Redux 的 dispatch 函数
   const [isLoading, setIsLoading] = useState(false);
   const { memberInfo, setMemberInfo } = useStore();
   const { memberId, setMemberId } = useStore();
   const accountName = decodeURIComponent(Cookies.get("displayName"));
-
+  const fetchMemberInfo = async () => {
+    setIsLoading(true);
+    const response = await axios.get("/api/member/getMemberData");
+    setMemberInfo(response.data.member[0]);
+    setIsLoading(false);
+  };
   useEffect(() => {
-    const fetchMemberInfo = async () => {
-      setIsLoading(true);
-      const response = await axios.get("/api/member/getMemberData");
-      setMemberInfo(response.data.member[0]);
-      console.log(memberInfo);
-      setIsLoading(false);
-    };
     fetchMemberInfo();
   }, []);
 
@@ -62,8 +58,13 @@ const ApplicationPage = () => {
 
     try {
       setIsLoading(true);
-      let response;
-      if (memberId == null) {
+      const isMemberExist = await fetch("/api/member/isMemberExist", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        }
+      });
+      if (isMemberExist.length === 0) {
         response = await fetch("/api/member/createMember", {
           method: "POST",
           headers: {
@@ -88,7 +89,7 @@ const ApplicationPage = () => {
           body: JSON.stringify(memberData),
         });
       }
-      if (!response.ok) {
+      if (!response.success) {
         alert("申請失敗，請重新嘗試。");
       } else {
         router.push("/parent/verify");
