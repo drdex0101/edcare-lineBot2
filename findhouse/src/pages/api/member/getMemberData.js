@@ -23,6 +23,7 @@ export default async function handler(req, res) {
 
       const query = `
         SELECT 
+          member.id,
           member.account,
           member.cellphone, 
           member.email, 

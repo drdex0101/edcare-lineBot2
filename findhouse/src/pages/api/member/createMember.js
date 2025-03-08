@@ -9,7 +9,7 @@ export default async function handler(req, res) {
     const payload = await verifyToken(token);
     const userId = payload.userId;
 
-    const { accountName, phoneNumber, email, job } = req.body;
+    const { accountName, cellphone, email, job } = req.body;
     // 創建 PostgreSQL 客戶端
     const client = getClient();
 
@@ -24,7 +24,7 @@ export default async function handler(req, res) {
         RETURNING *;
       `;
       console.log(query);
-      const values = [accountName, userId, phoneNumber, email, job];
+      const values = [accountName, userId, cellphone, email, job];
       const result = await client.query(query, values);
 
       console.log('Member created successfully:', result.rows[0]);
