@@ -30,9 +30,10 @@ export default async function handler(req, res) {
       const memberIdResult = await client.query(memberIdQuery, [userId]);
       
       if (memberIdResult.rowCount === 0) {
-        return res.status(404).json({ 
-          success: false, 
-          message: 'Member not found for the given userId' 
+        return res.status(200).json({ 
+          success: true, 
+          nannyProfile: [], 
+          pageCount: 0
         });
       }
 

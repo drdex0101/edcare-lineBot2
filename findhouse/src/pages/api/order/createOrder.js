@@ -42,7 +42,7 @@ export default async function handler(req, res) {
       const result = await client.query(query, values);
 
       console.log('order created successfully:', result.rows[0]);
-      return res.status(201).json({ success: true, order: result.rows[0] });
+      return res.status(201).json({ success: true, order: result.rows[0]});
     } catch (error) {
       console.error('Database error:', error);
       res.status(500).json({ error: 'Database error' });

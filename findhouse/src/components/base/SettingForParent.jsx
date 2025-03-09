@@ -123,7 +123,7 @@ export default function SettingForParent() {
                 />
               </svg>
             </div>
-            <span className="setting-item-font">收藏案件</span>
+            <span className="setting-item-font">收藏保母</span>
           </div>
           <div
             onClick={() => router.push("/parent/history")}

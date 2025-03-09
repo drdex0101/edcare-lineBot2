@@ -3,7 +3,7 @@ import { Client } from 'pg';
 export default async function handler(req, res) {
   if (req.method === 'PATCH') {
     console.log('req.body', req.body);
-    const { name, identityCard, gender, birthday, welfareCertNo, address, communicateAddress, identityFrontUploadId, identityBackUploadId, iconUploadId, status } = req.body;
+    const {id, name, identityCard, gender, birthday, welfareCertNo, address, communicateAddress, identityFrontUploadId, identityBackUploadId, iconUploadId, status } = req.body;
 
     // 創建 PostgreSQL 客戶端
     const client = new Client({
@@ -45,7 +45,8 @@ export default async function handler(req, res) {
         identityFrontUploadId,
         identityBackUploadId,
         iconUploadId,
-        status
+        status,
+        id
       ];
       const result = await client.query(query, values);
 

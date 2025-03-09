@@ -19,7 +19,9 @@ export default async function handler(req, res) {
       location,
       kycId,
       uploadId,
-      nannyId
+      nannyId,
+      suddenlyId,
+      longTermId
     } = req.body;
 
     const client = new Client({
@@ -50,8 +52,10 @@ export default async function handler(req, res) {
           location = $13,
           kycId = $14,
           uploadId = $15,
+          suddenly_id = $16,
+          long_tern_id = $17,
           created_ts = NOW()
-        WHERE id = $16
+        WHERE id = $18
         RETURNING *;
       `;
       const values = [
@@ -70,6 +74,8 @@ export default async function handler(req, res) {
         location,
         kycId,
         uploadId,
+        suddenlyId,
+        longTermId,
         nannyId
       ];
       const result = await client.query(query, values);

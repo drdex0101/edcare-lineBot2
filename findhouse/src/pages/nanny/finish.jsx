@@ -1,110 +1,188 @@
 import React from "react";
 import { useRouter } from "next/router";
+import { useState, useEffect } from "react";
+import Loading from "../../components/base/Loading";
+
 import "./css/finish.css";
 const ApplicationPage = () => {
   const router = useRouter();
 
-  const handleLastClick = () => {
-    router.back(); // 替换 '/next-page' 为你想要跳转的路径
+  const [isMember, setIsMember] = useState(false);
+  const [haveKyc, setHaveKyc] = useState(false);
+  const [haveNanny, setHaveNanny] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const fetchData = async () => {
+    try {
+      const response = await fetch("/api/member/isMemberExist");
+      const data = await response.json();
+      if (data.member.length > 0) {
+        setIsMember(true);
+      }
+      if (data.member[0].kyc_id) {
+        setHaveKyc(true);
+      }
+    } catch (error) {
+      console.error("Error fetching member data:", error);
+    }
   };
 
-  const path = router.pathname;
-  const pageName = path.includes('/parent') 
-    ? "申請成為家長" 
-    : path.includes('/nanny') 
-      ? "申請成為保母" 
-      : "申請家長";
+  const fetchNanny = async () => {
+    try {
+      const response = await fetch("/api/nanny/getNannyInfo");
+      const data = await response.json();
+      if (data.nannies.length > 0) {
+        setHaveNanny(true);
+      }
+    } catch (error) {
+      console.error("Error fetching nanny data:", error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchAllData = async () => {
+      try {
+        await Promise.all([fetchData(), fetchNanny()]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchAllData();
+  }, []);
+
+  useEffect(() => {
+    console.log('Status updated:', { isMember, haveKyc, haveNanny });
+  }, [isMember, haveKyc, haveNanny]);
+
+  const handleClick = () => {
+    if (!isMember) {
+      router.push("/nanny/apply");
+    } else if (!haveKyc) {
+      router.push("/nanny/upload");
+    } else if (!haveNanny) {
+      router.push("/nanny/create");
+    }
+  };
 
   return (
     <div style={styles.main}>
-      <div style={styles.header}>
-        <span style={styles.headerFont}>{pageName}</span>
-        <button onClick={handleLastClick} style={styles.lastButton}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <>
+          <div style={styles.header}>
+            <span style={styles.headerFont}>申請進度查詢</span>
+          </div>
+          <div
+            style={{
+              backgroundColor: "white",
+              width: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100%",
+            }}
           >
-            <g clip-path="url(#clip0_45_10396)">
-              <path
-                d="M7.77223 12.9916L18.7822 12.9916C19.3322 12.9916 19.7822 12.5416 19.7822 11.9916C19.7822 11.4416 19.3322 10.9916 18.7822 10.9916L7.77223 10.9916L7.77223 9.20162C7.77223 8.75162 7.23223 8.53162 6.92223 8.85162L4.14223 11.6416C3.95223 11.8416 3.95223 12.1516 4.14223 12.3516L6.92223 15.1416C7.23223 15.4616 7.77223 15.2316 7.77223 14.7916L7.77223 12.9916V12.9916Z"
-                fill="#074C5F"
-              />
-            </g>
-            <defs>
-              <clipPath id="clip0_45_10396">
-                <rect width="24" height="24" fill="white" />
-              </clipPath>
-            </defs>
-          </svg>
-        </button>
-      </div>
-      <div
-        style={{
-          backgroundColor: "white",
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          width: "100%",
-        }}
-      >
-        <div style={styles.contentLayout}>
-          <div style={styles.rollerLayout}>
-            <div style={styles.rollerActive}></div>
-            <div style={styles.rollerActive}></div>
-            <div style={styles.rollerActive}></div>
-            <div style={styles.rollerActive}></div>
-            <div style={styles.rollerActive}></div>
+            <div style={styles.contentLayout}>
+              <div style={styles.rollerLayout}>
+                <div style={styles.rollerActive}></div>
+                <div style={styles.rollerActive}></div>
+                <div style={styles.rollerActive}></div>
+                <div style={styles.rollerActive}></div>
+                <div style={styles.rollerActive}></div>
+              </div>
+              <div className="outlineBorder">
+                {isMember && haveKyc && haveNanny ? (
+                  <div className="flexColumn">
+                    <span className="outlineTitle">您的資料已完成，</span>
+                    <span className="outlineTitle">請稍等資料審核。</span>
+                  </div>
+                ) : (
+                  <div className="flexColumn">
+                    <span className="outlineTitle">您的資料尚未完成，</span>
+                    <span className="outlineTitle">請先繼續資料填寫。</span>
+                  </div>
+                )}
+                {isMember && haveKyc && haveNanny ? (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="31"
+                    height="30"
+                    viewBox="0 0 31 30"
+                    fill="none"
+                  >
+                    <circle cx="15.5" cy="15" r="15" fill="#F5E5E5" />
+                    <path
+                      d="M12.1637 19.8949L8.5146 16.0678C8.10798 15.6414 7.46157 15.6414 7.05496 16.0678C6.64835 16.4943 6.64835 17.1722 7.05496 17.5987L11.4234 22.1802C11.8301 22.6066 12.4869 22.6066 12.8935 22.1802L23.945 10.6006C24.3517 10.1742 24.3517 9.49627 23.945 9.06983C23.5384 8.64339 22.892 8.64339 22.4854 9.06983L12.1637 19.8949Z"
+                      fill="#E3838E"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    width="37"
+                    height="36"
+                    viewBox="0 0 37 36"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    onClick={handleClick}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <g id="Group 3602">
+                      <g id="Union">
+                        <path
+                          fill-rule="evenodd"
+                          clip-rule="evenodd"
+                          d="M33.5001 18.054C33.5001 14.0622 31.8351 10.3014 29.0734 7.43221L29.0684 7.4271C26.301 4.66244 22.5338 3 18.5397 3C14.553 3 10.7824 4.54925 8.00857 7.42963C3.25113 12.1842 2.13997 19.1606 5.24336 25.0289L5.41047 25.3449L8.01253 24.0452C8.01253 24.0452 10.3515 28.4262 7.83549 23.7136C5.31952 19.0009 6.25971 13.3432 10.042 9.56508L10.0537 9.55216C12.1402 7.25886 15.1737 5.99977 18.4313 5.99977C21.687 5.99977 24.7252 7.25824 26.9232 9.55876L26.9292 9.56477C29.2401 11.8734 30.4976 14.9129 30.4976 18.0539C30.4976 21.1999 29.2368 24.3423 26.9352 26.537L26.9292 26.543C23.1515 30.3171 17.4861 31.157 12.76 28.7441L12.4162 28.5686L11.2523 31.185L11.5653 31.3414C13.7773 32.4462 16.1036 33 18.5399 33C22.4225 33 26.1907 31.4481 29.0685 28.5729C31.8359 25.8082 33.5001 22.0446 33.5001 18.054Z"
+                          fill="#E3838E"
+                        />
+                        <path
+                          fill-rule="evenodd"
+                          clip-rule="evenodd"
+                          d="M20.7682 17.7539L20.7685 22.74H23.6623V12.8282H13.7416V15.7199H18.7314L6.99419 27.3408L9.13557 29.4801L20.7682 17.7539Z"
+                          fill="#E3838E"
+                        />
+                      </g>
+                    </g>
+                  </svg>
+                )}
+              </div>
+              <div className="outlineBorderSecond">
+                <div className="flexColumnSecond">
+                  <span className="secondTitle">我需要完成哪些步驟？</span>
+                  <span className="secondSubTitle">
+                    除了完整填寫資料外，您還需要驗證您的手機號碼，送出資料後可進行驗證流程。
+                  </span>
+                </div>
+                <div className="flexColumnSecond">
+                  <span className="secondTitle">什麼時候會通過審核？</span>
+                  <span className="secondSubTitle">
+                    審核時間約2~3天的時間，我們會撥電話給您做身分確認與審核。
+                  </span>
+                </div>
+                <div className="flexColumnSecond">
+                  <span className="secondTitle">我可以修改資料嗎？</span>
+                  <span className="secondSubTitle">
+                    可以的，您送出資料後，可以在此頁進入修改申請資料頁面，若您有修改手機號碼，必須重新驗證。
+                  </span>
+                </div>
+              </div>
+              <button style={styles.lastButton}></button>
+            </div>
           </div>
-          <div className="outlineBorder">
-            <div className="flexColumn">
-              <span className="outlineTitle">您的資料已完成，</span>
-              <span className="outlineTitle">請稍等資料審核。</span>
-            </div>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="31"
-              height="30"
-              viewBox="0 0 31 30"
-              fill="none"
-            >
-              <circle cx="15.5" cy="15" r="15" fill="#F5E5E5" />
-              <path
-                d="M12.1637 19.8949L8.5146 16.0678C8.10798 15.6414 7.46157 15.6414 7.05496 16.0678C6.64835 16.4943 6.64835 17.1722 7.05496 17.5987L11.4234 22.1802C11.8301 22.6066 12.4869 22.6066 12.8935 22.1802L23.945 10.6006C24.3517 10.1742 24.3517 9.49627 23.945 9.06983C23.5384 8.64339 22.892 8.64339 22.4854 9.06983L12.1637 19.8949Z"
-                fill="#E3838E"
-              />
-            </svg>
-          </div>
-          <div className="outlineBorderSecond">
-            <div className="flexColumnSecond">
-              <span className="secondTitle">我需要完成哪些步驟？</span>
-              <span className="secondSubTitle">
-                除了完整填寫資料外，您還需要驗證您的手機號碼，送出資料後可進行驗證流程。
-              </span>
-            </div>
-            <div className="flexColumnSecond">
-              <span className="secondTitle">什麼時候會通過審核？</span>
-              <span className="secondSubTitle">
-                審核時間約2~3天的時間，我們會撥電話給您做身分確認與審核。
-              </span>
-            </div>
-            <div className="flexColumnSecond">
-              <span className="secondTitle">我可以修改資料嗎？</span>
-              <span className="secondSubTitle">
-                可以的，您送出資料後，可以在此頁進入修改申請資料頁面，若您有修改手機號碼，必須重新驗證。
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
+        </>
+      )}
     </div>
   );
 };
 
 const styles = {
+  goToLink: {
+    border: "none",
+    backgroundColor: "#FFF",
+    width: "100%",
+    height: "100px",
+    borderRadius: "10px",
+  },
   lastButton: {
     border: "none",
     backgroundColor: "#FFF",

@@ -1,8 +1,13 @@
 import getClient from '../../../utils/getClient';
+import { verifyToken } from '../../../utils/jwtUtils';
 
 export default async function handler(req, res) {
   if (req.method === 'PATCH') {
     const { kycId, memberId } = req.body;
+
+    const token = req.cookies.authToken;
+    const payload = await verifyToken(token);
+    const userId = payload.userId;
 
     // 創建 PostgreSQL 客戶端
     const client = getClient();
@@ -16,10 +21,10 @@ export default async function handler(req, res) {
         UPDATE member
         SET kyc_id = $1,
             update_ts = NOW()
-        WHERE id = $2
+        WHERE line_id = $2
         RETURNING *;
       `;
-      const values = [kycId, memberId];
+      const values = [kycId, userId];
 
       const result = await client.query(query, values);
 

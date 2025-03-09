@@ -13,7 +13,7 @@ import Loading from "../../../components/base/Loading";
 
 const ApplicationPage = () => {
   const router = useRouter();
-  const nannyInfo = useStore((state) => state.nannyInfo);
+  const { nannyInfo, setNannyInfo } = useStore();
   const [switchStates, setSwitchStates] = useState({
     1: true,
     2: true,
@@ -36,7 +36,8 @@ const ApplicationPage = () => {
   const [introduction, setIntroduction] = useState("");
   const [selectedAddress, setSelectedAddress] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [responseNannyData, setResponseNannyData] = useState(null);
+  const [suddenlyId, setSuddenlyId] = useState(null);
+  const [longTermId, setLongTermId] = useState(null);
 
   useEffect(() => {
     if (nannyInfo?.service) {
@@ -52,19 +53,33 @@ const ApplicationPage = () => {
   }, [nannyInfo]); // **確保 `item` 更新後會同步 `switchStates`**
 
   useEffect(() => {
-    setIsLoading(true);
-    if (nannyInfo) {
-      setSelectedCareType(nannyInfo.scenario);
-      setAddress(nannyInfo.location);
-      setIntroduction(nannyInfo.introduction);
-      if (nannyInfo.uploadid) {
-        setHeadIcon(nannyInfo.uploadid);
-        setHeadIconUrl(getUrl(nannyInfo.uploadid));
+    const storedData = localStorage.getItem("data-storage");
+    const way = localStorage.getItem("way");
+    if (way === "suddenly" && storedData) {
+      const parsedData = JSON.parse(storedData);
+      if (parsedData?.state?.suddenlyInfo?.id) {
+        setSuddenlyId(parsedData.state.suddenlyInfo.id);
       }
-      if (nannyInfo.environmentpic && nannyInfo.environmentpic.length > 0) {
+    } else if (way === "longTerm" && storedData) {
+      const parsedData = JSON.parse(storedData);
+      if (parsedData?.state?.longTermInfo?.id) {
+        setLongTermId(parsedData.state.longTermInfo.id);
+      }
+    }
+    const parsedData = JSON.parse(storedData).state.nannyInfo;
+    setIsLoading(true);
+    if (parsedData) {
+      setSelectedCareType(parsedData.scenario);
+      setAddress(parsedData.location);
+      setIntroduction(parsedData.introduction);
+      if (parsedData.uploadid) {
+        setHeadIcon(parsedData.uploadid);
+        setHeadIconUrl(getUrl(parsedData.uploadid));
+      }
+      if (parsedData.environmentpic && parsedData.environmentpic.length > 0) {
         const fetchImageUrls = async () => {
           const urls = await Promise.all(
-            nannyInfo.environmentpic.map(async (picId) => {
+            parsedData.environmentpic.map(async (picId) => {
               const response = await fetch(`/api/base/getImgUrl?id=${picId}`);
               const data = await response.json();
               return data.url;
@@ -74,9 +89,10 @@ const ApplicationPage = () => {
         };
         fetchImageUrls();
       }
+      setNannyInfo(parsedData);
     }
     setIsLoading(false);
-  }, [nannyInfo]);
+  }, []);
 
   const handleNextClick = async () => {
     const nannyData = {
@@ -96,6 +112,9 @@ const ApplicationPage = () => {
       kycId: nannyInfo ? nannyInfo.kycId : null,
       introduction: introduction,
       nannyId: nannyInfo ? nannyInfo.nanny_id : null,
+      suddenlyId: suddenlyId,
+      longTermId: longTermId,
+      uploadId: headIcon,
     };
 
     // 必填欄位列表
@@ -128,7 +147,7 @@ const ApplicationPage = () => {
 
         if (response.ok) {
           const data = await response.json();
-          setResponseNannyData(data.nanny);
+          setNannyInfo(data.nanny);
           console.log(data);
         } else {
           console.error("请求失败，状态码：", response.status);
@@ -144,7 +163,7 @@ const ApplicationPage = () => {
 
         if (response.ok) {
           let data = await response.json();
-          setResponseNannyData(data.nanny);
+          setNannyInfo(data.nanny);
           console.log(data.nanny.id);
           setIsLoading(false);
         } else {
@@ -152,15 +171,6 @@ const ApplicationPage = () => {
         }
       }
 
-      if (localStorage.getItem("way") === "suddenly") {
-        await createSuddenlyRecord(
-          responseNannyData.id,
-          selectedCareType,
-          address,
-        );
-      } else if (localStorage.getItem("way") === "longTerm") {
-        await createLongTermRecord(responseNannyData.id);
-      }
       setIsLoading(false);
       router.push("/nanny/finish");
     } catch (error) {
@@ -384,6 +394,8 @@ const ApplicationPage = () => {
             <div style={styles.rollerActive}></div>
             <div style={styles.rollerActive}></div>
             <div style={styles.rollerActive}></div>
+            <div style={styles.rollerActive}></div>
+            <div style={styles.roller}></div>
           </div>
           <div style={styles.titleLayout}>
             <span style={styles.subTitle}>托育資料填寫</span>

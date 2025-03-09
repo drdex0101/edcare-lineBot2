@@ -65,8 +65,20 @@ export default async function handler(req, res) {
       `;
 
       const values = [
-          orderId, nannyid, status, choosetype, orderstatus, 
-          caretypeid, nickname, gender, birthday, rank, hope, intro, isshow, created_by
+          orderId ? parseInt(orderId) : null,
+          nannyid ? parseInt(nannyid) : null,
+          status,
+          choosetype,
+          orderstatus,
+          caretypeid ? parseInt(caretypeid) : null,
+          nickname,
+          gender,
+          birthday,
+          rank ? parseInt(rank) : null,
+          hope,
+          intro,
+          isshow,
+          created_by ? parseInt(created_by) : null
       ];
 
 

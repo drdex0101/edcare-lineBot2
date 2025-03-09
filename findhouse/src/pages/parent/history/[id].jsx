@@ -128,19 +128,19 @@ export default function HistoryId() {
           <span className="title-font">訂單狀態</span>
           <div className="status-process-layout">
             <div className="status-process-on">
-              <span className="status-process-font-on">已付款</span>
+              <span className="status-process-font-on">媒合中</span>
             </div>
             <div className="status-process-off">
-              <span className="status-process-font-off">未付款</span>
+              <span className="status-process-font-off">預約中</span>
             </div>
             <div className="status-process-off">
-              <span className="status-process-font-off">未付款</span>
+              <span className="status-process-font-off">簽約中</span>
             </div>
             <div className="status-process-off">
-              <span className="status-process-font-off">未付款</span>
+              <span className="status-process-font-off">合約履行中</span>
             </div>
             <div className="status-process-off">
-              <span className="status-process-font-off">未付款</span>
+              <span className="status-process-font-off">已完成</span>
             </div>
           </div>
         </div>

@@ -64,7 +64,9 @@ const ApplicationPage = () => {
         <div style={styles.contentLayout}>
           <div style={styles.rollerLayout}>
             <div style={styles.rollerActive}></div>
-            <div style={styles.roller}></div>
+            <div style={styles.rollerActive}></div>
+            <div style={styles.rollerActive}></div>
+            <div style={styles.rollerActive}></div>
             <div style={styles.roller}></div>
           </div>
           <div style={styles.titleLayout}>

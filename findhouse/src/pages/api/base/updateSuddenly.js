@@ -4,7 +4,7 @@ export default async function handler(req, res) {
   if (req.method === 'PATCH') {
     console.log('req.body', req.body);
     const { 
-        careTypeId,
+        id,
         startDate,
         endDate,
         scenario,
@@ -37,7 +37,7 @@ export default async function handler(req, res) {
       `;
       
       const values = [
-        careTypeId,
+        id,
         startDate,
         endDate,
         scenario,
@@ -48,8 +48,8 @@ export default async function handler(req, res) {
       
       const result = await client.query(query, values);
 
-      console.log('Suddenly created successfully:', result.rows[0]);
-      return res.status(201).json({ success: true, suddenly: result.rows[0] });
+      console.log('Suddenly updated successfully:', result.rows[0]);
+      return res.status(200).json({ success: true, suddenly: result.rows[0] });
     } catch (error) {
       console.error('Database error:', error);
       res.status(500).json({ error: 'Database error' });
@@ -57,7 +57,7 @@ export default async function handler(req, res) {
       await client.end();
     }
   } else {
-    res.setHeader('Allow', ['POST']);
+    res.setHeader('Allow', ['PATCH']);
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }
