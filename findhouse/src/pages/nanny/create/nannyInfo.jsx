@@ -263,57 +263,8 @@ const ApplicationPage = () => {
     setAddress(event.target.value);
   };
 
-  const createLongTermRecord = async (nannyId) => {
-    const weekdaysString = localStorage.getItem("longTermDays");
-    const weekdaysArray = weekdaysString.split(",").map(Number); // 將字串轉換成數字數組
-
-    const response = await fetch("/api/base/createLongTern", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        nannyId: nannyId,
-        weekdays: weekdaysArray, // 使用轉換後的數組
-        scenario: localStorage.getItem("careScenario"),
-        careTime: localStorage.getItem("longTermCareTime"),
-        idType: "nanny",
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to insert data into long_term table");
-    }
-
-    return response.json();
-  };
-
-  const createSuddenlyRecord = async (nannyId, selectedCareType, address) => {
-    const response = await fetch("/api/base/createSuddenly", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        nannyId: nannyId,
-        startDate: localStorage.getItem("suddenlyStartDate"),
-        endDate: localStorage.getItem("suddsuddenlyEndDate"),
-        scenario: selectedCareType,
-        location: address,
-        careTime: "",
-        idType: "nanny",
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to insert data into suddenly table");
-    }
-
-    return response.json();
-  };
-
   useEffect(() => {
-    // 初始化 state，對應的數字開啟
+
     const initialStates = {};
     for (let i = 1; i <= 6; i++) {
       initialStates[i] = nannyInfo
