@@ -4,13 +4,14 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Select from "@mui/material/Select";
 import { MenuItem, InputLabel, FormControl } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import Loading from "../../components/base/Loading";
 import useStore from "../../lib/store";
+import dayjs from 'dayjs';
 
 const ApplicationPage = () => {
   const router = useRouter();
@@ -21,10 +22,13 @@ const ApplicationPage = () => {
   const [backImg, setBackImg] = useState(null);
   const [headIcon, setHeadIcon] = useState(null);
   const [gender, setGender] = useState("");
-  const [selectedDate, setSelectedDate] = useState();
+  const [selectedDate, setSelectedDate] = useState(null);
   const memberId = useSelector((state) => state.member.memberId);
   const [isLoading, setIsLoading] = useState(false);
   const { kycData, setKycData } = useStore();
+
+  // 计算最大可选日期，即当前日期减去12年
+  const maxSelectableDate = dayjs().subtract(12, 'year');
 
   const handleNextClick = async () => {
     setIsLoading(true);
@@ -48,6 +52,7 @@ const ApplicationPage = () => {
       if (kycData != null) {
         try {
           setIsLoading(true);
+          kycInfoData.id = kycData.id;
           const response = await fetch("/api/kycInfo/updateKycInfo", {
             method: "PATCH",
             headers: {
@@ -108,6 +113,20 @@ const ApplicationPage = () => {
   const handleLastClick = () => {
     router.back(); // 替换 '/next-page' 为你想要跳转的路径
   };
+
+  useEffect(() => {
+    const storedData = localStorage.getItem('data-storage'); // 讀取本地存儲
+    if (storedData) {
+      if (kycData != null) {
+        const parsedData = JSON.parse(storedData).state.kycData.member; // 解析數據
+        setKycData(parsedData);
+        setSelectedDate(parsedData.birthday ? dayjs(parsedData.birthday) : null);
+        setGender(parsedData.gender || "");
+        setFrontImg(parsedData.identityfrontuploadid || null);
+        setBackImg(parsedData.identitybackuploadid || null);
+      }
+    }
+  }, []);
 
   const handleUpload = async (file, type) => {
     setIsLoading(true);
@@ -305,7 +324,7 @@ const ApplicationPage = () => {
             <TextField
               id="identityCard"
               label="身分證字號"
-              value={kycData?.identityCard}
+              value={kycData?.identitycard}
               variant="outlined"
               InputProps={{
                 sx: {
@@ -336,7 +355,7 @@ const ApplicationPage = () => {
               <Select
                 labelId="gender-label"
                 id="gender"
-                value={kycData?.gender}
+                value={gender}
                 onChange={handleGenderChange}
                 label="性別"
                 sx={{
@@ -361,8 +380,9 @@ const ApplicationPage = () => {
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 label="生日"
-                value={kycData?.birthday}
+                value={selectedDate}
                 onChange={(newValue) => setSelectedDate(newValue)}
+                maxDate={maxSelectableDate}
                 renderInput={(params) => <TextField {...params} />}
                 views={["year", "month", "day"]}
                 disableFuture
@@ -422,7 +442,7 @@ const ApplicationPage = () => {
             <TextField
               id="communicateAddress"
               label="通訊地址"
-              value={kycData?.communicateAddress}
+              value={kycData?.communicateaddress}
               variant="outlined"
               InputProps={{
                 sx: {
@@ -467,7 +487,7 @@ const ApplicationPage = () => {
                 style={styles.imgLayout}
                 onClick={() => document.getElementById("file-upload").click()}
               >
-                {kycData?.identityFrontUploadId || frontImg ? (
+                {kycData?.identityfrontuploadid || frontImg ? (
                   <img
                     src="/uploadSuccess.png"
                     alt="Description of image F"
@@ -542,7 +562,7 @@ const ApplicationPage = () => {
                 style={styles.imgLayout}
                 onClick={() => document.getElementById("file-backend").click()}
               >
-                {kycData?.identityBackUploadId || backImg ? (
+                {kycData?.identitybackuploadid || backImg ? (
                   <img
                     src="/uploadSuccess.png"
                     alt="Description of image B"

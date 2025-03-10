@@ -37,7 +37,7 @@ const ApplicationPage = () => {
     const cellphone = document.getElementById("cellphone").value;
     const email = document.getElementById("email").value;
 
-    if (!account || !cellphone || !email) {
+    if (!account || !cellphone || !email ) {
       alert("請填寫所有必填欄位。");
       return;
     }
@@ -83,8 +83,6 @@ const ApplicationPage = () => {
         const data = await response.json();
         const memberId = data.member.id; // 獲取返回的 memberId
         setMemberId(memberId); // 保存到 Redux Store
-        
-        router.push("/nanny/upload");
       } else {
         response = await fetch("/api/member/updateMember", {
           method: "PATCH",
@@ -93,12 +91,9 @@ const ApplicationPage = () => {
           },
           body: JSON.stringify(memberData),
         });
-        if (!response.ok) {
-          alert("申請失敗，請重新嘗試。");
-          setIsLoading(false);
-        }
-        router.push("/nanny/verify");
       }
+      router.push("/nanny/upload");
+      setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
       alert("申請失敗，請重新嘗試。");

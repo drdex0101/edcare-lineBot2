@@ -9,9 +9,12 @@ import Select from "@mui/material/Select";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import  useStore from "../../../lib/store";
+import { useEffect } from "react";
 
 import { MenuItem, InputLabel, FormControl } from "@mui/material";
 import Cookies from "js-cookie";
+
 const ApplicationPage = () => {
   const router = useRouter();
   const [selectedDate, setSelectedDate] = useState();
@@ -21,59 +24,13 @@ const ApplicationPage = () => {
   const [babyBirthOrder, setBabyBirthOrder] = useState("");
   const [babyHope, setBabyHope] = useState("");
   const [selectedCareType, setSelectedCareType] = useState(null);
+  const { babyInfo, setBabyInfo } = useStore();
   const handleNextClick = () => {
     createBabyRecord();
   };
 
   const handleLastClick = () => {
     router.back();
-  };
-
-  const createLongTermRecord = async (nannyId) => {
-    const weekdaysString = localStorage.getItem("longTermDays");
-    const weekdaysArray = weekdaysString.split(",").map(Number); // 將字串轉換成數字數組
-
-    const response = await fetch("/api/base/createLongTern", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        weekdays: weekdaysArray, // 使用轉換後的數組
-        scenario: localStorage.getItem("careScenario"),
-        careTime: localStorage.getItem("longTermCareTime"),
-        idType: "parent",
-      }),
-    });
-
-    if (!response.success) {
-      throw new Error("Failed to insert data into long_term table");
-    }
-
-    return response.json();
-  };
-
-  const createSuddenlyRecord = async (nannyId, selectedCareType, address) => {
-    const response = await fetch("/api/base/createSuddenly", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        startDate: localStorage.getItem("suddenlyStartDate"),
-        endDate: localStorage.getItem("suddsuddenlyEndDate"),
-        scenario: selectedCareType,
-        location: address,
-        careTime: "",
-        idType: "parent",
-      }),
-    });
-
-    if (!response.success) {
-      throw new Error("Failed to insert data into suddenly table");
-    }
-
-    return response.json();
   };
 
   const createBabyRecord = async () => {
@@ -92,6 +49,7 @@ const ApplicationPage = () => {
       intro: babyHope,
       isshow: true,
       created_by: localStorage.getItem("account"),
+      id: babyInfo ? babyInfo.id : null,
     };
 
     // **必填欄位檢查**
@@ -124,13 +82,24 @@ const ApplicationPage = () => {
     }
 
     try {
-      const response = await fetch("/api/order/createOrder", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(babyRecordData),
-      });
+      let response;
+      if (babyInfo) {
+        response = await fetch("/api/order/updateOrderData", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(babyRecordData),
+        });
+      } else {
+        response = await fetch("/api/order/createOrder", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(babyRecordData),
+        });
+      }
 
       if (!response.ok) {
         throw new Error(`HTTP 錯誤！狀態碼: ${response.status}`);
@@ -138,19 +107,9 @@ const ApplicationPage = () => {
 
       const responseData = await response.json();
       console.log("訂單建立成功:", responseData);
-      alert("訂單建立成功！");
+      setBabyInfo(responseData);
+      router.push("/parent/finish");
 
-      if (localStorage.getItem("choosetype") === "suddenly") {
-        await createSuddenlyRecord(
-          response.nanny.id,
-          selectedCareType,
-          address
-        );
-        router.push("/parent/finish");
-      } else if (localStorage.getItem("choosetype") === "longTerm") {
-        await createLongTermRecord(response.nanny.id);
-        router.push("/parent/finish");
-      }
     } catch (error) {
       console.error("訂單建立失敗:", error);
       alert("提交失敗，請稍後再試");
@@ -159,10 +118,13 @@ const ApplicationPage = () => {
 
   const handleSwitchChange = (optionId, isChecked) => {
     setSelectedOptions((prevOptions) => {
+      // Ensure prevOptions is an array
+      const currentOptions = Array.isArray(prevOptions) ? prevOptions : [];
+      
       if (isChecked) {
-        return [...prevOptions, optionId];
+        return [...currentOptions, optionId];
       } else {
-        return prevOptions.filter((id) => id !== optionId);
+        return currentOptions.filter((id) => id !== optionId);
       }
     });
   };
@@ -180,6 +142,20 @@ const ApplicationPage = () => {
     }
     setSelectedDate(newValue);
   };
+
+  useEffect(() => {
+    const storedData = localStorage.getItem("data-storage");
+    const parsedData = JSON.parse(storedData).state.babyInfo;
+    if (parsedData) {
+      setBabyInfo(parsedData);
+      setBabyName(parsedData.nickname);
+      setBabyGender(parsedData.gender);
+      setSelectedDate(parsedData.birthday);
+      setBabyBirthOrder(parsedData.rank);
+      setBabyHope(parsedData.intro);
+      setSelectedOptions(parsedData.hope);
+    }
+  }, []);
 
   return (
     <div style={styles.main}>
@@ -235,6 +211,7 @@ const ApplicationPage = () => {
               id="name"
               label="孩童暱稱"
               variant="outlined"
+              value={babyName}
               onChange={(e) => setBabyName(e.target.value)}
               InputProps={{
                 sx: {

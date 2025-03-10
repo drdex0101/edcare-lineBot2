@@ -10,12 +10,12 @@ CREATE TABLE suddenly (
 );
 
 CREATE TABLE long_term (
-    id BIGSERIAL PRIMARY KEY,
-    order_id VARCHAR(50),
-    weekdays VARCHAR[], -- 星期 (array of days)
-    scenario VARCHAR(100), -- 情境
-    care_time VARCHAR(50), -- 托育時間
-    id_type VARCHAR(50)
+    id BIGSERIAL PRIMARY KEY,        
+    order_id VARCHAR(50) ,    
+    weekdays INTEGER[] ,      
+    care_time VARCHAR(50) ,   
+    id_type VARCHAR(50),
+    scenario VARCHAR(100)  
 );
 
 ALTER TABLE suddenly ADD COLUMN id_type VARCHAR(50);

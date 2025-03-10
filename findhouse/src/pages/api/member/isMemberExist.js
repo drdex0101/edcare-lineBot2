@@ -23,7 +23,8 @@ export default async function handler(req, res) {
 
       const query = `
         SELECT 
-          member.id
+          member.id,
+          member.kyc_id
         FROM member
         WHERE member.line_id = $1;
       `;

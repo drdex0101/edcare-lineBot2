@@ -1,21 +1,18 @@
+"use client";
 import React, { useState, useEffect } from "react";
 import "./order.css";
-import SearchBarSortOnly from "../../../components/base/SearchBarSortOnly";
-import OrderPersonalItem from "../../../components/base/OrderPersonalItem";
-import Pagination from "../../../components/base/pagenation";
 import { useRouter } from "next/router";
-import SettingForParent from "../../../components/base/SettingForParent";
 import Loading from "../../../components/base/Loading";
+import SettingForNanny from "../../../components/base/SettingForNanny";
+
 export default function OrderPage() {
   const router = useRouter();
-  const [keywords, setKeywords] = useState("");
-  const [orderList, setOrderList] = useState([]);
-  const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [nannyProfile, setNannyProfile] = useState([]);
   const [nannyInfo, setNannyInfo] = useState(null);
   const [nannyProfileImg, setNannyProfileImg] = useState(null);
   const [isShow, setIsShow] = useState(false);
+
   useEffect(() => {
     fetchNannyProfile();
   }, []);
@@ -74,9 +71,12 @@ export default function OrderPage() {
       throw new Error("Network response was not ok");
     }
     const data = await response.json();
-    setNannyProfile(data.nannyProfile[0]);
-    setNannyInfo(data.nannyProfile[0]);
-    setNannyProfileImg(await getImgUrl(data.nannyProfile[0].uploadid));
+    if (data.nannyProfile.length > 0) {
+      setNannyProfile(data.nannyProfile[0]);
+      setNannyInfo(data.nannyProfile[0]);
+      setNannyProfileImg(await getImgUrl(data.nannyProfile[0].uploadid));
+    }
+    else
     setIsLoading(false);
   };
 
@@ -114,7 +114,7 @@ export default function OrderPage() {
               fill="#252525"
             />
           </svg>
-          <SettingForParent />
+          <SettingForNanny />
         </div>
         <div
           className={`order-body-header ${nannyProfile.length === 0 ? "disabled" : ""}`}
