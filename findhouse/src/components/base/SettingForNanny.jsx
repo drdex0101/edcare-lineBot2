@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect} from "react";
 import "./css/Setting.css";
 import { useRouter } from "next/router";
 
