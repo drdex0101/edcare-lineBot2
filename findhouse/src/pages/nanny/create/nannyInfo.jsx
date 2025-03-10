@@ -38,6 +38,7 @@ const ApplicationPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [suddenlyId, setSuddenlyId] = useState(null);
   const [longTermId, setLongTermId] = useState(null);
+  const [memberId, setMemberId] = useState(null);
 
   useEffect(() => {
     if (nannyInfo?.service) {
@@ -53,19 +54,24 @@ const ApplicationPage = () => {
   }, [nannyInfo]); // **確保 `item` 更新後會同步 `switchStates`**
 
   useEffect(() => {
+    setIsLoading(true);
     const storedData = localStorage.getItem("data-storage");
-    const way = localStorage.getItem("way");
+    const way = localStorage.getItem("choosetype");
     if (way === "suddenly" && storedData) {
       const parsedData = JSON.parse(storedData);
       if (parsedData?.state?.suddenlyInfo?.id) {
         setSuddenlyId(parsedData.state.suddenlyInfo.id);
       }
+      console.log(parsedData.state.suddenlyInfo.id);
     } else if (way === "longTerm" && storedData) {
       const parsedData = JSON.parse(storedData);
       if (parsedData?.state?.longTermInfo?.id) {
         setLongTermId(parsedData.state.longTermInfo.id);
       }
+      console.log(parsedData.state.longTermInfo.id);
     }
+    const parseMember = JSON.parse(storedData).state.memberInfo;
+    setMemberId(parseMember.memberId);
     const parsedData = JSON.parse(storedData).state.nannyInfo;
     setIsLoading(true);
     if (parsedData) {
@@ -74,7 +80,13 @@ const ApplicationPage = () => {
       setIntroduction(parsedData.introduction);
       if (parsedData.uploadid) {
         setHeadIcon(parsedData.uploadid);
-        setHeadIconUrl(getUrl(parsedData.uploadid));
+        console.log(parsedData.uploadid);
+        getUrl(parsedData.uploadid).then(url => {
+          console.log("Image URL:", url);
+          setHeadIconUrl(url);
+        }).catch(error => {
+          console.error("Error fetching URL:", error);
+        });
       }
       if (parsedData.environmentpic && parsedData.environmentpic.length > 0) {
         const fetchImageUrls = async () => {
@@ -96,7 +108,7 @@ const ApplicationPage = () => {
 
   const handleNextClick = async () => {
     const nannyData = {
-      memberId: nannyInfo ? nannyInfo.memberId : "",
+      memberId: memberId,
       experienment: nannyInfo ? nannyInfo.experienment : null,
       age: nannyInfo ? nannyInfo.age : null,
       kidCount: nannyInfo ? nannyInfo.kidcount : null,
@@ -220,7 +232,12 @@ const ApplicationPage = () => {
         ]);
       } else {
         setHeadIcon(uploadId);
-        setHeadIconUrl(result.url);
+        getUrl(uploadId).then(url => {
+          console.log("Image URL:", url);
+          setHeadIconUrl(url);
+        }).catch(error => {
+          console.error("Error fetching URL:", error);
+        });
       }
   
       if (result.success) {
@@ -264,7 +281,6 @@ const ApplicationPage = () => {
   };
 
   useEffect(() => {
-
     const initialStates = {};
     for (let i = 1; i <= 6; i++) {
       initialStates[i] = nannyInfo

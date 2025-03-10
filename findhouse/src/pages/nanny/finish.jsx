@@ -28,9 +28,9 @@ const ApplicationPage = () => {
 
   const fetchNanny = async () => {
     try {
-      const response = await fetch("/api/nanny/getNannyInfo");
+      const response = await fetch("/api/nanny/getNannyProfile");
       const data = await response.json();
-      if (data.nannies.length > 0) {
+      if (data.nannyProfile.length > 0) {
         setHaveNanny(true);
       }
     } catch (error) {

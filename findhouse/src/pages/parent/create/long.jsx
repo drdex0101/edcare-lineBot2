@@ -8,6 +8,7 @@ import Select from "@mui/material/Select";
 import CalendarWeekendPicker from "../../../components/base/CalendarWeekendPicker";
 import Loading from "../../../components/base/Loading";
 import { MenuItem, InputLabel, FormControl } from "@mui/material";
+import useStore from "../../../lib/store";
 
 const ApplicationPage = () => {
   const router = useRouter();
@@ -15,19 +16,57 @@ const ApplicationPage = () => {
   const handleLastClick = () => {
     router.back(); // 替换 '/next-page' 为你想要跳转的路径
   };
+  const { longTernInfo, setLongTernInfo } = useStore();
 
-  const handleNextClick = () => {
+  useEffect(() => {
+    if (longTernInfo) {
+      setSelectedDays(longTernInfo.weekdays);
+      setSelectedCareTime(longTernInfo.care_time);
+    }
+  }, [longTernInfo]);
+
+  const createLongTerm = async () => {
+    setIsLoading(true);
+    const response = await fetch("/api/base/createLongTern", {
+      method: "POST",
+      body: JSON.stringify({
+        longTermDays: selectedDays,
+        longTermCareType: selectedCareTime,
+        careScenario: selectedScenario,
+        idType: "nanny",
+      }),
+    });
+    const data = await response.json();
+    setLongTernInfo(data.long_term);
+  };
+
+  const updateLongTerm = async () => {
+    const response = await fetch("/api/base/updateLongTern", {
+      method: "PATCH",
+      body: JSON.stringify({
+        longTernId: longTernInfo.id,
+        longTermDays: selectedDays,
+        longTermCareType: selectedCareTime,
+        careScenario: selectedScenario,
+        idType: "nanny",
+      }),
+    });
+    const data = await response.json();
+    setLongTernInfo(data.long_term);
+  }
+
+  const handleNextClick = async() => {
     setIsLoading(true);
     if (selectedDays.length === 0 || !selectedCareTime || !selectedScenario) {
       alert("請填寫所有必填欄位。");
       return;
     }
-
-    localStorage.setItem("way", "longTerm");
-    localStorage.setItem("longTermDays", selectedDays);
-    localStorage.setItem("longTermCareType", selectedCareTime);
-    localStorage.setItem("careScenario", selectedScenario);
-    router.push("/parent/create/babyInfo"); // 替换 '/next-page' 为你想要跳转的路径
+    if (longTernInfo) {
+      await updateLongTerm();
+    } else {
+      await createLongTerm();
+    }
+    router.push("/parent/create/babyInfo");
   };
 
   const [selectedDays, setSelectedDays] = useState([]);
