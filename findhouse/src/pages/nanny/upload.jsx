@@ -114,6 +114,16 @@ const ApplicationPage = () => {
     router.back(); // 替换 '/next-page' 为你想要跳转的路径
   };
 
+  const fetchKycData = async () => {
+    const response = await fetch(`/api/kycInfo/getKycData`);
+    const data = await response.json();
+    setKycData(data.kycInfoList[0]);
+    setSelectedDate(data.kycInfoList[0].birthday ? dayjs(data.kycInfoList[0].birthday) : null);
+    setGender(data.kycInfoList[0].gender || "");
+    setFrontImg(data.kycInfoList[0].identityfrontuploadid || null);
+    setBackImg(data.kycInfoList[0].identitybackuploadid || null);
+  };
+
   useEffect(() => {
     const storedData = localStorage.getItem('data-storage'); // 讀取本地存儲
     if (storedData) {
@@ -124,6 +134,9 @@ const ApplicationPage = () => {
         setGender(parsedData.gender || "");
         setFrontImg(parsedData.identityfrontuploadid || null);
         setBackImg(parsedData.identitybackuploadid || null);
+      }
+      else {
+        fetchKycData();
       }
     }
   }, []);

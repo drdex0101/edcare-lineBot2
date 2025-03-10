@@ -81,7 +81,7 @@ const ApplicationPage = () => {
     }
     const data = await response.json();
     setData(data.suddenly);
-    localStorage.setItem("careTypeId", data.suddenly.id);
+    localStorage.setItem("careTypeId", item.caretypeid);
     localStorage.setItem("choosetype", "suddenly");
   };
 

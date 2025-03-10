@@ -510,6 +510,7 @@ const styles = {
     fontStyle: "normal",
     fontWeight: "700",
     lineHeight: "normal",
+    width:'120px'
   },
   headerFont: {
     fontSize: "24px",

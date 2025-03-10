@@ -44,7 +44,7 @@ export default function HistoryPage() {
       <div className="matching-body-header-background">
         <div className="matching-body-header">
           <img src={"/icon/headIcon.svg"} alt="history-header" />
-          <p className="matching-body-header-title">媒合通知</p>
+          <span className="matching-body-header-title">媒合通知</span>
         </div>
       </div>
       <div
