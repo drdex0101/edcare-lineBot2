@@ -12,17 +12,17 @@ export default function SettingForParent() {
     setIsOpen(!isOpen);
   };
 
-  useEffect(() => {
-    return () => {
-      if (settingPopupRef.current) {
-        settingPopupRef.current.remove();
-      }
-    };
-  }, []);
+  // useEffect(() => {
+  //   return () => {
+  //     if (settingPopupRef.current) {
+  //       settingPopupRef.current.remove();
+  //     }
+  //   };
+  // }, []);
 
-  useEffect(() => {
-    setIsOpen(false); // 確保切換路由後關閉彈窗
-  }, [router.pathname]);
+  // useEffect(() => {
+  //   setIsOpen(false); // 確保切換路由後關閉彈窗
+  // }, [router.pathname]);
 
   return (
     <div className="setting-container">

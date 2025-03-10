@@ -3,7 +3,7 @@ import "./history.css";
 import Pagination from "../../../components/base/pagenation";
 import SearchBarSortOnly from "../../../components/base/SearchBarSortOnly";
 import OrderHistoryItem from "../../../components/base/OrderHistoryItem";
-import SettingForParent from "../../../components/base/SettingForParent";
+import SettingForNanny from "../../../components/base/SettingForNanny";
 import { useRouter } from "next/router";
 import Loading from "../../../components/base/Loading";
 export default function HistoryPage() {
@@ -75,7 +75,7 @@ export default function HistoryPage() {
           alt="back"
           onClick={() => router.back()}
         />
-        <SettingForParent />
+        <SettingForNanny />
       </div>
 
       <div className="history-body-header">

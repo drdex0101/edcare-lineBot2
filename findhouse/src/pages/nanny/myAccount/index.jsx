@@ -68,12 +68,12 @@ export default function DetailsPage() {
       )}
       <>
         <div className="details-header">
-        <img
-          src="/icon/arrowForward.svg"
-          alt="back"
-          onClick={() => router.back()}
-        />
-         <SettingForNanny />
+          <img
+            src="/icon/arrowForward.svg"
+            alt="back"
+            onClick={() => router.back()}
+          />
+          <SettingForNanny />
         </div>
         <div className="details-body">
           <img src={"/icon/detailsIcon.png"} alt="details-icon" />
