@@ -1,8 +1,10 @@
+"use client";
 import React, { useState, useEffect } from "react";
 import "./order.css";
 import { useRouter } from "next/router";
 import Loading from "../../../components/base/Loading";
 import SettingForNanny from "../../../components/base/SettingForNanny";
+
 export default function OrderPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
@@ -10,6 +12,7 @@ export default function OrderPage() {
   const [nannyInfo, setNannyInfo] = useState(null);
   const [nannyProfileImg, setNannyProfileImg] = useState(null);
   const [isShow, setIsShow] = useState(false);
+
   useEffect(() => {
     fetchNannyProfile();
   }, []);

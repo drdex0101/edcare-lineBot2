@@ -28,6 +28,7 @@ export default async function handler(req, res) {
         SELECT id FROM member WHERE line_id = $1;
       `;
       const memberIdResult = await client.query(memberIdQuery, [userId]);
+      console.log(memberIdResult);
       
       if (memberIdResult.rowCount === 0) {
         return res.status(200).json({ 
