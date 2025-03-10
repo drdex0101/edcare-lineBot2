@@ -7,7 +7,7 @@ CREATE TABLE nanny (
     way VARCHAR, -- 托育方式
     scenario TEXT, -- 托育情境
     environmentPic VARCHAR[], -- 環境照片，使用陣列儲存多張照片的URL
-    serviceLocation VARCHAR[], -- 服務地點
+    serviceLocation VARCHAR, -- 服務地點
     introduction VARCHAR, -- 自我介紹
     service VARCHAR[], -- 服務項目，使用陣列儲存多個服務
     score VARCHAR, -- 評分，例如 4.85

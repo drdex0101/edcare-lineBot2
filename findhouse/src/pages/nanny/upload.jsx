@@ -30,17 +30,48 @@ const ApplicationPage = () => {
   // 计算最大可选日期，即当前日期减去12年
   const maxSelectableDate = dayjs().subtract(12, 'year');
 
+  // 新增表單資料的 state
+  const [formData, setFormData] = useState({
+    name: '',
+    identityCard: '',
+    address: '',
+    communicateAddress: '',
+    welfareCertNo: ''
+  });
+
+  // 當 kycData 載入時更新表單資料
+  useEffect(() => {
+    if (kycData) {
+      setFormData({
+        name: kycData.name || '',
+        identityCard: kycData.identitycard || '',
+        address: kycData.address || '',
+        communicateAddress: kycData.communicateaddress || '',
+        welfareCertNo: kycData.welfarecertno || ''
+      });
+    }
+  }, [kycData]);
+
+  // 處理表單欄位變更
+  const handleInputChange = (e) => {
+    const { id, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [id]: value
+    }));
+  };
+
   const handleNextClick = async () => {
     setIsLoading(true);
     const options = { year: "numeric", month: "2-digit", day: "2-digit" };
     const kycInfoData = {
-      name: document.getElementById("name").value,
-      identityCard: document.getElementById("identityCard").value,
+      name: formData.name,
+      identityCard: formData.identityCard,
       gender: gender,
       birthday: selectedDate,
-      address: document.getElementById("address").value,
-      communicateAddress: document.getElementById("communicateAddress").value,
-      welfareCertNo: document.getElementById("welfareCertNo").value,
+      address: formData.address,
+      communicateAddress: formData.communicateAddress,
+      welfareCertNo: formData.welfareCertNo,
       identityFrontUploadId: frontImg,
       identityBackUploadId: backImg,
       frontImg: frontImg,
@@ -60,12 +91,13 @@ const ApplicationPage = () => {
             },
             body: JSON.stringify(kycInfoData),
           });
-          router.push("/parent/create/choose");
+          setKycData(response.member);
+          router.push("/nanny/create/choose");
         } catch (error) {
           alert("更新失敗，請重新嘗試。");
           console.error("Error updating kyc info:", error);
           setIsLoading(false);
-          router.push("/parent/create/choose");
+          router.push("/nanny/create/choose");
         }
       } else {
         const response = await fetch("/api/kycInfo/createKycInfo", {
@@ -81,7 +113,7 @@ const ApplicationPage = () => {
           kycId: kycId,
           memberId: memberId,
         };
-        setKycData(kycData);
+        setKycData(kycData.member);
         const response2 = await fetch("/api/member/updateKycId", {
           method: "PATCH",
           headers: {
@@ -95,7 +127,7 @@ const ApplicationPage = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            richMenuId: "richmenu-bd0843b93a53c3df760bbd95c7871e23",
+            richMenuId: "richmenu-e2577cc1b2bd4a59ad7fe9c3b99605ba",
           }),
         });
         router.push("/nanny/create/choose");
@@ -115,30 +147,51 @@ const ApplicationPage = () => {
   };
 
   const fetchKycData = async () => {
-    const response = await fetch(`/api/kycInfo/getKycData`);
+    const response = await fetch("/api/kycInfo/getKycData", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
     const data = await response.json();
     setKycData(data.kycInfoList[0]);
-    setSelectedDate(data.kycInfoList[0].birthday ? dayjs(data.kycInfoList[0].birthday) : null);
-    setGender(data.kycInfoList[0].gender || "");
-    setFrontImg(data.kycInfoList[0].identityfrontuploadid || null);
-    setBackImg(data.kycInfoList[0].identitybackuploadid || null);
   };
 
   useEffect(() => {
-    const storedData = localStorage.getItem('data-storage'); // 讀取本地存儲
-    if (storedData) {
-      if (kycData != null) {
-        const parsedData = JSON.parse(storedData).state.kycData.member; // 解析數據
-        setKycData(parsedData);
-        setSelectedDate(parsedData.birthday ? dayjs(parsedData.birthday) : null);
-        setGender(parsedData.gender || "");
-        setFrontImg(parsedData.identityfrontuploadid || null);
-        setBackImg(parsedData.identitybackuploadid || null);
+    const loadData = async () => {
+      await fetchKycData(); // Wait for KYC data to be fetched
+      
+      const storedData = localStorage.getItem('data-storage');
+      
+      if (storedData) {
+        try {
+          const parsedData = JSON.parse(storedData);
+          if (parsedData.state && parsedData.state.kycData) {
+            const storedKycData = parsedData.state.kycData;
+            setKycData(storedKycData);
+            setSelectedDate(storedKycData.birthday ? dayjs(storedKycData.birthday) : null);
+            setGender(storedKycData.gender || "");
+            setFrontImg(storedKycData.identityfrontuploadid || null);
+            setBackImg(storedKycData.identitybackuploadid || null);
+          }
+        } catch (error) {
+          console.error("Error parsing stored data:", error);
+        }
       }
-      else {
-        fetchKycData();
+      
+      // If no stored data or parsing failed, use kycData from API
+      if (!storedData && kycData) {
+        setSelectedDate(kycData.birthday ? dayjs(kycData.birthday) : null);
+        setGender(kycData.gender || "");
+        setFrontImg(kycData.identityfrontuploadid || null);
+        setBackImg(kycData.identitybackuploadid || null);
       }
-    }
+      
+      setIsLoading(false);
+    };
+    
+    setIsLoading(true);
+    loadData();
   }, []);
 
   const handleUpload = async (file, type) => {
@@ -309,7 +362,9 @@ const ApplicationPage = () => {
               id="name"
               label="真實姓名"
               variant="outlined"
-              value={kycData?.name}
+              required
+              value={formData.name}
+              onChange={handleInputChange}
               InputProps={{
                 sx: {
                   padding: "0px 16px",
@@ -337,7 +392,9 @@ const ApplicationPage = () => {
             <TextField
               id="identityCard"
               label="身分證字號"
-              value={kycData?.identitycard}
+              required
+              value={formData.identityCard}
+              onChange={handleInputChange}
               variant="outlined"
               InputProps={{
                 sx: {
@@ -369,6 +426,7 @@ const ApplicationPage = () => {
                 labelId="gender-label"
                 id="gender"
                 value={gender}
+                required
                 onChange={handleGenderChange}
                 label="性別"
                 sx={{
@@ -427,7 +485,9 @@ const ApplicationPage = () => {
             <TextField
               id="address"
               label="戶籍地址"
-              value={kycData?.address}
+              required
+              value={formData.address}
+              onChange={handleInputChange}
               variant="outlined"
               InputProps={{
                 sx: {
@@ -455,7 +515,9 @@ const ApplicationPage = () => {
             <TextField
               id="communicateAddress"
               label="通訊地址"
-              value={kycData?.communicateaddress}
+              required
+              value={formData.communicateAddress}
+              onChange={handleInputChange}
               variant="outlined"
               InputProps={{
                 sx: {
@@ -481,34 +543,35 @@ const ApplicationPage = () => {
               }}
             />
             <TextField
-                id="welfareCertNo"
-                label="居家式托育服務登記書號"
-                variant="outlined"
-                value={kycData?.welfarecertno}
-                required
-                InputProps={{
-                  sx: {
-                    padding: "0px 16px",
-                    borderRadius: "8px",
-                    backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
-                  },
-                }}
-                sx={{
-                  alignSelf: "stretch",
+              id="welfareCertNo"
+              label="居家式托育服務登記書號"
+              value={formData.welfareCertNo}
+              onChange={handleInputChange}
+              variant="outlined"
+              required
+              InputProps={{
+                sx: {
+                  padding: "0px 16px",
                   borderRadius: "8px",
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": {
-                      borderColor: "var(--OutLine-OutLine, #78726D)",
-                    },
-                    "&:hover fieldset": {
-                      borderColor: "#E3838E",
-                    },
-                    "&.Mui-focused fieldset": {
-                      borderColor: "#E3838E",
-                    },
+                  backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
+                },
+              }}
+              sx={{
+                alignSelf: "stretch",
+                borderRadius: "8px",
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor: "var(--OutLine-OutLine, #78726D)",
                   },
-                }}
-              />
+                  "&:hover fieldset": {
+                    borderColor: "#E3838E",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#E3838E",
+                  },
+                },
+              }}
+            />
           </Box>
           <div style={styles.imgStyle}>
             <div style={styles.uplaodLayout}>

@@ -92,6 +92,13 @@ const ApplicationPage = () => {
           body: JSON.stringify(memberData),
         });
       }
+      await fetch("/api/line/changeRichMenu", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ richMenuId: "richmenu-bd0843b93a53c3df760bbd95c7871e23" }),
+      });
       router.push("/parent/verify");
       setIsLoading(false);
     } catch (error) {

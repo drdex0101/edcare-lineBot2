@@ -22,6 +22,7 @@ const ApplicationPage = () => {
     if (longTernInfo) {
       setSelectedDays(longTernInfo.weekdays);
       setSelectedCareTime(longTernInfo.care_time);
+      setSelectedScenario(longTernInfo.scenario);
     }
   }, [longTernInfo]);
 
@@ -37,10 +38,13 @@ const ApplicationPage = () => {
       }),
     });
     const data = await response.json();
+    localStorage.setItem("careTypeId", data.long_term.id);
+    localStorage.setItem("choosetype", "longTern");
     setLongTernInfo(data.long_term);
   };
 
   const updateLongTerm = async () => {
+    setIsLoading(true);
     const response = await fetch("/api/base/updateLongTern", {
       method: "PATCH",
       body: JSON.stringify({
@@ -52,11 +56,12 @@ const ApplicationPage = () => {
       }),
     });
     const data = await response.json();
+    localStorage.setItem("careTypeId", data.long_term.id);
+    localStorage.setItem("choosetype", "longTern");
     setLongTernInfo(data.long_term);
   }
 
   const handleNextClick = async() => {
-    setIsLoading(true);
     if (selectedDays.length === 0 || !selectedCareTime || !selectedScenario) {
       alert("請填寫所有必填欄位。");
       return;
@@ -357,7 +362,8 @@ const ApplicationPage = () => {
                     backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
                   }}
                 >
-                  <MenuItem value="home">居家托育</MenuItem>
+                  <MenuItem value="toHome">到宅托育</MenuItem>
+                  <MenuItem value="home">在宅托育</MenuItem>
                 </Select>
               </FormControl>
             </div>

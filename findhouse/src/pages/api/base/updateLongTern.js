@@ -4,7 +4,7 @@ import { verifyToken } from "../../../utils/jwtUtils";
 export default async function handler(req, res) {
   if (req.method === "PATCH") {
     console.log("req.body", req.body);
-    const { longTermDays, longTermCareType, idType, longTernId } =
+    const { longTermDays, longTermCareType, idType, longTernId, careScenario } =
       typeof req.body === "string" ? JSON.parse(req.body) : req.body;
 
     const token = req.cookies.authToken;
@@ -26,12 +26,13 @@ export default async function handler(req, res) {
         SET 
           weekdays = $2,
           care_time = $3,
-          id_type = $4
+          id_type = $4,
+          scenario = $5
         WHERE id = $1
         RETURNING *;
       `;
       const weekdaysArray = longTermDays.map((day) => day.toString());
-      const values = [longTernId, weekdaysArray, longTermCareType, idType];
+      const values = [longTernId, weekdaysArray, longTermCareType, idType, careScenario];
 
       const result = await client.query(query, values);
 
