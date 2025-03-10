@@ -27,8 +27,8 @@ export default function DetailsPage() {
   const fetchFavoriteList = async () => {
     const response = await fetch("/api/favorite/getFavoriteList?page=1&pageSize=4");
     const data = await response.json();
-    setFavoriteList(data.favorites);
-    setFavoriteCount(data.favorites.length);
+    setFavoriteList(data.favorite);
+    setFavoriteCount(data.favorite.length);
     setIsLoading(false);
   };
 
@@ -44,7 +44,7 @@ export default function DetailsPage() {
     fetchHistoryList();
     fetchFavoriteList();
     fetchMatchingList();
-  }, []);
+  }, []);  
 
   return (
     <div className="details-main">
