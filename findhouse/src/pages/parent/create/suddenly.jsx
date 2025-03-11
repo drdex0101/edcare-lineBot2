@@ -9,7 +9,7 @@ import useStore from "../../../lib/store";
 
 const ApplicationPage = () => {
   const router = useRouter();
-  const { suddenlyInfo, setSuddenlyInfo } = useStore();
+  const { careData, setCareData } = useStore();
   const handleNextClick = async () => {
     if (!selectedRange.startDate || !selectedRange.endDate) {
       alert("請填寫所有必填欄位。");
@@ -39,22 +39,26 @@ const ApplicationPage = () => {
       ? selectedAddress
       : [selectedAddress];
     let response;
-    if (suddenlyInfo) {
-      response = await fetch("/api/base/updateSuddenly", {
+    if (careData) {
+      response = await fetch("/api/base/updateCareData", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          id: suddenlyInfo.id,
           startDate: selectedRange.startDate,
           endDate: selectedRange.endDate,
           scenario: selectedCareType,
           location: locationArray,
+          careTime: "",
+          idType: "parent",
+          careDataId: careData.id,
+          careType: "suddenly",
+          weekdays: [],
         }),
       });
     } else {
-      response = await fetch("/api/base/createSuddenly", {
+      response = await fetch("/api/base/createCareData", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -67,17 +71,18 @@ const ApplicationPage = () => {
           location: locationArray,
           careTime: "",
           idType: "parent",
+          careType: "suddenly",
+          weekdays: [],
         }),
       });
     }
     if (!response.ok) {
-      throw new Error("Failed to insert data into suddenly table");
+      throw new Error("Failed to insert data into care_data table");
     }
     const data = await response.json();
-    setData(data.suddenly);
-    console.log(data.suddenly);
-    setSuddenlyInfo(data.suddenly);
-    localStorage.setItem("careTypeId", data.suddenly.id);
+    console.log(data.careData);
+    setCareData(data.careData);
+    localStorage.setItem("careTypeId", data.careData.id);
     localStorage.setItem("choosetype", "suddenly");
   };
 

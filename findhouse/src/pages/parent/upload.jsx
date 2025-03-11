@@ -30,17 +30,48 @@ const ApplicationPage = () => {
   // 计算最大可选日期，即当前日期减去12年
   const maxSelectableDate = dayjs().subtract(12, 'year');
 
+  // 新增表單資料的 state
+  const [formData, setFormData] = useState({
+    name: '',
+    identityCard: '',
+    address: '',
+    communicateAddress: '',
+    welfareCertNo: ''
+  });
+
+  // 當 kycData 載入時更新表單資料
+  useEffect(() => {
+    if (kycData) {
+      setFormData({
+        name: kycData.name || '',
+        identityCard: kycData.identitycard || '',
+        address: kycData.address || '',
+        communicateAddress: kycData.communicateaddress || '',
+        welfareCertNo: kycData.welfarecertno || ''
+      });
+    }
+  }, [kycData]);
+
+  // 處理表單欄位變更
+  const handleInputChange = (e) => {
+    const { id, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [id]: value
+    }));
+  };
+
   const handleNextClick = async () => {
     setIsLoading(true);
     const options = { year: "numeric", month: "2-digit", day: "2-digit" };
     const kycInfoData = {
-      name: document.getElementById("name").value,
-      identityCard: document.getElementById("identityCard").value,
+      name: formData.name,
+      identityCard: formData.identityCard,
       gender: gender,
       birthday: selectedDate,
-      address: document.getElementById("address").value,
-      communicateAddress: document.getElementById("communicateAddress").value,
-      welfareCertNo: null,
+      address: formData.address,
+      communicateAddress: formData.communicateAddress,
+      welfareCertNo: formData.welfareCertNo,
       identityFrontUploadId: frontImg,
       identityBackUploadId: backImg,
       frontImg: frontImg,
@@ -96,10 +127,10 @@ const ApplicationPage = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            richMenuId: "richmenu-bd0843b93a53c3df760bbd95c7871e23",
+            richMenuId: "richmenu-e2577cc1b2bd4a59ad7fe9c3b99605ba",
           }),
         });
-        router.push("/parent/create/");
+        router.push("/parent/create/choose");
       }
     } catch (error) {
       setIsLoading(false);
@@ -129,20 +160,37 @@ const ApplicationPage = () => {
   useEffect(() => {
     const loadData = async () => {
       await fetchKycData(); // Wait for KYC data to be fetched
-      
+
       const storedData = localStorage.getItem('data-storage');
-      console.log("storedData:", storedData);
-      
-      if (storedData && kycData != null) {
-        const parsedData = JSON.parse(storedData).state.kycData;
-        setKycData(parsedData);
-        setSelectedDate(parsedData.birthday ? dayjs(parsedData.birthday) : null);
-        setGender(parsedData.gender || "");
-        setFrontImg(parsedData.identityfrontuploadid || null);
-        setBackImg(parsedData.identitybackuploadid || null);
+
+      if (storedData) {
+        try {
+          const parsedData = JSON.parse(storedData);
+          if (parsedData.state && parsedData.state.kycData) {
+            const storedKycData = parsedData.state.kycData;
+            setKycData(storedKycData);
+            setSelectedDate(storedKycData.birthday ? dayjs(storedKycData.birthday) : null);
+            setGender(storedKycData.gender || "");
+            setFrontImg(storedKycData.identityfrontuploadid || null);
+            setBackImg(storedKycData.identitybackuploadid || null);
+          }
+        } catch (error) {
+          console.error("Error parsing stored data:", error);
+        }
       }
+
+      // If no stored data or parsing failed, use kycData from API
+      if (!storedData && kycData) {
+        setSelectedDate(kycData.birthday ? dayjs(kycData.birthday) : null);
+        setGender(kycData.gender || "");
+        setFrontImg(kycData.identityfrontuploadid || null);
+        setBackImg(kycData.identitybackuploadid || null);
+      }
+
+      setIsLoading(false);
     };
 
+    setIsLoading(true);
     loadData();
   }, []);
 
@@ -314,8 +362,9 @@ const ApplicationPage = () => {
               id="name"
               label="真實姓名"
               variant="outlined"
-              value={kycData?.name}
               required
+              value={formData.name}
+              onChange={handleInputChange}
               InputProps={{
                 sx: {
                   padding: "0px 16px",
@@ -343,8 +392,9 @@ const ApplicationPage = () => {
             <TextField
               id="identityCard"
               label="身分證字號"
-              value={kycData?.identitycard}
               required
+              value={formData.identityCard}
+              onChange={handleInputChange}
               variant="outlined"
               InputProps={{
                 sx: {
@@ -376,9 +426,9 @@ const ApplicationPage = () => {
                 labelId="gender-label"
                 id="gender"
                 value={gender}
+                required
                 onChange={handleGenderChange}
                 label="性別"
-                required
                 sx={{
                   backgroundColor: "#FFF",
                   borderRadius: "8px",
@@ -402,7 +452,6 @@ const ApplicationPage = () => {
               <DatePicker
                 label="生日"
                 value={selectedDate}
-                required
                 onChange={(newValue) => setSelectedDate(newValue)}
                 maxDate={maxSelectableDate}
                 renderInput={(params) => <TextField {...params} />}
@@ -437,7 +486,8 @@ const ApplicationPage = () => {
               id="address"
               label="戶籍地址"
               required
-              value={kycData?.address}
+              value={formData.address}
+              onChange={handleInputChange}
               variant="outlined"
               InputProps={{
                 sx: {
@@ -466,7 +516,8 @@ const ApplicationPage = () => {
               id="communicateAddress"
               label="通訊地址"
               required
-              value={kycData?.communicateaddress}
+              value={formData.communicateAddress}
+              onChange={handleInputChange}
               variant="outlined"
               InputProps={{
                 sx: {
@@ -506,7 +557,6 @@ const ApplicationPage = () => {
                 onChange={handleFileChange}
                 style={{ display: "none" }}
                 id="file-upload"
-                required
               />
               <div
                 style={styles.imgLayout}
@@ -582,7 +632,6 @@ const ApplicationPage = () => {
                 onChange={handleFileChangeBack}
                 style={{ display: "none" }}
                 id="file-backend"
-                required
               />
               <div
                 style={styles.imgLayout}

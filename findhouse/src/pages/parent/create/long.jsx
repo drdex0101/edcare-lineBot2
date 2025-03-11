@@ -16,49 +16,58 @@ const ApplicationPage = () => {
   const handleLastClick = () => {
     router.back(); // 替换 '/next-page' 为你想要跳转的路径
   };
-  const { longTernInfo, setLongTernInfo } = useStore();
+  const { careData, setCareData } = useStore();
 
   useEffect(() => {
-    if (longTernInfo) {
-      setSelectedDays(longTernInfo.weekdays);
-      setSelectedCareTime(longTernInfo.care_time);
-      setSelectedScenario(longTernInfo.scenario);
+    if (careData) {
+      setSelectedDays(careData?.weekdays || []);
+      setSelectedCareTime(careData?.care_time || "");
+      setSelectedScenario(careData?.scenario || "");
+      console.log(careData);
     }
-  }, [longTernInfo]);
+  }, [careData]);
 
-  const createLongTerm = async () => {
+  const createCareData = async () => {
     setIsLoading(true);
-    const response = await fetch("/api/base/createLongTern", {
+    const response = await fetch("/api/base/createCareData", {
       method: "POST",
       body: JSON.stringify({
-        longTermDays: selectedDays,
-        longTermCareType: selectedCareTime,
-        careScenario: selectedScenario,
-        idType: "nanny",
+        weekdays: selectedDays,
+        careTime: selectedCareTime,
+        scenario: selectedScenario,
+        idType: "parent",
+        careType: "longTern",
+        startDate: null,
+        endDate: null,
+        location: [],
       }),
     });
     const data = await response.json();
-    localStorage.setItem("careTypeId", data.long_term.id);
+    localStorage.setItem("careTypeId", data.careData.id);
     localStorage.setItem("choosetype", "longTern");
-    setLongTernInfo(data.long_term);
+    setCareData(data.careData);
   };
 
-  const updateLongTerm = async () => {
+  const updateCareData = async () => {
     setIsLoading(true);
-    const response = await fetch("/api/base/updateLongTern", {
+    const response = await fetch("/api/base/updateCareData", {
       method: "PATCH",
       body: JSON.stringify({
-        longTernId: longTernInfo.id,
-        longTermDays: selectedDays,
-        longTermCareType: selectedCareTime,
-        careScenario: selectedScenario,
-        idType: "nanny",
+        careDataId: careData.id,
+        weekdays: selectedDays,
+        careTime: selectedCareTime,
+        scenario: selectedScenario,
+        idType: "parent",
+        careType: "longTern",
+        startDate: null,
+        endDate: null,
+        location: [],
       }),
     });
     const data = await response.json();
-    localStorage.setItem("careTypeId", data.long_term.id);
+    localStorage.setItem("careTypeId", data.careData.id);
     localStorage.setItem("choosetype", "longTern");
-    setLongTernInfo(data.long_term);
+    setCareData(data.careData);
   }
 
   const handleNextClick = async() => {
@@ -66,10 +75,10 @@ const ApplicationPage = () => {
       alert("請填寫所有必填欄位。");
       return;
     }
-    if (longTernInfo) {
-      await updateLongTerm();
+    if (careData) {
+      await updateCareData();
     } else {
-      await createLongTerm();
+      await createCareData();
     }
     router.push("/parent/create/babyInfo");
   };
@@ -123,7 +132,7 @@ const ApplicationPage = () => {
       )}
       <>
         <div style={styles.header}>
-          <span style={styles.headerFont}>編輯保母資料</span>
+          <span style={styles.headerFont}>編輯家長資料</span>
           <button onClick={handleLastClick} style={styles.lastButton}>
             <svg
               xmlns="http://www.w3.org/2000/svg"

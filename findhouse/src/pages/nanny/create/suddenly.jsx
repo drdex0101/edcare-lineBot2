@@ -9,7 +9,7 @@ import useStore from "../../../lib/store";
 
 const ApplicationPage = () => {
   const router = useRouter();
-  const { suddenlyInfo, setSuddenlyInfo } = useStore();
+  const { careData, setCareData } = useStore();
   const handleNextClick = async () => {
     if (!selectedRange.startDate || !selectedRange.endDate) {
       alert("請填寫所有必填欄位。");
@@ -27,29 +27,37 @@ const ApplicationPage = () => {
 
   const [selectedCareType, setSelectedCareType] = React.useState(() => "");
   const [selectedAddress, setSelectedAddress] = React.useState(() => []);
-  const [orderData, setData] = React.useState("");
+
+  const handleCareTypeChange = (e) => {
+    setSelectedCareType(e.target.value);
+    setSelectedAddress([]); // Reset address when care type changes
+  };
 
   const createSuddenlyRecord = async () => {
     const locationArray = Array.isArray(selectedAddress)
       ? selectedAddress
       : [selectedAddress];
     let response;
-    if (suddenlyInfo) {
-      response = await fetch("/api/base/updateSuddenly", {
+    if (careData) {
+      response = await fetch("/api/base/updateCareData", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          id: suddenlyInfo.id,
           startDate: selectedRange.startDate,
           endDate: selectedRange.endDate,
           scenario: selectedCareType,
           location: locationArray,
+          careTime: "",
+          idType: "nanny",
+          careDataId: careData.id,
+          careType: "suddenly",
+          weekdays: [],
         }),
       });
     } else {
-      response = await fetch("/api/base/createSuddenly", {
+      response = await fetch("/api/base/createCareData", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -61,18 +69,19 @@ const ApplicationPage = () => {
           scenario: selectedCareType,
           location: locationArray,
           careTime: "",
-          idType: "parent",
+          idType: "nanny",
+          careType: "suddenly",
+          weekdays: [],
         }),
       });
     }
     if (!response.ok) {
-      throw new Error("Failed to insert data into suddenly table");
+      throw new Error("Failed to insert data into care_data table");
     }
     const data = await response.json();
-    setData(data.suddenly);
-    console.log(data.suddenly);
-    setSuddenlyInfo(data.suddenly);
-    localStorage.setItem("careTypeId", data.suddenly.id);
+    console.log(data.careData);
+    setCareData(data.careData);
+    localStorage.setItem("careTypeId", data.careData.id);
     localStorage.setItem("choosetype", "suddenly");
   };
 
@@ -222,6 +231,467 @@ const ApplicationPage = () => {
                 }}
               />
             </div>
+            <FormControl>
+              <InputLabel id="gender-label">選擇情境</InputLabel>
+              <Select
+                required
+                labelId="gender-label"
+                id="gender"
+                label="選擇情境"
+                value={selectedCareType}
+                onChange={handleCareTypeChange}
+                InputProps={{
+                  sx: {
+                    borderRadius: "8px",
+                    backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
+                  },
+                }}
+                sx={{
+                  alignSelf: "stretch",
+                  borderRadius: "8px",
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: "var(--OutLine-OutLine, #78726D)",
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "#E3838E",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#E3838E",
+                    },
+                  },
+                  backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
+                }}
+              >
+                <MenuItem value="home">
+                  <span style={styles.addressName}>在宅托育</span>
+                </MenuItem>
+                <MenuItem style={styles.addressName} value="infantCareCenter">
+                  <span style={styles.addressName}>定點托育</span>
+                </MenuItem>
+              </Select>
+            </FormControl>
+            {selectedCareType === "infantCareCenter" && (
+              <FormControl>
+                <InputLabel id="gender-label">定點選擇</InputLabel>
+                <Select
+                  required
+                  labelId="gender-label"
+                  id="gender"
+                  label="定點選擇"
+                  value={selectedAddress}
+                  onChange={(e) => setSelectedAddress(e.target.value)}
+                  MenuProps={{
+                    PaperProps: {
+                      style: {
+                        maxHeight: 48 * 3 + 8, // 48px * 3 (每個項目高度) + 8px (padding)
+                        overflowY: "auto", // 啟用滾動條
+                      },
+                    },
+                  }}
+                  InputProps={{
+                    sx: {
+                      padding: "0px 16px",
+                      borderRadius: "8px",
+                      backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
+                    },
+                  }}
+                  sx={{
+                    alignSelf: "stretch",
+                    borderRadius: "8px",
+                    "& .MuiOutlinedInput-root": {
+                      "& fieldset": {
+                        borderColor: "var(--OutLine-OutLine, #78726D)",
+                      },
+                      "&:hover fieldset": {
+                        borderColor: "#E3838E",
+                      },
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#E3838E",
+                      },
+                    },
+                    backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
+                  }}
+                >
+                  <MenuItem
+                    value="虎尾親子館-雲林縣斗六市保庄里3鄰建興路27-10號"
+                    sx={{
+                      color: "#410002",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "flex-start",
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <span style={styles.addressName}>虎尾親子館-</span>
+                    <span style={styles.address}>
+                      雲林縣斗六市保庄里3鄰建興路27-10號
+                    </span>
+                  </MenuItem>
+                  <MenuItem
+                    value="斗六親子館-雲林縣斗六市府前街58號"
+                    sx={{
+                      color: "#410002",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "flex-start",
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <span style={styles.addressName}>斗六親子館-</span>
+                    <span style={styles.address}>
+                      雲林縣斗六市府前街58號-10號
+                    </span>
+                  </MenuItem>
+                  <MenuItem
+                    value="斗南親子館-雲林縣斗南鎮莒光街31號"
+                    sx={{
+                      color: "#410002",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "flex-start",
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <span style={styles.addressName}>斗南親子館-</span>
+                    <span style={styles.address}>
+                      雲林縣斗南鎮莒光街31號-10號
+                    </span>
+                  </MenuItem>
+                  <MenuItem
+                    value="北港親子館-雲林縣北港鎮文化路246號3樓"
+                    sx={{
+                      color: "#410002",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "flex-start",
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <span style={styles.addressName}>北港親子館-</span>
+                    <span style={styles.address}>
+                      雲林縣北港鎮文化路246號3樓-10號
+                    </span>
+                  </MenuItem>
+                  <MenuItem
+                    value="西螺親子館-雲林縣西螺鎮中山路227號2樓"
+                    sx={{
+                      color: "#410002",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "flex-start",
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <span style={styles.addressName}>西螺親子館-</span>
+                    <span style={styles.address}>
+                      雲林縣西螺鎮中山路227號2樓-10號
+                    </span>
+                  </MenuItem>
+                  <MenuItem
+                    value="麥寮親子館-雲林縣台西鄉民生路52號"
+                    sx={{
+                      color: "#410002",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "flex-start",
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <span style={styles.addressName}>麥寮親子館-</span>
+                    <span style={styles.address}>
+                      雲林縣台西鄉民生路52號-10號
+                    </span>
+                  </MenuItem>
+                </Select>
+              </FormControl>
+            )}
+            {selectedCareType === "home" && (
+              <FormControl>
+                <InputLabel id="gender-label">托育地區</InputLabel>
+                <Select
+                  required
+                  multiple
+                  labelId="gender-label"
+                  id="gender"
+                  label="定點選擇"
+                  value={selectedAddress}
+                  onChange={(e) => setSelectedAddress(e.target.value)}
+                  MenuProps={{
+                    PaperProps: {
+                      style: {
+                        maxHeight: 24 * 7,
+                        overflowY: "auto",
+                      },
+                    },
+                  }}
+                  InputProps={{
+                    sx: {
+                      padding: "0px 16px",
+                      borderRadius: "8px",
+                      backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
+                    },
+                  }}
+                  sx={{
+                    alignSelf: "stretch",
+                    borderRadius: "8px",
+                    "& .MuiOutlinedInput-root": {
+                      "& fieldset": {
+                        borderColor: "var(--OutLine-OutLine, #78726D)",
+                      },
+                      "&:hover fieldset": {
+                        borderColor: "#E3838E",
+                      },
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#E3838E",
+                      },
+                    },
+                    backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
+                  }}
+                >
+                  <MenuItem
+                    value="斗六"
+                    sx={{
+                      color: "#410002",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "flex-start",
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <span style={styles.addressName}>斗六</span>
+                  </MenuItem>
+                  <MenuItem
+                    value="斗南"
+                    sx={{
+                      color: "#410002",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "flex-start",
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <span style={styles.addressName}>斗南</span>
+                  </MenuItem>
+                  <MenuItem
+                    value="林內"
+                    sx={{
+                      color: "#410002",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "flex-start",
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <span style={styles.addressName}>林內</span>
+                  </MenuItem>
+                  <MenuItem
+                    value="古坑"
+                    sx={{
+                      color: "#410002",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "flex-start",
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <span style={styles.addressName}>古坑</span>
+                  </MenuItem>
+                  <MenuItem
+                    value="莿桐"
+                    sx={{
+                      color: "#410002",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "flex-start",
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <span style={styles.addressName}>莿桐</span>
+                  </MenuItem>
+                  <MenuItem
+                    value="虎尾"
+                    sx={{
+                      color: "#410002",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "flex-start",
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <span style={styles.addressName}>虎尾</span>
+                  </MenuItem>
+                  <MenuItem
+                    value="西螺"
+                    sx={{
+                      color: "#410002",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "flex-start",
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <span style={styles.addressName}>西螺</span>
+                  </MenuItem>
+                  <MenuItem
+                    value="二崙"
+                    sx={{
+                      color: "#410002",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "flex-start",
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <span style={styles.addressName}>二崙</span>
+                  </MenuItem>
+                  <MenuItem
+                    value="土庫"
+                    sx={{
+                      color: "#410002",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "flex-start",
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <span style={styles.addressName}>土庫</span>
+                  </MenuItem>
+                  <MenuItem
+                    value="大埤"
+                    sx={{
+                      color: "#410002",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "flex-start",
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <span style={styles.addressName}>大埤</span>
+                  </MenuItem>
+                  <MenuItem
+                    value="北港"
+                    sx={{
+                      color: "#410002",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "flex-start",
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <span style={styles.addressName}>北港</span>
+                  </MenuItem>
+                  <MenuItem
+                    value="元長"
+                    sx={{
+                      color: "#410002",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "flex-start",
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <span style={styles.addressName}>元長</span>
+                  </MenuItem>
+                  <MenuItem
+                    value="四湖"
+                    sx={{
+                      color: "#410002",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "flex-start",
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <span style={styles.addressName}>四湖</span>
+                  </MenuItem>
+                  <MenuItem
+                    value="水林"
+                    sx={{
+                      color: "#410002",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "flex-start",
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <span style={styles.addressName}>水林</span>
+                  </MenuItem>
+                  <MenuItem
+                    value="口湖"
+                    sx={{
+                      color: "#410002",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "flex-start",
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <span style={styles.addressName}>口湖</span>
+                  </MenuItem>
+                  <MenuItem
+                    value="麥寮"
+                    sx={{
+                      color: "#410002",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "flex-start",
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <span style={styles.addressName}>麥寮</span>
+                  </MenuItem>
+                  <MenuItem
+                    value="崙背"
+                    sx={{
+                      color: "#410002",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "flex-start",
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <span style={styles.addressName}>崙背</span>
+                  </MenuItem>
+                  <MenuItem
+                    value="褒忠"
+                    sx={{
+                      color: "#410002",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "flex-start",
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <span style={styles.addressName}>褒忠</span>
+                  </MenuItem>
+                  <MenuItem
+                    value="東勢"
+                    sx={{
+                      color: "#410002",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "flex-start",
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <span style={styles.addressName}>東勢</span>
+                  </MenuItem>
+                  <MenuItem
+                    value="台西"
+                    sx={{
+                      color: "#410002",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "flex-start",
+                      alignItems: "flex-start",
+                    }}
+                  >
+                    <span style={styles.addressName}>台西</span>
+                  </MenuItem>
+                </Select>
+              </FormControl>
+            )}
           </div>
           <div style={styles.comfirmLayout}>
             <div style={styles.comfirmBtn}>

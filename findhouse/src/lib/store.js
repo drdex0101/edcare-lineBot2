@@ -16,12 +16,10 @@ const useStore = create(
       setKycData: (newKycData) => set({ kycData: newKycData }),
       memberId: null,
       setMemberId: (newMemberId) => set({ memberId: newMemberId }),
-      suddenlyInfo: null,
-      setSuddenlyInfo: (newSuddenlyInfo) => set({ suddenlyInfo: newSuddenlyInfo }),
       babyInfo: null,
       setBabyInfo: (newBabyInfo) => set({ babyInfo: newBabyInfo }),
-      longTernInfo: null,
-      setLongTernInfo: (newLongTernInfo) => set({ longTernInfo: newLongTernInfo }),
+      careData: null,
+      setCareData: (newCareData) => set({ careData: newCareData }),
     }),
     {
       name: 'data-storage', // 在 localStorage 中的 key

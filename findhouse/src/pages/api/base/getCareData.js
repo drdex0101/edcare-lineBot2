@@ -19,7 +19,7 @@ export default async function handler(req, res) {
       const query = `
         SELECT 
           *
-        FROM long_term
+        FROM care_data
         WHERE id = $1;
       `;
       
@@ -27,7 +27,7 @@ export default async function handler(req, res) {
       const caretypeid = parseInt(id, 10);
       const result = await client.query(query, [caretypeid]);
 
-      console.log('Nannies retrieved successfully:', result.rows);
+      console.log('care_data retrieved successfully:', result.rows);
       return res.status(200).json({ 
         success: true, 
         data: result.rows[0],
@@ -36,8 +36,6 @@ export default async function handler(req, res) {
     } catch (error) {
       console.error('Database error:', error);
       res.status(500).json({ error: 'Database error' });
-    } finally {
-      await client.end();
     }
   } else {
     res.setHeader('Allow', ['GET']);

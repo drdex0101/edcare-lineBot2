@@ -23,11 +23,7 @@ export default async function handler(req, res) {
 
       const query = `
         SELECT 
-          start_date,
-          end_date,
-          scenario,
-          location,
-          care_time
+          *
         FROM suddenly
         WHERE id = $1;
       `;

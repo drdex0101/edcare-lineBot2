@@ -105,7 +105,7 @@ const ApplicationPage = () => {
 
       const responseData = await response.json();
       console.log("訂單建立成功:", responseData);
-      setBabyInfo(responseData);
+      setBabyInfo(responseData.orders);
       router.push("/parent/finish");
 
     } catch (error) {

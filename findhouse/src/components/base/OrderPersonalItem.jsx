@@ -14,9 +14,26 @@ const OrderPersonalItem = ({
   item,
 }) => {
   const { setItem } = useStore();
+  const { longTernInfo, setLongTernInfo } = useStore();
+  const { suddenlyInfo, setSuddenlyInfo } = useStore();
+
+  const getLongTernInfo = async () => {
+    const response = await fetch("/api/base/getLongTern?id=" + item.caretypeid, {
+      method: "GET",
+    });
+    const data = await response.json();
+    setLongTernInfo(data.data);
+  }
+  const getSuddenlyInfo = async () => {
+    const response = await fetch("/api/base/getSuddenly?id=" + item.caretypeid, {
+      method: "GET",
+    });
+    const data = await response.json();
+    setSuddenlyInfo(data.data);
+  }
+
   const handleUpdateShow = async () => {
     item.isShow = !item.isShow;
-    console.log(item.isShow);
     const res = await fetch("/api/order/updateIsShow", {
       method: "PATCH",
       body: JSON.stringify({ id: item.id, isShow: item.isShow }),
@@ -36,12 +53,20 @@ const OrderPersonalItem = ({
           <span className="order-layout-item-left-text">{name}</span>
           <div className="order-way-scene-layout">
             <div className="order-scene">{scene}</div>
-            <div className="order-way">{way}</div>
+            <div className="order-way">{way === "longTern" ? "長期托育" : "臨時托育"}</div>
           </div>
           <span className="order-normal-text">
             托育期間：
             <br />
-            {createdTime.slice(0, 10)}~{createdTime.slice(0, 10)}
+            {way === "longTern" ? (
+                <>
+                  {item?.long_term_care_time}
+                </>
+              ) : (
+                <>
+              {item?.suddenly_start_date.slice(0, 10)}~{item?.suddenly_end_date.slice(0, 10)}
+              </>
+            )}
           </span>
         </div>
       </div>
@@ -50,7 +75,13 @@ const OrderPersonalItem = ({
           href={{
             pathname: "/parent/order/details/choose",
           }}
-          onClick={() => setItem(item)}
+          onClick={() => {
+            if (way === "longTern") {
+              getLongTernInfo();
+            } else {
+              getSuddenlyInfo();
+            }
+          }}
           passHref
         >
           <svg
