@@ -50,13 +50,11 @@ export default async function handler(req, res) {
       const result = await client.query(query, values);
 
       console.log("Suddenly updated successfully:", result.rows[0]);
-      return res.status(200).json({ success: true, long_term: result.rows[0] });
+      return res.status(200).json({ success: true, careData: result.rows[0] });
     } catch (error) {
       console.error("Database error:", error);
       res.status(500).json({ error: "Database error" });
-    } finally {
-      await client.end();
-    }
+    } 
   } else {
     res.setHeader("Allow", ["PATCH"]);
     res.status(405).end(`Method ${req.method} Not Allowed`);

@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import "./matching.css";
 import Pagination from "../../../components/base/pagenation";
 import SettingForParent from "../../../components/base/SettingForParent";
+import { useRouter } from "next/router";
 export default function HistoryPage() {
   const [totalCount, setTotalCount] = useState(0);
   const [historyList, setHistoryList] = useState([]);
+  const router = useRouter();
 
   return (
     <div className="matching-main">

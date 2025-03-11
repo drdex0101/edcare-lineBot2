@@ -53,7 +53,7 @@ const ApplicationPage = () => {
     const response = await fetch("/api/base/updateCareData", {
       method: "PATCH",
       body: JSON.stringify({
-        careDataId: longTernInfo.id,
+        careDataId: careData.id,
         weekdays: selectedDays,
         careTime: selectedCareTime,
         scenario: selectedScenario,

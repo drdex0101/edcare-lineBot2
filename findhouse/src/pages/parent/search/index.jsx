@@ -6,6 +6,7 @@ import Pagination from "../../../components/base/pagenation";
 import SearchBar from "../../../components/base/SearchBar";
 import useStore from "../../../lib/store";
 import Loading from "../../../components/base/Loading";
+import "../matching/matching.css";
 
 const ApplicationPage = () => {
   const router = useRouter();
@@ -32,6 +33,8 @@ const ApplicationPage = () => {
   const [locationCount, setLocationCount] = useState(0); // 新增狀態以追蹤選擇的地區數量
   const [currentOrderCareType, setCurrentOrderCareType] = useState(null);
   const { orderId, setOrderId } = useStore();
+  const [careData, setCareData] = useState();
+  const [babyInfo, setBabyInfo] = useState();
 
   const fetchNannyInfoList = async (page, pageSize = 5, keywords) => {
     setIsLoading(true); // Set loading state to true while fetching data
@@ -118,19 +121,11 @@ const ApplicationPage = () => {
           }
         });
         setOrderImages(imageMap);
-        if (data.orders[0].choosetype === "suddenly") {
-          const careTypeResponse = await fetch(
-            `/api/base/getSuddenly?id=${data.orders[0].caretypeid}`,
-          );
-          const careTypeDatas = await careTypeResponse.json();
-          setCareTypeData(careTypeDatas.data);
-        } else if (data.orders[0].choosetype === "longTerm") {
-          const careTypeResponse = await fetch(
-            `/api/base/getLongTern?id=${data.orders[0].caretypeid}`,
-          );
-          const careTypeDatas = await careTypeResponse.json();
-          setCareTypeData(careTypeDatas.data);
-        }
+        const careTypeResponse = await fetch(
+          `/api/base/getCareData?id=${data.orders[0].caretypeid}`,
+        );
+        const careTypeDatas = await careTypeResponse.json();
+        setCareTypeData(careTypeDatas.data);
       } else {
         throw new Error("No order information found in the response");
       }
@@ -182,11 +177,8 @@ const ApplicationPage = () => {
 
   const handleNextClick = (careType) => {
     console.log(careType);
-    if (careType === "suddenly") {
-      router.push("/parent/order/details/suddenly"); // 替换 '/next-page' 为你想要跳转的路径
-    } else if (careType === "longTerm") {
-      router.push("/parent/order/details/longTerm"); // 替换 '/next-page' 为你想要跳转的路径
-    }
+    setCareData(careTypeData);
+    setBabyInfo(orderInfo);
     router.push("/parent/create/choose");
   };
 
@@ -268,10 +260,12 @@ const ApplicationPage = () => {
                           </div>
                           <div style={styles.screen}>
                             {order.scenario === "home"
-                              ? "到宅托育"
+                              ? "在宅托育"
                               : order.scenario === "infantCareCenter"
                                 ? "定點托育"
-                                : ""}
+                                : order.scenario === "toHome"
+                                  ? "到宅托育"
+                                  : ""}
                           </div>
                         </div>
                         <div
@@ -284,13 +278,13 @@ const ApplicationPage = () => {
                           <span style={styles.timeFont}>托育時間:</span>
                           <span style={styles.timeFont}>
                             {order.choosetype === "suddenly"
-                              ? careTypeData.start_date.slice(0, 10) +
+                              ? careTypeData?.start_date.slice(0, 10) +
                                 "~" +
-                                careTypeData.end_date.slice(0, 10)
+                                careTypeData?.end_date.slice(0, 10)
                               : order.choosetype === "longTerm"
-                                ? careTypeData.weekdays.join(", ") +
+                                ? careTypeData?.weekdays.join(", ") +
                                   " " +
-                                  careTypeData.care_time
+                                  careTypeData?.care_time
                                 : ""}
                           </span>
                         </div>
@@ -306,6 +300,7 @@ const ApplicationPage = () => {
                           onClick={() => {
                             handleOrderPageChange(i + 1);
                             setItem(orderInfo);
+                            setBabyInfo(orderInfo[i]);
                             setCurrentOrderCareType(orderInfo[i].choosetype);
                           }}
                           style={{
@@ -433,32 +428,49 @@ const ApplicationPage = () => {
             </div>
             <div
               style={{
-                backgroundColor: "#f8ecec",
+                backgroundColor: "#f3ccd4",
                 width: "100%",
                 display: "flex",
+                borderRadius: "0 0 30px 0",
                 alignItems: "center",
                 flexDirection: "column",
               }}
             >
               <div style={styles.nannyItemLayout}>
-                <div style={styles.searchLayout}>
-                  <div style={styles.searchTypeLayout}>
-                    <span style={styles.searchFont}>
-                      地區: {selectedLocations.length}
+                {nannyInfo.length === 0 ? (
+                  <div className="space-layout">
+                    <img
+                      src="/icon/spaceIcon.png"
+                      className="space-icon"
+                      alt="space icon"
+                    />
+                    <span className="matching-body-layoff-content-title">
+                      尚無資料
+                      <br />
+                      趕緊配對保母吧！
                     </span>
                   </div>
-                  {selectedSort && (
+                ) : (
+                  <div style={styles.searchLayout}>
                     <div style={styles.searchTypeLayout}>
                       <span style={styles.searchFont}>
-                        {selectedSort === "time"
-                          ? "上架時間（新 ⭢ 舊）"
-                          : selectedSort === "rating"
-                            ? "保母評價(5 ⭢ 0)"
-                            : ""}
+                        地區: {selectedLocations.length}
                       </span>
                     </div>
-                  )}
-                </div>
+                    {selectedSort && (
+                      <div style={styles.searchTypeLayout}>
+                        <span style={styles.searchFont}>
+                          {selectedSort === "time"
+                            ? "上架時間（新 ⭢ 舊）"
+                            : selectedSort === "rating"
+                              ? "保母評價(5 ⭢ 0)"
+                              : ""}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {nannyInfo.map((nanny, index) => (
                   <div
                     key={index}
@@ -737,7 +749,6 @@ const styles = {
   nannyItemLayout: {
     display: "flex",
     flexDirection: "column",
-    gap: "10px",
     gap: "24px",
     width: "100%",
     marginBottom: "28px",
@@ -746,12 +757,11 @@ const styles = {
     paddingLeft: "35px",
     paddingRight: "35px",
     paddingTop: "20px",
-    borderRadius: "40px 0px 0px 0px", // 左上、右上、右下、左下的圓角
+    borderRadius: "40px 40px 40px 40px", // 左上、右上、右下、左下的圓角
   },
   buttonLayout: {
     display: "flex",
     flexDirection: "column",
-    gap: "10px",
     gap: "24px",
     width: "100%",
     marginBottom: "28px",
@@ -950,65 +960,5 @@ const styles = {
     zIndex: 1,
   },
 };
-
-const IOSSwitch = styled((props) => (
-  <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
-))(({ theme }) => ({
-  width: 42,
-  height: 26,
-  padding: 0,
-  "& .MuiSwitch-switchBase": {
-    padding: 0,
-    margin: 2,
-    transitionDuration: "300ms",
-    "&.Mui-checked": {
-      transform: "translateX(16px)",
-      color: "#e3838e",
-      "& + .MuiSwitch-track": {
-        backgroundColor: "#f5e5e5",
-        opacity: 1,
-        border: 0,
-        ...theme.applyStyles("dark", {
-          backgroundColor: "#2ECA45",
-        }),
-      },
-      "&.Mui-disabled + .MuiSwitch-track": {
-        opacity: 0.5,
-      },
-    },
-    "&.Mui-focusVisible .MuiSwitch-thumb": {
-      color: "#33cf4d",
-      border: "6px solid #fff",
-    },
-    "&.Mui-disabled .MuiSwitch-thumb": {
-      color: theme.palette.grey[100],
-      ...theme.applyStyles("dark", {
-        color: theme.palette.grey[600],
-      }),
-    },
-    "&.Mui-disabled + .MuiSwitch-track": {
-      opacity: 0.7,
-      ...theme.applyStyles("dark", {
-        opacity: 0.3,
-      }),
-    },
-  },
-  "& .MuiSwitch-thumb": {
-    boxSizing: "border-box",
-    width: 22,
-    height: 22,
-  },
-  "& .MuiSwitch-track": {
-    borderRadius: 26 / 2,
-    backgroundColor: "#fcf7f7",
-    opacity: 1,
-    transition: theme.transitions.create(["background-color"], {
-      duration: 500,
-    }),
-    ...theme.applyStyles("dark", {
-      backgroundColor: "#39393D",
-    }),
-  },
-}));
 
 export default ApplicationPage;

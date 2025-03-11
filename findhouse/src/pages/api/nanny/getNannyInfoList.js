@@ -36,7 +36,7 @@ export default async function handler(req, res) {
           m.account
         FROM nanny n
         JOIN member m ON n.memberId = m.id::VARCHAR  -- Cast m.id to VARCHAR for comparison
-        WHERE ($1::text[] IS NULL OR n.serviceLocation = ANY($1))  -- Filter by locations if provided
+        WHERE ($1::varchar[] IS NULL OR n.serviceLocation && $1)  -- Filter by locations if provided
         AND ($2::text IS NULL OR m.account ILIKE '%' || $2::text || '%')  -- Filter by account if keyword is provided
         ${orderByClause}  -- Add the order by clause if applicable
         LIMIT $3 OFFSET $4;

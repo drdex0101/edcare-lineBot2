@@ -240,7 +240,7 @@ const ApplicationPage = () => {
     const data = await response.json();
     setNannyProfile(data.nannyProfile[0]);
     setNannyInfo(data.nannyProfile[0]);
-    setNannyProfileImg(await getImgUrl(data.nannyProfile[0].uploadid));
+    setNannyProfileImg(await getImgUrl(data.nannyProfile[0]?.uploadid));
     setIsLoading(false);
   };
 
@@ -360,21 +360,21 @@ const ApplicationPage = () => {
               />
             </div>
             <div style={styles.nannyInfoLayout}>
-              <span style={styles.headerFont}>{nannyProfile.name}</span>
+              <span style={styles.headerFont}>{nannyProfile?.name}</span>
               <div style={styles.wayLayout}>
                 <div style={styles.wayStyle}>
-                  {nannyProfile.way === "suddenly"
+                  {nannyProfile?.way === "suddenly"
                     ? "臨時托育"
-                    : nannyProfile.way === "longTerm"
+                    : nannyProfile?.way === "longTerm"
                       ? "長期托育"
                       : ""}
                 </div>
-                <div style={styles.scenarioStyle}>{nannyProfile.scenario}</div>
+                <div style={styles.scenarioStyle}>{nannyProfile?.scenario}</div>
               </div>
               <span style={styles.headSubTitle}>
                 托育時間:
                 <br />
-                ㄧ、二、三、四、五、六、日
+                {nannyProfile?.time}
               </span>
             </div>
             {!isShow && (
@@ -516,11 +516,19 @@ const ApplicationPage = () => {
                         <div style={styles.wayStyle}>
                           {order.choosetype === "suddenly"
                             ? "臨時托育"
-                            : order.choosetype === "longTerm"
+                            : order.choosetype === "longTern"
                               ? "長期托育"
                               : ""}
                         </div>
-                        <div style={styles.scenarioStyle}>在宅</div>
+                        <div style={styles.scenarioStyle}>
+                        {order.scenario === "home"
+                              ? "在宅托育"
+                              : order.scenario === "infantCareCenter"
+                                ? "定點托育"
+                                : order.scenario === "toHome"
+                                  ? "到宅托育"
+                                  : ""}
+                        </div>
                       </div>
                     </div>
                   </div>
