@@ -54,6 +54,7 @@ export default async function handler(req, res) {
         o.intro, 
         o.isshow, 
         o.created_by,
+        o.caretypeid,
         n.score,
         COALESCE(s.scenario, l.scenario) AS scenario,
         COUNT(*) OVER() AS totalCount

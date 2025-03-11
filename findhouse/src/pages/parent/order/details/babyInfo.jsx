@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { styled } from "@mui/material/styles";
 import FormGroup from "@mui/material/FormGroup";
@@ -8,92 +8,123 @@ import TextField from "@mui/material/TextField";
 import Select from "@mui/material/Select";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs from "dayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import  useStore from "../../../../lib/store";
+import { useEffect } from "react";
 
 import { MenuItem, InputLabel, FormControl } from "@mui/material";
-import useStore from "../../../../lib/store";
+import Cookies from "js-cookie";
 
 const ApplicationPage = () => {
   const router = useRouter();
-  const item = useStore((state) => state.item);
-  const [selectedDate, setSelectedDate] = useState(
-    item?.birthday ? dayjs(item.birthday) : dayjs(),
-  );
-  const [switchStates, setSwitchStates] = useState({
-    1: true,
-    2: true,
-    3: true,
-    4: true,
-    5: true,
-    6: true,
-  });
-
-  // **當 `item` 變更時，更新 `switchStates`**
-  useEffect(() => {
-    if (item?.hope) {
-      setSwitchStates({
-        1: item.hope.includes(1),
-        2: item.hope.includes(2),
-        3: item.hope.includes(3),
-        4: item.hope.includes(4),
-        5: item.hope.includes(5),
-        6: item.hope.includes(6),
-      });
-    }
-  }, [item]); // **確保 `item` 更新後會同步 `switchStates`**
-
-  const [babyName, setBabyName] = useState(item ? item.nickname : "");
-  const [babyGender, setBabyGender] = useState(item ? item.gender : "");
-
-  const [babyBirthOrder, setBabyBirthOrder] = useState(item ? item.rank : "");
-  const [babyHope, setBabyHope] = useState(item ? item.intro : "");
-
+  const [selectedDate, setSelectedDate] = useState();
+  const [selectedOptions, setSelectedOptions] = useState([]);
+  const [babyName, setBabyName] = useState("");
+  const [babyGender, setBabyGender] = useState("");
+  const [babyBirthOrder, setBabyBirthOrder] = useState("");
+  const [babyHope, setBabyHope] = useState("");
+  const [selectedCareType, setSelectedCareType] = useState(null);
+  const { babyInfo, setBabyInfo } = useStore();
   const handleNextClick = () => {
-    updateBabyRecord();
+    createBabyRecord();
   };
 
   const handleLastClick = () => {
     router.back();
   };
 
-  const updateBabyRecord = async () => {
-    const response = await fetch("/api/order/updateOrderData", {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        orderId: item.id,
-        nannyid: null,
-        status: "create",
-        choosetype: item.choosetype,
-        orderstatus: "on",
-        caretypeid: item.caretypeid,
-        nickname: babyName,
-        gender: babyGender,
-        birthday: selectedDate,
-        rank: babyBirthOrder,
-        hope: Object.keys(switchStates).filter((key) => switchStates[key]),
-        intro: babyHope,
-        isshow: true,
-        created_by: localStorage.getItem("account"),
-      }),
-    });
-    const result = await response.json();
-    console.log(result);
-    if (result.success) {
-      router.push("/parent/search");
-    } else {
-      alert("更新失敗");
+  const createBabyRecord = async () => {
+    const babyRecordData = {
+      parentLineId: Cookies.get("userId"),
+      nannyid: "",
+      status: "create",
+      choosetype: localStorage.getItem("choosetype"),
+      orderstatus: "on",
+      caretypeid: localStorage.getItem("careTypeId"),
+      nickname: babyName,
+      gender: babyGender,
+      birthday: selectedDate,
+      rank: babyBirthOrder,
+      hope: selectedOptions,
+      intro: babyHope,
+      isshow: true,
+      created_by: localStorage.getItem("account"),
+      id: babyInfo ? babyInfo.id : null,
+    };
+
+    // **必填欄位檢查**
+    const requiredFields = {
+      nickname: "寶寶姓名",
+      gender: "寶寶性別",
+      birthday: "寶寶生日",
+      rank: "寶寶排行",
+      hope: "照護期望",
+    };
+
+    // 找出未填寫的欄位
+    const missingFields = Object.entries(requiredFields)
+      .filter(
+        ([key]) => !babyRecordData[key] || babyRecordData[key].length === 0
+      )
+      .map(([_, label]) => label);
+
+    if (missingFields.length > 0) {
+      alert(`請填寫以下必填欄位：\n${missingFields.join("\n")}`);
+      return; // 終止函數執行
+    }
+
+    // **檢查生日格式（應為 YYYY-MM-DD 或有效日期）**
+    if (!selectedDate || isNaN(new Date(selectedDate).getTime())) {
+      alert("請選擇有效的寶寶生日（格式：YYYY-MM-DD）。");
+      return;
+    }
+
+    try {
+      let response;
+      if (babyInfo) {
+        response = await fetch("/api/order/updateOrderData", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(babyRecordData),
+        });
+      } else {
+        response = await fetch("/api/order/createOrder", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(babyRecordData),
+        });
+      }
+
+      if (!response.ok) {
+        throw new Error(`HTTP 錯誤！狀態碼: ${response.status}`);
+      }
+
+      const responseData = await response.json();
+      console.log("訂單建立成功:", responseData);
+      setBabyInfo(responseData);
+      router.push("/parent/finish");
+
+    } catch (error) {
+      console.error("訂單建立失敗:", error);
+      alert("提交失敗，請稍後再試");
     }
   };
 
-  const handleSwitchChange = (index, checked) => {
-    setSwitchStates((prev) => ({
-      ...prev,
-      [index]: checked,
-    }));
+  const handleSwitchChange = (optionId, isChecked) => {
+    setSelectedOptions((prevOptions) => {
+      // Ensure prevOptions is an array
+      const currentOptions = Array.isArray(prevOptions) ? prevOptions : [];
+      
+      if (isChecked) {
+        return [...currentOptions, optionId];
+      } else {
+        return currentOptions.filter((id) => id !== optionId);
+      }
+    });
   };
 
   const handleDateChange = (newValue) => {
@@ -111,26 +142,18 @@ const ApplicationPage = () => {
   };
 
   useEffect(() => {
-    // 初始化 state，對應的數字開啟
-    const initialStates = {};
-    for (let i = 1; i <= 6; i++) {
-      initialStates[i] = item ? item.hope.includes(i.toString()) : false;
+    const storedData = localStorage.getItem("data-storage");
+    const parsedData = JSON.parse(storedData).state.babyInfo;
+    if (parsedData) {
+      setBabyInfo(parsedData);
+      setBabyName(parsedData.nickname);
+      setBabyGender(parsedData.gender);
+      setSelectedDate(parsedData.birthday);
+      setBabyBirthOrder(parsedData.rank);
+      setBabyHope(parsedData.intro);
+      setSelectedOptions(parsedData.hope);
     }
-    console.log(initialStates);
-    setSwitchStates(initialStates);
   }, []);
-
-  const getLabel = (num) => {
-    const labels = {
-      1: "可接送小朋友",
-      2: "寶寶衣物清洗",
-      3: "製作副食品",
-      4: "可遠端查看育兒情形",
-      5: "可配合不使用3C育兒",
-      6: "可配合家長外出",
-    };
-    return labels[num];
-  };
 
   return (
     <div style={styles.main}>
@@ -173,6 +196,8 @@ const ApplicationPage = () => {
             <div style={styles.rollerActive}></div>
             <div style={styles.rollerActive}></div>
             <div style={styles.rollerActive}></div>
+            <div style={styles.rollerActive}></div>
+            <div style={styles.roller}></div>
           </div>
           <div style={styles.titleLayout}>
             <span style={styles.subTitle}>托育資料填寫</span>
@@ -320,25 +345,103 @@ const ApplicationPage = () => {
             </FormControl>
 
             <div style={styles.hopeLayout}>
-              {[1, 2, 3, 4, 5, 6].map((num) => (
-                <div key={num} style={styles.componentLayout}>
-                  <span>{getLabel(num)}</span>
-                  <FormGroup>
-                    <FormControlLabel
-                      control={
-                        <IOSSwitch
-                          sx={{ m: 1 }}
-                          checked={!!switchStates[num]} // ✅ 確保 `checked` 不為 `undefined`
-                          onChange={(e) =>
-                            handleSwitchChange(num, e.target.checked)
-                          }
-                        />
-                      }
-                      style={{ marginRight: "0px" }}
-                    />
-                  </FormGroup>
-                </div>
-              ))}
+              <label style={styles.hopeLabel}>托育服務期望</label>
+              <div style={styles.componentLayout}>
+                <span>可接送小朋友</span>
+                <FormGroup>
+                  <FormControlLabel
+                    control={
+                      <IOSSwitch
+                        sx={{ m: 1 }}
+                        onChange={(e) =>
+                          handleSwitchChange(1, e.target.checked)
+                        }
+                      />
+                    }
+                    style={{ marginRight: "0px" }}
+                  />
+                </FormGroup>
+              </div>
+              <div style={styles.componentLayout}>
+                <span>寶寶衣物清洗</span>
+                <FormGroup>
+                  <FormControlLabel
+                    control={
+                      <IOSSwitch
+                        sx={{ m: 1 }}
+                        onChange={(e) =>
+                          handleSwitchChange(2, e.target.checked)
+                        }
+                      />
+                    }
+                    style={{ marginRight: "0px" }}
+                  />
+                </FormGroup>
+              </div>
+              <div style={styles.componentLayout}>
+                <span>製作副食品</span>
+                <FormGroup>
+                  <FormControlLabel
+                    control={
+                      <IOSSwitch
+                        sx={{ m: 1 }}
+                        onChange={(e) =>
+                          handleSwitchChange(3, e.target.checked)
+                        }
+                      />
+                    }
+                    style={{ marginRight: "0px" }}
+                  />
+                </FormGroup>
+              </div>
+              <div style={styles.componentLayout}>
+                <span>可遠端查看育兒情形</span>
+                <FormGroup>
+                  <FormControlLabel
+                    control={
+                      <IOSSwitch
+                        sx={{ m: 1 }}
+                        onChange={(e) =>
+                          handleSwitchChange(4, e.target.checked)
+                        }
+                      />
+                    }
+                    style={{ marginRight: "0px" }}
+                  />
+                </FormGroup>
+              </div>
+              <div style={styles.componentLayout}>
+                <span>可配合不使用3C育兒</span>
+                <FormGroup>
+                  <FormControlLabel
+                    control={
+                      <IOSSwitch
+                        sx={{ m: 1 }}
+                        onChange={(e) =>
+                          handleSwitchChange(5, e.target.checked)
+                        }
+                      />
+                    }
+                    style={{ marginRight: "0px" }}
+                  />
+                </FormGroup>
+              </div>
+              <div style={{ ...styles.componentLayout, borderBottom: "none" }}>
+                <span>可配合家長外出</span>
+                <FormGroup>
+                  <FormControlLabel
+                    control={
+                      <IOSSwitch
+                        sx={{ m: 1 }}
+                        onChange={(e) =>
+                          handleSwitchChange(6, e.target.checked)
+                        }
+                      />
+                    }
+                    style={{ marginRight: "0px" }}
+                  />
+                </FormGroup>
+              </div>
             </div>
 
             <TextField

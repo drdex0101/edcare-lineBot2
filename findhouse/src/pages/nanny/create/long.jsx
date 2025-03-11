@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { styled } from "@mui/material/styles";
 import FormGroup from "@mui/material/FormGroup";
@@ -9,62 +9,76 @@ import CalendarWeekendPicker from "../../../components/base/CalendarWeekendPicke
 import Loading from "../../../components/base/Loading";
 import { MenuItem, InputLabel, FormControl } from "@mui/material";
 import useStore from "../../../lib/store";
+
 const ApplicationPage = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const { longTernInfo, setLongTernInfo } = useStore();
-
   const handleLastClick = () => {
     router.back(); // 替换 '/next-page' 为你想要跳转的路径
   };
+  const { careData, setCareData } = useStore();
 
   useEffect(() => {
-    if (longTernInfo) {
-      setSelectedDays(longTernInfo.weekdays);
-      setSelectedCareTime(longTernInfo.care_time);
+    if (careData) {
+      setSelectedDays(careData?.weekdays || []);
+      setSelectedCareTime(careData?.care_time || "");
+      setSelectedScenario(careData?.scenario || "");
+      console.log(careData);
     }
-  }, [longTernInfo]);
+  }, [careData]);
 
-  const createLongTerm = async () => {
+  const createCareData = async () => {
     setIsLoading(true);
-    const response = await fetch("/api/base/createLongTern", {
+    const response = await fetch("/api/base/createCareData", {
       method: "POST",
       body: JSON.stringify({
-        longTermDays: selectedDays,
-        longTermCareType: selectedCareTime,
-        careScenario: selectedScenario,
-        idType: "nanny",
+        weekdays: selectedDays,
+        careTime: selectedCareTime,
+        scenario: selectedScenario,
+        idType: "parent",
+        careType: "longTern",
+        startDate: null,
+        endDate: null,
+        location: [],
       }),
     });
     const data = await response.json();
-    setLongTernInfo(data.long_term);
+    localStorage.setItem("careTypeId", data.careData.id);
+    localStorage.setItem("choosetype", "longTern");
+    setCareData(data.careData);
   };
 
-  const updateLongTerm = async () => {
-    const response = await fetch("/api/base/updateLongTern", {
+  const updateCareData = async () => {
+    setIsLoading(true);
+    const response = await fetch("/api/base/updateCareData", {
       method: "PATCH",
       body: JSON.stringify({
-        longTernId: longTernInfo.id,
-        longTermDays: selectedDays,
-        longTermCareType: selectedCareTime,
-        careScenario: selectedScenario,
-        idType: "nanny",
+        careDataId: longTernInfo.id,
+        weekdays: selectedDays,
+        careTime: selectedCareTime,
+        scenario: selectedScenario,
+        idType: "parent",
+        careType: "longTern",
+        startDate: null,
+        endDate: null,
+        location: [],
       }),
     });
     const data = await response.json();
-    setLongTernInfo(data.long_term);
+    localStorage.setItem("careTypeId", data.careData.id);
+    localStorage.setItem("choosetype", "longTern");
+    setCareData(data.careData);
   }
 
   const handleNextClick = async() => {
-    setIsLoading(true);
-    if (selectedDays.length === 0 || !selectedCareTime) {
+    if (selectedDays.length === 0 || !selectedCareTime || !selectedScenario) {
       alert("請填寫所有必填欄位。");
       return;
     }
-    if (longTernInfo) {
-      await updateLongTerm();
+    if (careData) {
+      await updateCareData();
     } else {
-      await createLongTerm();
+      await createCareData();
     }
     router.push("/nanny/create/nannyInfo");
   };
@@ -170,7 +184,7 @@ const ApplicationPage = () => {
                   required
                   labelId="care-time-label"
                   id="care-time"
-                  value={longTernInfo?.longTermCareType || selectedCareTime}
+                  value={selectedCareTime}
                   onChange={(e) => setSelectedCareTime(e.target.value)}
                   label="托育時間"
                   InputProps={{
@@ -324,6 +338,43 @@ const ApplicationPage = () => {
                   }}
                 />
               </div>
+              <FormControl>
+                <InputLabel id="gender-label">選擇情境</InputLabel>
+                <Select
+                  required
+                  labelId="scenario-label"
+                  id="scenario"
+                  value={selectedScenario}
+                  onChange={(e) => setSelectedScenario(e.target.value)}
+                  label="托育場景"
+                  InputProps={{
+                    sx: {
+                      padding: "0px 16px",
+                      borderRadius: "8px",
+                      backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
+                    },
+                  }}
+                  sx={{
+                    alignSelf: "stretch",
+                    borderRadius: "8px",
+                    "& .MuiOutlinedInput-root": {
+                      "& fieldset": {
+                        borderColor: "var(--OutLine-OutLine, #78726D)",
+                      },
+                      "&:hover fieldset": {
+                        borderColor: "#E3838E",
+                      },
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#E3838E",
+                      },
+                    },
+                    backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
+                  }}
+                >
+                  <MenuItem value="toHome">到宅托育</MenuItem>
+                  <MenuItem value="home">在宅托育</MenuItem>
+                </Select>
+              </FormControl>
             </div>
             <div style={styles.buttonLayout}>
               <button style={styles.nextBtn} onClick={handleNextClick}>

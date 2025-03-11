@@ -3,85 +3,81 @@ import { useRouter } from "next/router";
 import { styled } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
 import Select from "@mui/material/Select";
-import CalendarRangePicker from "../../../../components/base/CalendarRangePicker";
+import CalendarRangePicker from "../../../components/base/CalendarRangePicker";
 import { MenuItem, InputLabel, FormControl } from "@mui/material";
-import useStore from "../../../../lib/store";
+import useStore from "../../../lib/store";
 
 const ApplicationPage = () => {
   const router = useRouter();
-  const item = useStore((state) => state.item);
-  useEffect(() => {}, [item]);
-
-  useEffect(() => {
-    if (item) {
-      setSelectedRange({
-        startDate: parseEditDate(item.suddenly_start_date) || "", // 確保不是 `undefined`
-        endDate: parseEditDate(item.suddenly_end_date) || "",
-      });
-    }
-  }, [item]);
-
+  const { suddenlyInfo, setSuddenlyInfo } = useStore();
   const handleNextClick = async () => {
+    if (!selectedRange.startDate || !selectedRange.endDate) {
+      alert("請填寫所有必填欄位。");
+      return;
+    }
     await createSuddenlyRecord();
-    router.push("/parent/order/details/babyInfo"); // 替换 '/next-page' 为你想要跳转的路径
-  };
-
-  // Define parseDate function before using it
-  const parseDate = (dateString) => {
-    if (!dateString) return null;
-    return new Date(dateString);
-  };
-
-  const parseEditDate = (dateString) => {
-    if (!dateString) return null;
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const day = date.getDate().toString().padStart(2, "0");
-
-    const formattedDate = `${year}-${month}-${day}`;
-    return formattedDate;
+    router.push("/parent/create/babyInfo"); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   // Initialize state with default values based on item
   const [selectedRange, setSelectedRange] = React.useState(() => ({
-    startDate: item ? parseEditDate(item.suddenly_start_date) : null,
-    endDate: item ? parseEditDate(item.suddenly_end_date) : null,
+    startDate: new Date().toISOString().split("T")[0],
+    endDate: null,
   }));
 
-  const [selectedCareType, setSelectedCareType] = React.useState(() =>
-    item ? item.suddenly_scenario : "",
-  );
-
-  const [selectedAddress, setSelectedAddress] = React.useState(() =>
-    item ? item.suddenly_location : "",
-  );
-
+  const [selectedCareType, setSelectedCareType] = React.useState(() => "");
+  const [selectedAddress, setSelectedAddress] = React.useState(() => []);
   const [orderData, setData] = React.useState("");
 
-  const createSuddenlyRecord = async () => {
-    const response = await fetch("/api/base/updateSuddenly", {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        careTypeId: item.caretypeid,
-        startDate: selectedRange.startDate,
-        endDate: selectedRange.endDate,
-        scenario: selectedCareType,
-        location: selectedAddress,
-        careTime: "",
-        idType: "parent",
-      }),
-    });
+  const handleCareTypeChange = (e) => {
+    setSelectedCareType(e.target.value);
+    setSelectedAddress([]); // Reset address when care type changes
+  };
 
+  const createSuddenlyRecord = async () => {
+    const locationArray = Array.isArray(selectedAddress)
+      ? selectedAddress
+      : [selectedAddress];
+    let response;
+    if (suddenlyInfo) {
+      response = await fetch("/api/base/updateSuddenly", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: suddenlyInfo.id,
+          startDate: selectedRange.startDate,
+          endDate: selectedRange.endDate,
+          scenario: selectedCareType,
+          location: locationArray,
+        }),
+      });
+    } else {
+      response = await fetch("/api/base/createSuddenly", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          orderId: "",
+          startDate: selectedRange.startDate,
+          endDate: selectedRange.endDate,
+          scenario: selectedCareType,
+          location: locationArray,
+          careTime: "",
+          idType: "parent",
+        }),
+      });
+    }
     if (!response.ok) {
       throw new Error("Failed to insert data into suddenly table");
     }
     const data = await response.json();
     setData(data.suddenly);
-    localStorage.setItem("careTypeId", item.caretypeid);
+    console.log(data.suddenly);
+    setSuddenlyInfo(data.suddenly);
+    localStorage.setItem("careTypeId", data.suddenly.id);
     localStorage.setItem("choosetype", "suddenly");
   };
 
@@ -90,12 +86,27 @@ const ApplicationPage = () => {
   };
 
   const handleDateChange = (range) => {
-    // 將字符串格式轉換為 Date 對象
+    console.log("Date change:", range); // 添加日誌來調試
     setSelectedRange({
-      startDate: range.startDate ? parseDate(range.startDate) : null,
-      endDate: range.endDate ? parseDate(range.endDate) : null,
+      startDate: range.startDate || new Date().toISOString().split("T")[0],
+      endDate: range.endDate || null,
     });
   };
+
+  useEffect(() => {
+    const storedData = localStorage.getItem("data-storage");
+    const parsedData = JSON.parse(storedData).state.suddenlyInfo;
+    if (parsedData) {
+      setSelectedRange({
+        startDate:
+          parsedData.start_date || new Date().toISOString().split("T")[0],
+        endDate: parsedData.end_date || null,
+      });
+      setSelectedCareType(parsedData.scenario);
+      setSelectedAddress(parsedData.location);
+      setSuddenlyInfo(parsedData);
+    }
+  }, []);
 
   return (
     <div style={styles.main}>
@@ -137,6 +148,8 @@ const ApplicationPage = () => {
           <div style={styles.rollerLayout}>
             <div style={styles.rollerActive}></div>
             <div style={styles.rollerActive}></div>
+            <div style={styles.rollerActive}></div>
+            <div style={styles.rollerActive}></div>
             <div style={styles.roller}></div>
           </div>
           <div style={styles.titleLayout}>
@@ -144,13 +157,23 @@ const ApplicationPage = () => {
             <span style={styles.smallTitle}>臨時托育</span>
           </div>
           <div style={styles.buttonLayout}>
-            <div style={styles.buttonLayout}>
+            <div style={styles.dateLayout}>
+              <label style={styles.dateLabel}>開始日期</label>
               <div style={styles.inputField}>
                 <input
                   type="date"
                   id="datepicker1"
                   name="startDate"
-                  min="2023-01-01"
+                  min={
+                    selectedRange.startDate
+                      ? selectedRange.startDate.split("T")[0]
+                      : ""
+                  }
+                  value={
+                    selectedRange.startDate
+                      ? selectedRange.startDate.split("T")[0]
+                      : ""
+                  }
                   style={styles.dateInput}
                   onChange={(e) =>
                     handleDateChange({
@@ -158,19 +181,28 @@ const ApplicationPage = () => {
                       startDate: e.target.value,
                     })
                   }
+                  placeholder="請選擇開始日期"
                   lang="zh-TW"
-                  defaultValue={
-                    item ? parseEditDate(item.suddenly_start_date) : ""
-                  }
                 />
               </div>
-
+            </div>
+            <div style={styles.dateLayout}>
+              <label style={styles.dateLabel}>結束日期</label>
               <div style={styles.inputField}>
                 <input
                   type="date"
                   id="datepicker2"
                   name="endDate"
-                  min="2023-01-01"
+                  min={
+                    selectedRange.startDate
+                      ? selectedRange.startDate.split("T")[0]
+                      : ""
+                  }
+                  value={
+                    selectedRange.endDate
+                      ? selectedRange.endDate.split("T")[0]
+                      : ""
+                  }
                   style={styles.dateInput}
                   onChange={(e) =>
                     handleDateChange({
@@ -178,24 +210,22 @@ const ApplicationPage = () => {
                       endDate: e.target.value,
                     })
                   }
+                  placeholder="請選擇結束日期"
                   lang="zh-TW"
-                  defaultValue={
-                    item ? parseEditDate(item.suddenly_end_date) : ""
-                  }
                 />
               </div>
-              <div style={{ width: "100%" }}>
-                <CalendarRangePicker
-                  startDate={selectedRange.startDate}
-                  endDate={selectedRange.endDate}
-                  onDateChange={handleDateChange}
-                  locale="zh-TW"
-                  styles={{
-                    calendar: { maxWidth: "400px" },
-                    day: { width: "50px", height: "50px" },
-                  }}
-                />
-              </div>
+            </div>
+            <div style={{ width: "100%" }}>
+              <CalendarRangePicker
+                startDate={selectedRange.startDate}
+                endDate={selectedRange.endDate}
+                onDateChange={handleDateChange}
+                locale="zh-TW"
+                styles={{
+                  calendar: { maxWidth: "400px" },
+                  day: { width: "50px", height: "50px" },
+                }}
+              />
             </div>
             <FormControl>
               <InputLabel id="gender-label">選擇情境</InputLabel>
@@ -204,8 +234,8 @@ const ApplicationPage = () => {
                 labelId="gender-label"
                 id="gender"
                 label="選擇情境"
-                onChange={(e) => setSelectedCareType(e.target.value)}
-                defaultValue={item ? item.suddenly_scenario : ""}
+                value={selectedCareType}
+                onChange={handleCareTypeChange}
                 InputProps={{
                   sx: {
                     borderRadius: "8px",
@@ -245,7 +275,7 @@ const ApplicationPage = () => {
                   labelId="gender-label"
                   id="gender"
                   label="定點選擇"
-                  defaultValue={item ? item.suddenly_location : ""}
+                  value={selectedAddress}
                   onChange={(e) => setSelectedAddress(e.target.value)}
                   MenuProps={{
                     PaperProps: {
@@ -381,13 +411,13 @@ const ApplicationPage = () => {
                   labelId="gender-label"
                   id="gender"
                   label="定點選擇"
-                  defaultValue={item ? item.suddenly_location : []}
+                  value={selectedAddress}
                   onChange={(e) => setSelectedAddress(e.target.value)}
                   MenuProps={{
                     PaperProps: {
                       style: {
-                        maxHeight: 24 * 7, // 48px * 3 (每個項目高度) + 8px (padding)
-                        overflowY: "auto", // 啟用滾動條
+                        maxHeight: 24 * 7,
+                        overflowY: "auto",
                       },
                     },
                   }}
@@ -692,6 +722,38 @@ const ApplicationPage = () => {
 };
 
 const styles = {
+  inputContainer: {
+    position: "relative",
+    display: "inline-block",
+    width: "100%",
+  },
+
+  dateInput: {
+    width: "100%",
+    padding: "10px 5px",
+    fontSize: "16px",
+    boxSizing: "border-box",
+  },
+
+  floatingLabel: {
+    position: "absolute",
+    top: "50%",
+    left: "10px",
+    transform: "translateY(-50%)",
+    transition: "0.2s ease all",
+    color: "#aaa",
+    pointerEvents: "none",
+  },
+  dateInput: {
+    "&:focus + floatingLabel, &:not(:placeholder-shown) + floatingLabel": {
+      top: 0,
+      left: 5,
+      fontSize: "12px",
+      color: "#555",
+      background: "#fff",
+      padding: "0 2px", // Fixed padding syntax
+    },
+  },
   address: {
     color: "var(---Surface-Black-25, #252525)",
     fontFamily: "LINE Seed JP_TTF",
@@ -786,6 +848,12 @@ const styles = {
     alignSelf: "stretch",
     boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
     backgroundColor: "#FFF",
+  },
+  dateLayout: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px",
+    width: "100%",
   },
   inputField: {
     padding: "25px 14px",

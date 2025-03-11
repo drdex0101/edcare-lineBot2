@@ -6,307 +6,383 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Switch from "@mui/material/Switch";
 import Select from "@mui/material/Select";
 import CalendarWeekendPicker from "../../../../components/base/CalendarWeekendPicker";
+import Loading from "../../../../components/base/Loading";
+import { MenuItem, InputLabel, FormControl } from "@mui/material";
 import useStore from "../../../../lib/store";
 
-import { MenuItem, InputLabel, FormControl } from "@mui/material";
 const ApplicationPage = () => {
   const router = useRouter();
-
-  const item = useStore((state) => state.item);
-
-  useEffect(() => {
-    console.log(item);
-  }, [item]);
-
-  const handleNextClick = () => {
-    router.push("/parent/order/details/babyInfo"); // 替换 '/next-page' 为你想要跳转的路径
-  };
-
+  const [isLoading, setIsLoading] = useState(false);
   const handleLastClick = () => {
     router.back(); // 替换 '/next-page' 为你想要跳转的路径
   };
+  const { longTernInfo, setLongTernInfo } = useStore();
 
-  const [selectedDays, setSelectedDays] = useState({
-    monday: false,
-    tuesday: false,
-    wednesday: false,
-    thursday: false,
-    friday: false,
-    saturday: false,
-    sunday: false,
-  });
+  const fetchLongTernInfo = async () => {
+    const response = await fetch("/api/base/getLongTern", {
+      method: "GET",
+      body: JSON.stringify({ id: longTernInfo.id }),
+    });
+    const data = await response.json();
+  }
 
-  const [selectedCareType, setSelectedCareType] = useState(
-    item ? item.long_scenario : "",
-  );
+  useEffect(() => {
+    if (longTernInfo) {
+      setSelectedDays(longTernInfo.weekdays);
+      setSelectedCareTime(longTernInfo.care_time);
+      setSelectedScenario(longTernInfo.scenario);
+    }
+  }, [longTernInfo]);
 
-  const handleDayChange = (day) => {
-    setSelectedDays((prev) => ({ ...prev, [day]: !prev[day] }));
+  const createLongTerm = async () => {
+    setIsLoading(true);
+    const response = await fetch("/api/base/createLongTern", {
+      method: "POST",
+      body: JSON.stringify({
+        longTermDays: selectedDays,
+        longTermCareType: selectedCareTime,
+        careScenario: selectedScenario,
+        idType: "nanny",
+      }),
+    });
+    const data = await response.json();
+    localStorage.setItem("careTypeId", data.long_term.id);
+    localStorage.setItem("choosetype", "longTern");
+    setLongTernInfo(data.long_term);
   };
 
+  const updateLongTerm = async () => {
+    setIsLoading(true);
+    const response = await fetch("/api/base/updateLongTern", {
+      method: "PATCH",
+      body: JSON.stringify({
+        longTernId: longTernInfo.id,
+        longTermDays: selectedDays,
+        longTermCareType: selectedCareTime,
+        careScenario: selectedScenario,
+        idType: "nanny",
+      }),
+    });
+    const data = await response.json();
+    localStorage.setItem("careTypeId", data.long_term.id);
+    localStorage.setItem("choosetype", "longTern");
+    setLongTernInfo(data.long_term);
+  }
+
+  const handleNextClick = async() => {
+    if (selectedDays.length === 0 || !selectedCareTime || !selectedScenario) {
+      alert("請填寫所有必填欄位。");
+      return;
+    }
+    if (longTernInfo) {
+      await updateLongTerm();
+    } else {
+      await createLongTerm();
+    }
+    router.push("/parent/create/babyInfo");
+  };
+
+  const [selectedDays, setSelectedDays] = useState([]);
+
+  const handleDayChange = (day) => {
+    setSelectedDays((prev) => {
+      const dayNumber =
+        typeof day === "string"
+          ? [
+              "sunday",
+              "monday",
+              "tuesday",
+              "wednesday",
+              "thursday",
+              "friday",
+              "saturday",
+            ].indexOf(day.toLowerCase())
+          : day;
+
+      if (dayNumber === -1) return prev;
+
+      return prev.includes(dayNumber)
+        ? prev.filter((d) => d !== dayNumber)
+        : [...prev, dayNumber].sort((a, b) => a - b);
+    });
+  };
+
+  const [selectedCareTime, setSelectedCareTime] = useState("");
+  const [selectedScenario, setSelectedScenario] = useState("");
   return (
     <div style={styles.main}>
-      <div style={styles.header}>
-        <span style={styles.headerFont}>托育資料填寫</span>
-        <button onClick={handleLastClick} style={styles.lastButton}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-          >
-            <g clip-path="url(#clip0_45_10396)">
-              <path
-                d="M7.77223 12.9916L18.7822 12.9916C19.3322 12.9916 19.7822 12.5416 19.7822 11.9916C19.7822 11.4416 19.3322 10.9916 18.7822 10.9916L7.77223 10.9916L7.77223 9.20162C7.77223 8.75162 7.23223 8.53162 6.92223 8.85162L4.14223 11.6416C3.95223 11.8416 3.95223 12.1516 4.14223 12.3516L6.92223 15.1416C7.23223 15.4616 7.77223 15.2316 7.77223 14.7916L7.77223 12.9916V12.9916Z"
-                fill="#074C5F"
-              />
-            </g>
-            <defs>
-              <clipPath id="clip0_45_10396">
-                <rect width="24" height="24" fill="white" />
-              </clipPath>
-            </defs>
-          </svg>
-        </button>
-      </div>
-      <div
-        style={{
-          backgroundColor: "white",
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          width: "100%",
-        }}
-      >
-        <div style={styles.contentLayout}>
-          <div style={styles.rollerLayout}>
-            <div style={styles.roller}></div>
-            <div style={styles.roller}></div>
-            <div style={styles.roller}></div>
-            <div style={styles.roller}></div>
-            <div style={styles.roller}></div>
-            <div style={styles.rollerActive}></div>
-          </div>
-          <div style={styles.titleLayout}>
-            <span style={styles.subTitle}>托育資料填寫</span>
-            <span style={styles.smallTitle}>長期托育</span>
-          </div>
-          <div style={styles.buttonLayout}>
-            <FormControl>
-              <InputLabel id="gender-label">托育時間</InputLabel>
-              <Select
-                required
-                labelId="gender-label"
-                id="gender"
-                label="性別"
-                InputProps={{
-                  sx: {
-                    padding: "0px 16px",
-                    borderRadius: "8px",
-                    backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
-                  },
-                }}
-                sx={{
-                  alignSelf: "stretch",
-                  borderRadius: "8px",
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": {
-                      borderColor: "var(--OutLine-OutLine, #78726D)",
-                    },
-                    "&:hover fieldset": {
-                      borderColor: "#E3838E",
-                    },
-                    "&.Mui-focused fieldset": {
-                      borderColor: "#E3838E",
-                    },
-                  },
-                  backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
-                }}
-              >
-                <MenuItem value="home">全日</MenuItem>
-              </Select>
-            </FormControl>
-            <div style={styles.hopeLayout}>
-              <div style={styles.componentLayout}>
-                <span>星期一</span>
-                <FormGroup>
-                  <FormControlLabel
-                    control={
-                      <IOSSwitch
-                        sx={{ m: 1 }}
-                        checked={selectedDays.monday}
-                        onChange={() => handleDayChange("monday")}
-                      />
-                    }
-                    style={{ marginRight: "0px" }}
-                  />
-                </FormGroup>
-              </div>
-              <div style={styles.componentLayout}>
-                <span>星期二</span>
-                <FormGroup>
-                  <FormControlLabel
-                    control={
-                      <IOSSwitch
-                        sx={{ m: 1 }}
-                        checked={selectedDays.tuesday}
-                        onChange={() => handleDayChange("tuesday")}
-                      />
-                    }
-                    style={{ marginRight: "0px" }}
-                  />
-                </FormGroup>
-              </div>
-              <div style={styles.componentLayout}>
-                <span>星期三</span>
-                <FormGroup>
-                  <FormControlLabel
-                    control={
-                      <IOSSwitch
-                        sx={{ m: 1 }}
-                        checked={selectedDays.wednesday}
-                        onChange={() => handleDayChange("wednesday")}
-                      />
-                    }
-                    style={{ marginRight: "0px" }}
-                  />
-                </FormGroup>
-              </div>
-              <div style={styles.componentLayout}>
-                <span>星期四</span>
-                <FormGroup>
-                  <FormControlLabel
-                    control={
-                      <IOSSwitch
-                        sx={{ m: 1 }}
-                        checked={selectedDays.thursday}
-                        onChange={() => handleDayChange("thursday")}
-                      />
-                    }
-                    style={{ marginRight: "0px" }}
-                  />
-                </FormGroup>
-              </div>
-              <div style={styles.componentLayout}>
-                <span>星期五</span>
-                <FormGroup>
-                  <FormControlLabel
-                    control={
-                      <IOSSwitch
-                        sx={{ m: 1 }}
-                        checked={selectedDays.friday}
-                        onChange={() => handleDayChange("friday")}
-                      />
-                    }
-                    style={{ marginRight: "0px" }}
-                  />
-                </FormGroup>
-              </div>
-              <div style={{ ...styles.componentLayout, borderBottom: "none" }}>
-                <span>星期六</span>
-                <FormGroup>
-                  <FormControlLabel
-                    control={
-                      <IOSSwitch
-                        sx={{ m: 1 }}
-                        checked={selectedDays.saturday}
-                        onChange={() => handleDayChange("saturday")}
-                      />
-                    }
-                    style={{ marginRight: "0px" }}
-                  />
-                </FormGroup>
-              </div>
-              <div style={{ ...styles.componentLayout, borderBottom: "none" }}>
-                <span>星期日</span>
-                <FormGroup>
-                  <FormControlLabel
-                    control={
-                      <IOSSwitch
-                        sx={{ m: 1 }}
-                        checked={selectedDays.sunday}
-                        onChange={() => handleDayChange("sunday")}
-                      />
-                    }
-                    style={{ marginRight: "0px" }}
-                  />
-                </FormGroup>
-              </div>
+      {isLoading && (
+        <div
+          style={{
+            position: "fixed", // 確保 Loading 覆蓋整個畫面
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(255, 255, 255, 0.8)", // 透明度
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999, // 確保 Loading 在最上層
+          }}
+        >
+          <Loading />
+        </div>
+      )}
+      <>
+        <div style={styles.header}>
+          <span style={styles.headerFont}>編輯保母資料</span>
+          <button onClick={handleLastClick} style={styles.lastButton}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <g clip-path="url(#clip0_45_10396)">
+                <path
+                  d="M7.77223 12.9916L18.7822 12.9916C19.3322 12.9916 19.7822 12.5416 19.7822 11.9916C19.7822 11.4416 19.3322 10.9916 18.7822 10.9916L7.77223 10.9916L7.77223 9.20162C7.77223 8.75162 7.23223 8.53162 6.92223 8.85162L4.14223 11.6416C3.95223 11.8416 3.95223 12.1516 4.14223 12.3516L6.92223 15.1416C7.23223 15.4616 7.77223 15.2316 7.77223 14.7916L7.77223 12.9916V12.9916Z"
+                  fill="#074C5F"
+                />
+              </g>
+              <defs>
+                <clipPath id="clip0_45_10396">
+                  <rect width="24" height="24" fill="white" />
+                </clipPath>
+              </defs>
+            </svg>
+          </button>
+        </div>
+        <div
+          style={{
+            backgroundColor: "white",
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+          }}
+        >
+          <div style={styles.contentLayout}>
+            <div style={styles.rollerLayout}>
+              <div style={styles.rollerActive}></div>
+              <div style={styles.rollerActive}></div>
+              <div style={styles.rollerActive}></div>
+              <div style={styles.rollerActive}></div>
+              <div style={styles.roller}></div>
             </div>
-            <div style={{ width: "100%" }}>
-              <CalendarWeekendPicker
-                selectedWeekday={selectedDays}
-                handleDayChange={handleDayChange}
-                locale="zh-TW"
-                styles={{
-                  calendar: { maxWidth: "400px" },
-                  day: { width: "50px", height: "50px" },
-                }}
-              />
+            <div style={styles.titleLayout}>
+              <span style={styles.subTitle}>托育資料填寫</span>
+              <span style={styles.smallTitle}>長期托育</span>
             </div>
-            <FormControl>
-              <InputLabel id="gender-label">選擇情境</InputLabel>
-              <Select
-                required
-                labelId="gender-label"
-                id="gender"
-                label="性別"
-                InputProps={{
-                  sx: {
-                    padding: "0px 16px",
+            <div style={styles.buttonLayout}>
+              <FormControl>
+                <InputLabel id="gender-label">托育時間</InputLabel>
+                <Select
+                  required
+                  labelId="care-time-label"
+                  id="care-time"
+                  value={selectedCareTime}
+                  onChange={(e) => setSelectedCareTime(e.target.value)}
+                  label="托育時間"
+                  InputProps={{
+                    sx: {
+                      padding: "0px 16px",
+                      borderRadius: "8px",
+                      backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
+                    },
+                  }}
+                  sx={{
+                    alignSelf: "stretch",
                     borderRadius: "8px",
+                    "& .MuiOutlinedInput-root": {
+                      "& fieldset": {
+                        borderColor: "var(--OutLine-OutLine, #78726D)",
+                      },
+                      "&:hover fieldset": {
+                        borderColor: "#E3838E",
+                      },
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#E3838E",
+                      },
+                    },
                     backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
-                  },
-                }}
-                sx={{
-                  alignSelf: "stretch",
-                  borderRadius: "8px",
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": {
-                      borderColor: "var(--OutLine-OutLine, #78726D)",
+                  }}
+                >
+                  <MenuItem value="allDay">全日</MenuItem>
+                  <MenuItem value="morning">日間</MenuItem>
+                  <MenuItem value="night">夜間</MenuItem>
+                </Select>
+              </FormControl>
+              <div style={styles.hopeLayout}>
+                <div style={styles.componentLayout}>
+                  <span>星期一</span>
+                  <FormGroup>
+                    <FormControlLabel
+                      control={
+                        <IOSSwitch
+                          sx={{ m: 1 }}
+                          checked={selectedDays.includes(1)}
+                          onChange={() => handleDayChange(1)}
+                        />
+                      }
+                      style={{ marginRight: "0px" }}
+                    />
+                  </FormGroup>
+                </div>
+                <div style={styles.componentLayout}>
+                  <span>星期二</span>
+                  <FormGroup>
+                    <FormControlLabel
+                      control={
+                        <IOSSwitch
+                          sx={{ m: 1 }}
+                          checked={selectedDays.includes(2)}
+                          onChange={() => handleDayChange(2)}
+                        />
+                      }
+                      style={{ marginRight: "0px" }}
+                    />
+                  </FormGroup>
+                </div>
+                <div style={styles.componentLayout}>
+                  <span>星期三</span>
+                  <FormGroup>
+                    <FormControlLabel
+                      control={
+                        <IOSSwitch
+                          sx={{ m: 1 }}
+                          checked={selectedDays.includes(3)}
+                          onChange={() => handleDayChange(3)}
+                        />
+                      }
+                      style={{ marginRight: "0px" }}
+                    />
+                  </FormGroup>
+                </div>
+                <div style={styles.componentLayout}>
+                  <span>星期四</span>
+                  <FormGroup>
+                    <FormControlLabel
+                      control={
+                        <IOSSwitch
+                          sx={{ m: 1 }}
+                          checked={selectedDays.includes(4)}
+                          onChange={() => handleDayChange(4)}
+                        />
+                      }
+                      style={{ marginRight: "0px" }}
+                    />
+                  </FormGroup>
+                </div>
+                <div style={styles.componentLayout}>
+                  <span>星期五</span>
+                  <FormGroup>
+                    <FormControlLabel
+                      control={
+                        <IOSSwitch
+                          sx={{ m: 1 }}
+                          checked={selectedDays.includes(5)}
+                          onChange={() => handleDayChange(5)}
+                        />
+                      }
+                      style={{ marginRight: "0px" }}
+                    />
+                  </FormGroup>
+                </div>
+                <div
+                  style={{ ...styles.componentLayout, borderBottom: "none" }}
+                >
+                  <span>星期六</span>
+                  <FormGroup>
+                    <FormControlLabel
+                      control={
+                        <IOSSwitch
+                          sx={{ m: 1 }}
+                          checked={selectedDays.includes(6)}
+                          onChange={() => handleDayChange(6)}
+                        />
+                      }
+                      style={{ marginRight: "0px" }}
+                    />
+                  </FormGroup>
+                </div>
+                <div
+                  style={{ ...styles.componentLayout, borderBottom: "none" }}
+                >
+                  <span>星期日</span>
+                  <FormGroup>
+                    <FormControlLabel
+                      control={
+                        <IOSSwitch
+                          sx={{ m: 1 }}
+                          checked={selectedDays.includes(0)}
+                          onChange={() => handleDayChange(0)}
+                        />
+                      }
+                      style={{ marginRight: "0px" }}
+                    />
+                  </FormGroup>
+                </div>
+              </div>
+              <div style={{ width: "100%" }}>
+                <CalendarWeekendPicker
+                  selectedWeekday={selectedDays}
+                  handleDayChange={handleDayChange}
+                  locale="zh-TW"
+                  styles={{
+                    calendar: { maxWidth: "400px" },
+                    day: { width: "50px", height: "50px" },
+                  }}
+                />
+              </div>
+              <FormControl>
+                <InputLabel id="gender-label">選擇情境</InputLabel>
+                <Select
+                  required
+                  labelId="scenario-label"
+                  id="scenario"
+                  value={selectedScenario}
+                  onChange={(e) => setSelectedScenario(e.target.value)}
+                  label="托育場景"
+                  InputProps={{
+                    sx: {
+                      padding: "0px 16px",
+                      borderRadius: "8px",
+                      backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
                     },
-                    "&:hover fieldset": {
-                      borderColor: "#E3838E",
+                  }}
+                  sx={{
+                    alignSelf: "stretch",
+                    borderRadius: "8px",
+                    "& .MuiOutlinedInput-root": {
+                      "& fieldset": {
+                        borderColor: "var(--OutLine-OutLine, #78726D)",
+                      },
+                      "&:hover fieldset": {
+                        borderColor: "#E3838E",
+                      },
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#E3838E",
+                      },
                     },
-                    "&.Mui-focused fieldset": {
-                      borderColor: "#E3838E",
-                    },
-                  },
-                  backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
-                }}
-              >
-                <MenuItem value="home">居家托育</MenuItem>
-              </Select>
-            </FormControl>
-          </div>
-          <div style={styles.buttonLayout}>
-            <button style={styles.nextBtn} onClick={handleNextClick}>
-              下一步
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-              >
-                <g clip-path="url(#clip0_45_10393)">
-                  <path
-                    d="M14.29 5.71047C13.9 6.10047 13.9 6.73047 14.29 7.12047L18.17 11.0005H3C2.45 11.0005 2 11.4505 2 12.0005C2 12.5505 2.45 13.0005 3 13.0005H18.18L14.3 16.8805C13.91 17.2705 13.91 17.9005 14.3 18.2905C14.69 18.6805 15.32 18.6805 15.71 18.2905L21.3 12.7005C21.69 12.3105 21.69 11.6805 21.3 11.2905L15.7 5.71047C15.32 5.32047 14.68 5.32047 14.29 5.71047Z"
-                    fill="#FFFFFF"
-                  />
-                </g>
-                <defs>
-                  <clipPath id="clip0_45_10393">
-                    <rect width="24" height="24" fill="white" />
-                  </clipPath>
-                </defs>
-              </svg>
-            </button>
+                    backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
+                  }}
+                >
+                  <MenuItem value="toHome">到宅托育</MenuItem>
+                  <MenuItem value="home">在宅托育</MenuItem>
+                </Select>
+              </FormControl>
+            </div>
+            <div style={styles.buttonLayout}>
+              <button style={styles.nextBtn} onClick={handleNextClick}>
+                下一步
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      </>
     </div>
   );
 };

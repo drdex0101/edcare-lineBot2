@@ -1,0 +1,12 @@
+CREATE TABLE care_data (
+    id BIGSERIAL PRIMARY KEY,
+    order_id VARCHAR(50),
+    start_date DATE, -- 臨時才有
+    end_date DATE, -- 臨時才有
+    scenario VARCHAR(100),
+    location VARCHAR[],
+    care_time VARCHAR(50), -- 長期才有
+    id_type VARCHAR(50),
+    care_type VARCHAR(50), --分longTern,suddenly
+    weekdays INTEGER[]     -- 長期才有
+);
