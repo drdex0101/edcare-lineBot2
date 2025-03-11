@@ -9,7 +9,8 @@ export default async function handler(req, res) {
     const { 
         longTermDays,
         longTermCareType,
-        idType
+        idType,
+        careScenario
     } = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
 
     const token = req.cookies.authToken;
@@ -36,10 +37,10 @@ export default async function handler(req, res) {
 
       const query = `
         INSERT INTO long_term (
-          order_id, weekdays, care_time, id_type
+          order_id, weekdays, care_time, id_type, scenario
         )
         VALUES (
-          $1, $2, $3, $4
+          $1, $2, $3, $4, $5
         )
         RETURNING *;
       `;
@@ -49,7 +50,8 @@ export default async function handler(req, res) {
         nannyId,
         weekdaysArray,
         longTermCareType,
-        idType
+        idType,
+        careScenario
       ];
       
       console.log('Final query values:', values);

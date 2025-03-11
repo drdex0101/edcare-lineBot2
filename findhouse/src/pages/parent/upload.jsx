@@ -60,6 +60,7 @@ const ApplicationPage = () => {
             },
             body: JSON.stringify(kycInfoData),
           });
+          setKycData(response.member);
           router.push("/parent/create/choose");
         } catch (error) {
           alert("更新失敗，請重新嘗試。");
@@ -81,7 +82,7 @@ const ApplicationPage = () => {
           kycId: kycId,
           memberId: memberId,
         };
-        setKycData(kycData);
+        setKycData(kycData.member);
         const response2 = await fetch("/api/member/updateKycId", {
           method: "PATCH",
           headers: {
@@ -114,18 +115,35 @@ const ApplicationPage = () => {
     router.back(); // 替换 '/next-page' 为你想要跳转的路径
   };
 
+  const fetchKycData = async () => {
+    const response = await fetch("/api/kycInfo/getKycData", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
+    setKycData(data.kycInfoList[0]);
+  };
+
   useEffect(() => {
-    const storedData = localStorage.getItem('data-storage'); // 讀取本地存儲
-    if (storedData) {
-      if (kycData != null) {
-        const parsedData = JSON.parse(storedData).state.kycData.member; // 解析數據
+    const loadData = async () => {
+      await fetchKycData(); // Wait for KYC data to be fetched
+      
+      const storedData = localStorage.getItem('data-storage');
+      console.log("storedData:", storedData);
+      
+      if (storedData && kycData != null) {
+        const parsedData = JSON.parse(storedData).state.kycData;
         setKycData(parsedData);
         setSelectedDate(parsedData.birthday ? dayjs(parsedData.birthday) : null);
         setGender(parsedData.gender || "");
         setFrontImg(parsedData.identityfrontuploadid || null);
         setBackImg(parsedData.identitybackuploadid || null);
       }
-    }
+    };
+
+    loadData();
   }, []);
 
   const handleUpload = async (file, type) => {
@@ -297,6 +315,7 @@ const ApplicationPage = () => {
               label="真實姓名"
               variant="outlined"
               value={kycData?.name}
+              required
               InputProps={{
                 sx: {
                   padding: "0px 16px",
@@ -325,6 +344,7 @@ const ApplicationPage = () => {
               id="identityCard"
               label="身分證字號"
               value={kycData?.identitycard}
+              required
               variant="outlined"
               InputProps={{
                 sx: {
@@ -358,6 +378,7 @@ const ApplicationPage = () => {
                 value={gender}
                 onChange={handleGenderChange}
                 label="性別"
+                required
                 sx={{
                   backgroundColor: "#FFF",
                   borderRadius: "8px",
@@ -381,6 +402,7 @@ const ApplicationPage = () => {
               <DatePicker
                 label="生日"
                 value={selectedDate}
+                required
                 onChange={(newValue) => setSelectedDate(newValue)}
                 maxDate={maxSelectableDate}
                 renderInput={(params) => <TextField {...params} />}
@@ -414,6 +436,7 @@ const ApplicationPage = () => {
             <TextField
               id="address"
               label="戶籍地址"
+              required
               value={kycData?.address}
               variant="outlined"
               InputProps={{
@@ -442,6 +465,7 @@ const ApplicationPage = () => {
             <TextField
               id="communicateAddress"
               label="通訊地址"
+              required
               value={kycData?.communicateaddress}
               variant="outlined"
               InputProps={{
@@ -482,6 +506,7 @@ const ApplicationPage = () => {
                 onChange={handleFileChange}
                 style={{ display: "none" }}
                 id="file-upload"
+                required
               />
               <div
                 style={styles.imgLayout}
@@ -557,6 +582,7 @@ const ApplicationPage = () => {
                 onChange={handleFileChangeBack}
                 style={{ display: "none" }}
                 id="file-backend"
+                required
               />
               <div
                 style={styles.imgLayout}

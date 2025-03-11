@@ -92,6 +92,13 @@ const ApplicationPage = () => {
           body: JSON.stringify(memberData),
         });
       }
+      await fetch("/api/line/changeRichMenu", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ richMenuId: "richmenu-bd0843b93a53c3df760bbd95c7871e23" }),
+      });
       router.push("/parent/verify");
       setIsLoading(false);
     } catch (error) {
@@ -212,6 +219,7 @@ const ApplicationPage = () => {
                   id="cellphone"
                   label="常用電話"
                   variant="outlined"
+                  required
                   InputProps={{
                     sx: {
                       padding: "0px 16px",
@@ -241,6 +249,7 @@ const ApplicationPage = () => {
                 <TextField
                   id="job"
                   label="職業"
+                  required
                   variant="outlined"
                   value={memberInfo?.job || ""}
                   onChange={handleInputChange("job")}
@@ -272,6 +281,7 @@ const ApplicationPage = () => {
                   id="email"
                   label="聯絡信箱"
                   variant="outlined"
+                  required
                   value={memberInfo?.email || ""}
                   onChange={handleInputChange("email")}
                   InputProps={{

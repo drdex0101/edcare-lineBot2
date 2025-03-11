@@ -154,7 +154,7 @@ export default function HistoryId() {
               </span>
               <span className="sub-title-font">
                 配對時間：
-                {orderInfo && orderInfo.update_ts
+                {orderInfo && orderInfo.status === "matching" && orderInfo.update_ts
                   ? orderInfo.update_ts.slice(0, 10)
                   : "無資料"}
               </span>

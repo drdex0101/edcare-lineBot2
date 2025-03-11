@@ -53,8 +53,17 @@ const ApplicationPage = () => {
     }
   }, [nannyInfo]); // **確保 `item` 更新後會同步 `switchStates`**
 
-  useEffect(() => {
+  const fetchNannyInfo = async () => {
+    const response = await fetch("/api/nanny/getNannyProfile");
+    const data = await response.json();
+    console.log(data);
+    setNannyInfo(data.nannyProfile[0]);
+    setIsLoading(false);
+  };
+
+  useEffect( async () => {
     setIsLoading(true);
+    await fetchNannyInfo();
     const storedData = localStorage.getItem("data-storage");
     const way = localStorage.getItem("choosetype");
     if (way === "suddenly" && storedData) {
@@ -75,8 +84,9 @@ const ApplicationPage = () => {
     const parsedData = JSON.parse(storedData).state.nannyInfo;
     setIsLoading(true);
     if (parsedData) {
+      setSelectedAddress(parsedData.servicelocation);
       setSelectedCareType(parsedData.scenario);
-      setAddress(parsedData.location);
+      setAddress(parsedData.location[0]);
       setIntroduction(parsedData.introduction);
       if (parsedData.uploadid) {
         setHeadIcon(parsedData.uploadid);
@@ -116,11 +126,11 @@ const ApplicationPage = () => {
       scenario: selectedCareType,
       environmentPic: uploadedImages,
       serviceLocation:
-        selectedCareType === "在宅托育" ? address : selectedAddress,
+        selectedCareType === "在宅托育" ? [address] : selectedAddress,
       service: Object.keys(switchStates).filter((key) => switchStates[key]),
       score: nannyInfo ? nannyInfo.score : "",
       isShow: true,
-      location: address,
+      location: [address],
       kycId: nannyInfo ? nannyInfo.kycId : null,
       introduction: introduction,
       nannyId: nannyInfo ? nannyInfo.nanny_id : null,
@@ -184,7 +194,7 @@ const ApplicationPage = () => {
       }
 
       setIsLoading(false);
-      router.push("/nanny/finish");
+      //router.push("/nanny/finish");
     } catch (error) {
       console.error("Error submitting nanny data:", error);
     }

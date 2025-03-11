@@ -1,9 +1,22 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 import useStore from "../../../lib/store";
 const ApplicationPage = () => {
   const router = useRouter();
   const nannyInfo = useStore((state) => state.nannyInfo);
+  //const memberInfo = useStore((state) => state.memberInfo);
+  const setMemberInfo = useStore((state) => state.setMemberInfo);
+
+  const fetchMemberInfo = async () => {
+    const response = await fetch("/api/member/getMemberData");
+    const data = await response.json();
+    console.log(data);
+    setMemberInfo(data.member[0]);
+  };
+
+  useEffect(async () => {
+    await fetchMemberInfo();
+  }, []);
 
   const handleNextClick = () => {
     if (nannyInfo) {

@@ -12,7 +12,7 @@ CREATE TABLE nanny (
     service VARCHAR[], -- 服務項目，使用陣列儲存多個服務
     score VARCHAR, -- 評分，例如 4.85
     isShow BOOLEAN DEFAULT true, -- 是否顯示
-    location VARCHAR[], -- 地理位置座標
+    location VARCHAR[],
     kycId BIGINT , 
     uploadId BIGINT , 
     created_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

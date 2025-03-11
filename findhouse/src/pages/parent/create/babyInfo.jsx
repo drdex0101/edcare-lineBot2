@@ -54,8 +54,6 @@ const ApplicationPage = () => {
 
     // **必填欄位檢查**
     const requiredFields = {
-      choosetype: "選擇類型",
-      caretypeid: "照護類型 ID",
       nickname: "寶寶姓名",
       gender: "寶寶性別",
       birthday: "寶寶生日",

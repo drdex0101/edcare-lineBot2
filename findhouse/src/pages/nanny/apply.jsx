@@ -182,6 +182,7 @@ const ApplicationPage = () => {
                   id="account"
                   label="帳號名稱"
                   variant="outlined"
+                  required
                   disabled
                   InputProps={{
                     sx: {
@@ -211,6 +212,7 @@ const ApplicationPage = () => {
                 <TextField
                   id="cellphone"
                   label="常用電話"
+                  required
                   variant="outlined"
                   InputProps={{
                     sx: {
@@ -241,6 +243,7 @@ const ApplicationPage = () => {
                 <TextField
                   id="email"
                   label="聯絡信箱"
+                  required
                   variant="outlined"
                   value={memberInfo?.email || ""}
                   onChange={handleInputChange("email")}
