@@ -36,8 +36,7 @@ const ApplicationPage = () => {
   const [introduction, setIntroduction] = useState("");
   const [selectedAddress, setSelectedAddress] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [suddenlyId, setSuddenlyId] = useState(null);
-  const [longTermId, setLongTermId] = useState(null);
+  const [careTypeId, setCareTypeId] = useState(null);
   const [memberId, setMemberId] = useState(null);
 
   useEffect(() => {
@@ -51,38 +50,11 @@ const ApplicationPage = () => {
         6: nannyInfo.service.includes("6"),
       });
     }
-  }, [nannyInfo]); // **確保 `item` 更新後會同步 `switchStates`**
+  }, [nannyInfo]);
 
-  const fetchNannyInfo = async () => {
-    const response = await fetch("/api/nanny/getNannyProfile");
-    const data = await response.json();
-    console.log(data);
-    setNannyInfo(data.nannyProfile[0]);
-    setIsLoading(false);
-  };
-
-  useEffect( async () => {
-    setIsLoading(true);
-    await fetchNannyInfo();
+  useEffect(() => {
     const storedData = localStorage.getItem("data-storage");
-    const way = localStorage.getItem("choosetype");
-    if (way === "suddenly" && storedData) {
-      const parsedData = JSON.parse(storedData);
-      if (parsedData?.state?.suddenlyInfo?.id) {
-        setSuddenlyId(parsedData.state.suddenlyInfo.id);
-      }
-      console.log(parsedData.state.suddenlyInfo.id);
-    } else if (way === "longTerm" && storedData) {
-      const parsedData = JSON.parse(storedData);
-      if (parsedData?.state?.longTermInfo?.id) {
-        setLongTermId(parsedData.state.longTermInfo.id);
-      }
-      console.log(parsedData.state.longTermInfo.id);
-    }
-    const parseMember = JSON.parse(storedData).state.memberInfo;
-    setMemberId(parseMember.memberId);
     const parsedData = JSON.parse(storedData).state.nannyInfo;
-    setIsLoading(true);
     if (parsedData) {
       setSelectedAddress(parsedData.servicelocation);
       setSelectedCareType(parsedData.scenario);
@@ -90,7 +62,6 @@ const ApplicationPage = () => {
       setIntroduction(parsedData.introduction);
       if (parsedData.uploadid) {
         setHeadIcon(parsedData.uploadid);
-        console.log(parsedData.uploadid);
         getUrl(parsedData.uploadid).then(url => {
           console.log("Image URL:", url);
           setHeadIconUrl(url);
@@ -98,22 +69,7 @@ const ApplicationPage = () => {
           console.error("Error fetching URL:", error);
         });
       }
-      if (parsedData.environmentpic && parsedData.environmentpic.length > 0) {
-        const fetchImageUrls = async () => {
-          const urls = await Promise.all(
-            parsedData.environmentpic.map(async (picId) => {
-              const response = await fetch(`/api/base/getImgUrl?id=${picId}`);
-              const data = await response.json();
-              return data.url;
-            }),
-          );
-          setUploadedEnvironmentImages(urls);
-        };
-        fetchImageUrls();
-      }
-      setNannyInfo(parsedData);
     }
-    setIsLoading(false);
   }, []);
 
   const handleNextClick = async () => {
@@ -134,8 +90,7 @@ const ApplicationPage = () => {
       kycId: nannyInfo ? nannyInfo.kycId : null,
       introduction: introduction,
       nannyId: nannyInfo ? nannyInfo.nanny_id : null,
-      suddenlyId: suddenlyId,
-      longTermId: longTermId,
+      careTypeId: careTypeId,
       uploadId: headIcon,
     };
 
@@ -194,7 +149,7 @@ const ApplicationPage = () => {
       }
 
       setIsLoading(false);
-      //router.push("/nanny/finish");
+      router.push("/nanny/finish");
     } catch (error) {
       console.error("Error submitting nanny data:", error);
     }

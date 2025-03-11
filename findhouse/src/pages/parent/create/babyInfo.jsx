@@ -58,7 +58,7 @@ const ApplicationPage = () => {
       gender: "寶寶性別",
       birthday: "寶寶生日",
       rank: "寶寶排行",
-      hope: "照護期望",
+      hope: "照護期望"
     };
 
     // 找出未填寫的欄位
@@ -105,7 +105,7 @@ const ApplicationPage = () => {
 
       const responseData = await response.json();
       console.log("訂單建立成功:", responseData);
-      setBabyInfo(responseData.orders);
+      setBabyInfo(responseData);
       router.push("/parent/finish");
 
     } catch (error) {
@@ -445,8 +445,7 @@ const ApplicationPage = () => {
             </div>
 
             <TextField
-              required
-              id="phone-number"
+              id='hope'
               variant="outlined"
               label="托育理念"
               multiline

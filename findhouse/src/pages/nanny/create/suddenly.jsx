@@ -99,7 +99,7 @@ const ApplicationPage = () => {
 
   useEffect(() => {
     const storedData = localStorage.getItem("data-storage");
-    const parsedData = JSON.parse(storedData).state.suddenlyInfo;
+    const parsedData = JSON.parse(storedData).state.careData;
     if (parsedData) {
       setSelectedRange({
         startDate:
@@ -108,7 +108,7 @@ const ApplicationPage = () => {
       });
       setSelectedCareType(parsedData.scenario);
       setSelectedAddress(parsedData.location);
-      setSuddenlyInfo(parsedData);
+      setCareData(parsedData);
     }
   }, []);
 

@@ -1,50 +1,32 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import useStore from "../../../lib/store";
+
 const ApplicationPage = () => {
   const router = useRouter();
-  const nannyInfo = useStore((state) => state.nannyInfo);
-  //const memberInfo = useStore((state) => state.memberInfo);
-  const setMemberInfo = useStore((state) => state.setMemberInfo);
-
-  const fetchMemberInfo = async () => {
-    const response = await fetch("/api/member/getMemberData");
-    const data = await response.json();
-    console.log(data);
-    setMemberInfo(data.member[0]);
-  };
-
-  useEffect(async () => {
-    await fetchMemberInfo();
-  }, []);
+  const [loading, setLoading] = useState(false);
 
   const handleNextClick = () => {
-    if (nannyInfo) {
-      nannyInfo.way = "suddenly";
-      router.push("/nanny/create/suddenly");
-    } else {
-      router.push("/nanny/create/suddenly");
-    }
+    router.push("/nanny/create/suddenly");
   };
 
-  const handleLastClick = () => {
-    router.back();
+  const handleBack = () => {
+    try {
+      router.back();
+    } catch (error) {
+      console.error('Navigation error:', error);
+    }
   };
 
   const handleLongClick = () => {
-    if (nannyInfo) {
-      nannyInfo.way = "longTerm";
-      router.push("/nanny/create/long");
-    } else {
-      router.push("/nanny/create/long");
-    }
+    router.push("/nanny/create/long");
   };
 
   return (
     <div style={styles.main}>
       <div style={styles.header}>
         <span style={styles.headerFont}>編輯保母資料</span>
-        <button onClick={handleLastClick} style={styles.lastButton}>
+        <button onClick={handleBack} style={styles.lastButton}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
