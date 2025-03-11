@@ -53,8 +53,17 @@ const ApplicationPage = () => {
     }
   }, [nannyInfo]); // **確保 `item` 更新後會同步 `switchStates`**
 
-  useEffect(() => {
+  const fetchNannyInfo = async () => {
+    const response = await fetch("/api/nanny/getNannyProfile");
+    const data = await response.json();
+    console.log(data);
+    setNannyInfo(data.nannyProfile[0]);
+    setIsLoading(false);
+  };
+
+  useEffect( async () => {
     setIsLoading(true);
+    await fetchNannyInfo();
     const storedData = localStorage.getItem("data-storage");
     const way = localStorage.getItem("choosetype");
     if (way === "suddenly" && storedData) {
