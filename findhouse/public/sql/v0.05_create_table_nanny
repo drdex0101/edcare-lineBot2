@@ -20,3 +20,4 @@ CREATE TABLE nanny (
     suddenly_id VARCHAR(50),
     long_tern_id VARCHAR(50)
 );
+ALTER TABLE nanny ADD COLUMN care_type_id BIGINT; 

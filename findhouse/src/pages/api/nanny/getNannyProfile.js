@@ -39,6 +39,7 @@ export default async function handler(req, res) {
       }
 
       const memberId = memberIdResult.rows[0].id;
+      console.log('memberId:',memberId);
 
       const query = `
         SELECT 
@@ -59,18 +60,17 @@ export default async function handler(req, res) {
           nanny.uploadId, 
           nanny.created_ts,
           k.name,
-          l.weekdays,
-          l.care_time as long_term_care_time,
-          s.start_date as suddenly_start_date,
-          s.end_date as suddenly_end_date,
-          s.care_time as suddenly_care_time,
-          s.location as suddenly_location,
-          s.scenario as suddenly_scenario,
-          COALESCE(s.scenario, l.scenario) AS scenario
+          c.weekdays,
+          c.care_time as long_term_care_time,
+          c.start_date as suddenly_start_date,
+          c.end_date as suddenly_end_date,
+          c.care_time as suddenly_care_time,
+          c.location as suddenly_location,
+          c.scenario as suddenly_scenario,
+          c.scenario
         FROM nanny
         LEFT JOIN kyc_info k ON nanny.kycId = k.id
-        LEFT JOIN long_term l ON nanny.id::varchar = l.order_id
-        LEFT JOIN suddenly s ON nanny.id::varchar = s.order_id
+        LEFT JOIN care_data c ON nanny.care_type_id = c.id
         WHERE nanny.memberId = $1;
       `;
       const result = await client.query(query, [memberId]);
