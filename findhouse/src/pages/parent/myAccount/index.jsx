@@ -8,16 +8,54 @@ export default function DetailsPage() {
   const router = useRouter();
   const [historyList, setHistoryList] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
+  const [kycData, setKycData] = useState(null);
+  const [favoriteCount, setFavoriteCount] = useState(0);
+  const statusMap = {
+    pending: "待驗證",
+    check: "已驗證",
+    reject: "退件",
+  };
 
   const fetchHistoryList = async () => {
     const response = await fetch("/api/order/getHistoryList?page=1&pageSize=4");
     const data = await response.json();
     setHistoryList(data.orders);
-    setTotalCount(data.totalCount);
+    setTotalCount(data.totalCount || 0);
+  };
+
+  const fetchKycData = async () => {
+    const response = await fetch("/api/kycInfo/getKycData");
+    const data = await response.json();
+    setKycData(data);
+  };
+
+  const fetchFavoriteCount = async () => {
+    const response = await fetch(
+      "/api/favorite/getFavoriteList?type=parent&page=1&pageSize=10"
+    );
+    const data = await response.json();
+    setFavoriteCount(data.favorite.length || 0);
+  };
+
+  const toMatching = () => {
+    router.prefetch("/parent/matching"); // 預先加載頁面，提高切換速度
+    router.push("/parent/matching");
+  };
+
+  const toFavorite = () => {
+    router.prefetch("/parent/favorite"); // 預先加載頁面，提高切換速度
+    router.push("/parent/favorite");
+  };
+
+  const toHistory = () => {
+    router.prefetch("/parent/history"); // 預先加載頁面，提高切換速度
+    router.push("/parent/history");
   };
 
   useEffect(() => {
     fetchHistoryList();
+    fetchKycData();
+    fetchFavoriteCount();
   }, []);
 
   return (
@@ -57,7 +95,9 @@ export default function DetailsPage() {
             </div>
             <div className="details-four-layout-item-coulumn">
               <span className="details-four-layout-item-title">身分驗證</span>
-              <span className="details-four-layout-item-content">已驗證</span>
+              <span className="details-four-layout-item-content">
+                {statusMap[kycData?.status] || "未填寫"}
+              </span>
             </div>
           </div>
           <div className="details-four-layout-item">
@@ -82,7 +122,7 @@ export default function DetailsPage() {
                 </defs>
               </svg>
             </div>
-            <div className="details-four-layout-item-coulumn">
+            <div className="details-four-layout-item-coulumn" onClick={toMatching}>
               <span className="details-four-layout-item-title">媒合訂單</span>
               <span className="details-four-layout-item-content">2</span>
             </div>
@@ -108,9 +148,9 @@ export default function DetailsPage() {
                 />
               </svg>
             </div>
-            <div className="details-four-layout-item-coulumn">
+            <div className="details-four-layout-item-coulumn" onClick={toFavorite}>
               <span className="details-four-layout-item-title">收藏保母</span>
-              <span className="details-four-layout-item-content">21</span>
+              <span className="details-four-layout-item-content">{favoriteCount}</span>
             </div>
           </div>
           <div className="details-four-layout-item">
@@ -130,7 +170,7 @@ export default function DetailsPage() {
                 />
               </svg>
             </div>
-            <div className="details-four-layout-item-coulumn">
+            <div className="details-four-layout-item-coulumn" onClick={toHistory}>
               <span className="details-four-layout-item-title">歷史訂單</span>
               <span className="details-four-layout-item-content">
                 {totalCount}
@@ -144,8 +184,8 @@ export default function DetailsPage() {
               <OrderHistoryItem
                 key={index}
                 name={item.nickname}
-                way={item.way}
-                scene={item.choosetype}
+                way={item.choosetype}
+                scene={item.scenario}
                 orderId={item.id}
                 createdTime={item.created_ts}
                 status={item.status}

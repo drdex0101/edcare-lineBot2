@@ -56,14 +56,12 @@ export default async function handler(req, res) {
         o.created_by,
         o.caretypeid,
         n.score,
-        COALESCE(s.scenario, l.scenario) AS scenario,
+        c.scenario,
         COUNT(*) OVER() AS totalCount
     FROM 
         orderinfo o
     LEFT JOIN 
-        suddenly s ON o.choosetype = 'suddenly' AND o.caretypeid = s.id
-    LEFT JOIN 
-        long_term l ON o.choosetype = 'long_term' AND o.caretypeid = l.id
+        care_data c ON o.caretypeid = c.id
     LEFT JOIN 
         nanny n ON o.nannyid = n.id
     WHERE 
