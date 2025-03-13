@@ -3,7 +3,7 @@ import { verifyToken } from '../../../utils/jwtUtils';
 
 export default async function handler(req, res) {
   if (req.method === 'PATCH') {
-    const { id, orderId } = req.body; // id 為保母id
+    const { id, orderId, status } = req.body; // id 為保母id
 
     const token = req.cookies.authToken;
     const payload = await verifyToken(token);
@@ -25,11 +25,12 @@ export default async function handler(req, res) {
       const query = `
         UPDATE orderinfo
         SET nannyid = $1,
+            status = $4,
             update_ts = NOW()
         WHERE parentLineId = $2 AND id = $3
         RETURNING *;
       `;
-      const values = [id, userId, orderId];
+      const values = [id, userId, orderId, status];
 
       const result = await client.query(query, values);
       return res.status(201).json({ success: true, member: result.rows[0] });

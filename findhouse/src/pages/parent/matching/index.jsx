@@ -1,12 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./matching.css";
 import Pagination from "../../../components/base/pagenation";
 import SettingForParent from "../../../components/base/SettingForParent";
 import { useRouter } from "next/router";
+import useStore from "../../../lib/store";
 export default function HistoryPage() {
   const [totalCount, setTotalCount] = useState(0);
-  const [historyList, setHistoryList] = useState([]);
+  const [matchingList, setMatchingList] = useState([]);
+  const [onGoingList, setOnGoingList] = useState([]);
+  const { orderId,setOrderId } = useStore();
+
+  const fetchMatchingCount = async () => {
+    const response = await fetch("/api/order/match/getMatchingCountByParent?page=1&pageSize=10&status=matching");
+    const data = await response.json();
+    setMatchingList(data.orders || []);
+  };
+
+  const getImgUrl = (id) => {
+    return `/api/base/getImgUrl?id=${id}`;
+  };
+
+  const fetchOnGoingCount = async () => {
+    const response = await fetch("/api/order/match/getMatchingCountByParent?page=1&pageSize=10&status=onGoing");
+    const data = await response.json();
+    setOnGoingList(data.orders || []);
+    setTotalCount(data.totalCount || 0);
+  };
   const router = useRouter();
+
+  useEffect(() => {
+    fetchMatchingCount();
+    fetchOnGoingCount();
+  }, []);
 
   return (
     <div className="matching-main">
@@ -36,9 +61,9 @@ export default function HistoryPage() {
         <div className="matching-body-layoff">
           <span className="matching-body-layoff-title">新配對</span>
           <div className="avatar-container">
-            {historyList.map((avatar) => (
-              <div className="avatar" key={avatar.id}>
-                <img src={avatar.imgSrc} alt="avatar" className="avatar-img" />
+            {matchingList.map((avatar) => (
+              <div className="avatar" key={avatar.id} onClick={() => {router.push(`/parent/matching/pair/${avatar.nannyid}`); setOrderId(avatar.id)}}>
+                <img src={"/nannyIcon.jpg" || getImgUrl(avatar.uploadid)} alt="avatar" className="avatar-img" />
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <span className="avatar-name">{avatar.name}</span>
                   <svg
@@ -93,18 +118,14 @@ export default function HistoryPage() {
                 <span className="matching-body-layoff-content-title">
                   已配對，待社工聯繫...
                 </span>
-                {historyList.map((avatar) => (
+                {onGoingList.map((avatar) => (
                   <div className="nanny-layout" key={avatar.id}>
                     <div className="nanny-avatar">
-                      <img
-                        src={avatar.imgSrc}
-                        className="nanny-avatar-icon"
-                        alt="nanny avatar"
-                      />
+                      <img src={"/nannyIcon.jpg" || getImgUrl(avatar.uploadid)} alt="avatar" className="avatar-img" />
                     </div>
                     <div className="nanny-intro">
                       <span className="nanny-intro-name">{avatar.name}</span>
-                      <span className="nanny-intro-exp">{avatar.age}岁</span>
+                      <span className="nanny-intro-exp">{avatar.age}歲</span>
                     </div>
                     <div className="status">
                       <span className="status-content">已配對</span>
@@ -122,7 +143,7 @@ export default function HistoryPage() {
               width: "100%",
             }}
           >
-            <Pagination totalItems={10} pageSize={5} currentPage={1} />
+            <Pagination totalItems={totalCount} pageSize={5} currentPage={1} />
           </div>
         </div>
       </div>

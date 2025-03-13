@@ -62,7 +62,10 @@ export default function ProfilePage() {
         </div>
         <div className="member-body-content">
           <span className="member-body-content-font">
-            會員編號： {memberInfo.account}
+            會員編號： 
+            {memberInfo.job === '保母' 
+              ? `N000${memberInfo.id}` 
+              : `P000${memberInfo.id}`}
           </span>
           <span className="member-body-content-font">
             會員姓名： {memberInfo.name}

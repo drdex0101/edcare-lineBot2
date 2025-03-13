@@ -16,7 +16,7 @@ CREATE TABLE orderInfo (
     intro TEXT,                                -- 托育理念
     isShow BOOLEAN DEFAULT TRUE,               -- 是否公開 (預設為公開)
     created_by VARCHAR(50),
-    CONSTRAINT chk_status CHECK (status IN ('create', 'cancel', 'finish')), -- 訂單狀態限制
+    CONSTRAINT chk_status CHECK (status IN ('create', 'cancel', 'finish','matching','signing','onGoing')), -- 訂單狀態限制
     CONSTRAINT chk_chooseType CHECK (chooseType IN ('longTern', 'suddenly')),       -- 托育型別限制
     CONSTRAINT chk_orderStatus CHECK (orderStatus IN ('on', 'off'))     -- 上架狀態限制
 );

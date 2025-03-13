@@ -10,6 +10,7 @@ export default function DetailsPage() {
   const [totalCount, setTotalCount] = useState(0);
   const [kycData, setKycData] = useState(null);
   const [favoriteCount, setFavoriteCount] = useState(0);
+  const [matchingCount, setMatchingCount] = useState(0);
   const statusMap = {
     pending: "待驗證",
     check: "已驗證",
@@ -37,6 +38,12 @@ export default function DetailsPage() {
     setFavoriteCount(data.favorite.length || 0);
   };
 
+  const fetchMatchingCount = async () => {
+    const response = await fetch("/api/order/match/getMatchingCountByParent?page=1&pageSize=10&status=matching");
+    const data = await response.json();
+    setMatchingCount(data.totalCount || 0);
+  };
+
   const toMatching = () => {
     router.prefetch("/parent/matching"); // 預先加載頁面，提高切換速度
     router.push("/parent/matching");
@@ -56,6 +63,7 @@ export default function DetailsPage() {
     fetchHistoryList();
     fetchKycData();
     fetchFavoriteCount();
+    fetchMatchingCount();
   }, []);
 
   return (
@@ -124,7 +132,7 @@ export default function DetailsPage() {
             </div>
             <div className="details-four-layout-item-coulumn" onClick={toMatching}>
               <span className="details-four-layout-item-title">媒合訂單</span>
-              <span className="details-four-layout-item-content">2</span>
+              <span className="details-four-layout-item-content">{matchingCount}</span>
             </div>
           </div>
         </div>
