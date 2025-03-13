@@ -22,6 +22,15 @@ const ApplicationPage = () => {
   };
   useEffect(() => {
     fetchMemberInfo();
+    fetch("/api/line/changeRichMenu", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        richMenuId: "richmenu-richmenu-richmenu-bd0843b93a53c3df760bbd95c7871e23",
+      }),
+    })
   }, []);
 
   const handleNextClick = async () => {

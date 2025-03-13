@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 const ApplicationPage = () => {
   const router = useRouter();
@@ -12,7 +12,6 @@ const ApplicationPage = () => {
     }
     router.push("/nanny/apply"); // 替换 '/next-page' 为你想要跳转的路径
   };
-
   return (
     <div style={styles.main}>
       <div style={styles.header}>
