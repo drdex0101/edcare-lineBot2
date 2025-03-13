@@ -27,7 +27,7 @@ export default function DetailsPage() {
   const fetchKycData = async () => {
     const response = await fetch("/api/kycInfo/getKycData");
     const data = await response.json();
-    setKycData(data);
+    setKycData(data.kycInfoList[0]);
   };
 
   const fetchFavoriteCount = async () => {
