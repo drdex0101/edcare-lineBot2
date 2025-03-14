@@ -144,6 +144,7 @@ const ApplicationPage = () => {
   useEffect(() => {
     const storedData = localStorage.getItem("data-storage");
     const parsedData = JSON.parse(storedData).state.babyInfo;
+    console.log(parsedData);
     if (parsedData) {
       setBabyInfo(parsedData);
       setBabyName(parsedData.nickname);

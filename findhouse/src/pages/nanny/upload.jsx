@@ -12,6 +12,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import Loading from "../../components/base/Loading";
 import useStore from "../../lib/store";
 import dayjs from 'dayjs';
+import Swal from 'sweetalert2'
 
 const ApplicationPage = () => {
   const router = useRouter();
@@ -63,7 +64,42 @@ const ApplicationPage = () => {
 
   const handleNextClick = async () => {
     setIsLoading(true);
-    const options = { year: "numeric", month: "2-digit", day: "2-digit" };
+
+    const requiredFields = {
+      name: "真實姓名",
+      identityCard: "身分證字號",
+      gender: "性別",
+      address: "戶籍地址",
+      communicateAddress: "通訊地址",
+      frontImg: "身分證正面照片",
+      backImg: "身分證反面照片",
+    };
+
+    if (!selectedDate) {
+      Swal.fire({
+        icon: "warning",
+        title: "請選擇生日！",
+      });
+      setIsLoading(false);
+      return; // 阻止表單提交
+    }
+    
+  
+    // 取得缺少的欄位
+    const missingFields = Object.entries(requiredFields)
+      .filter(([key]) => !formData[key] && !eval(key)) // 檢查 formData 和 state 變數
+      .map(([_, label]) => label);
+  
+    if (missingFields.length > 0) {
+      Swal.fire({
+        icon: "warning",
+        title: "請填寫所有必填欄位！",
+        text: `以下欄位未填寫：\n${missingFields.join(", ")}`,
+      });
+      setIsLoading(false);
+      return; // 停止提交
+    }  
+
     const kycInfoData = {
       name: formData.name,
       identityCard: formData.identityCard,
@@ -94,7 +130,10 @@ const ApplicationPage = () => {
           setKycData(response.member);
           router.push("/nanny/create/choose");
         } catch (error) {
-          alert("更新失敗，請重新嘗試。");
+          Swal.fire({
+            icon: 'error',
+            title: '更新失敗，請重新嘗試。',
+          });
           console.error("Error updating kyc info:", error);
           setIsLoading(false);
           router.push("/nanny/create/choose");
@@ -134,7 +173,10 @@ const ApplicationPage = () => {
       }
     } catch (error) {
       setIsLoading(false);
-      alert("申請失敗，請重新嘗試。");
+      Swal.fire({
+        icon: 'error',
+        title: '申請失敗，請重新嘗試。',
+      });
       console.error("Error creating member:", error);
     }
   };
@@ -224,7 +266,10 @@ const ApplicationPage = () => {
         console.log("Uploaded Image URL:", result.url);
       } else {
         setIsLoading(false);
-        alert("上傳失敗，請重新嘗試。");
+        Swal.fire({
+          icon: 'error',
+          title: '上傳失敗，請重新嘗試。',
+        });
         if (type === "ID Front") {
           setFileName("");
         } else if (type === "ID Back") {
@@ -234,7 +279,10 @@ const ApplicationPage = () => {
       }
     } catch (error) {
       setIsLoading(false);
-      alert("上傳失敗，請重新嘗試。");
+      Swal.fire({
+        icon: 'error',
+        title: '上傳失敗，請重新嘗試。',
+      });
       if (type === "ID Front") {
         setFrontImg(null);
       } else if (type === "ID Back") {
@@ -420,7 +468,7 @@ const ApplicationPage = () => {
               }}
             />
 
-            <FormControl fullWidth sx={{ alignSelf: "stretch" }}>
+            <FormControl required  fullWidth sx={{ alignSelf: "stretch" }}>
               <InputLabel id="gender-label">性別</InputLabel>
               <Select
                 labelId="gender-label"
@@ -450,13 +498,14 @@ const ApplicationPage = () => {
 
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
-                label="生日"
+                label="生日*"
                 value={selectedDate}
                 onChange={(newValue) => setSelectedDate(newValue)}
                 maxDate={maxSelectableDate}
                 renderInput={(params) => <TextField {...params} />}
                 views={["year", "month", "day"]}
                 disableFuture
+                required
                 InputProps={{
                   sx: {
                     padding: "0px 16px",

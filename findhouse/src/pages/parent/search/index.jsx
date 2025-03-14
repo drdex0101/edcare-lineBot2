@@ -30,8 +30,7 @@ export default function HistoryPage() {
   const [locationCount, setLocationCount] = useState(0); // 新增狀態以追蹤選擇的地區數量
   const [currentOrderCareType, setCurrentOrderCareType] = useState(null);
   const { orderId, setOrderId } = useStore();
-  const [careData, setCareData] = useState();
-  const [babyInfo, setBabyInfo] = useState();
+  const { careData, setCareData, babyInfo, setBabyInfo } = useStore() || {};
   const [isComposing, setIsComposing] = useState(false);
 
   const handleChange = (e) => {
@@ -181,9 +180,9 @@ export default function HistoryPage() {
   };
 
   const handleNextClick = (careType) => {
-    console.log(careType);
+    console.log(careType,orderCurrentPage);
     setCareData(careTypeData);
-    setBabyInfo(orderInfo);
+    setBabyInfo(orderInfo[orderCurrentPage - 1]);
     router.push("/parent/create/choose");
   };
 
@@ -556,6 +555,9 @@ export default function HistoryPage() {
 }
 
 const styles = {
+  orderItem: {
+    display: "flex",
+  },
   searchFont: {
     color: "#000",
     /* Line/medium/11pt */
@@ -633,9 +635,6 @@ const styles = {
     fontStyle: "normal",
     fontWeight: "700",
     lineHeight: "normal",
-  },
-  orderItem: {
-    display: "flex",
   },
   orderInfo: {
     display: "flex",
@@ -844,7 +843,6 @@ const styles = {
     width: "100%",
     display: "flex",
     height: "85px",
-    padding: "28.5px 38.5px 27.5px 39.5px",
     justifyContent: "center",
     alignItems: "center",
     borderRadius: "12px",
