@@ -11,19 +11,20 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import  useStore from "../../../lib/store";
 import { useEffect } from "react";
+import dayjs from "dayjs";
+import Swal from "sweetalert2";
 
 import { MenuItem, InputLabel, FormControl } from "@mui/material";
 import Cookies from "js-cookie";
 
 const ApplicationPage = () => {
   const router = useRouter();
-  const [selectedDate, setSelectedDate] = useState();
+  const [selectedDate, setSelectedDate] = useState(null); // 避免 undefined
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [babyName, setBabyName] = useState("");
   const [babyGender, setBabyGender] = useState("");
   const [babyBirthOrder, setBabyBirthOrder] = useState("");
   const [babyHope, setBabyHope] = useState("");
-  const [selectedCareType, setSelectedCareType] = useState(null);
   const { babyInfo, setBabyInfo } = useStore();
   const handleNextClick = () => {
     createBabyRecord();
@@ -69,13 +70,22 @@ const ApplicationPage = () => {
       .map(([_, label]) => label);
 
     if (missingFields.length > 0) {
-      alert(`請填寫以下必填欄位：\n${missingFields.join("\n")}`);
+      Swal.fire({
+        icon: "error",
+        title: "請填寫以下必填欄位",
+        text: missingFields.join("\n"),
+        confirmButtonText: "確定",
+      });
       return; // 終止函數執行
     }
 
     // **檢查生日格式（應為 YYYY-MM-DD 或有效日期）**
     if (!selectedDate || isNaN(new Date(selectedDate).getTime())) {
-      alert("請選擇有效的寶寶生日（格式：YYYY-MM-DD）。");
+      Swal.fire({
+        icon: "error",
+        title: "請選擇有效的寶寶生日（格式：YYYY-MM-DD）。",
+        confirmButtonText: "確定",
+      });
       return;
     }
 
@@ -134,7 +144,11 @@ const ApplicationPage = () => {
       const age = today.getFullYear() - birthDate.getFullYear();
 
       if (age >= 12) {
-        alert("孩童年齡不能超過12歲");
+        Swal.fire({
+          icon: "error",
+          title: "孩童年齡不能超過12歲",
+          confirmButtonText: "確定",
+        });
         return;
       }
     }
@@ -149,7 +163,7 @@ const ApplicationPage = () => {
       setBabyInfo(parsedData);
       setBabyName(parsedData.nickname);
       setBabyGender(parsedData.gender);
-      setSelectedDate(parsedData.birthday);
+      setSelectedDate( parsedData?.birthday ? dayjs(parsedData?.birthday) : null);
       setBabyBirthOrder(parsedData.rank);
       setBabyHope(parsedData.intro);
       setSelectedOptions(parsedData.hope);
@@ -359,6 +373,7 @@ const ApplicationPage = () => {
                         }
                       />
                     }
+                    checked={selectedOptions.includes('1')}
                     style={{ marginRight: "0px" }}
                   />
                 </FormGroup>
@@ -375,6 +390,7 @@ const ApplicationPage = () => {
                         }
                       />
                     }
+                    checked={selectedOptions.includes('2')}
                     style={{ marginRight: "0px" }}
                   />
                 </FormGroup>
@@ -391,6 +407,7 @@ const ApplicationPage = () => {
                         }
                       />
                     }
+                    checked={selectedOptions.includes('3')}
                     style={{ marginRight: "0px" }}
                   />
                 </FormGroup>
@@ -407,6 +424,7 @@ const ApplicationPage = () => {
                         }
                       />
                     }
+                    checked={selectedOptions.includes('4')}
                     style={{ marginRight: "0px" }}
                   />
                 </FormGroup>
@@ -423,6 +441,7 @@ const ApplicationPage = () => {
                         }
                       />
                     }
+                    checked={selectedOptions.includes('5')}
                     style={{ marginRight: "0px" }}
                   />
                 </FormGroup>
@@ -439,6 +458,7 @@ const ApplicationPage = () => {
                         }
                       />
                     }
+                    checked={selectedOptions.includes('6')}
                     style={{ marginRight: "0px" }}
                   />
                 </FormGroup>
