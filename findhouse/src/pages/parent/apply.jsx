@@ -7,6 +7,7 @@ import Loading from "../../components/base/Loading";
 import { useState } from "react";
 import useStore from "../../lib/store";
 import Cookies from "js-cookie";
+import Swal from 'sweetalert2'
 
 const ApplicationPage = () => {
   const router = useRouter();
@@ -38,21 +39,30 @@ const ApplicationPage = () => {
     const email = document.getElementById("email").value;
 
     if (!account || !cellphone || !email || !job) {
-      alert("請填寫所有必填欄位。");
+      Swal.fire({
+        icon: 'error',
+        title: '請填寫所有必填欄位。',
+      });
       return;
     }
 
     // 驗證手機號碼格式（假設為台灣的手機號碼格式）
     const phonePattern = /^09\d{8}$/;
     if (!phonePattern.test(memberData.cellphone)) {
-      alert("請輸入有效的手機號碼（例如：0912345678）。");
+      Swal.fire({
+        icon: 'error',
+        title: '請輸入有效的手機號碼（例如：0912345678）。',
+      });
       return;
     }
 
     // 驗證電子郵件格式
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(memberData.email)) {
-      alert("請輸入有效的電子郵件地址。");
+      Swal.fire({
+        icon: 'error',
+        title: '請輸入有效的電子郵件地址。',
+      });
       return;
     }
 
@@ -103,7 +113,10 @@ const ApplicationPage = () => {
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
-      alert("申請失敗，請重新嘗試。");
+      Swal.fire({
+        icon: 'error',
+        title: '申請失敗，請重新嘗試。',
+      });
       console.error("Error creating member:", error);
     }
   };
