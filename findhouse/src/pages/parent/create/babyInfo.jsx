@@ -126,13 +126,14 @@ const ApplicationPage = () => {
 
   const handleSwitchChange = (optionId, isChecked) => {
     setSelectedOptions((prevOptions) => {
-      // Ensure prevOptions is an array
+      // Ensure prevOptions is an array and convert optionId to string
       const currentOptions = Array.isArray(prevOptions) ? prevOptions : [];
+      const optionIdString = optionId.toString();
       
       if (isChecked) {
-        return [...currentOptions, optionId];
+        return [...currentOptions, optionIdString];
       } else {
-        return currentOptions.filter((id) => id !== optionId);
+        return currentOptions.filter((id) => id !== optionIdString);
       }
     });
   };
@@ -369,7 +370,7 @@ const ApplicationPage = () => {
                       <IOSSwitch
                         sx={{ m: 1 }}
                         onChange={(e) =>
-                          handleSwitchChange(1, e.target.checked)
+                          handleSwitchChange('1', e.target.checked)
                         }
                       />
                     }
