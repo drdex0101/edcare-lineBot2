@@ -37,7 +37,7 @@ const ApplicationPage = () => {
   const [selectedAddress, setSelectedAddress] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [careTypeId, setCareTypeId] = useState(null);
-  const [memberId, setMemberId] = useStore();
+  const { memberId, setMemberId } = useStore() || { memberId: null, setMemberId: () => {} };
 
   useEffect(() => {
     if (nannyInfo?.service) {
