@@ -57,7 +57,7 @@ const ApplicationPage = () => {
         weekdays: selectedDays,
         careTime: selectedCareTime,
         scenario: selectedScenario,
-        idType: "parent",
+        idType: "nanny",
         careType: "longTern",
         startDate: null,
         endDate: null,

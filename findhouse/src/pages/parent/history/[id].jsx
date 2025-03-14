@@ -11,6 +11,12 @@ export default function HistoryId() {
   const [orderInfo, setOrderInfo] = useState(null);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
+  const [nannyInfo, setNannyInfo] = useState(null);
+  const getNannyInfo = async (nannyId) => {
+    const response = await fetch(`/api/nanny/getNannyInfo?id=${nannyId}`);
+    const data = await response.json();
+    setNannyInfo(data.nannies[0]);
+  };
 
   useEffect(() => {
     if (!router.isReady) return; // 等待路由准备完毕
@@ -38,6 +44,7 @@ export default function HistoryId() {
         title: "訂單資訊取得失敗",
         confirmButtonText: "確定",
       });
+      console.error(error);
       setIsLoading(false);
     }
   };
@@ -171,7 +178,7 @@ export default function HistoryId() {
                 <span className="title-font">托育人員</span>
                 <div className="about-nanny-font-layout">
                   <span className="sub-title-font">
-                    保母姓名：{orderInfo.name ? orderInfo.name : "無"}
+                    保母姓名：{nannyInfo?.name ? nannyInfo?.name : "無"}
                   </span>
                   <span className="sub-title-font">
                     配對時間：
