@@ -15,33 +15,11 @@ const OrderHistoryItem = ({
 }) => {
   const router = useRouter();
   const setItem = useStore((state) => state.setItem);
-  const [careTypeData, setCareTypeData] = useState([]);
+
   const handleClick = () => {
     setItem(item);
     router.push(`/parent/history/${orderId}`);
   };
-
-  const fetchCareTypeData = async () => {
-    try {
-      let careTypeResponse;
-      if (way === "suddenly") {
-        careTypeResponse = await fetch(`/api/base/getSuddenly?id=${scene}`);
-      } else if (way === "longTerm") {
-        careTypeResponse = await fetch(`/api/base/getLongTern?id=${scene}`);
-      }
-
-      if (!careTypeResponse.ok) throw new Error("API call failed");
-      const careTypeDatas = await careTypeResponse.json();
-
-      setCareTypeData(careTypeDatas.data || {}); // ✅ 確保 `data` 是物件
-    } catch (error) {
-      console.error("Failed to fetch careTypeData:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchCareTypeData();
-  }, []);
 
   return (
     <div className="order-history-list-item" onClick={() => handleClick()}>
@@ -58,7 +36,13 @@ const OrderHistoryItem = ({
           </div>
           <div className="sceneLayout">
             <span className="normalFont">
-              {careTypeData.scenario === "home" ? "在宅" : "到宅"}
+              {scene === "toHome"
+                ? "到宅"
+                : scene === "home"
+                  ? "在宅"
+                  : scene === "infantCareCenter"
+                    ? "定點"
+                    : ""}
             </span>
           </div>
         </div>
@@ -72,7 +56,19 @@ const OrderHistoryItem = ({
         </span>
       </div>
       <div className="order-status-success">
-        <span className="order-status-success-font">{status}</span>
+        <span className="order-status-success-font">
+          {status === "create"
+                ? "媒合中"
+                : status === "matching"
+                  ? "預約中"
+                  : status === "signing"
+                    ? "簽約中"
+                    : status === "onGoing"
+                      ? "合約履行中"
+                      : status === "finish"
+                        ? "已完成"
+                        : ""}
+        </span>
       </div>
     </div>
   );

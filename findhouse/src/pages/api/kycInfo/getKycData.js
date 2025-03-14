@@ -32,7 +32,7 @@ export default async function handler(req, res) {
       `;
       const result = await client.query(query, [userId]);
 
-      console.log('Nannies retrieved successfully:', result.rows);
+      console.log('kyc retrieved successfully:', result.rows);
       return res.status(200).json({ 
         success: true, 
         kycInfoList: result.rows, 

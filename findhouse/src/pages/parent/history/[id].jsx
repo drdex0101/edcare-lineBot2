@@ -22,6 +22,9 @@ export default function HistoryId() {
       console.log(data);
       if (data.orders) {
         setOrderInfo(data.orders[0]);
+        if (data.orders[0].nannyid) {
+          getNannyInfo(data.orders[0].nannyid);
+        }
       } else {
         console.error("API 响应中缺少 'orders' 属性:", data);
       }
@@ -30,10 +33,24 @@ export default function HistoryId() {
     }
   };
 
+  const orderStatusSteps = [
+    { key: "create", label: "媒合中" },
+    { key: "matching", label: "預約中" },
+    { key: "signing", label: "簽約中" },
+    { key: "onGoing", label: "合約履行中" },
+    { key: "finish", label: "已完成" },
+  ];
+  
+  // 確保 orderInfo 存在
+  const currentStatus = orderInfo?.status || "create"; 
+  
+  // 找到目前 status 在列表中的索引
+  const currentIndex = orderStatusSteps.findIndex((step) => step.key === currentStatus);
+
   return (
     <div className="history-main">
       <div className="history-header">
-      <img
+        <img
           src="/icon/arrowForward.svg"
           alt="back"
           onClick={() => router.back()}
@@ -83,50 +100,46 @@ export default function HistoryId() {
             <span className="sub-title-font">
               托育時間：
               {orderInfo.choosetype === "suddenly"
-                ? orderInfo.suddenly_care_time || "無資料"
-                : orderInfo.long_term_care_time || "無資料"}
+                ? orderInfo.care_time || "無資料"
+                : orderInfo.care_time || "無資料"}
             </span>
             <span className="sub-title-font">
               托育日期：
               {orderInfo.choosetype === "suddenly"
-                ? `${orderInfo.suddenly_start_date.slice(0, 10) || "無資料"} ~ ${orderInfo.suddenly_end_date.slice(0, 10) || "無資料"}`
-                : orderInfo.long_term_care_time || "無資料"}
+                ? `${orderInfo?.start_date.slice(0, 10) || "無資料"} ~ ${orderInfo?.end_date.slice(0, 10) || "無資料"}`
+                : orderInfo.care_time || "無資料"}
             </span>
             <span className="sub-title-font">
               托育情境：
-              {orderInfo.choosetype === "suddenly"
-                ? orderInfo.suddenly_scenario || "無資料"
-                : orderInfo.long_term_scenario || "無資料"}
+              {orderInfo.scenario === "home"
+                ? "在宅托育"
+                : orderInfo.scenario === "infantCareCenter"
+                  ? "定點托育"
+                  : orderInfo.scenario === "toHome"
+                    ? "到宅托育"
+                    : "無資料"}
             </span>
             <span className="sub-title-font">
               托育地址：
               {orderInfo.choosetype === "suddenly"
-                ? orderInfo.suddenly_location || "無資料"
+                ? orderInfo?.location || "無資料"
                 : "無資料"}
             </span>
           </div>
         )}
 
-        <div className="status-layout">
-          <span className="title-font">訂單狀態</span>
-          <div className="status-process-layout">
-            <div className="status-process-on">
-              <span className="status-process-font-on">媒合中</span>
+      <div className="status-layout">
+        <span className="title-font">訂單狀態</span>
+        <div className="status-process-layout">
+          {orderStatusSteps.map((step, index) => (
+            <div key={step.key} className={index <= currentIndex ? "status-process-on" : "status-process-off"}>
+              <span className={index <= currentIndex ? "status-process-font-on" : "status-process-font-off"}>
+                {step.label}
+              </span>
             </div>
-            <div className="status-process-off">
-              <span className="status-process-font-off">預約中</span>
-            </div>
-            <div className="status-process-off">
-              <span className="status-process-font-off">簽約中</span>
-            </div>
-            <div className="status-process-off">
-              <span className="status-process-font-off">合約履行中</span>
-            </div>
-            <div className="status-process-off">
-              <span className="status-process-font-off">已完成</span>
-            </div>
-          </div>
+          ))}
         </div>
+      </div>
 
         {orderInfo && (
           <div className="about-nanny">

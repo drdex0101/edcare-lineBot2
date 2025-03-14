@@ -46,26 +46,22 @@ export default async function handler(req, res) {
         o.created_by,
         k.name,
         n.environmentpic,
-        l.weekdays,
-        l.care_time as long_term_care_time,
-        l.scenario as long_term_scenario,
-        s.start_date as suddenly_start_date,
-        s.end_date as suddenly_end_date,
-        s.care_time as suddenly_care_time,
-        s.location as suddenly_location,
-        s.scenario as suddenly_scenario,
-        COALESCE(s.scenario, l.scenario) AS scenario,
+        c.weekdays,
+        c.care_time,
+        c.scenario,
+        c.start_date,
+        c.end_date,
         COUNT(*) OVER() AS totalCount
     FROM 
         orderinfo o
     LEFT JOIN 
-        suddenly s ON o.choosetype = 'suddenly' AND o.caretypeid = s.id
+        care_data c ON o.caretypeid = c.id
     LEFT JOIN 
-        long_term l ON o.choosetype = 'long_term' AND o.caretypeid = l.id
+        member m ON o.nannyid = m.id
     LEFT JOIN 
         nanny n ON o.nannyid = n.id
     LEFT JOIN 
-        kyc_info k ON n.kycId = k.id
+        kyc_info k ON m.kyc_id::bigint = k.id
     WHERE 
         o.id = $1
       `;

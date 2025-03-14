@@ -47,14 +47,12 @@ export default async function handler(req, res) {
       return res.status(200).json({ 
         success: true, 
         nannies: result.rows, 
-        totalCount: result.rowCount, // Total count of records in the current result
+        totalCount: totalCountResult.rows[0].count, // Total count of records in the current result
         pageCount: result.rowCount // Count of records in the current page
       });
     } catch (error) {
       console.error('Database error:', error);
       res.status(500).json({ error: 'Database error' });
-    } finally {
-      await client.end();
     }
   } else {
     res.setHeader('Allow', ['GET']);

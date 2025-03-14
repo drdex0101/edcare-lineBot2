@@ -47,24 +47,21 @@ export default async function handler(req, res) {
         o.created_by,
         n.score,
         k.name,
-        l.weekdays,
-        l.care_time AS long_term_care_time,
-        l.scenario AS long_term_scenario,
-        s.start_date AS suddenly_start_date,
-        s.end_date AS suddenly_end_date,
-        s.care_time AS suddenly_care_time,
-        s.location AS suddenly_location,
-        s.scenario AS suddenly_scenario,
-        COALESCE(s.scenario, l.scenario) AS scenario,
+        c.weekdays,
+        c.care_time,
+        c.scenario,
+        c.start_date,
+        c.end_date,
+        c.care_time,
+        c.location,
+        c.scenario,
         COUNT(*) OVER() AS totalCount
         FROM 
             favorites f
         LEFT JOIN 
             orderinfo o ON f.item_id::bigint = o.id
         LEFT JOIN 
-            suddenly s ON o.choosetype = 'suddenly' AND o.caretypeid = s.id
-        LEFT JOIN 
-            long_term l ON o.choosetype = 'long_term' AND o.caretypeid = l.id
+            care_data c ON  o.caretypeid = c.id
         LEFT JOIN 
             nanny n ON o.nannyid = n.id
         LEFT JOIN 
