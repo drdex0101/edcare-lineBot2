@@ -1,5 +1,5 @@
 # 使用 Node.js LTS 版本作為基礎映像
-FROM --platform=linux/amd64 node:20-alpine
+FROM --platform=linux/amd64 node:20-alpine AS builder
 
 # 設定工作目錄
 WORKDIR /app
