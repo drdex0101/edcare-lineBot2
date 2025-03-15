@@ -1,1 +1,10 @@
 findhouse/public/local-abbey-440508-h9-260ffb20396f.json
+findhouse/node_modules
+findhouse/.next
+findhouse/.env
+findhouse/.env.local
+findhouse/.env.development.local
+findhouse/.env.test.local
+findhouse/.env.production.local
+findhouse/1020
+findhouse/key.json

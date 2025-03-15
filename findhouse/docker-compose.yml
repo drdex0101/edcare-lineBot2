@@ -1,0 +1,6 @@
+services:
+  app:
+    image: edcare-linebot2-app
+    build: .
+    ports:
+      - "8080:8080"
