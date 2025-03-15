@@ -26,6 +26,9 @@ jobs:
         run: |
           gcloud auth configure-docker us-central1-docker.pkg.dev
 
+      - name: Move to findhouse directory
+        run: cd findhouse
+
       - name: Build and push Docker image
         run: |
           docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/nextjs-repo/nextjs-app ./findhouse
