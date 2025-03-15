@@ -9,6 +9,7 @@ import CalendarWeekendPicker from "../../../components/base/CalendarWeekendPicke
 import Loading from "../../../components/base/Loading";
 import { MenuItem, InputLabel, FormControl } from "@mui/material";
 import useStore from "../../../lib/store";
+import Swal from "sweetalert2";
 
 const ApplicationPage = () => {
   const router = useRouter();
@@ -46,6 +47,7 @@ const ApplicationPage = () => {
     localStorage.setItem("careTypeId", data.careData.id);
     localStorage.setItem("choosetype", "longTern");
     setCareData(data.careData);
+    setIsLoading(false);
   };
 
   const updateCareData = async () => {
@@ -68,12 +70,18 @@ const ApplicationPage = () => {
     localStorage.setItem("careTypeId", data.careData.id);
     localStorage.setItem("choosetype", "longTern");
     setCareData(data.careData);
+    setIsLoading(false);
   }
 
   const handleNextClick = async() => {
-    if (selectedDays.length === 0 || !selectedCareTime || !selectedScenario) {
-      alert("請填寫所有必填欄位。");
-      return;
+    try {
+      if (selectedDays.length === 0 || !selectedCareTime || !selectedScenario) {
+        Swal.fire({
+          icon: "error",
+          title: "錯誤",
+          text: "請填寫所有必填欄位。",
+        });
+        return;
     }
     if (careData) {
       await updateCareData();
@@ -81,6 +89,14 @@ const ApplicationPage = () => {
       await createCareData();
     }
     router.push("/parent/create/babyInfo");
+    } catch (error) {
+      console.error("發生錯誤:", error);
+      Swal.fire({
+        icon: "error",
+        title: "發生錯誤",
+        text: "請稍後再試。",
+      });
+    }
   };
 
   const [selectedDays, setSelectedDays] = useState([]);

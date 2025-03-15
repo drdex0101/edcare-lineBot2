@@ -4,7 +4,7 @@ import { verifyToken } from '../../../utils/jwtUtils';
 export default async function handler(req, res) {
   if (req.method === 'PATCH') {
     const { 
-      orderId,
+      id,
       nannyid,
       status,
       choosetype,
@@ -65,7 +65,7 @@ export default async function handler(req, res) {
       `;
 
       const values = [
-          orderId ? parseInt(orderId) : null,
+          id ? parseInt(id) : null,
           nannyid ? parseInt(nannyid) : null,
           status,
           choosetype,
