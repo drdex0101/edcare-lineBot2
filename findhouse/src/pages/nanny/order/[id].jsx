@@ -14,6 +14,7 @@ export default function ProfilePage() {
   const [iconUrl, setIconUrl] = useState("/assets/images/resource/error.png");
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [age, setAge] = useState(0);
   const [selectedRange, setSelectedRange] = React.useState({
     startDate: null,
     endDate: null,
@@ -78,9 +79,8 @@ export default function ProfilePage() {
         const response = await fetch(`/api/order/getOrderInfoById?id=${id}`);
         const data = await response.json();
         setOrderInfo(data.orders[0]);
-
         // 如果有環境照片，則獲取每張照片的URL
-        if (data.orders[0].environmentpic.length > 0) {
+        if (data.orders[0].environmentpic && data.orders[0].environmentpic.length > 0) {
           for (const picId of data.orders[0].environmentpic) {
             const response2 = await fetch(`/api/base/getImgUrl?id=${picId}`);
             const data2 = await response2.json();

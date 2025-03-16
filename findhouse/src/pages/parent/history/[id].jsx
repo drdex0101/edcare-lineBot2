@@ -28,7 +28,6 @@ export default function HistoryId() {
     try {
       const response = await fetch(`/api/order/getOrderInfoById?id=${id}`);
       const data = await response.json();
-      console.log(data);
       if (data.orders) {
         setOrderInfo(data.orders[0]);
         if (data.orders[0].nannyid) {
@@ -73,6 +72,29 @@ export default function HistoryId() {
   const getCareTimeLabel = (careTimeKey) => {
     const careTimeItem = careTime.find(item => item.key === careTimeKey);
     return careTimeItem ? careTimeItem.label : "無資料";
+  };
+
+  // Update this helper function to handle both array and string inputs
+  const convertWeekdaysToString = (weekdays) => {
+    if (!weekdays) return "無資料";
+    const weekdayMap = {
+      1: "星期一",
+      2: "星期二",
+      3: "星期三",
+      4: "星期四",
+      5: "星期五",
+      6: "星期六",
+      7: "星期日"
+    };
+
+    // Handle both array and string inputs
+    const weekdayArray = Array.isArray(weekdays) 
+      ? weekdays 
+      : weekdays.split(",").map(day => day.trim());
+
+    return weekdayArray
+      .map(day => weekdayMap[day])
+      .join(", ");
   };
 
   return (
@@ -139,7 +161,7 @@ export default function HistoryId() {
                   托育日期：
                   {orderInfo.choosetype === "suddenly"
                     ? `${orderInfo?.start_date.slice(0, 10) || "無資料"} ~ ${orderInfo?.end_date.slice(0, 10) || "無資料"}`
-                    : getCareTimeLabel(orderInfo.care_time) || "無資料"}
+                    : convertWeekdaysToString(orderInfo.weekdays) + " " + getCareTimeLabel(orderInfo.care_time)}
                 </span>
                 <span className="sub-title-font">
                   托育情境：
