@@ -166,7 +166,11 @@ const ApplicationPage = () => {
                   </span>
                 </div>
               </div>
-              <button style={styles.lastButton}></button>
+              {isMember && haveKyc && haveNanny ? (
+                <></>
+              ) : (
+                <button style={styles.goToLink} onClick={handleClick}>點我繼續填寫資料</button>
+              )}
             </div>
           </div>
         </>
@@ -177,11 +181,22 @@ const ApplicationPage = () => {
 
 const styles = {
   goToLink: {
+    display: "flex",
+    height: "34px",
+    padding: "12px 16px",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "8px",
+    borderRadius: "32px",
+    background: "var(---Primary-Primary, #E3838E)",
+    color: "var(---SurfaceContainer-Lowest, #FFF)",
+    fontFamily: "Source Sans Pro",
+    fontSize: "16px",
+    fontStyle: "normal",
+    fontWeight: "600",
+    lineHeight: "24px",
     border: "none",
-    backgroundColor: "#FFF",
-    width: "100%",
-    height: "100px",
-    borderRadius: "10px",
+    marginTop: "20px",
   },
   lastButton: {
     border: "none",

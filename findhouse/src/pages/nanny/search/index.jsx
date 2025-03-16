@@ -261,7 +261,7 @@ const ApplicationPage = () => {
 
     try {
       const response = await fetch(
-        `/api/order/getOrderInfoList?page=${page}&pageSize=${pageSize}&keywords=${keywords}&locations=${searchLocation}&sort=${sort}`,
+        `/api/order/getOrderInfoListForNanny?page=${page}&pageSize=${pageSize}&keywords=${keywords}&locations=${searchLocation}&sort=${sort}`,
         {
           method: "GET",
           headers: {
