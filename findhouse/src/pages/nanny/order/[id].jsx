@@ -18,7 +18,6 @@ export default function ProfilePage() {
   const [age, setAge] = useState(0);
   const [isMatching, setIsMatching] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [age, setAge] = useState(0);
   const [selectedRange, setSelectedRange] = React.useState({
     startDate: null,
     endDate: null,
