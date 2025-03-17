@@ -11,6 +11,12 @@ export default function HistoryId() {
   const [orderInfo, setOrderInfo] = useState(null);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
+  const [nannyInfo, setNannyInfo] = useState(null);
+  const getNannyInfo = async (nannyId) => {
+    const response = await fetch(`/api/nanny/getNannyInfo?id=${nannyId}`);
+    const data = await response.json();
+    setNannyInfo(data.nannies[0]);
+  };
 
   useEffect(() => {
     if (!router.isReady) return; // 等待路由准备完毕
@@ -22,7 +28,6 @@ export default function HistoryId() {
     try {
       const response = await fetch(`/api/order/getOrderInfoById?id=${id}`);
       const data = await response.json();
-      console.log(data);
       if (data.orders) {
         setOrderInfo(data.orders[0]);
         if (data.orders[0].nannyid) {
@@ -38,6 +43,7 @@ export default function HistoryId() {
         title: "訂單資訊取得失敗",
         confirmButtonText: "確定",
       });
+      console.error(error);
       setIsLoading(false);
     }
   };
@@ -66,6 +72,29 @@ export default function HistoryId() {
   const getCareTimeLabel = (careTimeKey) => {
     const careTimeItem = careTime.find(item => item.key === careTimeKey);
     return careTimeItem ? careTimeItem.label : "無資料";
+  };
+
+  // Update this helper function to handle both array and string inputs
+  const convertWeekdaysToString = (weekdays) => {
+    if (!weekdays) return "無資料";
+    const weekdayMap = {
+      1: "星期一",
+      2: "星期二",
+      3: "星期三",
+      4: "星期四",
+      5: "星期五",
+      6: "星期六",
+      7: "星期日"
+    };
+
+    // Handle both array and string inputs
+    const weekdayArray = Array.isArray(weekdays) 
+      ? weekdays 
+      : weekdays.split(",").map(day => day.trim());
+
+    return weekdayArray
+      .map(day => weekdayMap[day])
+      .join(", ");
   };
 
   return (
@@ -132,7 +161,7 @@ export default function HistoryId() {
                   托育日期：
                   {orderInfo.choosetype === "suddenly"
                     ? `${orderInfo?.start_date.slice(0, 10) || "無資料"} ~ ${orderInfo?.end_date.slice(0, 10) || "無資料"}`
-                    : getCareTimeLabel(orderInfo.care_time) || "無資料"}
+                    : convertWeekdaysToString(orderInfo.weekdays) + " " + getCareTimeLabel(orderInfo.care_time)}
                 </span>
                 <span className="sub-title-font">
                   托育情境：
@@ -171,7 +200,7 @@ export default function HistoryId() {
                 <span className="title-font">托育人員</span>
                 <div className="about-nanny-font-layout">
                   <span className="sub-title-font">
-                    保母姓名：{orderInfo.name ? orderInfo.name : "無"}
+                    保母姓名：{nannyInfo?.name ? nannyInfo?.name : "無"}
                   </span>
                   <span className="sub-title-font">
                     配對時間：

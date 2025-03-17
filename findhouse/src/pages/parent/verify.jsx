@@ -8,6 +8,15 @@ const ApplicationPage = () => {
   };
 
   const finishClick = () => {
+    fetch("/api/line/changeRichMenu", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        richMenuId: "richmenu-48f0c719cfbfc92dd6ea5b8ce10b6cb3",
+      }),
+    })
     router.push("/parent/finish"); // 替换 '/next-page' 为你想要跳转的路径
   };
 
