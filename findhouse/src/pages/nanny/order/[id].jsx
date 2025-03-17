@@ -18,6 +18,7 @@ export default function ProfilePage() {
   const [age, setAge] = useState(0);
   const [isMatching, setIsMatching] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [age, setAge] = useState(0);
   const [selectedRange, setSelectedRange] = React.useState({
     startDate: null,
     endDate: null,
@@ -102,7 +103,6 @@ export default function ProfilePage() {
         const data = await response.json();
         setAge(calculateAge(data.orders[0].birthday));
         setOrderInfo(data.orders[0]);
-
         // 如果有環境照片，則獲取每張照片的URL
         if (data.orders[0].environmentpic && data.orders[0].environmentpic.length > 0) {
           for (const picId of data.orders[0].environmentpic) {
