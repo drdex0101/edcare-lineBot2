@@ -24,7 +24,7 @@ const ApplicationPage = () => {
   const [headIcon, setHeadIcon] = useState(null);
   const [gender, setGender] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
-  const memberId = useSelector((state) => state.member.memberId);
+  const memberId = useStore();
   const [isLoading, setIsLoading] = useState(false);
   const { kycData, setKycData } = useStore();
 
@@ -197,6 +197,14 @@ const ApplicationPage = () => {
     });
     const data = await response.json();
     setKycData(data.kycInfoList[0]);
+    if (data.kycInfoList.length === 0 || !data.kycInfoList[0]) {
+      console.log("No KYC Data found, clearing localStorage");
+      localStorage.removeItem("data-storage");  // 清空 localStorage
+      setKycData(null);  // 清空 state
+    } else {
+      setKycData(data.kycInfoList[0]);
+      console.log("kycData", data.kycInfoList[0]);
+    }
   };
 
   useEffect(() => {

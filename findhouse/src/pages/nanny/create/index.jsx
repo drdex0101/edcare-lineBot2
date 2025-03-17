@@ -1,5 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useRouter } from "next/router";
+import useStore from "../../../lib/store";
+import Loading from "../../../components/base/Loading";
+import { useState } from "react";
+
 const ApplicationPage = () => {
   const router = useRouter();
 
@@ -15,8 +19,48 @@ const ApplicationPage = () => {
     router.push("/nanny/verify/"); // 替换 '/next-page' 为你想要跳转的路径
   };
 
+  const { memberId, setMemberId } = useStore();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const getMemberId = async () => {
+    setIsLoading(true);
+    const response = await fetch("/api/member/getMemberData", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
+    console.log("data", data);
+    setMemberId(data.member[0].id);
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    getMemberId();
+  }, []);
+
   return (
     <div style={styles.main}>
+       {isLoading && (
+        <div
+          style={{
+            position: "fixed", // 確保 Loading 覆蓋整個畫面
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(255, 255, 255, 0.8)", // 透明度
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999, // 確保 Loading 在最上層
+          }}
+        >
+          <Loading />
+        </div>
+      )}
+      <>
       <div style={styles.header}>
         <span style={styles.headerFont}>申請成為保母</span>
         <button onClick={handleLastClick} style={styles.lastButton}>
@@ -85,6 +129,7 @@ const ApplicationPage = () => {
           </div>
         </div>
       </div>
+      </>
     </div>
   );
 };

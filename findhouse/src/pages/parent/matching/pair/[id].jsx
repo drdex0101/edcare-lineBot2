@@ -525,9 +525,9 @@ export default function ProfilePage() {
             className="buttonLayout"
             style={{
                 position: "absolute",
-                top: `${500 + offset}px`, // 初始位置 100px，隨滾動調整
-                left: "50%", // 讓它的左邊對齊視窗的 50%
-                transform: "translateX(-50%)", // 向左平移自身寬度的 50%，達到置中效果
+                top: `${500 + offset}px`, 
+                left: "50%", 
+                transform: "translateX(-50%)", 
             }}
             >
             <svg xmlns="http://www.w3.org/2000/svg" width="78" height="76" viewBox="0 0 78 76" fill="none">

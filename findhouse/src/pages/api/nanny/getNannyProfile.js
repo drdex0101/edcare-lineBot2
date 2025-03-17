@@ -61,13 +61,13 @@ export default async function handler(req, res) {
           nanny.created_ts,
           k.name,
           c.weekdays,
-          c.care_time as long_term_care_time,
-          c.start_date as suddenly_start_date,
-          c.end_date as suddenly_end_date,
-          c.care_time as suddenly_care_time,
-          c.location as suddenly_location,
-          c.scenario as suddenly_scenario,
-          c.scenario
+          c.care_time,
+          c.start_date ,
+          c.end_date,
+          c.care_time,
+          c.location,
+          c.scenario,
+          c.care_type
         FROM nanny
         LEFT JOIN kyc_info k ON nanny.kycId = k.id
         LEFT JOIN care_data c ON nanny.care_type_id = c.id
