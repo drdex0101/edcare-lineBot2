@@ -5,14 +5,18 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import "../css/profile.css";
 import Loading from "../../../components/base/Loading";
+import useStore from "../../../lib/store";
 export default function ProfilePage() {
   const router = useRouter();
   const { id } = router.query;
+  const { orderId } = useStore();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [orderInfo, setOrderInfo] = useState({});
   const [urls, setUrls] = useState([]);
   const [iconUrl, setIconUrl] = useState("/assets/images/resource/error.png");
   const [isLoading, setIsLoading] = useState(true);
+  const [age, setAge] = useState(0);
+  const [isMatching, setIsMatching] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRange, setSelectedRange] = React.useState({
     startDate: null,
@@ -67,6 +71,25 @@ export default function ProfilePage() {
     const formattedDate = `${year}-${month}-${day}`;
     return formattedDate;
   };
+  const calculateAge = (birthdayString) => {
+    const birthday = new Date(birthdayString); // 轉換生日為 Date 物件
+    const today = new Date(); // 取得當前日期
+
+    let ageYears = today.getFullYear() - birthday.getFullYear(); // 計算年數
+    let ageMonths = today.getMonth() - birthday.getMonth(); // 計算月數
+    if (today.getDate() < birthday.getDate()) {
+        ageMonths--;
+    }
+    if (ageMonths < 0) {
+        ageYears--;
+        ageMonths += 12;
+    }
+    if (ageYears < 1) {
+        return `${ageMonths}個月`;
+    }
+
+    return `${ageYears}歲${ageMonths}個月`;
+  }
 
   useEffect(() => {
     const fetchOrderInfo = async () => {
@@ -77,10 +100,11 @@ export default function ProfilePage() {
       try {
         const response = await fetch(`/api/order/getOrderInfoById?id=${id}`);
         const data = await response.json();
+        setAge(calculateAge(data.orders[0].birthday));
         setOrderInfo(data.orders[0]);
 
         // 如果有環境照片，則獲取每張照片的URL
-        if (data.orders[0].environmentpic.length > 0) {
+        if (data.orders[0].environmentpic && data.orders[0].environmentpic.length > 0) {
           for (const picId of data.orders[0].environmentpic) {
             const response2 = await fetch(`/api/base/getImgUrl?id=${picId}`);
             const data2 = await response2.json();
@@ -315,6 +339,19 @@ export default function ProfilePage() {
     setIsModalOpen(true);
   };
 
+  const handleBooking = async () => {
+    const response = await fetch(`/api/order/matchByParent`, {
+      method: "PATCH",
+      body: JSON.stringify({ id, orderId, status: "matching" }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
+    setIsModalOpen(false);
+    setIsMatching(true);
+  };
+
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
@@ -340,25 +377,11 @@ export default function ProfilePage() {
         </div>
       )}
       <div className="nanny-header">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-        >
-          <g clip-path="url(#clip0_45_10396)">
-            <path
-              d="M7.77223 12.9916L18.7822 12.9916C19.3322 12.9916 19.7822 12.5416 19.7822 11.9916C19.7822 11.4416 19.3322 10.9916 18.7822 10.9916L7.77223 10.9916L7.77223 9.20162C7.77223 8.75162 7.23223 8.53162 6.92223 8.85162L4.14223 11.6416C3.95223 11.8416 3.95223 12.1516 4.14223 12.3516L6.92223 15.1416C7.23223 15.4616 7.77223 15.2316 7.77223 14.7916L7.77223 12.9916V12.9916Z"
-              fill="#074C5F"
-            />
-          </g>
-          <defs>
-            <clipPath id="clip0_45_10396">
-              <rect width="24" height="24" fill="white" />
-            </clipPath>
-          </defs>
-        </svg>
+        <img
+          src="/icon/arrowForward.svg"
+          alt="back"
+          onClick={() => router.back()}
+        />
         <svg
           className={`svg-icon ${isFavorite ? "active" : ""}`}
           xmlns="http://www.w3.org/2000/svg"
@@ -385,7 +408,7 @@ export default function ProfilePage() {
         <div className="profile-section">
           <div className="part">
             <span className="part-title">年紀</span>
-            <span className="part-subTitle">{orderInfo.age}</span>
+            <span className="part-subTitle">{age}</span>
           </div>
           <div className="part">
             <span className="part-title">性別</span>
@@ -530,7 +553,7 @@ export default function ProfilePage() {
           </div>
         </div>
         <div className="buttonLayout">
-          <button className="submitButton" onClick={handleBookingClick}>
+          <button className="submitButton" onClick={handleBookingClick} disabled={isMatching}>
             + 馬上預約
           </button>
         </div>
@@ -572,7 +595,9 @@ export default function ProfilePage() {
               <button className="cancelBtn" onClick={handleCloseModal}>
                 取消
               </button>
-              <button className="confirmBtn">確認</button>
+              <button className="confirmBtn" onClick={handleBooking}>
+                確認
+              </button>
             </div>
           </div>
         </div>
