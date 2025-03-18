@@ -16,7 +16,6 @@ const ApplicationPage = () => {
   const pageSize = 5;
   const [isLoading, setIsLoading] = useState(true);
   const [selectedSort, setSelectedSort] = useState("time"); // 新增狀態以追蹤選擇的排序
-  const [locationCount, setLocationCount] = useState(0); // 新增狀態以追蹤選擇的地區數量
   const [orderCurrentPage, setOrderCurrentPage] = useState(1);
   const [isShow, setIsShow] = useState(true);
   const [nannyProfile, setNannyProfile] = useState([]);
@@ -432,7 +431,7 @@ const ApplicationPage = () => {
               </svg>
             </div>
             <div style={styles.iconLayout} onClick={handleVisibilityToggle}>
-              {orderInfo[orderCurrentPage].isShow ? (
+              {orderInfo[orderCurrentPage]?.isShow ? (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="38"

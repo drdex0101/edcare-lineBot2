@@ -6,6 +6,7 @@ import Select from "@mui/material/Select";
 import CalendarRangePicker from "../../../components/base/CalendarRangePicker";
 import { MenuItem, InputLabel, FormControl } from "@mui/material";
 import useStore from "../../../lib/store";
+import { useState } from "react";
 
 const ApplicationPage = () => {
   const router = useRouter();
