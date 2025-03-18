@@ -81,15 +81,9 @@ const ApplicationPage = () => {
               </svg>
               進行身分認證
             </button>
-            <button style={styles.nextBtn} onClick={setIsChecked(true)}>
+            <button style={styles.nextBtn} onClick={finishClick}>
               稍後再驗證
             </button>
-            {isChecked && (
-              <div style={styles.checkboxLayout}>
-                <input type="checkbox" checked={isChecked} onChange={handleCheckboxChange} />
-                <label>我已閱讀並同意保母服務條款</label>
-              </div>
-            )}
           </div>
         </div>
       </div>
