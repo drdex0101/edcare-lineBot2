@@ -9,7 +9,7 @@ import Select from "@mui/material/Select";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import  useStore from "../../../lib/store";
+import  useStore from "../../../../lib/store";
 import { useEffect } from "react";
 import dayjs from "dayjs";
 import Swal from "sweetalert2";
@@ -91,7 +91,7 @@ const ApplicationPage = () => {
 
     try {
       let response;
-      if (babyInfo.orders.length > 0) {
+      if (babyInfo) {
         response = await fetch("/api/order/updateOrderData", {
           method: "PATCH",
           headers: {
@@ -117,7 +117,7 @@ const ApplicationPage = () => {
       console.log("訂單建立成功:", responseData);
       setBabyInfo(responseData);
       console.log("babyInfo", babyInfo);
-      router.push("/parent/finish");
+      router.push("/parent/verify/finish");
 
     } catch (error) {
       console.error("訂單建立失敗:", error);
@@ -160,7 +160,7 @@ const ApplicationPage = () => {
   useEffect(() => {
     const parsedData = useStore.getState().babyInfo;
     console.log(parsedData);
-    if (parsedData.orders.length > 0) {
+    if (parsedData) {
       setBabyInfo(parsedData);
       setBabyName(parsedData.nickname);
       setBabyGender(parsedData.gender);
@@ -169,7 +169,6 @@ const ApplicationPage = () => {
       setBabyHope(parsedData.intro);
       setSelectedOptions(parsedData.hope);
     }
-    console.log(babyInfo.orders);
   }, []);
 
   return (

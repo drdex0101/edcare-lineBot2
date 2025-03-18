@@ -71,7 +71,7 @@ export default function ProfilePage() {
   const handlApproval = async () => {
     const response = await fetch(`/api/order/matchByParent`, {
       method: "PATCH",
-      body: JSON.stringify({ id, orderId,status:'matching'}),
+      body: JSON.stringify({ id, orderId,status:'onGoing'}),
       headers: {
         "Content-Type": "application/json",
       },

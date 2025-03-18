@@ -20,10 +20,16 @@ const ApplicationPage = () => {
   };
 
   // Initialize state with default values based on item
-  const [selectedRange, setSelectedRange] = React.useState(() => ({
-    startDate: new Date().toISOString().split("T")[0],
-    endDate: null,
-  }));
+  const [selectedRange, setSelectedRange] = useState(() => {
+    const today = new Date();
+    const threeDaysLater = new Date();
+    threeDaysLater.setDate(today.getDate() + 3); // 設定三天後
+    return {
+      startDate: threeDaysLater.toISOString().split("T")[0], // 格式化 YYYY-MM-DD
+      endDate: null,
+    };
+  });
+
 
   const [selectedCareType, setSelectedCareType] = React.useState(() => "");
   const [selectedAddress, setSelectedAddress] = React.useState(() => []);

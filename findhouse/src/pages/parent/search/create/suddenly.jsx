@@ -3,10 +3,10 @@ import { useRouter } from "next/router";
 import { styled } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
 import Select from "@mui/material/Select";
-import CalendarRangePicker from "../../../components/base/CalendarRangePicker";
+import CalendarRangePicker from "../../../../components/base/CalendarRangePicker";
 import { MenuItem, InputLabel, FormControl } from "@mui/material";
-import useStore from "../../../lib/store";
-import Loading from "../../../components/base/Loading";
+import useStore from "../../../../lib/store";
+import Loading from "../../../../components/base/Loading";
 import { useState } from "react";
 const ApplicationPage = () => {
   const router = useRouter();
@@ -21,7 +21,7 @@ const ApplicationPage = () => {
     }
     await createSuddenlyRecord();
     setIsLoading(false);
-    router.push("/parent/create/babyInfo"); // 替换 '/next-page' 为你想要跳转的路径
+    router.push("/parent/search/create/babyInfo"); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   // Initialize state with default values based on item
@@ -35,10 +35,8 @@ const ApplicationPage = () => {
     };
   });
 
-
   const [selectedCareType, setSelectedCareType] = React.useState(() => "");
   const [selectedAddress, setSelectedAddress] = React.useState(() => []);
-  const [orderData, setData] = React.useState("");
 
   const handleCareTypeChange = (e) => {
     setSelectedCareType(e.target.value);
@@ -166,8 +164,6 @@ const ApplicationPage = () => {
           >
             <div style={styles.contentLayout}>
               <div style={styles.rollerLayout}>
-                <div style={styles.rollerActive}></div>
-                <div style={styles.rollerActive}></div>
                 <div style={styles.rollerActive}></div>
                 <div style={styles.rollerActive}></div>
                 <div style={styles.roller}></div>

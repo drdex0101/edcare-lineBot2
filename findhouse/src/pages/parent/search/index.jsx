@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "./matching.css";
+import "./profile.css";
 import Pagination from "../../../components/base/pagenation";
 import SearchBar from "../../../components/base/SearchBar";
+import OrderCarousel from "../../../components/nanny/search/OrderCarousel";
 import { useRouter } from "next/router";
 import useStore from "../../../lib/store";
 import Loading from "../../../components/base/Loading";
@@ -30,6 +32,8 @@ export default function HistoryPage() {
   const [currentOrderCareType, setCurrentOrderCareType] = useState(null);
   const { orderId, setOrderId } = useStore();
   const { careData, setCareData, babyInfo, setBabyInfo } = useStore() || {};
+  const [haveKyc, setHaveKyc] = useState(false);
+  const [openKycModal, setOpenKycModal] = useState(false);
 
   const [isComposing, setIsComposing] = useState(false);
 
@@ -103,7 +107,7 @@ export default function HistoryPage() {
       }
 
       const data = await response.json();
-      if (data) {
+      if (data.orders.length > 0) {
         setOrderInfo(data.orders);
         setOrderId(data.orders[0].id);
         setItem(data.orders[0]);
@@ -142,6 +146,21 @@ export default function HistoryPage() {
     }
   };
 
+  const checkHaveKyc = async () => {
+    const isMemberExist = await fetch("/api/member/isMemberExist", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      }
+    });
+    const memberExistData = await isMemberExist.json();
+    if (memberExistData.member[0].kyc_id === null) {
+      setHaveKyc(false);
+    } else {
+      setHaveKyc(true);
+    }
+  }
+
   useEffect(() => {
     let isCancelled = false;
     const fetchData = async () => {
@@ -160,57 +179,37 @@ export default function HistoryPage() {
       }
     };
     fetchData();
+    checkHaveKyc();
+    console.log("haveKyc", haveKyc);
     return () => {
       isCancelled = true; // 在組件卸載時取消請求
     };
   }, [currentPage]); // 監聽關鍵依賴變數
 
-  const handleOrderPageChange = (page) => {
-    console.log("page:", page);
-    setOrderCurrentPage(page); // Update currentPage when a new page is selected
-    setOrderId(orderInfo[page - 1].id);
-    console.log("orderId:", orderId);
+  const handleNextClick = (careType) => {
+    if (!haveKyc) {
+      setOpenKycModal(true);
+    } else {
+      setCareData(careData);
+      setBabyInfo(orderInfo[orderCurrentPage - 1]);
+      router.push("/parent/search/create/choose");
+    }
   };
 
-  const handleNextClick = (careType) => {
-    setCareData(careData);
-    setBabyInfo(orderInfo[orderCurrentPage - 1]);
-    router.push("/parent/create/choose");
-  };
+  const handleKycModal = () => {
+    router.push("/parent/verify/verifyOnly");
+  }
+
+  const handleCloseKycModal = () => {
+    setOpenKycModal(false);
+  }
 
   const handleFilterChange = (region, locations, sorts) => {
-    console.log("接收到的 locations:", locations); // Debug
-
     setSelectedRegion(region);
     setSelectedLocations([...locations]); // 確保 locations 為新陣列
     setSelectedSort(sorts);
 
     fetchNannyInfoList(currentPage, pageSize, keywords);
-  };
-
-  const handleVisibilityToggle = async () => {
-    try {
-      // Default to true if isShow is null
-      const currentIsShow = isShow === null ? true : isShow;
-
-      const response = await fetch(
-        `/api/order/updateIsShow?isShow=${!currentIsShow}&id=${orderInfo[orderCurrentPage - 1].id}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to update visibility");
-      }
-
-      setIsShow(!currentIsShow);
-    } catch (error) {
-      console.error("Error updating visibility:", error);
-    }
   };
 
   return (
@@ -221,183 +220,53 @@ export default function HistoryPage() {
         <>
           <div className="matching-body-header-background">
             <div style={styles.header}>
-              <div
-                style={
-                  orderInfo.length > 0
-                    ? styles.createInfoLayoutHave
-                    : styles.createInfoLayout
-                }
-              >
-                {orderInfo.length > 0 ? (
-                  <div
-                    style={{
-                      ...styles.orderInfoLayout,
-                      position: "relative", // Add position relative to contain the overlay
-                    }}
-                  >
-                    {isShow && ( // Add overlay when isShow is false
-                      <div style={styles.overlay}></div>
-                    )}
-                    {currentOrders.map((order, index) => (
-                      <div key={index} style={styles.orderItem}>
-                        <img
-                          src={orderImages[order.id] || "/orderCreate.png"}
-                          style={styles.headIcon}
-                          alt="Order Icon"
-                        />
-                        <div style={styles.orderInfo}>
-                          <span style={styles.nickname}>{order.nickname}</span>
-                          <div style={{ display: "flex", gap: "5px" }}>
-                            <div style={styles.way}>
-                              {careData.care_type === "suddenly"
-                                ? "臨時托育"
-                                : careData.care_type === "longTern"
-                                  ? "長期托育"
-                                  : ""}
-                            </div>
-                            <div style={styles.screen}>
-                              {order.scenario === "home"
-                                ? "在宅托育"
-                                : order.scenario === "infantCareCenter"
-                                  ? "定點托育"
-                                  : order.scenario === "toHome"
-                                    ? "到宅托育"
-                                    : ""}
-                            </div>
-                          </div>
-                          <div
-                            style={{
-                              display: "flex",
-                              gap: "5px",
-                              flexDirection: "column",
-                            }}
-                          >
-                            <span style={styles.timeFont}>托育時間:</span>
-                            <span style={styles.timeFont}>
-                              {careData.care_type === "suddenly"
-                                ? careData?.start_date.slice(0, 10) +
-                                  "~" +
-                                  careData?.end_date.slice(0, 10)
-                                : careData.care_type === "longTern"
-                                  ? careData?.weekdays
-                                      .map(
-                                        (day) =>
-                                          ({
-                                            1: "星期一",
-                                            2: "星期二",
-                                            3: "星期三",
-                                            4: "星期四",
-                                            5: "星期五",
-                                            6: "星期六",
-                                            7: "星期日",
-                                          })[day]
-                                      )
-                                      .join(", ") +
-                                    " " +
-                                    ({
-                                      allDay: "全日",
-                                      morning: "日間",
-                                      night: "夜間",
-                                    }[careData?.care_time] || "未知")
-                                  : ""}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                    <div style={styles.paginationContainer}>
-                      {Array.from(
-                        { length: Math.ceil(orderInfo.length / itemsPerPage) },
-                        (_, i) => (
-                          <span
-                            key={i}
-                            onClick={() => {
-                              handleOrderPageChange(i + 1);
-                              setItem(orderInfo);
-                              setBabyInfo(orderInfo[i]);
-                              setCurrentOrderCareType(orderInfo[i].choosetype);
-                            }}
-                            style={{
-                              width: "7px",
-                              height: "7px",
-                              borderRadius: "50%",
-                              backgroundColor:
-                                orderCurrentPage === i + 1 ? "#CCC" : "#F2F2F2",
-                              margin: "0 5px",
-                              cursor: "pointer",
-                              transition: "background-color 0.3s ease",
-                            }}
-                          ></span>
-                        )
-                      )}
-                    </div>
-                  </div>
-                ) : (
-                  <span style={styles.headerFont} onClick={handleNextClick}>
-                    + 建立托育資料
-                  </span>
-                )}
-              </div>
-              <div style={styles.createButtonLayout}>
-                <div
-                  style={styles.iconLayout}
-                  onClick={() => handleNextClick(currentOrderCareType)}
-                >
+              <OrderCarousel orderList={orderInfo} handleNextClick={handleNextClick}/>
+            </div>
+          </div>
+          {haveKyc && openKycModal && (
+            <div className="modalOverlay">
+              <div className="modalContent">
+                <button className="closeButton" onClick={handleCloseKycModal}>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="38"
-                    height="38"
-                    viewBox="0 0 38 38"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 20 20"
                     fill="none"
                   >
-                    <rect width="38" height="38" rx="4" fill="#F5E5E5" />
-                    <path
-                      d="M26.0231 9C25.2613 9 24.4994 9.29013 23.9179 9.87171L22.6843 11.1053L26.8949 15.3158L28.1284 14.0822C29.2905 12.9201 29.2905 11.0349 28.1284 9.87171C27.5468 9.29013 26.785 9 26.0231 9ZM21.1053 12.6842L9 24.7895V29H13.2106L25.3159 16.8947L21.1053 12.6842Z"
-                      fill="#E3838E"
-                    />
-                  </svg>
-                </div>
-                <div style={styles.iconLayout} onClick={handleVisibilityToggle}>
-                  {isShow ? (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="38"
-                      height="38"
-                      viewBox="0 0 38 38"
-                      fill="none"
-                    >
-                      <rect width="38" height="38" rx="4" fill="#F5E5E5" />
+                    <g clip-path="url(#clip0_304_31413)">
                       <path
-                        d="M30.8209 18.2351C29.8547 16.2781 28.4397 14.5436 26.6759 13.1543L29.7079 10.3225L28.2929 9L24.9999 12.0728C23.1772 11.0881 21.1054 10.5776 18.9999 10.5943C11.4999 10.5943 8.05687 16.4419 7.17887 18.2351C7.06101 18.4754 7 18.7366 7 19.0009C7 19.2653 7.06101 19.5265 7.17887 19.7668C8.14501 21.7237 9.56009 23.4583 11.3239 24.8476L8.29287 27.6794L9.70687 29L12.9999 25.9272C14.8225 26.9119 16.8944 27.4224 18.9999 27.4057C26.4999 27.4057 29.9429 21.5581 30.8209 19.7649C30.9385 19.5249 30.9994 19.264 30.9994 19C30.9994 18.736 30.9385 18.4751 30.8209 18.2351ZM12.9999 19C12.998 17.9713 13.2998 16.9621 13.8721 16.0832C14.4445 15.2043 15.2652 14.4899 16.244 14.0183C17.2229 13.5468 18.322 13.3364 19.4206 13.4104C20.5191 13.4844 21.5745 13.8398 22.4709 14.4376L21.0189 15.7937C20.4093 15.4504 19.7117 15.2674 18.9999 15.2641C17.939 15.2641 16.9216 15.6577 16.1714 16.3583C15.4213 17.0589 14.9999 18.0092 14.9999 19C15.0034 19.6648 15.1993 20.3164 15.5669 20.8857L14.1149 22.2418C13.3898 21.2965 12.9999 20.1628 12.9999 19ZM18.9999 24.6038C17.7548 24.6038 16.541 24.2396 15.5289 23.5624L16.9809 22.2063C17.5904 22.5496 18.2881 22.7326 18.9999 22.7359C20.0607 22.7359 21.0782 22.3423 21.8283 21.6417C22.5784 20.941 22.9999 19.9908 22.9999 19C22.9964 18.3352 22.8005 17.6836 22.4329 17.1143L23.8849 15.7582C24.5249 16.5953 24.9055 17.5811 24.9847 18.6071C25.0639 19.6331 24.8386 20.6596 24.3338 21.5739C23.8289 22.4881 23.0639 23.2546 22.1229 23.7891C21.1819 24.3237 20.1013 24.6056 18.9999 24.6038Z"
-                        fill="#E3838E"
+                        d="M14.7782 5.22943C14.4824 4.93364 14.0045 4.93364 13.7088 5.22943L10 8.9306L6.29124 5.22184C5.99545 4.92605 5.51763 4.92605 5.22184 5.22184C4.92605 5.51763 4.92605 5.99545 5.22184 6.29124L8.9306 10L5.22184 13.7088C4.92605 14.0045 4.92605 14.4824 5.22184 14.7782C5.51763 15.0739 5.99545 15.0739 6.29124 14.7782L10 11.0694L13.7088 14.7782C14.0045 15.0739 14.4824 15.0739 14.7782 14.7782C15.0739 14.4824 15.0739 14.0045 14.7782 13.7088L11.0694 10L14.7782 6.29124C15.0664 6.00303 15.0664 5.51763 14.7782 5.22943Z"
+                        fill="#252525"
                       />
-                    </svg>
-                  ) : (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="38"
-                      height="38"
-                      viewBox="0 0 38 38"
-                      fill="none"
-                    >
-                      <rect width="38" height="38" rx="4" fill="#F5E5E5" />
-                      <g transform="translate(7, 10)">
-                        <path
-                          d="M23.8209 8.181C22.9429 6.261 19.4999 0 11.9999 0C4.49987 0 1.05687 6.261 0.178871 8.181C0.0610095 8.4383 0 8.71799 0 9.001C0 9.28401 0.0610095 9.5637 0.178871 9.821C1.05687 11.739 4.49987 18 11.9999 18C19.4999 18 22.9429 11.739 23.8209 9.819C23.9385 9.56199 23.9994 9.28265 23.9994 9C23.9994 8.71735 23.9385 8.43801 23.8209 8.181ZM11.9999 15C10.8132 15 9.65315 14.6481 8.66645 13.9888C7.67976 13.3295 6.91072 12.3925 6.45659 11.2961C6.00247 10.1997 5.88365 8.99334 6.11516 7.82946C6.34667 6.66557 6.91812 5.59647 7.75723 4.75736C8.59635 3.91824 9.66544 3.3468 10.8293 3.11529C11.9932 2.88378 13.1996 3.0026 14.296 3.45672C15.3923 3.91085 16.3294 4.67988 16.9887 5.66658C17.648 6.65327 17.9999 7.81331 17.9999 9C17.9983 10.5908 17.3656 12.116 16.2408 13.2409C15.1159 14.3658 13.5907 14.9984 11.9999 15Z"
-                          fill="#E3838E"
-                        />
-                        <path
-                          d="M12 13C14.2091 13 16 11.2091 16 9C16 6.79086 14.2091 5 12 5C9.79086 5 8 6.79086 8 9C8 11.2091 9.79086 13 12 13Z"
-                          fill="#E3838E"
-                        />
-                      </g>
-                    </svg>
-                  )}
+                    </g>
+                    <defs>
+                      <clipPath id="clip0_304_31413">
+                        <rect width="20" height="20" fill="white" />
+                      </clipPath>
+                    </defs>
+                  </svg>
+                </button>
+                <span className="modalTitle">尚未進行身分驗證</span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    gap: "16px",
+                  }}
+                >
+                  <button className="cancelBtn" onClick={handleCloseKycModal}>
+                    取消
+                  </button>
+                  <button className="confirmBtn" onClick={handleKycModal}>
+                    前往認證
+                  </button>
                 </div>
               </div>
             </div>
-          </div>
-          <div
+          )}
+            <div
             style={{
               backgroundColor: "#F3CCD4",
               borderRadius: "40px 0 0px 0",

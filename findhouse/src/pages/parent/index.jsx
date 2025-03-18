@@ -25,7 +25,7 @@ const ApplicationPage = () => {
       }),
     })
   }, []);
-  
+
   return (
     <div style={styles.main}>
       <div style={styles.header}>

@@ -432,7 +432,7 @@ const ApplicationPage = () => {
               </svg>
             </div>
             <div style={styles.iconLayout} onClick={handleVisibilityToggle}>
-              {isShow ? (
+              {orderInfo[orderCurrentPage].isShow ? (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="38"
