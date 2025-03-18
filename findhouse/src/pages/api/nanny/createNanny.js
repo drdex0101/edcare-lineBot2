@@ -19,8 +19,7 @@ export default async function handler(req, res) {
       location,
       kycId,
       uploadId,
-      suddenlyId,
-      longTermId
+      careTypeId
     } = req.body;
 
     const client = getClient();
@@ -36,12 +35,12 @@ export default async function handler(req, res) {
           memberId, experienment,
           age, kidCount, way, scenario, environmentPic,
           serviceLocation, introduction, service, score, isShow,
-          location, kycId, uploadId, suddenly_id, long_tern_id, created_ts
+          location, kycId, uploadId, care_type_id, created_ts
         )
         VALUES (
           $1, $2, $3, $4, $5,
           $6, $7, $8, $9, $10,
-          $11, $12, $13, $14, $15, $16, $17,
+          $11, $12, $13, $14, $15, $16,
           NOW()
         )
         RETURNING *;
@@ -63,8 +62,7 @@ export default async function handler(req, res) {
         location,
         kycId,
         uploadId,
-        suddenlyId,
-        longTermId
+        careTypeId
       ];
       const result = await client.query(query, values);
 

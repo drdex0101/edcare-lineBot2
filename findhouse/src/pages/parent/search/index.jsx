@@ -173,11 +173,8 @@ export default function HistoryPage() {
   };
 
   const handleNextClick = (careType) => {
-    console.log(careType, orderCurrentPage);
     setCareData(careData);
-    console.log(orderCurrentPage);
     setBabyInfo(orderInfo[orderCurrentPage - 1]);
-    console.log(orderInfo);
     router.push("/parent/create/choose");
   };
 

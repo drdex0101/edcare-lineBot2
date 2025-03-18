@@ -357,24 +357,58 @@ const ApplicationPage = () => {
               <img
                 src={nannyProfileImg || "/nannyIcon.png"}
                 alt="Nanny Profile"
+                style={styles.headIconImage}
               />
             </div>
             <div style={styles.nannyInfoLayout}>
               <span style={styles.headerFont}>{nannyProfile?.name}</span>
               <div style={styles.wayLayout}>
                 <div style={styles.wayStyle}>
-                  {nannyProfile?.way === "suddenly"
+                  {nannyProfile?.care_type === "suddenly"
                     ? "臨時托育"
-                    : nannyProfile?.way === "longTerm"
+                    : nannyProfile?.care_type === "longTern"
                       ? "長期托育"
                       : ""}
                 </div>
-                <div style={styles.scenarioStyle}>{nannyProfile?.scenario}</div>
+                <div style={styles.scenarioStyle}>
+                {nannyProfile.scenario === "home"
+                                ? "在宅托育"
+                                : nannyProfile.scenario === "infantCareCenter"
+                                  ? "定點托育"
+                                  : nannyProfile.scenario === "toHome"
+                                    ? "到宅托育"
+                                    : ""}
+                  </div>
               </div>
               <span style={styles.headSubTitle}>
                 托育時間:
                 <br />
-                {nannyProfile?.time}
+                {nannyProfile.care_type === "suddenly"
+                                ? nannyProfile?.start_date.slice(0, 10) +
+                                  "~" +
+                                  nannyProfile?.end_date.slice(0, 10)
+                                : nannyProfile.care_type === "longTern"
+                                  ? nannyProfile?.weekdays
+                                      .map(
+                                        (day) =>
+                                          ({
+                                            1: "星期一",
+                                            2: "星期二",
+                                            3: "星期三",
+                                            4: "星期四",
+                                            5: "星期五",
+                                            6: "星期六",
+                                            7: "星期日",
+                                          })[day]
+                                      )
+                                      .join(", ") +
+                                    " " +
+                                    ({
+                                      allDay: "全日",
+                                      morning: "日間",
+                                      night: "夜間",
+                                    }[nannyProfile?.care_time] || "未知")
+                                  : ""}
               </span>
             </div>
             {!isShow && (
@@ -781,6 +815,15 @@ const styles = {
     flexShrink: "0",
     backgroundColor: "#E3838E",
     borderRadius: "50%",
+    overflow: "hidden", // 添加這行來確保圖片不會溢出圓形區域
+    display: "flex", // 添加這行來居中圖片
+    justifyContent: "center", // 添加這行來居中圖片
+    alignItems: "center", // 添加這行來居中圖片
+  },
+  headIconImage: {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover", // 確保圖片填充整個空間並保持比例
   },
   createInfoLayout: {
     display: "flex",

@@ -33,7 +33,6 @@ export default async function handler(req, res) {
       const result = await client.query(query, [userId]);
 
       console.log('memberInfo retrieved successfully:', result.rows);
-      console.log('userId', userId);
       return res.status(200).json({ 
         success: true, 
         member: result.rows, 

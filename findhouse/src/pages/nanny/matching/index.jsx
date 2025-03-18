@@ -1,12 +1,40 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./matching.css";
 import Pagination from "../../../components/base/pagenation";
 import Loading from "../../../components/base/Loading";
 import SettingForNanny from "../../../components/base/SettingForNanny";
+import { useRouter } from "next/router";
+import useStore from "../../../lib/store";
 export default function HistoryPage() {
   const [totalCount, setTotalCount] = useState(0);
   const [historyList, setHistoryList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [matchingList, setMatchingList] = useState([]);
+  const [onGoingList, setOnGoingList] = useState([]);
+  const { orderId,setOrderId } = useStore();
+
+  const fetchMatchingCount = async () => {
+    const response = await fetch("/api/order/match/getMatchingCountByNanny?page=1&pageSize=10&status=matching");
+    const data = await response.json();
+    setMatchingList(data.orders || []);
+  };
+
+  const getImgUrl = (id) => {
+    return `/api/base/getImgUrl?id=${id}`;
+  };
+
+  const fetchOnGoingCount = async () => {
+    const response = await fetch("/api/order/match/getMatchingCountByParent?page=1&pageSize=10&status=onGoing");
+    const data = await response.json();
+    setOnGoingList(data.orders || []);
+    setTotalCount(data.totalCount || 0);
+  };
+  const router = useRouter();
+
+  useEffect(() => {
+    fetchMatchingCount();
+    fetchOnGoingCount();
+  }, []);
 
   return (
     <div className="matching-main">
@@ -53,11 +81,11 @@ export default function HistoryPage() {
         <div className="matching-body-layoff">
           <span className="matching-body-layoff-title">新配對</span>
           <div className="avatar-container">
-            {historyList.map((avatar) => (
+            {matchingList.map((avatar) => (
               <div className="avatar" key={avatar.id}>
-                <img src={avatar.imgSrc} alt="avatar" className="avatar-img" />
+                 <img src={"/orderCreate.png"} alt="avatar" className="avatar-img" />
                 <div style={{ display: "flex", alignItems: "center" }}>
-                  <span className="avatar-name">{avatar.name}</span>
+                  <span className="avatar-name">{avatar.nickname}</span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="18"

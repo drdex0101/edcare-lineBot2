@@ -25,6 +25,9 @@ const ApplicationPage = () => {
       setSelectedScenario(careData?.scenario || "");
       console.log(careData);
     }
+    else {
+      localStorage.removeItem("data-storage");
+    }
   }, [careData]);
 
   const createCareData = async () => {
@@ -53,7 +56,7 @@ const ApplicationPage = () => {
     const response = await fetch("/api/base/updateCareData", {
       method: "PATCH",
       body: JSON.stringify({
-        careDataId: longTernInfo.id,
+        careDataId: careData.id,
         weekdays: selectedDays,
         careTime: selectedCareTime,
         scenario: selectedScenario,

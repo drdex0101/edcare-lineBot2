@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import ServiceSchedule from "../../../components/base/ServiceSchedule";
+import CalendarRangePicker from "../../../components/base/CalendarRangePicker";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import RatingComponent from "../../../components/nanny/rating";
@@ -51,8 +52,8 @@ export default function ProfilePage() {
       `/api/favorite/getIsFavorite?itemId=${id}&&type=${"parent"}`,
     );
     const data = await response.json();
-    console.log("data", data.favorite);
-    if (data.favorite) {
+    console.log("data", data.favorite.length);
+    if (data.favorite.length > 0) {
       setIsFavorite(true);
     }
   };
@@ -75,6 +76,7 @@ export default function ProfilePage() {
             const data2 = await response2.json();
             console.log("data2", data2.url);
             urls.push(data2.url);
+            console.log("urls", urls);
           }
         }
         if (data.nannies[0].uploadid) {
@@ -370,15 +372,15 @@ export default function ProfilePage() {
         <div className="profile-section">
           <div className="part">
             <span className="part-title">經驗</span>
-            <span className="part-subTitle">{nannyInfo.experienment}</span>
+            <span className="part-subTitle">{nannyInfo.experienment|| "未填寫"}</span>
           </div>
           <div className="part">
             <span className="part-title">年紀</span>
-            <span className="part-subTitle">{nannyInfo.age}</span>
+            <span className="part-subTitle">{nannyInfo.age|| "未填寫"}</span>
           </div>
           <div className="part">
-            <span className="part-title">托育</span>
-            <span className="part-subTitle">{nannyInfo.kidcount}</span>
+            <span className="part-title">托育人數</span>
+            <span className="part-subTitle">{nannyInfo.kidcount || 0}</span>
           </div>
         </div>
         {/* Tabs */}
@@ -386,10 +388,12 @@ export default function ProfilePage() {
           <div className="tab-content">
             <span className="tab-tile">托育方式</span>
             <span className="tab-subTitle">
-              {nannyInfo.way === "suddenly"
-                ? "臨時托育"
-                : nannyInfo.way === "longTerm"
-                  ? "長期托育"
+              {nannyInfo.care_time === "night"
+                ? "夜間托育"
+                : nannyInfo.care_time === "allDay"
+                  ? "全天托育"
+                  : nannyInfo.care_time === "morning"
+                  ? "日間托育"
                   : ""}
             </span>
           </div>
@@ -409,7 +413,15 @@ export default function ProfilePage() {
           </svg>
           <div className="tab-content">
             <span className="tab-tile">托育情境</span>
-            <span className="tab-subTitle">{nannyInfo.scenario}</span>
+            <span className="tab-subTitle">
+              {nannyInfo.scenario === "home"
+                ? "在宅托育"
+                : nannyInfo.scenario === "infantCareCenter"
+                  ? "定點托育"
+                  : nannyInfo.scenario === "toHome"
+                    ? "到宅托育"
+                    : ""}
+            </span>
           </div>
         </div>
         {/* 圖片輪播區域 */}
@@ -450,7 +462,20 @@ export default function ProfilePage() {
           )}
         </div>
         <div style={{ backgroundColor: "#F8ECEC" }}>
-          <ServiceSchedule></ServiceSchedule>
+          {nannyInfo.care_type === "longTern" && (
+            <ServiceSchedule weekdays={nannyInfo.weekdays} care_time={nannyInfo.care_time}></ServiceSchedule>
+          )}
+          {nannyInfo.care_type === "suddenly" && (
+           <CalendarRangePicker
+            startDate={nannyInfo.start_date}
+            endDate={nannyInfo.end_date}
+            locale="zh-TW"
+            styles={{
+              calendar: { maxWidth: "400px" },
+              day: { width: "50px", height: "50px" },
+            }}
+          />
+          )}
         </div>
         {/* Icon Navigation */}
         <div style={{ backgroundColor: "#fff", border: "none" }}>

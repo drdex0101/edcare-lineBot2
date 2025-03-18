@@ -36,8 +36,8 @@ const ApplicationPage = () => {
   const [introduction, setIntroduction] = useState("");
   const [selectedAddress, setSelectedAddress] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [careTypeId, setCareTypeId] = useState(null);
-  const { memberId, setMemberId } = useStore() || { memberId: null, setMemberId: () => {} };
+  const { careData, setCareData} = useStore();
+  const { memberId, setMemberId } = useStore();
 
   useEffect(() => {
     if (nannyInfo?.service) {
@@ -54,23 +54,28 @@ const ApplicationPage = () => {
 
   useEffect(() => {
     const storedData = localStorage.getItem("data-storage");
-    const parsedData = JSON.parse(storedData).state.nannyInfo;
-    if (parsedData) {
-      setSelectedAddress(parsedData.servicelocation);
-      setSelectedCareType(parsedData.scenario);
-      setAddress(parsedData.location[0]);
-      setIntroduction(parsedData.introduction);
-      if (parsedData.uploadid) {
-        setHeadIcon(parsedData.uploadid);
-        getUrl(parsedData.uploadid).then(url => {
-          console.log("Image URL:", url);
-          setHeadIconUrl(url);
-        }).catch(error => {
-          console.error("Error fetching URL:", error);
-        });
+    if (storedData) {
+      try {
+        const parsedData = JSON.parse(storedData);
+        if (parsedData.state?.nannyInfo) {
+          setSelectedAddress(parsedData.state.nannyInfo.servicelocation || []);
+          setSelectedCareType(parsedData.state.nannyInfo.scenario || "");
+          setAddress(parsedData.state.nannyInfo.location?.[0] || "");
+          setIntroduction(parsedData.state.nannyInfo.introduction || "");
+          
+          if (parsedData.state.nannyInfo.uploadid) {
+            setHeadIcon(parsedData.state.nannyInfo.uploadid);
+            getUrl(parsedData.state.nannyInfo.uploadid)
+              .then(url => setHeadIconUrl(url))
+              .catch(error => console.error("Error fetching URL:", error));
+          }
+        }
+      } catch (error) {
+        console.error("Error parsing stored data:", error);
       }
     }
   }, []);
+  
 
   const handleNextClick = async () => {
     const nannyData = {
@@ -90,7 +95,7 @@ const ApplicationPage = () => {
       kycId: nannyInfo ? nannyInfo.kycId : null,
       introduction: introduction,
       nannyId: nannyInfo ? nannyInfo.nanny_id : null,
-      careTypeId: careTypeId,
+      careTypeId: careData.id,
       uploadId: headIcon,
     };
 

@@ -15,6 +15,8 @@ const ApplicationPage = () => {
     router.back(); // 替换 '/next-page' 为你想要跳转的路径
   };
 
+  const [isChecked, setIsChecked] = React.useState(false); 
+
   return (
     <div style={styles.main}>
       <div style={styles.header}>

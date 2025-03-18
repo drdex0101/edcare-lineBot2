@@ -29,16 +29,25 @@ export default async function handler(req, res) {
   const offset = (currentPage - 1) * parseInt(pageSize);
   const limit = parseInt(pageSize);
 
-  let orderByClause = '';
-  if (sort === 'time') {
-    orderByClause = 'o.created_ts DESC';
-  }
-  if (sort === 'rating') {
-    orderByClause = 'n.score DESC';
-  }
-
   try {
     const client = await pool.connect();
+
+    const memberQuery = `
+      SELECT * FROM member
+      WHERE line_id = $1
+    `;
+    const memberValues = [userId];
+    const memberResult = await client.query(memberQuery, memberValues);
+    console.log('memberResult', memberResult.rows);
+
+    const nannyQuery = `
+      SELECT * FROM nanny
+      WHERE memberid = $1
+    `;
+    const nannyValues = [memberResult.rows[0].id];
+    const nannyResult = await client.query(nannyQuery, nannyValues);
+    console.log('nannyResult', nannyResult.rows[0].id);
+
     const locationArray = locations ? locations.split(",") : null;
     console.log('locationArray:',locationArray);
     const query = `
@@ -78,34 +87,16 @@ export default async function handler(req, res) {
             kyc_info k ON n.kycId = k.id
         WHERE 
             o.nannyId = $1
-            AND ($4::text IS NULL OR o.nickname ILIKE '%' || $4::text || '%')
-            AND o.status = $5
+            AND o.status = $4
         ORDER BY 
-            $6
+            o.created_ts DESC
         OFFSET 
             $2 
         LIMIT 
             $3;
       `;
 
-
-      const parameterizedQuery = query
-      .replace('$1', `'${nannyId}'`)
-      .replace('$2', offset)
-      .replace('$3', limit)
-      .replace('$4', keywords ? `'${keywords}'` : 'NULL')
-      .replace('$5', orderByClause);
-
-    // Log the constructed query
-    console.log('Executing query with parameters:', parameterizedQuery);
-
-    const { rows } = await client.query(query, [nannyId, offset, limit, keywords, orderByClause,status]);
-
-    client.release();
-
-    if (rows.length === 0) {
-      return res.status(200).json({ success: true, orders: [], pageCount: 0, totalCount: 0 });
-    }
+    const { rows } = await client.query(query, [nannyResult.rows[0].id, offset, limit,status]);
 
     return res.status(200).json({ 
       success: true,
