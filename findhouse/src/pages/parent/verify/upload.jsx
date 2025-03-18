@@ -221,6 +221,10 @@ const ApplicationPage = () => {
           console.error("Error parsing stored data:", error);
         }
       }
+      else {
+        setKycData(null);
+        console.log("kycData", kycData);
+      }
 
       setIsLoading(false);
     };

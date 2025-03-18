@@ -187,8 +187,10 @@ export default function HistoryPage() {
   }, [currentPage]); // 監聽關鍵依賴變數
 
   const handleNextClick = (careType) => {
+    console.log("haveKyc", haveKyc);
     if (!haveKyc) {
       setOpenKycModal(true);
+
     } else {
       setCareData(careData);
       setBabyInfo(orderInfo[orderCurrentPage - 1]);
@@ -223,7 +225,7 @@ export default function HistoryPage() {
               <OrderCarousel orderList={orderInfo} handleNextClick={handleNextClick}/>
             </div>
           </div>
-          {haveKyc && openKycModal && (
+          {openKycModal && (
             <div className="modalOverlay">
               <div className="modalContent">
                 <button className="closeButton" onClick={handleCloseKycModal}>
