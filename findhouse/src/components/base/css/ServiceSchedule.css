@@ -17,7 +17,7 @@
     font-size: 16px;
     font-weight: bold;
     border-bottom: 1px solid #eee;
-    color: var(---Primary-Primary, #E3838E);
+    color: var(---Primary-Primary, #f76a97);
     font-family: "LINE Seed JP_TTF";
     font-size: 14px;
     font-style: normal;
@@ -82,14 +82,11 @@
     flex: 1;
     height: 40px;
     background-color: #eee;
-    cursor: pointer;
+    cursor: default;
     transition: background-color 0.2s;
   }
   
   .slot.active {
-    background-color: #f8a5c2;
-  }
-  
-  .slot:hover {
     background-color: #f76a97;
   }
+  

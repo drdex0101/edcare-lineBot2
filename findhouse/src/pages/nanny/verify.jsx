@@ -15,6 +15,8 @@ const ApplicationPage = () => {
     router.back(); // 替换 '/next-page' 为你想要跳转的路径
   };
 
+  const [isChecked, setIsChecked] = React.useState(false); 
+
   return (
     <div style={styles.main}>
       <div style={styles.header}>
@@ -79,9 +81,15 @@ const ApplicationPage = () => {
               </svg>
               進行身分認證
             </button>
-            <button style={styles.nextBtn} onClick={finishClick}>
+            <button style={styles.nextBtn} onClick={setIsChecked(true)}>
               稍後再驗證
             </button>
+            {isChecked && (
+              <div style={styles.checkboxLayout}>
+                <input type="checkbox" checked={isChecked} onChange={handleCheckboxChange} />
+                <label>我已閱讀並同意保母服務條款</label>
+              </div>
+            )}
           </div>
         </div>
       </div>

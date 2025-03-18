@@ -116,6 +116,7 @@ const ApplicationPage = () => {
       const responseData = await response.json();
       console.log("訂單建立成功:", responseData);
       setBabyInfo(responseData);
+      console.log("babyInfo", babyInfo);
       router.push("/parent/finish");
 
     } catch (error) {
@@ -157,8 +158,7 @@ const ApplicationPage = () => {
   };
 
   useEffect(() => {
-    const storedData = localStorage.getItem("data-storage");
-    const parsedData = JSON.parse(storedData).state.babyInfo;
+    const parsedData = useStore.getState().babyInfo;
     console.log(parsedData);
     if (parsedData) {
       setBabyInfo(parsedData);

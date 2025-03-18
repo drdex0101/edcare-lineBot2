@@ -204,13 +204,13 @@ const ApplicationPage = () => {
     const loadData = async () => {
       await fetchKycData(); // Wait for KYC data to be fetched
 
-      const storedData = localStorage.getItem('data-storage');
-
-      if (storedData) {
+      const parsedData = useStore.getState().kycData;
+      console.log("parsedData", parsedData);
+    
+      if (parsedData) {
         try {
-          const parsedData = JSON.parse(storedData);
-          if (parsedData.state && parsedData.state.kycData) {
-            const storedKycData = parsedData.state.kycData;
+          if (parsedData) {
+            const storedKycData = parsedData;
             setKycData(storedKycData);
             setSelectedDate(storedKycData.birthday ? dayjs(storedKycData.birthday) : null);
             setGender(storedKycData.gender || "");
@@ -220,14 +220,6 @@ const ApplicationPage = () => {
         } catch (error) {
           console.error("Error parsing stored data:", error);
         }
-      }
-
-      // If no stored data or parsing failed, use kycData from API
-      if (!storedData && kycData) {
-        setSelectedDate(kycData.birthday ? dayjs(kycData.birthday) : null);
-        setGender(kycData.gender || "");
-        setFrontImg(kycData.identityfrontuploadid || null);
-        setBackImg(kycData.identitybackuploadid || null);
       }
 
       setIsLoading(false);

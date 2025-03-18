@@ -21,10 +21,6 @@ const useStore = create(
       careData: null,
       setCareData: (newCareData) => set({ careData: newCareData }),
     }),
-    {
-      name: 'data-storage', // 在 localStorage 中的 key
-      getStorage: () => localStorage, // 使用 localStorage 持久化
-    }
   )
 );
 

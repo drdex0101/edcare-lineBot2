@@ -104,8 +104,8 @@ const ApplicationPage = () => {
   };
 
   useEffect(() => {
-    const storedData = localStorage.getItem("data-storage");
-    const parsedData = JSON.parse(storedData).state.careData;
+    const parsedData = useStore.getState().careData;
+    console.log("storedCareData", parsedData);
     if (parsedData) {
       setSelectedRange({
         startDate:

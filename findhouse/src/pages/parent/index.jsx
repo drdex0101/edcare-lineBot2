@@ -13,6 +13,19 @@ const ApplicationPage = () => {
     }
     router.push("/parent/apply"); // 替换 '/next-page' 为你想要跳转的路径
   };
+
+  useEffect(() => {
+    fetch("/api/line/changeRichMenu", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        richMenuId: "richmenu-bd0843b93a53c3df760bbd95c7871e23",
+      }),
+    })
+  }, []);
+  
   return (
     <div style={styles.main}>
       <div style={styles.header}>

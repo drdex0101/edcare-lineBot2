@@ -10,6 +10,7 @@ import Loading from "../../../components/base/Loading";
 import { MenuItem, InputLabel, FormControl } from "@mui/material";
 import useStore from "../../../lib/store";
 import Swal from "sweetalert2";
+import TextField from "@mui/material/TextField";
 
 const ApplicationPage = () => {
   const router = useRouter();
@@ -24,12 +25,14 @@ const ApplicationPage = () => {
       setSelectedDays(careData?.weekdays || []);
       setSelectedCareTime(careData?.care_time || "");
       setSelectedScenario(careData?.scenario || "");
+      setLocation(careData?.location || []);
       console.log(careData);
     }
   }, [careData]);
 
   const createCareData = async () => {
     setIsLoading(true);
+    const formattedLocation = Array.isArray(location) ? location : [location];
     const response = await fetch("/api/base/createCareData", {
       method: "POST",
       body: JSON.stringify({
@@ -40,7 +43,7 @@ const ApplicationPage = () => {
         careType: "longTern",
         startDate: null,
         endDate: null,
-        location: [],
+        location: formattedLocation,
       }),
     });
     const data = await response.json();
@@ -52,6 +55,7 @@ const ApplicationPage = () => {
 
   const updateCareData = async () => {
     setIsLoading(true);
+    const formattedLocation = Array.isArray(location) ? location : [location];
     const response = await fetch("/api/base/updateCareData", {
       method: "PATCH",
       body: JSON.stringify({
@@ -63,7 +67,7 @@ const ApplicationPage = () => {
         careType: "longTern",
         startDate: null,
         endDate: null,
-        location: [],
+        location: formattedLocation,
       }),
     });
     const data = await response.json();
@@ -72,34 +76,6 @@ const ApplicationPage = () => {
     setCareData(data.careData);
     setIsLoading(false);
   }
-
-  const handleNextClick = async() => {
-    try {
-      if (selectedDays.length === 0 || !selectedCareTime || !selectedScenario) {
-        Swal.fire({
-          icon: "error",
-          title: "錯誤",
-          text: "請填寫所有必填欄位。",
-        });
-        return;
-    }
-    if (careData) {
-      await updateCareData();
-    } else {
-      await createCareData();
-    }
-    router.push("/parent/create/babyInfo");
-    } catch (error) {
-      console.error("發生錯誤:", error);
-      Swal.fire({
-        icon: "error",
-        title: "發生錯誤",
-        text: "請稍後再試。",
-      });
-    }
-  };
-
-  const [selectedDays, setSelectedDays] = useState([]);
 
   const handleDayChange = (day) => {
     setSelectedDays((prev) => {
@@ -124,8 +100,38 @@ const ApplicationPage = () => {
     });
   };
 
+  const handleNextClick = async () => {
+    try {
+      if (selectedDays.length === 0 || !selectedCareTime || !selectedScenario) {
+        Swal.fire({
+          icon: "error",
+          title: "錯誤",
+          text: "請填寫所有必填欄位。",
+        });
+        return;
+      }
+      if (careData) {
+        await updateCareData();
+      } else {
+        await createCareData();
+      }
+      router.push("/parent/create/babyInfo");
+    } catch (error) {
+      console.error("發生錯誤:", error);
+      Swal.fire({
+        icon: "error",
+        title: "發生錯誤",
+        text: "請稍後再試。",
+      });
+    }
+  };
+
+  const [selectedDays, setSelectedDays] = useState([]);
+
   const [selectedCareTime, setSelectedCareTime] = useState("");
   const [selectedScenario, setSelectedScenario] = useState("");
+  const [location, setLocation] = useState([]);
+
   return (
     <div style={styles.main}>
       {isLoading && (
@@ -392,6 +398,41 @@ const ApplicationPage = () => {
                 </Select>
               </FormControl>
             </div>
+            {
+              selectedScenario == 'toHome' && (
+                <TextField
+                  required
+                  id="name"
+                  label="托育地址"
+                  variant="outlined"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  InputProps={{
+                    sx: {
+                      padding: "0px 16px",
+                      borderRadius: "8px",
+                      marginBottom: "20px",
+                      backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
+                    },
+                  }}
+                  sx={{
+                    alignSelf: "stretch",
+                    borderRadius: "8px",
+                    "& .MuiOutlinedInput-root": {
+                      "& fieldset": {
+                        borderColor: "var(--OutLine-OutLine, #78726D)",
+                      },
+                      "&:hover fieldset": {
+                        borderColor: "#E3838E",
+                      },
+                      "&.Mui-focused fieldset": {
+                        borderColor: "#E3838E",
+                      },
+                    },
+                  }}
+                />
+              )
+            }
             <div style={styles.buttonLayout}>
               <button style={styles.nextBtn} onClick={handleNextClick}>
                 下一步
