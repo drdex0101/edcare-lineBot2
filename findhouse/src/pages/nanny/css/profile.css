@@ -31,6 +31,7 @@ background: #FFF;
       padding: 37px 40px;
       justify-content: center;
       align-items: center;
+      flex-direction: column;
       gap: 10px;
       flex-shrink: 0;
       align-self: stretch;
@@ -433,6 +434,7 @@ background: #FFF;
     width: 310px;
     height: 402px;
     padding: 23px 22px 356px 23px;
+    margin-top: 14px;
     flex-direction: column;
     align-items: flex-start;
     border-radius: 38px;
@@ -452,10 +454,14 @@ background: #FFF;
   }
 
   .buttonLayout {
-    width: 100%; /* Adjust width as needed */
-    max-width:390px;
-    padding: 20px 48px;
-  }
+    width: 100%;
+    display: flex;
+    padding: 8px 12px;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    align-self: stretch;
+  }  
 
   .submitButton {
     display: flex;

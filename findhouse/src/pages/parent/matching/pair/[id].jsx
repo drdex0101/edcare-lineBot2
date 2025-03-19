@@ -18,7 +18,7 @@ export default function ProfilePage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const [isMatching, setIsMatching] = useState(false);
-  const { orderId,setOrderId } = useStore();
+  const { orderId, setOrderId } = useStore();
 
   const handleSvgClick = async () => {
     try {
@@ -71,7 +71,7 @@ export default function ProfilePage() {
   const handlApproval = async () => {
     const response = await fetch(`/api/order/matchByParent`, {
       method: "PATCH",
-      body: JSON.stringify({ id, orderId,status:'onGoing'}),
+      body: JSON.stringify({ id, orderId, status: 'onGoing' }),
       headers: {
         "Content-Type": "application/json",
       },
@@ -84,7 +84,7 @@ export default function ProfilePage() {
   const handlReject = async () => {
     const response = await fetch(`/api/order/matchByParent`, {
       method: "PATCH",
-      body: JSON.stringify({ id, orderId,status:'cancel'}),
+      body: JSON.stringify({ id, orderId, status: 'cancel' }),
       headers: {
         "Content-Type": "application/json",
       },
@@ -129,7 +129,7 @@ export default function ProfilePage() {
     };
 
     fetchNannyInfo();
-  }, [id, router.isReady]); 
+  }, [id, router.isReady]);
 
   const serviceNames = {
     1: "可接送小朋友",
@@ -139,8 +139,8 @@ export default function ProfilePage() {
     5: "寶寶衣物清洗",
     6: "可配合家長外出",
   };
-  
-  
+
+
   const icons = {
     1: {
       active: (
@@ -384,22 +384,22 @@ export default function ProfilePage() {
       <div className="profileSection">
         <img className="profilePic" src={iconUrl} alt="Profile" />{" "}
         {/* 頭貼圓形 */}
-        <h2 className="profileName">{nannyInfo.name}</h2>
+        <h2 className="profileName">{nannyInfo?.name}</h2>
         <div className="rating">
-          <RatingComponent score={nannyInfo.score} />
+          <RatingComponent score={nannyInfo?.score} />
         </div>
         <div className="profile-section">
           <div className="part">
             <span className="part-title">經驗</span>
-            <span className="part-subTitle">{nannyInfo.experienment}</span>
+            <span className="part-subTitle">{nannyInfo?.experienment}</span>
           </div>
           <div className="part">
             <span className="part-title">年紀</span>
-            <span className="part-subTitle">{nannyInfo.age}</span>
+            <span className="part-subTitle">{nannyInfo?.age}</span>
           </div>
           <div className="part">
             <span className="part-title">托育</span>
-            <span className="part-subTitle">{nannyInfo.kidcount}</span>
+            <span className="part-subTitle">{nannyInfo?.kidcount}</span>
           </div>
         </div>
         {/* Tabs */}
@@ -407,9 +407,9 @@ export default function ProfilePage() {
           <div className="tab-content">
             <span className="tab-tile">托育方式</span>
             <span className="tab-subTitle">
-              {nannyInfo.way === "suddenly"
+              {nannyInfo?.way === "suddenly"
                 ? "臨時托育"
-                : nannyInfo.way === "longTerm"
+                : nannyInfo?.way === "longTerm"
                   ? "長期托育"
                   : ""}
             </span>
@@ -430,7 +430,7 @@ export default function ProfilePage() {
           </svg>
           <div className="tab-content">
             <span className="tab-tile">托育情境</span>
-            <span className="tab-subTitle">{nannyInfo.scenario}</span>
+            <span className="tab-subTitle">{nannyInfo?.scenario}</span>
           </div>
         </div>
         {/* 圖片輪播區域 */}
@@ -451,16 +451,16 @@ export default function ProfilePage() {
               }}
             >
               <div className="imageCounter">
-                {nannyInfo.environmentpic
-                  ? `${currentImageIndex + 1}/${nannyInfo.environmentpic.length}`
+                {nannyInfo?.environmentpic
+                  ? `${currentImageIndex + 1}/${nannyInfo?.environmentpic.length}`
                   : "0/0"}
               </div>
             </div>
           </div>
           {/* 圓點指示器 */}
-          {nannyInfo.environmentpic && nannyInfo.environmentpic.length > 0 && (
+          {nannyInfo?.environmentpic && nannyInfo?.environmentpic?.length > 0 && (
             <div className="dotsContainer">
-              {nannyInfo.environmentpic.map((_, index) => (
+              {nannyInfo?.environmentpic?.map((_, index) => (
                 <span
                   key={index}
                   className={`dot ${index === currentImageIndex ? "active" : ""}`}
@@ -495,14 +495,14 @@ export default function ProfilePage() {
                   }}
                 >
                   <div
-                    className={`iconStyle ${nannyInfo.service?.includes(number) ? "active" : "inactive"}`}
+                    className={`iconStyle ${nannyInfo?.service?.includes(number) ? "active" : "inactive"}`}
                   >
-                    {nannyInfo.service?.includes(number)
+                    {nannyInfo?.service?.includes(number)
                       ? icons[number].active
                       : icons[number].default}
                   </div>
                   <span
-                    className={`fontSpan ${nannyInfo.service?.includes(number) ? "active" : "inactive"}`}
+                    className={`fontSpan ${nannyInfo?.service?.includes(number) ? "active" : "inactive"}`}
                   >
                     {serviceNames[number]}
                   </span>
@@ -515,30 +515,48 @@ export default function ProfilePage() {
               <div className="introSection">
                 <div className="notesSection">
                   <span className="imgFont">保母自介</span>
-                  {nannyInfo.introduction}
+                  {nannyInfo?.introduction}
                 </div>
               </div>
             </div>
           </div>
         </div>
-            <div
-            className="buttonLayout"
-            style={{
-                position: "absolute",
-                top: `${500 + offset}px`, 
-                left: "50%", 
-                transform: "translateX(-50%)", 
-            }}
-            >
-            <svg xmlns="http://www.w3.org/2000/svg" width="78" height="76" viewBox="0 0 78 76" fill="none">
-                <path d="M77.25 68V23.0588C77.25 21.078 76.4663 19.1775 75.0701 17.7724L60.1065 2.71355C58.6986 1.29672 56.7838 0.5 54.7864 0.5H8.75C4.60787 0.5 1.25 3.85786 1.25 8V52.1795C1.25 54.1613 2.0344 56.0625 3.43182 57.4678L19.1637 73.2884C20.5714 74.704 22.4855 75.5 24.4819 75.5H69.75C73.8921 75.5 77.25 72.1421 77.25 68Z" fill="#F5E5E5" fill-opacity="0.8" stroke="#F3CCD4"/>
-                <image href="/icon/reject.svg" x="24" y="24" width="30" height="30" onClick={handlReject}/>
-            </svg>
-    
-            <svg xmlns="http://www.w3.org/2000/svg" width="78" height="76" viewBox="0 0 78 76" fill="none">
-                <path d="M0.75 68V23.0588C0.75 21.078 1.53366 19.1775 2.9299 17.7724L17.8935 2.71355C19.3014 1.29672 21.2162 0.5 23.2136 0.5H69.25C73.3921 0.5 76.75 3.85786 76.75 8V52.1795C76.75 54.1613 75.9656 56.0625 74.5682 57.4678L58.8363 73.2884C57.4286 74.704 55.5145 75.5 53.5181 75.5H8.25C4.10787 75.5 0.75 72.1421 0.75 68Z" fill="#F5E5E5" fill-opacity="0.8" stroke="#F3CCD4"/>
-                <image href="/icon/approve.svg" x="24" y="24" width="30" height="30" onClick={handlApproval}/>
-            </svg>
+        <div
+          className="buttonLayout"
+          style={{
+            position: "absolute",
+            top: `${500 + offset}px`,
+            left: "50%",
+            transform: "translateX(-50%)",
+            gap: "10px",
+          }}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="78" height="76" viewBox="0 0 78 76" fill="none">
+            <path d="M77.25 68V23.0588C77.25 21.078 76.4663 19.1775 75.0701 17.7724L60.1065 2.71355C58.6986 1.29672 56.7838 0.5 54.7864 0.5H8.75C4.60787 0.5 1.25 3.85786 1.25 8V52.1795C1.25 54.1613 2.0344 56.0625 3.43182 57.4678L19.1637 73.2884C20.5714 74.704 22.4855 75.5 24.4819 75.5H69.75C73.8921 75.5 77.25 72.1421 77.25 68Z" fill="#F5E5E5" fill-opacity="0.8" stroke="#F3CCD4" />
+            <image href="/icon/reject.svg" x="24" y="24" width="30" height="30" onClick={handlReject} />
+          </svg>
+
+          <svg xmlns="http://www.w3.org/2000/svg" width="56" height="65" viewBox="0 0 56 65" fill="none">
+            <path d="M22.6564 61.8784L3.42644 43.7484C1.978 42.3828 1.16481 40.5303 1.16604 38.5991L1.17355 26.8226C1.17477 24.8944 1.98777 23.0455 3.43394 21.682L23.4296 2.83016C26.4434 -0.0113071 31.3299 -0.0113093 34.3437 2.83016L53.2013 20.6091C54.6504 21.9753 55.4636 23.8288 55.4617 25.761L55.4489 38.2446C55.4469 40.1719 54.634 42.0197 53.1885 43.3825L33.5705 61.8784C30.5567 64.7198 25.6702 64.7198 22.6564 61.8784Z" fill="#F5E5E5" fill-opacity="0.8" stroke="#F3CCD4" />
+
+            <g onClick={handleSvgClick} style={{ cursor: "pointer" }}>
+              <svg x="18" y="25" width="20" height="18" viewBox="0 0 20 18" fill="none">
+                <path
+                  d="M10 4.15428C8 -0.540161 1 -0.0401611 1 5.95987C1 11.9599 10 16.9601 10 16.9601C10 16.9601 19 11.9599 19 5.95987C19 -0.0401611 12 -0.540161 10 4.15428Z"
+                  stroke="#E3838E"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  fill={isFavorite ? "#E3838E" : "none"} // 控制填充顏色
+                />
+              </svg>
+            </g>
+          </svg>
+
+          <svg xmlns="http://www.w3.org/2000/svg" width="78" height="76" viewBox="0 0 78 76" fill="none">
+            <path d="M0.75 68V23.0588C0.75 21.078 1.53366 19.1775 2.9299 17.7724L17.8935 2.71355C19.3014 1.29672 21.2162 0.5 23.2136 0.5H69.25C73.3921 0.5 76.75 3.85786 76.75 8V52.1795C76.75 54.1613 75.9656 56.0625 74.5682 57.4678L58.8363 73.2884C57.4286 74.704 55.5145 75.5 53.5181 75.5H8.25C4.10787 75.5 0.75 72.1421 0.75 68Z" fill="#F5E5E5" fill-opacity="0.8" stroke="#F3CCD4" />
+            <image href="/icon/approve.svg" x="24" y="24" width="30" height="30" onClick={handlApproval} />
+          </svg>
         </div>
       </div>
 
@@ -566,7 +584,7 @@ export default function ProfilePage() {
                 </defs>
               </svg>
             </button>
-            <span className="modalTitle">{}</span>
+            <span className="modalTitle">{ }</span>
             <div
               style={{
                 display: "flex",
