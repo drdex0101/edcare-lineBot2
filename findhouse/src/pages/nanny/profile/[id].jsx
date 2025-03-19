@@ -96,6 +96,10 @@ export default function ProfilePage() {
     fetchNannyInfo();
   }, [id, router.isReady]); // 添加 router.isReady 作為依賴
 
+  const toMatching = () => {
+    router.push("/parent/matching");
+  };
+
   const serviceNames = {
     1: "可接送小朋友",
     2: "可遠端查看育兒情形",
@@ -300,21 +304,27 @@ export default function ProfilePage() {
     setIsModalOpen(true);
   };
 
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+
   const handleBooking = async () => {
     const response = await fetch(`/api/order/matchByParent`, {
       method: "PATCH",
-      body: JSON.stringify({ id, orderId, status: "matching" }),
+      body: JSON.stringify({ id, orderId, status: "matchByParent" }),
       headers: {
         "Content-Type": "application/json",
       },
     });
     const data = await response.json();
     setIsModalOpen(false);
+    if (data.success) {
+      setIsBookingModalOpen(true);
+    }
     setIsMatching(true);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+    setIsBookingModalOpen(false);
   };
 
   return (
@@ -432,6 +442,7 @@ export default function ProfilePage() {
               src={urls[currentImageIndex]}
               alt={`圖片 ${currentImageIndex + 1}`}
               className="carouselImage"
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
             <div
               style={{
@@ -461,7 +472,7 @@ export default function ProfilePage() {
             </div>
           )}
         </div>
-        <div style={{ backgroundColor: "#F8ECEC",marginBottom:"14px" }}>
+        <div style={{ width: "100%",marginBottom:"14px",padding:"10px 40px" }}>
           {nannyInfo.care_type === "longTern" && (
             <ServiceSchedule weekdays={nannyInfo.weekdays} care_time={nannyInfo.care_time}></ServiceSchedule>
           )}
@@ -570,6 +581,36 @@ export default function ProfilePage() {
                 確認
               </button>
             </div>
+          </div>
+        </div>
+      )}
+      {isBookingModalOpen && (
+        <div className="modalOverlay">
+          <div className="modalContent">
+            <button className="closeButton" onClick={handleCloseModal}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+                fill="none"
+              >
+                <g clip-path="url(#clip0_304_31413)">
+                  <path
+                    d="M14.7782 5.22943C14.4824 4.93364 14.0045 4.93364 13.7088 5.22943L10 8.9306L6.29124 5.22184C5.99545 4.92605 5.51763 4.92605 5.22184 5.22184C4.92605 5.51763 4.92605 5.99545 5.22184 6.29124L8.9306 10L5.22184 13.7088C4.92605 14.0045 4.92605 14.4824 5.22184 14.7782C5.51763 15.0739 5.99545 15.0739 6.29124 14.7782L10 11.0694L13.7088 14.7782C14.0045 15.0739 14.4824 15.0739 14.7782 14.7782C15.0739 14.4824 15.0739 14.0045 14.7782 13.7088L11.0694 10L14.7782 6.29124C15.0664 6.00303 15.0664 5.51763 14.7782 5.22943Z"
+                    fill="#252525"
+                  />
+                </g>
+                <defs>
+                  <clipPath id="clip0_304_31413">
+                    <rect width="20" height="20" fill="white" />
+                  </clipPath>
+                </defs>
+              </svg>
+            </button>
+            <span className="bookingFont">預約成功！待等家長回覆...</span>
+            <img src="/review.png" alt="check" />
+            <button className="bookingBtn" onClick={toMatching}>點我前往查看回覆</button>
           </div>
         </div>
       )}

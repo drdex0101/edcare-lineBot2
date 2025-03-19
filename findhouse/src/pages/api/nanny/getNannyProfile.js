@@ -60,6 +60,7 @@ export default async function handler(req, res) {
           nanny.uploadId, 
           nanny.created_ts,
           k.name,
+          k.birthday,
           c.weekdays,
           c.care_time,
           c.start_date ,

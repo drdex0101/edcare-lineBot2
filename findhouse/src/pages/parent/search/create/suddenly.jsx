@@ -102,7 +102,7 @@ const ApplicationPage = () => {
   const handleDateChange = (range) => {
     console.log("Date change:", range); // 添加日誌來調試
     setSelectedRange({
-      startDate: range.startDate || new Date().toISOString().split("T")[0],
+      startDate: range.startDate || new Date().toISOString().split("T")[0]+3,
       endDate: range.endDate || null,
     });
   };

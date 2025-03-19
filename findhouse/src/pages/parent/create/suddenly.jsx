@@ -11,6 +11,7 @@ import { useState } from "react";
 const ApplicationPage = () => {
   const router = useRouter();
   const { careData, setCareData } = useStore();
+  const { babyInfo, setBabyInfo } = useStore();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleNextClick = async () => {
@@ -28,9 +29,9 @@ const ApplicationPage = () => {
   const [selectedRange, setSelectedRange] = useState(() => {
     const today = new Date();
     const threeDaysLater = new Date();
-    threeDaysLater.setDate(today.getDate() + 3); // 設定三天後
+    threeDaysLater.setDate(today.getDate() + 3); 
     return {
-      startDate: threeDaysLater.toISOString().split("T")[0], // 格式化 YYYY-MM-DD
+      startDate: threeDaysLater.toISOString().split("T")[0],
       endDate: null,
     };
   });
@@ -38,7 +39,6 @@ const ApplicationPage = () => {
 
   const [selectedCareType, setSelectedCareType] = React.useState(() => "");
   const [selectedAddress, setSelectedAddress] = React.useState(() => []);
-  const [orderData, setData] = React.useState("");
 
   const handleCareTypeChange = (e) => {
     setSelectedCareType(e.target.value);
@@ -50,7 +50,7 @@ const ApplicationPage = () => {
       ? selectedAddress
       : [selectedAddress];
     let response;
-    if (careData) {
+    if (careData.id) {
       response = await fetch("/api/base/updateCareData", {
         method: "PATCH",
         headers: {
@@ -95,6 +95,7 @@ const ApplicationPage = () => {
     setCareData(data.careData);
     localStorage.setItem("careTypeId", data.careData.id);
     localStorage.setItem("choosetype", "suddenly");
+    setBabyInfo({});
   };
 
   const handleLastClick = () => {
@@ -115,7 +116,11 @@ const ApplicationPage = () => {
     if (parsedData) {
       setSelectedRange({
         startDate:
-          parsedData.start_date || new Date().toISOString().split("T")[0],
+          parsedData.start_date || (() => {
+            const threeDaysLater = new Date();
+            threeDaysLater.setDate(threeDaysLater.getDate() + 3);
+            return threeDaysLater.toISOString().split("T")[0];
+          })(),
         endDate: parsedData.end_date || null,
       });
       setSelectedCareType(parsedData.scenario);

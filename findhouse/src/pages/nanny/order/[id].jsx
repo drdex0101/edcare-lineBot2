@@ -496,7 +496,7 @@ export default function ProfilePage() {
             </div>
           )}
         </div>
-        <div style={{ marginBottom: "20px" }}>
+        <div style={{ width: "100%",marginBottom:"14px",padding:"10px 40px" }}>
           {orderInfo.choosetype === "suddenly" &&
             selectedRange.startDate &&
             selectedRange.endDate && (

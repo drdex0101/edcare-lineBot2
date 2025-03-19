@@ -26,6 +26,8 @@ const ApplicationPage = () => {
   const [babyBirthOrder, setBabyBirthOrder] = useState("");
   const [babyHope, setBabyHope] = useState("");
   const { babyInfo, setBabyInfo } = useStore();
+  const { careData, setCareData } = useStore();
+
   const handleNextClick = () => {
     createBabyRecord();
   };
@@ -39,9 +41,9 @@ const ApplicationPage = () => {
       parentLineId: Cookies.get("userId"),
       nannyid: "",
       status: "create",
-      choosetype: localStorage.getItem("choosetype"),
+      choosetype: careData?.care_type,
       orderstatus: "on",
-      caretypeid: localStorage.getItem("careTypeId"),
+      caretypeid: careData?.id,
       nickname: babyName,
       gender: babyGender,
       birthday: selectedDate,
@@ -88,10 +90,10 @@ const ApplicationPage = () => {
       });
       return;
     }
-
+    
     try {
       let response;
-      if (babyInfo.orders.length > 0) {
+      if (babyInfo.orders!=null) {
         response = await fetch("/api/order/updateOrderData", {
           method: "PATCH",
           headers: {
@@ -121,7 +123,11 @@ const ApplicationPage = () => {
 
     } catch (error) {
       console.error("訂單建立失敗:", error);
-      alert("提交失敗，請稍後再試");
+      Swal.fire({
+        icon: "error",
+        title: "提交失敗，請稍後再試",
+        confirmButtonText: "確定",
+      });
     }
   };
 
@@ -160,7 +166,7 @@ const ApplicationPage = () => {
   useEffect(() => {
     const parsedData = useStore.getState().babyInfo;
     console.log(parsedData);
-    if (parsedData.orders.length > 0) {
+    if (parsedData.orders?.length > 0) {
       setBabyInfo(parsedData);
       setBabyName(parsedData.nickname);
       setBabyGender(parsedData.gender);

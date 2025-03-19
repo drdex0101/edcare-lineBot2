@@ -193,7 +193,7 @@ export default function HistoryPage() {
 
     } else {
       setCareData({});
-      setBabyInfo(orderInfo[orderCurrentPage - 1]);
+      setBabyInfo({});
       router.push("/parent/search/create/choose");
     }
   };

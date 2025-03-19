@@ -90,18 +90,10 @@ const ApplicationPage = () => {
                 <div style={styles.rollerActive}></div>
               </div>
               <div className="outlineBorder">
-                {isMember && haveKyc && haveOrder ? (
-                  <div className="flexColumn">
+              <div className="flexColumn">
                     <span className="outlineTitle">您的資料已完成，</span>
                     <span className="outlineTitle">請稍等資料審核。</span>
                   </div>
-                ) : (
-                  <div className="flexColumn">
-                    <span className="outlineTitle">您的資料尚未完成，</span>
-                    <span className="outlineTitle">請先繼續資料填寫。</span>
-                  </div>
-                )}
-                {isMember && haveKyc && haveOrder ? (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="31"
@@ -115,34 +107,6 @@ const ApplicationPage = () => {
                       fill="#E3838E"
                     />
                   </svg>
-                ) : (
-                  <svg
-                    width="37"
-                    height="36"
-                    viewBox="0 0 37 36"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    onClick={handleClick}
-                    style={{ cursor: "pointer" }}
-                  >
-                    <g id="Group 3602">
-                      <g id="Union">
-                        <path
-                          fill-rule="evenodd"
-                          clip-rule="evenodd"
-                          d="M33.5001 18.054C33.5001 14.0622 31.8351 10.3014 29.0734 7.43221L29.0684 7.4271C26.301 4.66244 22.5338 3 18.5397 3C14.553 3 10.7824 4.54925 8.00857 7.42963C3.25113 12.1842 2.13997 19.1606 5.24336 25.0289L5.41047 25.3449L8.01253 24.0452C8.01253 24.0452 10.3515 28.4262 7.83549 23.7136C5.31952 19.0009 6.25971 13.3432 10.042 9.56508L10.0537 9.55216C12.1402 7.25886 15.1737 5.99977 18.4313 5.99977C21.687 5.99977 24.7252 7.25824 26.9232 9.55876L26.9292 9.56477C29.2401 11.8734 30.4976 14.9129 30.4976 18.0539C30.4976 21.1999 29.2368 24.3423 26.9352 26.537L26.9292 26.543C23.1515 30.3171 17.4861 31.157 12.76 28.7441L12.4162 28.5686L11.2523 31.185L11.5653 31.3414C13.7773 32.4462 16.1036 33 18.5399 33C22.4225 33 26.1907 31.4481 29.0685 28.5729C31.8359 25.8082 33.5001 22.0446 33.5001 18.054Z"
-                          fill="#E3838E"
-                        />
-                        <path
-                          fill-rule="evenodd"
-                          clip-rule="evenodd"
-                          d="M20.7682 17.7539L20.7685 22.74H23.6623V12.8282H13.7416V15.7199H18.7314L6.99419 27.3408L9.13557 29.4801L20.7682 17.7539Z"
-                          fill="#E3838E"
-                        />
-                      </g>
-                    </g>
-                  </svg>
-                )}
               </div>
               <div className="outlineBorderSecond">
                 <div className="flexColumnSecond">
