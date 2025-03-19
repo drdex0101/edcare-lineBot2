@@ -7,6 +7,15 @@ align-self: stretch;
 margin-top: 10px;
 background: #FFF;
 }
+.favoriteBtn {
+  width: 52.07px;
+  height: 51.007px;
+  transform: rotate(-45deg);
+  flex-shrink: 0;
+  fill: rgba(245, 229, 229, 0.80);
+  stroke-width: 1px;
+  stroke: var(---Primary-Container, #F3CCD4);
+}
 .location-subTitle {
   display: flex;
   padding: 0px 11px 0px 12px;
