@@ -461,7 +461,7 @@ export default function ProfilePage() {
             </div>
           )}
         </div>
-        <div style={{ backgroundColor: "#F8ECEC" }}>
+        <div style={{ backgroundColor: "#F8ECEC",marginBottom:"14px" }}>
           {nannyInfo.care_type === "longTern" && (
             <ServiceSchedule weekdays={nannyInfo.weekdays} care_time={nannyInfo.care_time}></ServiceSchedule>
           )}
@@ -515,20 +515,18 @@ export default function ProfilePage() {
             </div>
           </div>
           <div>
-            <div style={{ backgroundColor: "#F8ECEC" }}>
+            <div style={{ backgroundColor: "#F8ECEC"}}>
               <div className="introSection">
                 <div className="notesSection">
                   <span className="imgFont">保母自介</span>
                   {nannyInfo.introduction}
                 </div>
+                <button className="submitButton" onClick={handleBookingClick} disabled={isMatching}>
+                  + 馬上預約
+                </button>
               </div>
             </div>
           </div>
-        </div>
-        <div className="buttonLayout">
-          <button className="submitButton" onClick={handleBookingClick} disabled={isMatching}>
-            + 馬上預約
-          </button>
         </div>
       </div>
 
