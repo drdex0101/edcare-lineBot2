@@ -167,7 +167,7 @@ const ApplicationPage = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            richMenuId: "richmenu-bd0843b93a53c3df760bbd95c7871e23",
+            richMenuId: "richmenu-0e3bddda8e703d189f73cfcfc9a0d320",
           }),
         });
         router.push("/parent/verify/finish");

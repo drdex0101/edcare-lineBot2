@@ -11,6 +11,7 @@
     justify-content: space-between;
     gap: 10px;
     min-width: 100%;
+    width: 500px;
 }
 
 .addIcon {

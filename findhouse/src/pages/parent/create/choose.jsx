@@ -1,6 +1,8 @@
 import React from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import useStore from "../../../lib/store";
+
 const ApplicationPage = () => {
   const router = useRouter();
   // Set the item in the store when the component mounts
@@ -9,8 +11,16 @@ const ApplicationPage = () => {
     router.back(); // 替换 '/next-page' 为你想要跳转的路径
   };
 
-  const handleLongClick = () => {
-    router.push("/parent/create/long"); // 替换 '/next-page' 为你想要跳转的路径
+  const { careData, setCareData } = useStore();
+
+  const handleToLong = () => {
+    setCareData({});
+    router.push("/parent/create/long");
+  };
+
+  const handleToSuddenly = () => {
+    setCareData({});
+    router.push("/parent/create/suddenly");
   };
 
   return (
@@ -62,26 +72,16 @@ const ApplicationPage = () => {
             <span style={styles.smallTitle}>選擇托育方式</span>
           </div>
           <div style={styles.buttonLayout}>
-            <Link
-              href={{
-                pathname: "/parent/create/suddenly",
-              }}
-              passHref
-            >
-              <button style={styles.suddenlyBtn}>
+           
+              <button style={styles.suddenlyBtn} onClick={handleToSuddenly}>
                 <span style={styles.typeFont}>臨時托育</span>
               </button>
-            </Link>
-            <Link
-              href={{
-                pathname: "/parent/create/long",
-              }}
-              passHref
-            >
-              <button style={styles.longBtn}>
+
+            
+              <button style={styles.longBtn} onClick={handleToLong}>
                 <span style={styles.typeFont}>長期托育</span>
               </button>
-            </Link>
+
           </div>
         </div>
       </div>
