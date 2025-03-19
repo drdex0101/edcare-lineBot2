@@ -746,6 +746,7 @@ const styles = {
     height: "147px",
     padding: "15px 38px",
     alignItems: "center",
+    justifyContent:"space-between",
     gap: "20px",
     alignSelf: "stretch",
     width: "100%",
