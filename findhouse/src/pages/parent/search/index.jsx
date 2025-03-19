@@ -192,7 +192,7 @@ export default function HistoryPage() {
       setOpenKycModal(true);
 
     } else {
-      setCareData(careData);
+      setCareData({});
       setBabyInfo(orderInfo[orderCurrentPage - 1]);
       router.push("/parent/search/create/choose");
     }
