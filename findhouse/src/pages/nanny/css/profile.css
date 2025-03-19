@@ -1,3 +1,25 @@
+.bookingBtn {
+  display: flex;
+  height: 34px;
+  padding: 12px 16px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border-radius: 32px;
+  background: var(---Primary-Primary, #E3838E);
+  border: none;
+  color: #fff;
+}
+.bookingFont {
+  color: var(---Outline-OnSurfaceVariant, #402626);
+  text-align: center;
+  font-family: "LINE Seed JP_TTF";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
 .profile-location {
   display: flex;
 padding: 2px 66px;
@@ -280,7 +302,8 @@ background: #FFF;
     height: 80px;
     border-radius: 50%;
     margin-bottom: 10px;
-    margin-top:50px
+    margin-top:50px;
+    object-fit: cover;
   }
 
   .profileName {
