@@ -106,7 +106,7 @@ export default function ProfilePage() {
         setNannyInfo(data.nannies[0]);
 
         // 如果有環境照片，則獲取每張照片的URL
-        if (data.nannies[0].environmentpic.length > 0) {
+        if (data.nannies[0].environmentpic?.length > 0) {
           for (const picId of data.nannies[0].environmentpic) {
             const response2 = await fetch(`/api/base/getImgUrl?id=${picId}`);
             const data2 = await response2.json();

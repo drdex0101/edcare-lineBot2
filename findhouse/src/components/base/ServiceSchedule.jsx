@@ -10,7 +10,7 @@ export default function ServiceSchedule({ weekdays, care_time }) {
 
   useEffect(() => {
     // 設置激活的天
-    const activeDayIndices = weekdays.map((day) => parseInt(day, 10));
+    const activeDayIndices = weekdays?.map((day) => parseInt(day, 10));
     setActiveDays(activeDayIndices);
 
     // 設置激活的時段
@@ -48,7 +48,7 @@ export default function ServiceSchedule({ weekdays, care_time }) {
           {dayMapping.map((day, index) => (
             <div
               key={index}
-              className={`day ${activeDays.includes(index) ? "active" : ""}`}
+              className={`day ${activeDays?.includes(index) ? "active" : ""}`}
             >
               {day}
             </div>
