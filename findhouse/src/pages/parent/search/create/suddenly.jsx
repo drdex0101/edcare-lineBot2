@@ -8,10 +8,15 @@ import { MenuItem, InputLabel, FormControl } from "@mui/material";
 import useStore from "../../../../lib/store";
 import Loading from "../../../../components/base/Loading";
 import { useState } from "react";
+import Swal from "sweetalert2";
 const ApplicationPage = () => {
   const router = useRouter();
   const { careData, setCareData } = useStore();
   const [isLoading, setIsLoading] = useState(false);
+
+  const today = new Date();
+  const threeDaysLater = new Date(today);
+  threeDaysLater.setDate(today.getDate() + 3);
 
   const handleNextClick = async () => {
     setIsLoading(true);
@@ -26,11 +31,8 @@ const ApplicationPage = () => {
 
   // Initialize state with default values based on item
   const [selectedRange, setSelectedRange] = useState(() => {
-    const today = new Date();
-    const threeDaysLater = new Date();
-    threeDaysLater.setDate(today.getDate() + 3); // 設定三天後
     return {
-      startDate: threeDaysLater.toISOString().split("T")[0], // 格式化 YYYY-MM-DD
+      startDate: threeDaysLater.toISOString().split("T")[0], // Set initial startDate to 3 days later
       endDate: null,
     };
   });
@@ -100,9 +102,9 @@ const ApplicationPage = () => {
   };
 
   const handleDateChange = (range) => {
-    console.log("Date change:", range); // 添加日誌來調試
+    console.log("Date change:", range);
     setSelectedRange({
-      startDate: range.startDate || new Date().toISOString().split("T")[0]+3,
+      startDate: range.startDate || threeDaysLater.toISOString().split("T")[0], // Use threeDaysLater as fallback
       endDate: range.endDate || null,
     });
   };
@@ -111,9 +113,14 @@ const ApplicationPage = () => {
     const parsedData = useStore.getState().careData;
     console.log("storedCareData", parsedData);
     if (parsedData) {
+      // Check if start_date is less than 3 days from now
+      const startDate = parsedData.start_date ? new Date(parsedData.start_date) : null;
+      const minStartDate = threeDaysLater;
+      
       setSelectedRange({
-        startDate:
-          parsedData.start_date || new Date().toISOString().split("T")[0],
+        startDate: (startDate && startDate >= minStartDate) 
+          ? parsedData.start_date 
+          : threeDaysLater.toISOString().split("T")[0],
         endDate: parsedData.end_date || null,
       });
       setSelectedCareType(parsedData.scenario);
@@ -180,16 +187,8 @@ const ApplicationPage = () => {
                       type="date"
                       id="datepicker1"
                       name="startDate"
-                      min={
-                        selectedRange.startDate
-                          ? selectedRange.startDate.split("T")[0]
-                          : ""
-                      }
-                      value={
-                        selectedRange.startDate
-                          ? selectedRange.startDate.split("T")[0]
-                          : ""
-                      }
+                      min={threeDaysLater.toISOString().split("T")[0]}
+                      value={selectedRange.startDate || ""}
                       style={styles.dateInput}
                       onChange={(e) =>
                         handleDateChange({
@@ -430,9 +429,21 @@ const ApplicationPage = () => {
                       multiple
                       labelId="gender-label"
                       id="gender"
-                      label="定點選擇"
+                      label="托育地區"
                       value={selectedAddress}
-                      onChange={(e) => setSelectedAddress(e.target.value)}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        // Limit selection to 5 items
+                        if (value.length <= 5) {
+                          setSelectedAddress(value);
+                        } else {
+                          Swal.fire({
+                            icon: "error",
+                            title: "最多只能選擇5個地區",
+                            confirmButtonText: "確定",
+                          });
+                        }
+                      }}
                       MenuProps={{
                         PaperProps: {
                           style: {

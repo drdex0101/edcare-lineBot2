@@ -118,9 +118,6 @@ export default function HistoryPage() {
               </div>
             ) : (
               <>
-                <span className="matching-body-layoff-content-title">
-                  已配對，待社工聯繫...
-                </span>
                 {onGoingList.map((avatar) => (
                   <div className="nanny-layout" key={avatar.id}>
                     <div className="nanny-avatar">

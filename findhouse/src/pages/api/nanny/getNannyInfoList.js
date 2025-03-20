@@ -39,6 +39,7 @@ export default async function handler(req, res) {
         LEFT JOIN upload u ON n.uploadId = u.id
         WHERE ($1::varchar[] IS NULL OR n.serviceLocation && $1)  -- Filter by locations if provided
         AND ($2::text IS NULL OR m.account ILIKE '%' || $2::text || '%')  -- Filter by account if keyword is provided
+        AND n.is_paired = FALSE
         ${orderByClause}  -- Add the order by clause if applicable
         LIMIT $3 OFFSET $4;
       `;

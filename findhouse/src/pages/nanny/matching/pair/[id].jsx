@@ -1,24 +1,31 @@
 import React, { useState } from "react";
 import ServiceSchedule from "../../../../components/base/ServiceSchedule";
+import CalendarRangePicker from "../../../../components/base/CalendarRangePicker";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import RatingComponent from "../../../../components/nanny/rating";
 import "./profile.css";
+import "./order.css";
 import Loading from "../../../../components/base/Loading";
 import useStore from "../../../../lib/store";
-
 export default function ProfilePage() {
   const router = useRouter();
   const { id } = router.query;
+  const { orderId } = useStore();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [nannyInfo, setNannyInfo] = useState({});
+  const [orderInfo, setOrderInfo] = useState({});
   const [urls, setUrls] = useState([]);
   const [iconUrl, setIconUrl] = useState("/assets/images/resource/error.png");
   const [isLoading, setIsLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(false);
+  const [age, setAge] = useState(0);
   const [isMatching, setIsMatching] = useState(false);
-  const { orderId, setOrderId } = useStore();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedRange, setSelectedRange] = React.useState({
+    startDate: null,
+    endDate: null,
+  });
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+
+  const [isFavorite, setIsFavorite] = useState(null);
 
   const handleSvgClick = async () => {
     try {
@@ -27,109 +34,107 @@ export default function ProfilePage() {
         await fetch(`/api/favorite/deleteFavorite`, {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ itemId: id, type: "parent" }),
+          body: JSON.stringify({ itemId: id, type: "nanny" }),
         });
       } else {
         setIsFavorite(true);
         await fetch(`/api/favorite/createFavorite`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ itemId: id, type: "parent" }),
+          body: JSON.stringify({ itemId: id, type: "nanny" }),
         });
       }
     } catch (error) {
       console.error("Error handling favorite:", error);
     }
   };
+
   // 處理點擊圓點來跳轉到對應圖片
   const handleDotClick = (index) => {
     setCurrentImageIndex(index);
   };
 
-  const [offset, setOffset] = useState(0);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setOffset(window.scrollY);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   const getIsFavorite = async () => {
     const response = await fetch(
-      `/api/favorite/getIsFavorite?itemId=${id}&&type=${"parent"}`,
+      `/api/favorite/getIsFavorite?itemId=${id}&&type=${"nanny"}`,
     );
     const data = await response.json();
-    console.log("data", data.favorite);
-    if (data.favorite) {
+    if (data.favorite.length > 0) {
       setIsFavorite(true);
     }
   };
 
-  const handlApproval = async () => {
-    const response = await fetch(`/api/order/matchByParent`, {
-      method: "PATCH",
-      body: JSON.stringify({ id, orderId, status: 'onGoing' }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await response.json();
-    setIsModalOpen(false);
-    setIsMatching(true);
+  const parseEditDate = (dateString) => {
+    if (!dateString) return null;
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    const formattedDate = `${year}-${month}-${day}`;
+    return formattedDate;
   };
+  const calculateAge = (birthdayString) => {
+    const birthday = new Date(birthdayString); // 轉換生日為 Date 物件
+    const today = new Date(); // 取得當前日期
 
-  const handlReject = async () => {
-    const response = await fetch(`/api/order/matchByParent`, {
-      method: "PATCH",
-      body: JSON.stringify({ id, orderId, status: 'cancel' }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await response.json();
-    setIsModalOpen(false);
-    setIsMatching(true);
-  };
+    let ageYears = today.getFullYear() - birthday.getFullYear(); // 計算年數
+    let ageMonths = today.getMonth() - birthday.getMonth(); // 計算月數
+    if (today.getDate() < birthday.getDate()) {
+        ageMonths--;
+    }
+    if (ageMonths < 0) {
+        ageYears--;
+        ageMonths += 12;
+    }
+    if (ageYears < 1) {
+        return `${ageMonths}個月`;
+    }
+
+    return `${ageYears}歲${ageMonths}個月`;
+  }
 
   useEffect(() => {
-    const fetchNannyInfo = async () => {
+    const fetchOrderInfo = async () => {
       setIsLoading(true);
       if (!router.isReady) return; // 等待路由準備就緒
       if (!id) return;
 
       try {
-        const response = await fetch(`/api/nanny/getNannyInfo?id=${id}`);
+        const response = await fetch(`/api/order/getOrderInfoById?id=${id}`);
         const data = await response.json();
-        setNannyInfo(data.nannies[0]);
-
+        setAge(calculateAge(data.orders[0].birthday));
+        setOrderInfo(data.orders[0]);
         // 如果有環境照片，則獲取每張照片的URL
-        if (data.nannies[0].environmentpic?.length > 0) {
-          for (const picId of data.nannies[0].environmentpic) {
+        if (data.orders[0].environmentpic && data.orders[0].environmentpic.length > 0) {
+          for (const picId of data.orders[0].environmentpic) {
             const response2 = await fetch(`/api/base/getImgUrl?id=${picId}`);
             const data2 = await response2.json();
             console.log("data2", data2.url);
             urls.push(data2.url);
           }
         }
-        if (data.nannies[0].uploadid) {
+        if (data.orders[0].uploadid) {
           const response3 = await fetch(
-            `/api/base/getImgUrl?id=${data.nannies[0].uploadid}`,
+            `/api/base/getImgUrl?id=${data.orders[0].uploadid}`,
           );
           const data3 = await response3.json();
           setIconUrl(data3.url);
         }
+        if (data.orders[0].choosetype === "suddenly") {
+          setSelectedRange({
+            startDate: parseEditDate(data.orders[0].suddenly_start_date) || "", // 確保不是 `undefined`
+            endDate: parseEditDate(data.orders[0].suddenly_end_date) || "",
+          });
+        }
         getIsFavorite();
+        setIsLoading(false);
       } catch (error) {
         console.error("Failed to fetch nanny info:", error);
       }
-      setIsLoading(false);
     };
 
-    fetchNannyInfo();
-  }, [id, router.isReady]);
+    fetchOrderInfo();
+  }, [id, router.isReady]); // 添加 router.isReady 作為依賴
 
   const serviceNames = {
     1: "可接送小朋友",
@@ -139,7 +144,6 @@ export default function ProfilePage() {
     5: "寶寶衣物清洗",
     6: "可配合家長外出",
   };
-
 
   const icons = {
     1: {
@@ -331,9 +335,51 @@ export default function ProfilePage() {
       ),
     },
   };
+  const [offset, setOffset] = useState(0);
+
+  const handlApproval = async () => {
+    const response = await fetch(`/api/order/matchByParent`, {
+      method: "PATCH",
+      body: JSON.stringify({ id, orderId, status: 'onGoing' }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
+    setIsModalOpen(false);
+    setIsMatching(true);
+  };
+
+  const handlReject = async () => {
+    const response = await fetch(`/api/order/matchByParent`, {
+      method: "PATCH",
+      body: JSON.stringify({ id, orderId, status: 'cancel' }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
+    setIsModalOpen(false);
+    setIsMatching(true);
+    
+  };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setOffset(window.scrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const toMatching = () => {
+    router.push("/nanny/search");
+  };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+    setIsBookingModalOpen(false);
   };
 
   return (
@@ -384,22 +430,17 @@ export default function ProfilePage() {
       <div className="profileSection">
         <img className="profilePic" src={iconUrl} alt="Profile" />{" "}
         {/* 頭貼圓形 */}
-        <h2 className="profileName">{nannyInfo?.name}</h2>
-        <div className="rating">
-          <RatingComponent score={nannyInfo?.score} />
-        </div>
+        <h2 className="profileName">{orderInfo.nickname}</h2>
         <div className="profile-section">
           <div className="part">
-            <span className="part-title">經驗</span>
-            <span className="part-subTitle">{nannyInfo?.experienment}</span>
-          </div>
-          <div className="part">
             <span className="part-title">年紀</span>
-            <span className="part-subTitle">{nannyInfo?.age}</span>
+            <span className="part-subTitle">{age}</span>
           </div>
           <div className="part">
-            <span className="part-title">托育</span>
-            <span className="part-subTitle">{nannyInfo?.kidcount}</span>
+            <span className="part-title">性別</span>
+            <span className="part-subTitle">
+              {orderInfo.gender === "male" ? "男" : "女"}
+            </span>
           </div>
         </div>
         {/* Tabs */}
@@ -407,11 +448,7 @@ export default function ProfilePage() {
           <div className="tab-content">
             <span className="tab-tile">托育方式</span>
             <span className="tab-subTitle">
-              {nannyInfo?.way === "suddenly"
-                ? "臨時托育"
-                : nannyInfo?.way === "longTerm"
-                  ? "長期托育"
-                  : ""}
+              {orderInfo.choosetype === "suddenly" ? "臨時托育" : "長期托育"}
             </span>
           </div>
           <svg
@@ -430,8 +467,28 @@ export default function ProfilePage() {
           </svg>
           <div className="tab-content">
             <span className="tab-tile">托育情境</span>
-            <span className="tab-subTitle">{nannyInfo?.scenario}</span>
+            <span className="tab-subTitle">
+              {orderInfo.scenario === "infantCareCenter"
+                ? "定點托育"
+                : "到宅托育"}
+            </span>
           </div>
+        </div>
+        <div className="profile-location">
+          <span className="location-subTitle">
+            {orderInfo.choosetype === "suddenly"
+              ? orderInfo.suddenly_location
+              : orderInfo.scenario === "infantCareCenter"
+                ? orderInfo.long_term_location.slice(0, 6)
+                : orderInfo.long_term_location?.map((location, index) => (
+                    <span key={index}>
+                      {location}
+                      {index < orderInfo.long_term_location.length - 1
+                        ? "、"
+                        : ""}
+                    </span>
+                  ))}
+          </span>
         </div>
         {/* 圖片輪播區域 */}
         <div className="imageSection">
@@ -442,25 +499,11 @@ export default function ProfilePage() {
               alt={`圖片 ${currentImageIndex + 1}`}
               className="carouselImage"
             />
-            <div
-              style={{
-                width: "100%",
-                display: "flex",
-                alignItems: "flex-end",
-                justifyContent: "flex-end",
-              }}
-            >
-              <div className="imageCounter">
-                {nannyInfo?.environmentpic
-                  ? `${currentImageIndex + 1}/${nannyInfo?.environmentpic.length}`
-                  : "0/0"}
-              </div>
-            </div>
           </div>
           {/* 圓點指示器 */}
-          {nannyInfo?.environmentpic && nannyInfo?.environmentpic?.length > 0 && (
+          {orderInfo.environmentpic && orderInfo.environmentpic.length > 0 && (
             <div className="dotsContainer">
-              {nannyInfo?.environmentpic?.map((_, index) => (
+              {orderInfo.environmentpic.map((_, index) => (
                 <span
                   key={index}
                   className={`dot ${index === currentImageIndex ? "active" : ""}`}
@@ -470,8 +513,22 @@ export default function ProfilePage() {
             </div>
           )}
         </div>
-        <div style={{ backgroundColor: "#F8ECEC" }}>
-          <ServiceSchedule></ServiceSchedule>
+        <div style={{ width: "100%",marginBottom:"14px",padding:"10px 40px" }}>
+          {orderInfo.choosetype === "suddenly" &&
+            selectedRange.startDate &&
+            selectedRange.endDate && (
+              <CalendarRangePicker
+                startDate={selectedRange.startDate}
+                endDate={selectedRange.endDate}
+                styles={{
+                  calendar: { maxWidth: "400px" },
+                  day: { width: "50px", height: "50px" },
+                }}
+              />
+            )}
+          {orderInfo.choosetype === "longTerm" && (
+            <ServiceSchedule></ServiceSchedule>
+          )}
         </div>
         {/* Icon Navigation */}
         <div style={{ backgroundColor: "#fff", border: "none" }}>
@@ -495,14 +552,14 @@ export default function ProfilePage() {
                   }}
                 >
                   <div
-                    className={`iconStyle ${nannyInfo?.service?.includes(number) ? "active" : "inactive"}`}
+                    className={`iconStyle ${orderInfo.hope?.includes(number) ? "active" : "inactive"}`}
                   >
-                    {nannyInfo?.service?.includes(number)
+                    {orderInfo.hope?.includes(number)
                       ? icons[number].active
                       : icons[number].default}
                   </div>
                   <span
-                    className={`fontSpan ${nannyInfo?.service?.includes(number) ? "active" : "inactive"}`}
+                    className={`fontSpan ${orderInfo.hope?.includes(number) ? "active" : "inactive"}`}
                   >
                     {serviceNames[number]}
                   </span>
@@ -514,8 +571,8 @@ export default function ProfilePage() {
             <div style={{ backgroundColor: "#F8ECEC" }}>
               <div className="introSection">
                 <div className="notesSection">
-                  <span className="imgFont">保母自介</span>
-                  {nannyInfo?.introduction}
+                  <span className="imgFont">托育理念</span>
+                  <span>{orderInfo.intro}</span>
                 </div>
               </div>
             </div>
@@ -560,7 +617,7 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {isModalOpen && (
+      {isBookingModalOpen && (
         <div className="modalOverlay">
           <div className="modalContent">
             <button className="closeButton" onClick={handleCloseModal}>
@@ -584,22 +641,9 @@ export default function ProfilePage() {
                 </defs>
               </svg>
             </button>
-            <span className="modalTitle">{ }</span>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                gap: "16px",
-              }}
-            >
-              <button className="cancelBtn" onClick={handleCloseModal}>
-                取消
-              </button>
-              <button className="confirmBtn" onClick={handleCloseModal}>
-                確認
-              </button>
-            </div>
+            <span className="bookingFont">預約成功！等待管理員媒合...</span>
+            <img src="/review.png" alt="check" />
+            <button className="bookingBtn" onClick={toMatching}>點我前往查看回覆</button>
           </div>
         </div>
       )}

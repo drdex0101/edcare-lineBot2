@@ -21,3 +21,4 @@ CREATE TABLE nanny (
     long_tern_id VARCHAR(50)
 );
 ALTER TABLE nanny ADD COLUMN care_type_id BIGINT; 
+alter table nanny add column is_paired BOOLEAN DEFAULT False;

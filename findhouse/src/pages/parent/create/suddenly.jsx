@@ -189,16 +189,13 @@ const ApplicationPage = () => {
                       type="date"
                       id="datepicker1"
                       name="startDate"
-                      min={
-                        selectedRange.startDate
-                          ? selectedRange.startDate.split("T")[0]
-                          : ""
-                      }
-                      value={
-                        selectedRange.startDate
-                          ? selectedRange.startDate.split("T")[0]
-                          : ""
-                      }
+                      min={(() => {
+                        const today = new Date();
+                        const threeDaysLater = new Date();
+                        threeDaysLater.setDate(today.getDate() + 3);
+                        return threeDaysLater.toISOString().split("T")[0];
+                      })()}
+                      value={selectedRange.startDate || ""}
                       style={styles.dateInput}
                       onChange={(e) =>
                         handleDateChange({
@@ -439,16 +436,20 @@ const ApplicationPage = () => {
                       multiple
                       labelId="gender-label"
                       id="gender"
-                      label="定點選擇"
+                      label="托育地區"
                       value={selectedAddress}
-                      onChange={(e) => setSelectedAddress(e.target.value)}
-                      MenuProps={{
-                        PaperProps: {
-                          style: {
-                            maxHeight: 24 * 7,
-                            overflowY: "auto",
-                          },
-                        },
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        // Limit selection to 5 items
+                        if (value.length <= 5) {
+                          setSelectedAddress(value);
+                        } else {
+                          Swal.fire({
+                            icon: "error",
+                            title: "最多只能選擇5個地區",
+                            confirmButtonText: "確定",
+                          });
+                        }
                       }}
                       InputProps={{
                         sx: {
