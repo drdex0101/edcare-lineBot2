@@ -70,7 +70,7 @@ export default async function handler(req, res) {
           c.scenario,
           c.care_type
         FROM nanny
-        LEFT JOIN kyc_info k ON nanny.kycId = k.id
+        LEFT JOIN kyc_info k ON nanny.kycid = k.id
         LEFT JOIN care_data c ON nanny.care_type_id = c.id
         WHERE nanny.memberId = $1;
       `;

@@ -1,27 +1,24 @@
 import React, { useState } from "react";
-import ServiceSchedule from "../../../components/base/ServiceSchedule";
-import CalendarRangePicker from "../../../components/base/CalendarRangePicker";
+import ServiceSchedule from "../../../../components/base/ServiceSchedule";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import RatingComponent from "../../../components/nanny/rating";
-import "../css/profile.css";
-import Loading from "../../../components/base/Loading";
-import useStore from "../../../lib/store";
-import Swal from "sweetalert2";
+import RatingComponent from "../../../../components/nanny/rating";
+import "./profile.css";
+import Loading from "../../../../components/base/Loading";
+import useStore from "../../../../lib/store";
+
 export default function ProfilePage() {
   const router = useRouter();
   const { id } = router.query;
-  const { orderId } = useStore();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [nannyInfo, setNannyInfo] = useState({});
   const [urls, setUrls] = useState([]);
   const [iconUrl, setIconUrl] = useState("/assets/images/resource/error.png");
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isActive, setIsActive] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const [isMatching, setIsMatching] = useState(false);
-  const [kycId, setKycId] = useState(0);
+  const { orderId, setOrderId } = useStore();
 
   const handleSvgClick = async () => {
     try {
@@ -49,26 +46,55 @@ export default function ProfilePage() {
     setCurrentImageIndex(index);
   };
 
+  const [offset, setOffset] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setOffset(window.scrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const getIsFavorite = async () => {
     const response = await fetch(
       `/api/favorite/getIsFavorite?itemId=${id}&&type=${"parent"}`,
     );
     const data = await response.json();
-    console.log("data", data.favorite.length);
-    if (data.favorite.length > 0) {
+    console.log("data", data.favorite);
+    if (data.favorite) {
       setIsFavorite(true);
     }
   };
 
-  const getIsMember = async () => {
-    const response = await fetch(`/api/member/isMemberExist`);
+  const handlApproval = async () => {
+    const response = await fetch(`/api/order/matchByParent`, {
+      method: "PATCH",
+      body: JSON.stringify({ id, orderId, status: 'onGoing' }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
     const data = await response.json();
-    console.log("data", data);
-    setKycId(data.member.kyc_id);
+    setIsModalOpen(false);
+    setIsMatching(true);
+  };
+
+  const handlReject = async () => {
+    const response = await fetch(`/api/order/matchByParent`, {
+      method: "PATCH",
+      body: JSON.stringify({ id, orderId, status: 'cancel' }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
+    setIsModalOpen(false);
+    setIsMatching(true);
   };
 
   useEffect(() => {
-    getIsMember();
     const fetchNannyInfo = async () => {
       setIsLoading(true);
       if (!router.isReady) return; // 等待路由準備就緒
@@ -80,13 +106,12 @@ export default function ProfilePage() {
         setNannyInfo(data.nannies[0]);
 
         // 如果有環境照片，則獲取每張照片的URL
-        if (data.nannies[0].environmentpic.length > 0) {
+        if (data.nannies[0].environmentpic?.length > 0) {
           for (const picId of data.nannies[0].environmentpic) {
             const response2 = await fetch(`/api/base/getImgUrl?id=${picId}`);
             const data2 = await response2.json();
             console.log("data2", data2.url);
             urls.push(data2.url);
-            console.log("urls", urls);
           }
         }
         if (data.nannies[0].uploadid) {
@@ -104,11 +129,7 @@ export default function ProfilePage() {
     };
 
     fetchNannyInfo();
-  }, [id, router.isReady]); // 添加 router.isReady 作為依賴
-
-  const toMatching = () => {
-    router.push("/parent/matching");
-  };
+  }, [id, router.isReady]);
 
   const serviceNames = {
     1: "可接送小朋友",
@@ -118,6 +139,7 @@ export default function ProfilePage() {
     5: "寶寶衣物清洗",
     6: "可配合家長外出",
   };
+
 
   const icons = {
     1: {
@@ -310,40 +332,8 @@ export default function ProfilePage() {
     },
   };
 
-  const handleBookingClick = () => {
-
-    setIsModalOpen(true);
-  };
-
-  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
-
-  const handleBooking = async () => {
-    if (kycId == 0) {
-      setIsModalOpen(false);
-      Swal.fire({
-        icon: 'error',
-        title: '請先填寫kyc。',
-      });
-      return;
-    }
-    const response = await fetch(`/api/order/matchByParent`, {
-      method: "PATCH",
-      body: JSON.stringify({ id, orderId, status: "matchByParent" }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await response.json();
-    setIsModalOpen(false);
-    if (data.success) {
-      setIsBookingModalOpen(true);
-    }
-    setIsMatching(true);
-  };
-
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setIsBookingModalOpen(false);
   };
 
   return (
@@ -394,22 +384,22 @@ export default function ProfilePage() {
       <div className="profileSection">
         <img className="profilePic" src={iconUrl} alt="Profile" />{" "}
         {/* 頭貼圓形 */}
-        <h2 className="profileName">{nannyInfo.name}</h2>
+        <h2 className="profileName">{nannyInfo?.name}</h2>
         <div className="rating">
-          <RatingComponent score={nannyInfo.score} />
+          <RatingComponent score={nannyInfo?.score} />
         </div>
         <div className="profile-section">
           <div className="part">
             <span className="part-title">經驗</span>
-            <span className="part-subTitle">{nannyInfo.experienment|| "未填寫"}</span>
+            <span className="part-subTitle">{nannyInfo?.experienment}</span>
           </div>
           <div className="part">
             <span className="part-title">年紀</span>
-            <span className="part-subTitle">{nannyInfo.age|| "未填寫"}</span>
+            <span className="part-subTitle">{nannyInfo?.age}</span>
           </div>
           <div className="part">
-            <span className="part-title">托育人數</span>
-            <span className="part-subTitle">{nannyInfo.kidcount || 0}</span>
+            <span className="part-title">托育</span>
+            <span className="part-subTitle">{nannyInfo?.kidcount}</span>
           </div>
         </div>
         {/* Tabs */}
@@ -417,12 +407,10 @@ export default function ProfilePage() {
           <div className="tab-content">
             <span className="tab-tile">托育方式</span>
             <span className="tab-subTitle">
-              {nannyInfo.care_time === "night"
-                ? "夜間托育"
-                : nannyInfo.care_time === "allDay"
-                  ? "全天托育"
-                  : nannyInfo.care_time === "morning"
-                  ? "日間托育"
+              {nannyInfo?.way === "suddenly"
+                ? "臨時托育"
+                : nannyInfo?.way === "longTerm"
+                  ? "長期托育"
                   : ""}
             </span>
           </div>
@@ -442,32 +430,8 @@ export default function ProfilePage() {
           </svg>
           <div className="tab-content">
             <span className="tab-tile">托育情境</span>
-            <span className="tab-subTitle">
-              {nannyInfo.scenario === "home"
-                ? "在宅托育"
-                : nannyInfo.scenario === "infantCareCenter"
-                  ? "定點托育"
-                  : nannyInfo.scenario === "toHome"
-                    ? "到宅托育"
-                    : ""}
-            </span>
+            <span className="tab-subTitle">{nannyInfo?.scenario}</span>
           </div>
-        </div>
-        <div className="profile-location">
-          <span className="location-subTitle">
-            {nannyInfo.choosetype === "suddenly"
-              ? nannyInfo.location
-              : nannyInfo.scenario === "infantCareCenter"
-                ? nannyInfo.location.slice(0, 6)
-                : nannyInfo.location?.map((location, index) => (
-                    <span key={index}>
-                      {location}
-                      {index < nannyInfo.location.length - 1
-                        ? "、"
-                        : ""}
-                    </span>
-                  ))}
-          </span>
         </div>
         {/* 圖片輪播區域 */}
         <div className="imageSection">
@@ -477,7 +441,6 @@ export default function ProfilePage() {
               src={urls[currentImageIndex]}
               alt={`圖片 ${currentImageIndex + 1}`}
               className="carouselImage"
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
             <div
               style={{
@@ -488,16 +451,16 @@ export default function ProfilePage() {
               }}
             >
               <div className="imageCounter">
-                {nannyInfo.environmentpic
-                  ? `${currentImageIndex + 1}/${nannyInfo.environmentpic.length}`
+                {nannyInfo?.environmentpic
+                  ? `${currentImageIndex + 1}/${nannyInfo?.environmentpic.length}`
                   : "0/0"}
               </div>
             </div>
           </div>
           {/* 圓點指示器 */}
-          {nannyInfo.environmentpic && nannyInfo.environmentpic.length > 0 && (
+          {nannyInfo?.environmentpic && nannyInfo?.environmentpic?.length > 0 && (
             <div className="dotsContainer">
-              {nannyInfo.environmentpic.map((_, index) => (
+              {nannyInfo?.environmentpic?.map((_, index) => (
                 <span
                   key={index}
                   className={`dot ${index === currentImageIndex ? "active" : ""}`}
@@ -507,21 +470,8 @@ export default function ProfilePage() {
             </div>
           )}
         </div>
-        <div style={{ width: "100%",marginBottom:"14px",padding:"10px 40px" }}>
-          {nannyInfo.care_type === "longTern" && (
-            <ServiceSchedule weekdays={nannyInfo.weekdays} care_time={nannyInfo.care_time}></ServiceSchedule>
-          )}
-          {nannyInfo.care_type === "suddenly" && (
-           <CalendarRangePicker
-            startDate={nannyInfo.start_date}
-            endDate={nannyInfo.end_date}
-            locale="zh-TW"
-            styles={{
-              calendar: { maxWidth: "400px" },
-              day: { width: "50px", height: "50px" },
-            }}
-          />
-          )}
+        <div style={{ backgroundColor: "#F8ECEC" }}>
+          <ServiceSchedule></ServiceSchedule>
         </div>
         {/* Icon Navigation */}
         <div style={{ backgroundColor: "#fff", border: "none" }}>
@@ -545,14 +495,14 @@ export default function ProfilePage() {
                   }}
                 >
                   <div
-                    className={`iconStyle ${nannyInfo.service?.includes(number) ? "active" : "inactive"}`}
+                    className={`iconStyle ${nannyInfo?.service?.includes(number) ? "active" : "inactive"}`}
                   >
-                    {nannyInfo.service?.includes(number)
+                    {nannyInfo?.service?.includes(number)
                       ? icons[number].active
                       : icons[number].default}
                   </div>
                   <span
-                    className={`fontSpan ${nannyInfo.service?.includes(number) ? "active" : "inactive"}`}
+                    className={`fontSpan ${nannyInfo?.service?.includes(number) ? "active" : "inactive"}`}
                   >
                     {serviceNames[number]}
                   </span>
@@ -561,18 +511,52 @@ export default function ProfilePage() {
             </div>
           </div>
           <div>
-            <div style={{ backgroundColor: "#F8ECEC"}}>
+            <div style={{ backgroundColor: "#F8ECEC" }}>
               <div className="introSection">
                 <div className="notesSection">
                   <span className="imgFont">保母自介</span>
-                  {nannyInfo.introduction}
+                  {nannyInfo?.introduction}
                 </div>
-                <button className="submitButton" onClick={handleBookingClick} disabled={isMatching}>
-                  + 馬上預約
-                </button>
               </div>
             </div>
           </div>
+        </div>
+        <div
+          className="buttonLayout"
+          style={{
+            position: "absolute",
+            top: `${500 + offset}px`,
+            left: "50%",
+            transform: "translateX(-50%)",
+            gap: "10px",
+          }}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="78" height="76" viewBox="0 0 78 76" fill="none">
+            <path d="M77.25 68V23.0588C77.25 21.078 76.4663 19.1775 75.0701 17.7724L60.1065 2.71355C58.6986 1.29672 56.7838 0.5 54.7864 0.5H8.75C4.60787 0.5 1.25 3.85786 1.25 8V52.1795C1.25 54.1613 2.0344 56.0625 3.43182 57.4678L19.1637 73.2884C20.5714 74.704 22.4855 75.5 24.4819 75.5H69.75C73.8921 75.5 77.25 72.1421 77.25 68Z" fill="#F5E5E5" fill-opacity="0.8" stroke="#F3CCD4" />
+            <image href="/icon/reject.svg" x="24" y="24" width="30" height="30" onClick={handlReject} />
+          </svg>
+
+          <svg xmlns="http://www.w3.org/2000/svg" width="56" height="65" viewBox="0 0 56 65" fill="none">
+            <path d="M22.6564 61.8784L3.42644 43.7484C1.978 42.3828 1.16481 40.5303 1.16604 38.5991L1.17355 26.8226C1.17477 24.8944 1.98777 23.0455 3.43394 21.682L23.4296 2.83016C26.4434 -0.0113071 31.3299 -0.0113093 34.3437 2.83016L53.2013 20.6091C54.6504 21.9753 55.4636 23.8288 55.4617 25.761L55.4489 38.2446C55.4469 40.1719 54.634 42.0197 53.1885 43.3825L33.5705 61.8784C30.5567 64.7198 25.6702 64.7198 22.6564 61.8784Z" fill="#F5E5E5" fill-opacity="0.8" stroke="#F3CCD4" />
+
+            <g onClick={handleSvgClick} style={{ cursor: "pointer" }}>
+              <svg x="18" y="25" width="20" height="18" viewBox="0 0 20 18" fill="none">
+                <path
+                  d="M10 4.15428C8 -0.540161 1 -0.0401611 1 5.95987C1 11.9599 10 16.9601 10 16.9601C10 16.9601 19 11.9599 19 5.95987C19 -0.0401611 12 -0.540161 10 4.15428Z"
+                  stroke="#E3838E"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  fill={isFavorite ? "#E3838E" : "none"} // 控制填充顏色
+                />
+              </svg>
+            </g>
+          </svg>
+
+          <svg xmlns="http://www.w3.org/2000/svg" width="78" height="76" viewBox="0 0 78 76" fill="none">
+            <path d="M0.75 68V23.0588C0.75 21.078 1.53366 19.1775 2.9299 17.7724L17.8935 2.71355C19.3014 1.29672 21.2162 0.5 23.2136 0.5H69.25C73.3921 0.5 76.75 3.85786 76.75 8V52.1795C76.75 54.1613 75.9656 56.0625 74.5682 57.4678L58.8363 73.2884C57.4286 74.704 55.5145 75.5 53.5181 75.5H8.25C4.10787 75.5 0.75 72.1421 0.75 68Z" fill="#F5E5E5" fill-opacity="0.8" stroke="#F3CCD4" />
+            <image href="/icon/approve.svg" x="24" y="24" width="30" height="30" onClick={handlApproval} />
+          </svg>
         </div>
       </div>
 
@@ -600,7 +584,7 @@ export default function ProfilePage() {
                 </defs>
               </svg>
             </button>
-            <span className="modalTitle">確認向此保母發送托育服務需求</span>
+            <span className="modalTitle">{ }</span>
             <div
               style={{
                 display: "flex",
@@ -612,40 +596,10 @@ export default function ProfilePage() {
               <button className="cancelBtn" onClick={handleCloseModal}>
                 取消
               </button>
-              <button className="confirmBtn" onClick={handleBooking}>
+              <button className="confirmBtn" onClick={handleCloseModal}>
                 確認
               </button>
             </div>
-          </div>
-        </div>
-      )}
-      {isBookingModalOpen && (
-        <div className="modalOverlay">
-          <div className="modalContent">
-            <button className="closeButton" onClick={handleCloseModal}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 20 20"
-                fill="none"
-              >
-                <g clip-path="url(#clip0_304_31413)">
-                  <path
-                    d="M14.7782 5.22943C14.4824 4.93364 14.0045 4.93364 13.7088 5.22943L10 8.9306L6.29124 5.22184C5.99545 4.92605 5.51763 4.92605 5.22184 5.22184C4.92605 5.51763 4.92605 5.99545 5.22184 6.29124L8.9306 10L5.22184 13.7088C4.92605 14.0045 4.92605 14.4824 5.22184 14.7782C5.51763 15.0739 5.99545 15.0739 6.29124 14.7782L10 11.0694L13.7088 14.7782C14.0045 15.0739 14.4824 15.0739 14.7782 14.7782C15.0739 14.4824 15.0739 14.0045 14.7782 13.7088L11.0694 10L14.7782 6.29124C15.0664 6.00303 15.0664 5.51763 14.7782 5.22943Z"
-                    fill="#252525"
-                  />
-                </g>
-                <defs>
-                  <clipPath id="clip0_304_31413">
-                    <rect width="20" height="20" fill="white" />
-                  </clipPath>
-                </defs>
-              </svg>
-            </button>
-            <span className="bookingFont">預約成功！待等家長回覆...</span>
-            <img src="/review.png" alt="check" />
-            <button className="bookingBtn" onClick={toMatching}>點我前往查看回覆</button>
           </div>
         </div>
       )}

@@ -59,8 +59,8 @@ const OrderHistoryItem = ({
         <span className="order-status-success-font">
           {status === "create"
                 ? "媒合中"
-                : status === "matching"
-                  ? "預約中"
+                : status === "matchByParent" || status === "matchByNanny"
+                  ? "媒合中"
                   : status === "signing"
                     ? "簽約中"
                     : status === "onGoing"

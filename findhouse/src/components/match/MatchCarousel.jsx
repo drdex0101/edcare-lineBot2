@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import "./orderCarousal.css";
+import "./matchCarousal.css";
 import { useRouter } from "next/router";
 import useStore from "../../../lib/store";
 
@@ -142,27 +142,6 @@ const OrderCarousel = ({ orderList, handleNextClick = () => { }, itemsPerPage = 
           marginTop:"14px",
         }}
       >
-        {/* 新增訂單資料區塊 */}
-        <div className="addOrder">
-          <div key={-1} className="zero" onClick={handleNextClick}>
-            <span className="zero-text">+ 新增訂單</span>
-          </div>
-          <div className="iconLayout" style={{ position: "relative", zIndex: 11 }}>
-            <div>
-              <svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 38 38" fill="none">
-                <rect width="38" height="38" rx="4" fill="#F2F2F2"/>
-                <path d="M26.0231 9C25.2613 9 24.4994 9.29013 23.9179 9.87171L22.6843 11.1053L26.8949 15.3158L28.1284 14.0822C29.2905 12.9201 29.2905 11.0349 28.1284 9.87171C27.5468 9.29013 26.785 9 26.0231 9ZM21.1053 12.6842L9 24.7895V29H13.2106L25.3159 16.8947L21.1053 12.6842Z" fill="#CCCCCC"/>
-              </svg>
-            </div>
-            <div className="addIcon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 18" fill="none">
-                <path d="M23.8209 8.181C22.9429 6.261 19.4999 0 11.9999 0C4.49987 0 1.05687 6.261 0.178871 8.181C0.0610095 8.4383 0 8.71799 0 9.001C0 9.28401 0.0610095 9.5637 0.178871 9.821C1.05687 11.739 4.49987 18 11.9999 18C19.4999 18 22.9429 11.739 23.8209 9.819C23.9385 9.56199 23.9994 9.28265 23.9994 9C23.9994 8.71735 23.9385 8.43801 23.8209 8.181ZM11.9999 15C10.8132 15 9.65315 14.6481 8.66645 13.9888C7.67976 13.3295 6.91072 12.3925 6.45659 11.2961C6.00247 10.1997 5.88365 8.99334 6.11516 7.82946C6.34667 6.66557 6.91812 5.59647 7.75723 4.75736C8.59635 3.91824 9.66544 3.3468 10.8293 3.11529C11.9932 2.88378 13.1996 3.0026 14.296 3.45672C15.3923 3.91085 16.3294 4.67988 16.9887 5.66658C17.648 6.65327 17.9999 7.81331 17.9999 9C17.9983 10.5908 17.3656 12.116 16.2408 13.2409C15.1159 14.3658 13.5907 14.9984 11.9999 15Z" fill="#CCCCCC"/>
-                <path d="M12 13C14.2091 13 16 11.2091 16 9C16 6.79086 14.2091 5 12 5C9.79086 5 8 6.79086 8 9C8 11.2091 9.79086 13 12 13Z" fill="#CCCCCC"/>
-              </svg>
-            </div>
-          </div>
-        </div>
-
         {orderList.map((order, index) => (
           <div key={index} className="order-item" style={{ minWidth: "100%", position: "relative" }}>
             {!isShowMap[order.id] && (
@@ -205,10 +184,10 @@ const OrderCarousel = ({ orderList, handleNextClick = () => { }, itemsPerPage = 
               <div className="time">
                 <span className="time-text">托育時間:</span>
                 {order.choosetype === "suddenly" ? (
-                  <span className="time-text">{careData?.start_date}~{careData?.end_date}</span>
+                  <span className="time-text">{careData.start_date}~{careData.end_date}</span>
                 ) : (
                   <span className="time-text">
-                    {convertWeekdays(careData?.weekdays)}
+                    {convertWeekdays(careData.weekdays)}
                   </span>
                 )}
               </div>

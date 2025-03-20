@@ -130,7 +130,7 @@ export default function HistoryPage() {
             <OrderHistoryItem
               name={item.nickname}
               way={item.choosetype}
-              scene={item.caretypeid}
+              scene={item.scenario}
               orderId={item.id}
               createdTime={item.created_ts}
               status={item.status}

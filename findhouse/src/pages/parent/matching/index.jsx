@@ -11,7 +11,7 @@ export default function HistoryPage() {
   const { orderId,setOrderId } = useStore();
 
   const fetchMatchingCount = async () => {
-    const response = await fetch("/api/order/match/getMatchingCountByParent?page=1&pageSize=10&status=matching");
+    const response = await fetch("/api/order/match/getMatchingCountByParent?page=1&pageSize=10&status=matchingByNanny");
     const data = await response.json();
     setMatchingList(data.orders || []);
   };
@@ -100,6 +100,9 @@ export default function HistoryPage() {
         </div>
         <div className="matching-body-layoff-content-background">
           <div className="matching-body-layoff-content">
+              <span className="matching-body-layoff-content-title">
+                已配對，待社工聯繫...
+              </span>
             {totalCount === 0 ? (
               <div className="space-layout">
                 <img

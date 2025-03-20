@@ -75,7 +75,7 @@ export default async function handler(req, res) {
         LEFT JOIN 
             nanny n ON o.nannyid = n.id
         LEFT JOIN 
-            kyc_info k ON n.kycId = k.id
+            kyc_info k ON n.kycid = k.id
         WHERE 
             ($3::text IS NULL OR o.nickname ILIKE '%' || $3::text || '%')
         ORDER BY 
