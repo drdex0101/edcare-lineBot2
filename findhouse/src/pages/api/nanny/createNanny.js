@@ -35,7 +35,7 @@ export default async function handler(req, res) {
           memberId, experienment,
           age, kidCount, way, scenario, environmentPic,
           serviceLocation, introduction, service, score, isShow,
-          location, kycId, uploadId, care_type_id, created_ts
+          location, kycid, uploadId, care_type_id, created_ts
         )
         VALUES (
           $1, $2, $3, $4, $5,

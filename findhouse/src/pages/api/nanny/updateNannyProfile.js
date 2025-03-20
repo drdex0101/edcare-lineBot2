@@ -50,7 +50,7 @@ export default async function handler(req, res) {
           score = $11,
           isShow = $12,
           location = $13,
-          kycId = $14,
+          kycid = $14,
           uploadId = $15,
           suddenly_id = $16,
           long_tern_id = $17,

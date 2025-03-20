@@ -33,9 +33,10 @@ export default async function handler(req, res) {
           n.id, n.memberId, n.experienment, n.age, n.kidCount, n.way, n.scenario, 
           n.environmentPic, n.serviceLocation, n.introduction, n.service, 
           n.score, n.isShow, n.location, n.kycId, n.uploadId, n.created_ts,
-          m.account
+          m.account, u.upload_url
         FROM nanny n
-        JOIN member m ON n.memberId = m.id::VARCHAR  -- Cast m.id to VARCHAR for comparison
+        LEFT JOIN member m ON n.memberId = m.id::VARCHAR  -- Cast m.id to VARCHAR for comparison
+        LEFT JOIN upload u ON n.uploadId = u.id
         WHERE ($1::varchar[] IS NULL OR n.serviceLocation && $1)  -- Filter by locations if provided
         AND ($2::text IS NULL OR m.account ILIKE '%' || $2::text || '%')  -- Filter by account if keyword is provided
         ${orderByClause}  -- Add the order by clause if applicable

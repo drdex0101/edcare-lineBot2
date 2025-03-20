@@ -14,7 +14,7 @@ export default function HistoryPage() {
   const { orderId,setOrderId } = useStore();
 
   const fetchMatchingCount = async () => {
-    const response = await fetch("/api/order/match/getMatchingCountByNanny?page=1&pageSize=10&status=matching");
+    const response = await fetch("/api/order/match/getMatchingCountByNanny?page=1&pageSize=10&status=matchingByParent");
     const data = await response.json();
     setMatchingList(data.orders || []);
   };
@@ -83,7 +83,7 @@ export default function HistoryPage() {
           <div className="avatar-container">
             {matchingList.map((avatar) => (
               <div className="avatar" key={avatar.id}>
-                 <img src={"/orderCreate.png"} alt="avatar" className="avatar-img" />
+                 <img src={"/orderCreate.png"} alt="avatar" className="avatar-img" onClick={() => {router.push(`/nanny/matching/pair/${avatar.id}`);}}/>
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <span className="avatar-name">{avatar.nickname}</span>
                   <svg
@@ -120,6 +120,9 @@ export default function HistoryPage() {
         </div>
         <div className="matching-body-layoff-content-background">
           <div className="matching-body-layoff-content">
+            <span className="matching-body-layoff-content-title">
+              已配對，待社工聯繫...
+            </span>
             {totalCount === 0 ? (
               <div className="space-layout">
                 <img
@@ -130,7 +133,7 @@ export default function HistoryPage() {
                 <span className="matching-body-layoff-content-title">
                   尚無資料
                   <br />
-                  趕緊配對保母吧！
+                  趕緊配對家長吧！
                 </span>
               </div>
             ) : (
@@ -139,7 +142,7 @@ export default function HistoryPage() {
                   已配對，待社工聯繫...
                 </span>
                 {historyList.map((avatar) => (
-                  <div className="nanny-layout" key={avatar.id}>
+                  <div className="nanny-layout" key={avatar.id} onClick={() => {router.push(`/nanny/matching/pair/${avatar.id}`); setOrderId(avatar.id)}}>
                     <div className="nanny-avatar">
                       <img
                         src={avatar.imgSrc}
@@ -167,7 +170,7 @@ export default function HistoryPage() {
               width: "100%",
             }}
           >
-            <Pagination totalItems={10} pageSize={5} currentPage={1} />
+            <Pagination totalItems={historyList.length} pageSize={5} currentPage={1} />
           </div>
         </div>
       </div>

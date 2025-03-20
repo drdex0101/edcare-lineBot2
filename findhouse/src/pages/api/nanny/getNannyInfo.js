@@ -21,10 +21,11 @@ export default async function handler(req, res) {
           nanny.id AS nanny_id, memberId, experienment, age, kidCount, way, 
           environmentPic, serviceLocation, introduction, service, 
           score, isShow, nanny.kycId, uploadId, nanny.created_ts,
-          k.name, c.weekdays, c.care_time, c.start_date, c.end_date, c.care_time, c.location, c.scenario, c.care_type
+          k.name, c.weekdays, c.care_time, c.start_date, c.end_date, c.care_time, c.location, c.scenario, c.care_type, u.upload_url
         FROM nanny
-        LEFT JOIN kyc_info k ON nanny.kycId = k.id
+        LEFT JOIN kyc_info k ON nanny.kycid = k.id
         LEFT JOIN care_data c ON nanny.care_type_id = c.id
+        LEFT JOIN upload u ON nanny.uploadid = u.id
         WHERE nanny.id = $1;
       `;
       

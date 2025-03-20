@@ -199,7 +199,7 @@ export default function DetailsPage() {
                   key={index}
                   name={item.nickname}
                   way={item.way}
-                  scene={item.choosetype}
+                  scene={item.scenario}
                   orderId={item.id}
                   createdTime={item.created_ts}
                   status={item.status}

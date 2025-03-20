@@ -112,25 +112,6 @@ export default function HistoryPage() {
         setOrderId(data.orders[0].id);
         setItem(data.orders[0]);
         setCurrentOrderCareType(data.orders[0].choosetype);
-        const imagePromises = data.orders.map(async (order) => {
-          if (order.uploadId) {
-            const imgResponse = await fetch(
-              `/api/base/getImgUrl?id=${order.uploadId}`
-            );
-            const imgData = await imgResponse.json();
-            return { orderId: order.id, imageUrl: imgData.url };
-          }
-          return null;
-        });
-
-        const images = await Promise.all(imagePromises);
-        const imageMap = {};
-        images.forEach((img) => {
-          if (img) {
-            imageMap[img.orderId] = img.imageUrl;
-          }
-        });
-        setOrderImages(imageMap);
         const careTypeResponse = await fetch(
           `/api/base/getCareData?id=${data.orders[0].caretypeid}`
         );
@@ -370,7 +351,7 @@ export default function HistoryPage() {
                     <div style={styles.rightPart}>
                       <div>
                         <img
-                          src={orderImages.image || "/nannyIcon.jpg"}
+                          src={nanny.upload_url || "/nannyIcon.jpg"}
                           style={styles.nannyIcon}
                           alt="Nanny Icon"
                         />

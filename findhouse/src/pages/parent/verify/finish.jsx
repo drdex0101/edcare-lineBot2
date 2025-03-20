@@ -128,11 +128,6 @@ const ApplicationPage = () => {
                   </span>
                 </div>
               </div>
-              {isMember && haveKyc && haveOrder ? (
-                <></>
-              ) : (
-                <button style={styles.goToLink} onClick={handleClick}>點我繼續填寫資料</button>
-              )}
             </div>
           </div>
         </>
