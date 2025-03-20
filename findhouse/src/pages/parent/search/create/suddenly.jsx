@@ -14,6 +14,10 @@ const ApplicationPage = () => {
   const { careData, setCareData } = useStore();
   const [isLoading, setIsLoading] = useState(false);
 
+  const today = new Date();
+  const threeDaysLater = new Date(today);
+  threeDaysLater.setDate(today.getDate() + 3);
+
   const handleNextClick = async () => {
     setIsLoading(true);
     if (!selectedRange.startDate || !selectedRange.endDate) {
@@ -27,11 +31,8 @@ const ApplicationPage = () => {
 
   // Initialize state with default values based on item
   const [selectedRange, setSelectedRange] = useState(() => {
-    const today = new Date();
-    const threeDaysLater = new Date();
-    threeDaysLater.setDate(today.getDate() + 3); // 設定三天後
     return {
-      startDate: threeDaysLater.toISOString().split("T")[0], // 格式化 YYYY-MM-DD
+      startDate: threeDaysLater.toISOString().split("T")[0], // Set initial startDate to 3 days later
       endDate: null,
     };
   });
@@ -101,9 +102,9 @@ const ApplicationPage = () => {
   };
 
   const handleDateChange = (range) => {
-    console.log("Date change:", range); // 添加日誌來調試
+    console.log("Date change:", range);
     setSelectedRange({
-      startDate: range.startDate || new Date().toISOString().split("T")[0] + 3,
+      startDate: range.startDate || threeDaysLater.toISOString().split("T")[0], // Use threeDaysLater as fallback
       endDate: range.endDate || null,
     });
   };
@@ -113,8 +114,7 @@ const ApplicationPage = () => {
     console.log("storedCareData", parsedData);
     if (parsedData) {
       setSelectedRange({
-        startDate:
-          parsedData.start_date || new Date().toISOString().split("T")[0],
+        startDate: parsedData.start_date || threeDaysLater.toISOString().split("T")[0],
         endDate: parsedData.end_date || null,
       });
       setSelectedCareType(parsedData.scenario);
@@ -181,12 +181,8 @@ const ApplicationPage = () => {
                       type="date"
                       id="datepicker1"
                       name="startDate"
-                      min={threeDaysLater.toISOString().split("T")[0]} // Use threeDaysLater as minimum date
-                      value={
-                        selectedRange.startDate
-                          ? selectedRange.startDate.split("T")[0]
-                          : ""
-                      }
+                      min={threeDaysLater.toISOString().split("T")[0]}
+                      value={selectedRange.startDate || ""}
                       style={styles.dateInput}
                       onChange={(e) =>
                         handleDateChange({

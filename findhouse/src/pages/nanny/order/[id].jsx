@@ -3,7 +3,7 @@ import ServiceSchedule from "../../../components/base/ServiceSchedule";
 import CalendarRangePicker from "../../../components/base/CalendarRangePicker";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import "../../css/profile.css";
+import "../css/profile.css";
 import "./order.css";
 import Loading from "../../../components/base/Loading";
 import useStore from "../../../lib/store";
