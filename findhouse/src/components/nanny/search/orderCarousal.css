@@ -130,8 +130,8 @@
 
 .time {
     display: flex;
-    align-items: center;
-    gap: 10px;
+    align-items: flex-start;
+    flex-direction: column;
 }
 
 .time-text {    

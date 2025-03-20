@@ -113,8 +113,14 @@ const ApplicationPage = () => {
     const parsedData = useStore.getState().careData;
     console.log("storedCareData", parsedData);
     if (parsedData) {
+      // Check if start_date is less than 3 days from now
+      const startDate = parsedData.start_date ? new Date(parsedData.start_date) : null;
+      const minStartDate = threeDaysLater;
+      
       setSelectedRange({
-        startDate: parsedData.start_date || threeDaysLater.toISOString().split("T")[0],
+        startDate: (startDate && startDate >= minStartDate) 
+          ? parsedData.start_date 
+          : threeDaysLater.toISOString().split("T")[0],
         endDate: parsedData.end_date || null,
       });
       setSelectedCareType(parsedData.scenario);
