@@ -205,7 +205,7 @@ const OrderCarousel = ({ orderList, handleNextClick = () => { }, itemsPerPage = 
               <div className="time">
                 <span className="time-text">托育時間:</span>
                 {order.choosetype === "suddenly" ? (
-                  <span className="time-text">{careData?.start_date}~{careData?.end_date}</span>
+                  <span className="time-text">{careData?.start_date.slice(0, 6)}~{careData?.end_date.slice(0, 6)}</span>
                 ) : (
                   <span className="time-text">
                     {convertWeekdays(careData?.weekdays)}

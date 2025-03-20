@@ -8,6 +8,7 @@ import { MenuItem, InputLabel, FormControl } from "@mui/material";
 import useStore from "../../../../lib/store";
 import Loading from "../../../../components/base/Loading";
 import { useState } from "react";
+import Swal from "sweetalert2";
 const ApplicationPage = () => {
   const router = useRouter();
   const { careData, setCareData } = useStore();
@@ -102,7 +103,7 @@ const ApplicationPage = () => {
   const handleDateChange = (range) => {
     console.log("Date change:", range); // 添加日誌來調試
     setSelectedRange({
-      startDate: range.startDate || new Date().toISOString().split("T")[0]+3,
+      startDate: range.startDate || new Date().toISOString().split("T")[0] + 3,
       endDate: range.endDate || null,
     });
   };
@@ -180,11 +181,7 @@ const ApplicationPage = () => {
                       type="date"
                       id="datepicker1"
                       name="startDate"
-                      min={
-                        selectedRange.startDate
-                          ? selectedRange.startDate.split("T")[0]
-                          : ""
-                      }
+                      min={threeDaysLater.toISOString().split("T")[0]} // Use threeDaysLater as minimum date
                       value={
                         selectedRange.startDate
                           ? selectedRange.startDate.split("T")[0]
@@ -430,9 +427,21 @@ const ApplicationPage = () => {
                       multiple
                       labelId="gender-label"
                       id="gender"
-                      label="定點選擇"
+                      label="托育地區"
                       value={selectedAddress}
-                      onChange={(e) => setSelectedAddress(e.target.value)}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        // Limit selection to 5 items
+                        if (value.length <= 5) {
+                          setSelectedAddress(value);
+                        } else {
+                          Swal.fire({
+                            icon: "error",
+                            title: "最多只能選擇5個地區",
+                            confirmButtonText: "確定",
+                          });
+                        }
+                      }}
                       MenuProps={{
                         PaperProps: {
                           style: {

@@ -102,7 +102,7 @@ export default async function handler(req, res) {
       success: true,
       orders: rows,
       pageCount: rows.length, 
-      totalCount: rows[0].totalcount, // 總筆數
+      totalCount: rows.length > 0 ? rows[0].totalcount : 0,
     });
 
   } catch (error) {

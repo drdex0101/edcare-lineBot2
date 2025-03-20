@@ -61,7 +61,8 @@ const ApplicationPage = () => {
       gender: "寶寶性別",
       birthday: "寶寶生日",
       rank: "寶寶排行",
-      hope: "照護期望"
+      hope: "照護期望",
+      intro: "托育理念",
     };
 
     // 找出未填寫的欄位

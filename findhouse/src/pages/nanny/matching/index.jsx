@@ -14,7 +14,7 @@ export default function HistoryPage() {
   const { orderId,setOrderId } = useStore();
 
   const fetchMatchingCount = async () => {
-    const response = await fetch("/api/order/match/getMatchingCountByNanny?page=1&pageSize=10&status=matchingByParent");
+    const response = await fetch("/api/order/match/getMatchingCountByNanny?page=1&pageSize=10&status=matchByParent");
     const data = await response.json();
     setMatchingList(data.orders || []);
   };
@@ -138,9 +138,6 @@ export default function HistoryPage() {
               </div>
             ) : (
               <>
-                <span className="matching-body-layoff-content-title">
-                  已配對，待社工聯繫...
-                </span>
                 {historyList.map((avatar) => (
                   <div className="nanny-layout" key={avatar.id} onClick={() => {router.push(`/nanny/matching/pair/${avatar.id}`); setOrderId(avatar.id)}}>
                     <div className="nanny-avatar">
