@@ -461,15 +461,14 @@ background: #FFF;
   }
 
   .buttonLayout {
-    position: absolute;
-    bottom: 0;
+    width: 100%;
     display: flex;
-    width: 200px;
-    height: 113px;
-    justify-content: space-between;
-    align-items: flex-start;
-    flex-shrink: 0;
-  }
+    padding: 8px 12px;
+    align-items: center;
+    gap: 8px;
+    align-self: stretch;
+    justify-content: center;
+  }  
 
   .submitButton {
     display: flex;

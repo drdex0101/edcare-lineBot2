@@ -1,5 +1,5 @@
-import { Pool } from 'pg';
-import { verifyToken } from '../../../utils/jwtUtils';
+import { Pool } from "pg";
+import { verifyToken } from "../../../utils/jwtUtils";
 
 // 連線池設定
 const pool = new Pool({
@@ -8,9 +8,11 @@ const pool = new Pool({
 });
 
 export default async function handler(req, res) {
-  if (req.method !== 'GET') {
-    res.setHeader('Allow', ['GET']);
-    return res.status(405).json({ success: false, message: `Method ${req.method} Not Allowed` });
+  if (req.method !== "GET") {
+    res.setHeader("Allow", ["GET"]);
+    return res
+      .status(405)
+      .json({ success: false, message: `Method ${req.method} Not Allowed` });
   }
 
   const { page = 1, pageSize = 10, keywords, sort, locations } = req.query;
@@ -18,10 +20,12 @@ export default async function handler(req, res) {
   const payload = await verifyToken(token);
   const userId = payload.userId;
 
-  console.log('locations:',locations);
-  
+  console.log("locations:", locations);
+
   if (!userId) {
-    return res.status(400).json({ success: false, message: 'ID parameter is required' });
+    return res
+      .status(400)
+      .json({ success: false, message: "ID parameter is required" });
   }
 
   // Ensure page is at least 1
@@ -29,18 +33,18 @@ export default async function handler(req, res) {
   const offset = (currentPage - 1) * parseInt(pageSize);
   const limit = parseInt(pageSize);
 
-  let orderByClause = '';
-  if (sort === 'time') {
-    orderByClause = 'o.created_ts DESC';
+  let orderByClause = "";
+  if (sort === "time") {
+    orderByClause = "o.created_ts DESC";
   }
-  if (sort === 'rating') {
-    orderByClause = 'n.score DESC';
+  if (sort === "rating") {
+    orderByClause = "n.score DESC";
   }
 
   try {
     const client = await pool.connect();
     const locationArray = locations ? locations.split(",") : null;
-    console.log('locationArray:',locationArray);
+    console.log("locationArray:", locationArray);
     const query = `
        SELECT 
         o.id,
@@ -78,6 +82,7 @@ export default async function handler(req, res) {
             kyc_info k ON n.kycid = k.id
         WHERE 
             ($3::text IS NULL OR o.nickname ILIKE '%' || $3::text || '%')
+            AND o.status = 'created'
         ORDER BY 
             $4
         OFFSET 
@@ -86,25 +91,29 @@ export default async function handler(req, res) {
             $2;
       `;
 
-
-
-    const { rows } = await client.query(query, [offset, limit, keywords, orderByClause]);
+    const { rows } = await client.query(query, [
+      offset,
+      limit,
+      keywords,
+      orderByClause,
+    ]);
 
     client.release();
 
     if (rows.length === 0) {
-      return res.status(200).json({ success: true, orders: [], pageCount: 0, totalCount: 0 });
+      return res
+        .status(200)
+        .json({ success: true, orders: [], pageCount: 0, totalCount: 0 });
     }
 
-    return res.status(200).json({ 
+    return res.status(200).json({
       success: true,
       orders: rows,
-      pageCount: rows.length, 
+      pageCount: rows.length,
       totalCount: rows[0].totalcount, // 總筆數
     });
-
   } catch (error) {
-    console.error('Database error:', error);
-    return res.status(500).json({ success: false, error: 'Database error' });
+    console.error("Database error:", error);
+    return res.status(500).json({ success: false, error: "Database error" });
   }
 }

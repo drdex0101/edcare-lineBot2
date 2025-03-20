@@ -106,8 +106,8 @@ export default function ProfilePage() {
     fetchNannyInfo();
   }, [id, router.isReady]); // 添加 router.isReady 作為依賴
 
-  const toMatching = () => {
-    router.push("/parent/matching");
+  const toSearch = () => {
+    router.push("/parent/search");
   };
 
   const serviceNames = {
@@ -336,6 +336,14 @@ export default function ProfilePage() {
     const data = await response.json();
     setIsModalOpen(false);
     if (data.success) {
+      const response = await fetch(`/api/nanny/updateNannyPair`, {
+        method: "PATCH",
+        body: JSON.stringify({ isPaired: true, nannyId: id }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
       setIsBookingModalOpen(true);
     }
     setIsMatching(true);
@@ -645,7 +653,7 @@ export default function ProfilePage() {
             </button>
             <span className="bookingFont">預約成功！待等家長回覆...</span>
             <img src="/review.png" alt="check" />
-            <button className="bookingBtn" onClick={toMatching}>點我前往查看回覆</button>
+            <button className="bookingBtn" onClick={toSearch}>點我前往查看回覆</button>
           </div>
         </div>
       )}
