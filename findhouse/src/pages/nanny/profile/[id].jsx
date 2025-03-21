@@ -22,6 +22,7 @@ export default function ProfilePage() {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isMatching, setIsMatching] = useState(false);
   const [kycId, setKycId] = useState(0);
+  const [age, setAge] = useState(0);
 
   const handleSvgClick = async () => {
     try {
@@ -67,6 +68,18 @@ export default function ProfilePage() {
     setKycId(data.member.kyc_id);
   };
 
+  const calculateAge = (birthdayString) => {
+    const birthday = new Date(birthdayString); // 轉換生日為 Date 物件
+    const today = new Date(); // 取得當前日期
+
+    let ageYears = today.getFullYear() - birthday.getFullYear(); // 計算年數
+    let ageMonths = today.getMonth() - birthday.getMonth(); // 計算月數
+    if (ageMonths < 0) {
+        ageYears--;
+    }
+    return `${ageYears}歲`;
+  }
+
   useEffect(() => {
     getIsMember();
     const fetchNannyInfo = async () => {
@@ -105,6 +118,10 @@ export default function ProfilePage() {
 
     fetchNannyInfo();
   }, [id, router.isReady]); // 添加 router.isReady 作為依賴
+
+  useEffect(() => {
+    setAge(calculateAge(nannyInfo.birthday));
+  }, [nannyInfo]);
 
   const toSearch = () => {
     router.push("/parent/search");
@@ -413,7 +430,7 @@ export default function ProfilePage() {
           </div>
           <div className="part">
             <span className="part-title">年紀</span>
-            <span className="part-subTitle">{nannyInfo.age|| "未填寫"}</span>
+            <span className="part-subTitle">{age || "未填寫"}</span>
           </div>
           <div className="part">
             <span className="part-title">托育人數</span>

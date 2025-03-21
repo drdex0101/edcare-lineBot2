@@ -38,6 +38,8 @@ const ApplicationPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { careData, setCareData} = useStore();
   const { memberId, setMemberId } = useStore();
+  const [kyc_id, setKyc_id] = useState(null);
+  const [age, setAge] = useState(0);
 
   useEffect(() => {
     if (nannyInfo?.service) {
@@ -62,7 +64,6 @@ const ApplicationPage = () => {
           setSelectedCareType(parsedData.state.nannyInfo.scenario || "");
           setAddress(parsedData.state.nannyInfo.location?.[0] || "");
           setIntroduction(parsedData.state.nannyInfo.introduction || "");
-          
           if (parsedData.state.nannyInfo.uploadid) {
             setHeadIcon(parsedData.state.nannyInfo.uploadid);
             getUrl(parsedData.state.nannyInfo.uploadid)
@@ -75,7 +76,26 @@ const ApplicationPage = () => {
       }
     }
   }, []);
-  
+
+  useEffect(() => {
+    const checkMemberExistence = async () => {
+      try {
+        const response = await fetch("/api/member/isMemberExist", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const memberExistData = await response.json();
+        // 安全地取得 kyc_id（避免陣列為空時出錯）
+        const kycId = memberExistData.member?.[0]?.kyc_id ?? null;
+        setKyc_id(kycId);
+      } catch (error) {
+        console.error("Error checking member existence:", error);
+      }
+    };
+    checkMemberExistence();
+  }, []);
 
   const handleNextClick = async () => {
     const nannyData = {
@@ -92,7 +112,7 @@ const ApplicationPage = () => {
       score: nannyInfo ? nannyInfo.score : "",
       isShow: true,
       location: [address],
-      kycId: nannyInfo ? nannyInfo.kycId : null,
+      kycId: kyc_id ? kyc_id : null,
       introduction: introduction,
       nannyId: nannyInfo ? nannyInfo.nanny_id : null,
       careTypeId: careData.id,
@@ -183,17 +203,17 @@ const ApplicationPage = () => {
     console.log("file:", file);
     formData.append("file", file);
 
-  
+
     try {
       const res = await fetch("/api/kycInfo/uploadImg", {
         method: "POST",
         body: formData,
       });
-  
+
       const result = await res.json();
       console.log("Upload Response:", result);
       const uploadId = result.uploadId; // 确保 API 返回的是 id 而不是对象
-  
+
       if (type === "environment") {
         setUploadedImages((prevImages) => [...prevImages, uploadId]);
         setUploadedEnvironmentImages((prevImages) => [
@@ -209,7 +229,7 @@ const ApplicationPage = () => {
           console.error("Error fetching URL:", error);
         });
       }
-  
+
       if (result.success) {
         console.log("Uploaded Image URL:", result.url);
       } else {
