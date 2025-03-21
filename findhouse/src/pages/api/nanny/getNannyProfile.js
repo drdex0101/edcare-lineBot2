@@ -67,7 +67,7 @@ export default async function handler(req, res) {
           c.end_date,
           c.care_time,
           c.location,
-          c.scenario,
+          nanny.scenario,
           c.care_type
         FROM nanny
         LEFT JOIN kyc_info k ON nanny.kycid = k.id
