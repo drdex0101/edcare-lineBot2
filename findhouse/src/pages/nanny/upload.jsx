@@ -221,6 +221,7 @@ const ApplicationPage = () => {
             setKycData(storedKycData);
             setSelectedDate(storedKycData.birthday ? dayjs(storedKycData.birthday) : null);
             setGender(storedKycData.gender || "");
+            console.log("storedKycData", storedKycData);
             setFrontImg(storedKycData.identityfrontuploadid || null);
             setBackImg(storedKycData.identitybackuploadid || null);
           }
