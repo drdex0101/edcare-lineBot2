@@ -27,9 +27,7 @@ export default function HistoryPage() {
 
   const handleChange = (e) => {
     const value = e.target.value;
-    if (!isComposing) {
-      setKeywords(value);
-    }
+    setKeywords(value);
   };
 
   const icons = {
@@ -224,17 +222,15 @@ export default function HistoryPage() {
   };
 
   const handleFilterChange = (regions, locations, sorts) => {
-    console.log("locations", locations);
-    setSearchLocation(locations);
-    console.log(searchLocation);
     setSelectedSort(sorts);
+    selectedLocations(locations)
     fetchOrderInfoList(
       currentPage,
       pageSize,
       keywords,
       locations,
-      selectedSort,
-    ); // Fetch nanny info with updated filters
+      sorts
+    );
   };
 
   const fetchNannyProfile = async () => {
@@ -263,14 +259,14 @@ export default function HistoryPage() {
     page = 0,
     pageSize = 5,
     keywords="",
-    searchLocation="",
+    locations=[],
     sort="time",
   ) => {
     setIsLoading(true); // Set loading state to true while fetching data
 
     try {
       const response = await fetch(
-        `/api/order/getOrderInfoListForNanny?page=${page}&pageSize=${pageSize}&keywords=${keywords}&locations=${searchLocation}&sort=${sort}`,
+        `/api/order/getOrderInfoListForNanny?page=${page}&pageSize=${pageSize}&keywords=${keywords}&locations=${locations}&sort=${sort}`,
         {
           method: "GET",
           headers: {
@@ -536,11 +532,6 @@ export default function HistoryPage() {
                         placeholder="搜尋保母名稱"
                         value={keywords}
                         onChange={handleChange}
-                        onCompositionStart={() => setIsComposing(true)} // 開始輸入中文
-                        onCompositionEnd={(e) => {
-                          setIsComposing(false); // 組字結束，確保更新最新的值
-                          setKeywords(e.target.value);
-                        }}
                       />
                     </div>
                     <SearchBar
@@ -548,6 +539,7 @@ export default function HistoryPage() {
                         setKeyword={setKeywords}
                         onChange={handleFilterChange}
                         from={"nanny"}
+                        setSelectedLocations={setSelectedLocations}
                       />
                   </div>
                   <div style={styles.titleLayout}></div>
@@ -573,7 +565,7 @@ export default function HistoryPage() {
                   <div style={styles.searchLayout}>
                     <div style={styles.searchTypeLayout}>
                       <span style={styles.searchFont}>
-                        地區: {selectedLocations.length}
+                        地區: {locations.length}
                       </span>
                     </div>
                     {selectedSort && (

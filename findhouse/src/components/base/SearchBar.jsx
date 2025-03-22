@@ -7,12 +7,11 @@ export default function FilterButton({
   selectedSort: propSelectedSort,
   selectedRegion: propSelectedRegion,
   selectedLocations: propSelectedLocations,
+  setSelectedLocations: setSelectedLocations,
   from,
 }) {
   const [isFilterOpen, setIsFilterOpen] = useState(false); // 控制篩選框顯示
-  const [selectedLocations, setSelectedLocations] = useState(
-    propSelectedLocations || [],
-  ); // 已選地區
+  
   const [selectedRegion, setSelectedRegion] = useState(
     propSelectedRegion || "",
   ); // 當前選擇的區域
@@ -42,14 +41,13 @@ export default function FilterButton({
 
   // 切換篩選框顯示
   const toggleFilterPopup = () => {
+    if (!isFilterOpen) {
+      // 當開啟篩選框時，重置所有選擇
+      setSelectedLocations([]);
+      setSelectedRegion("");
+      setSelectedSort("time");
+    }
     setIsFilterOpen(!isFilterOpen);
-  };
-
-  // 清空篩選條件
-  const resetFilters = () => {
-    setSelectedRegion("");
-    setSelectedLocations([]);
-    setSelectedSort("time");
   };
 
   // 選擇區域，更新選擇的地區
@@ -63,8 +61,6 @@ export default function FilterButton({
       const updatedLocations = prev.includes(location)
         ? prev.filter((loc) => loc !== location)
         : [...prev, location];
-
-      console.log("selectedLocations:", updatedLocations);
       setSelectedLocations(updatedLocations);
       return updatedLocations;
     });

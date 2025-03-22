@@ -460,59 +460,37 @@ export default function ProfilePage() {
         <div className="profile-location">
           <span className="location-subTitle">
             {orderInfo.choosetype === "suddenly"
-              ? orderInfo.suddenly_location
+              ? orderInfo.location
               : orderInfo.scenario === "infantCareCenter"
-                ? orderInfo.long_term_location.slice(0, 6)
-                : orderInfo.long_term_location?.map((location, index) => (
+                ? orderInfo.location.slice(0, 6)
+                : orderInfo.location?.map((location, index) => (
                     <span key={index}>
                       {location}
-                      {index < orderInfo.long_term_location.length - 1
+                      {index < orderInfo.location.length - 1
                         ? "、"
                         : ""}
                     </span>
                   ))}
           </span>
         </div>
-        {/* 圖片輪播區域 */}
-        <div className="imageSection">
-          <span className="imgFont">托育環境</span>
-          <div className="carousel">
-            <img
-              src={urls[currentImageIndex]}
-              alt={`圖片 ${currentImageIndex + 1}`}
-              className="carouselImage"
-            />
-          </div>
-          {/* 圓點指示器 */}
-          {orderInfo.environmentpic && orderInfo.environmentpic.length > 0 && (
-            <div className="dotsContainer">
-              {orderInfo.environmentpic.map((_, index) => (
-                <span
-                  key={index}
-                  className={`dot ${index === currentImageIndex ? "active" : ""}`}
-                  onClick={() => handleDotClick(index)}
-                ></span>
-              ))}
-            </div>
-          )}
-        </div>
+       
         <div style={{ width: "100%",marginBottom:"14px",padding:"10px 40px" }}>
-          {orderInfo.choosetype === "suddenly" &&
-            selectedRange.startDate &&
-            selectedRange.endDate && (
-              <CalendarRangePicker
-                startDate={selectedRange.startDate}
-                endDate={selectedRange.endDate}
-                styles={{
-                  calendar: { maxWidth: "400px" },
-                  day: { width: "50px", height: "50px" },
-                }}
-              />
-            )}
-          {orderInfo.choosetype === "longTerm" && (
-            <ServiceSchedule></ServiceSchedule>
+          {orderInfo.choosetype === "longTern" && (
+            <ServiceSchedule weekdays={orderInfo.weekdays} care_time={orderInfo.care_time}></ServiceSchedule>
+          )}
+          {orderInfo.choosetype === "suddenly" && (
+           <CalendarRangePicker
+            startDate={orderInfo.start_date}
+            endDate={orderInfo.end_date}
+            locale="zh-TW"
+            styles={{
+              calendar: { maxWidth: "400px" },
+              day: { width: "50px", height: "50px" },
+            }}
+          />
           )}
         </div>
+
         {/* Icon Navigation */}
         <div style={{ backgroundColor: "#fff", border: "none" }}>
           <div
@@ -549,6 +527,7 @@ export default function ProfilePage() {
                 </div>
               ))}
             </div>
+           
           </div>
           <div>
             <div style={{ backgroundColor: "#F8ECEC" }}>

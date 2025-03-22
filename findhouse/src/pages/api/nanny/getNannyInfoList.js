@@ -37,10 +37,10 @@ export default async function handler(req, res) {
         FROM nanny n
         LEFT JOIN member m ON n.memberId = m.id::VARCHAR  -- Cast m.id to VARCHAR for comparison
         LEFT JOIN upload u ON n.uploadId = u.id
-        WHERE ($1::varchar[] IS NULL OR n.serviceLocation && $1)  -- Filter by locations if provided
+        WHERE ($1::varchar[] IS NULL OR n.serviceLocation && $1::varchar[])
         AND ($2::text IS NULL OR m.account ILIKE '%' || $2::text || '%')  -- Filter by account if keyword is provided
         AND n.is_paired = FALSE
-        ${orderByClause}  -- Add the order by clause if applicable
+        ${orderByClause}  -- Add the order by cause if applicable
         LIMIT $3 OFFSET $4;
       `;
       const result = await client.query(query, [locationsArray.length ? locationsArray : null, keyword, pageSize, safeIndex * pageSize]);

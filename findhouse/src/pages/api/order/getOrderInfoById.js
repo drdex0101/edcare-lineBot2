@@ -51,6 +51,7 @@ export default async function handler(req, res) {
         c.scenario,
         c.start_date,
         c.end_date,
+        c.location,
         COUNT(*) OVER() AS totalCount
     FROM 
         orderinfo o
