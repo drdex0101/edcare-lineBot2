@@ -1,15 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import React, { useState, useEffect } from "react";
+import "./matching.css";
+import "./profile.css";
 import Pagination from "../../../components/base/pagenation";
-import SearchBarSortOnly from "../../../components/base/SearchBarSortOnly";
-import "./favorite.css";
 import SettingForNanny from "../../../components/base/SettingForNanny";
+import SearchBarSortOnly from "../../../components/base/SearchBarSortOnly";
+import { useRouter } from "next/router";
 import Loading from "../../../components/base/Loading";
-import dynamic from 'next/dynamic';
-
-const ApplicationPage = () => {
+export default function HistoryPage() {
   const router = useRouter();
-  const [nannyInfo, setNannyInfo] = useState([]);
   const [orderInfo, setOrderInfo] = useState([]);
   const [totalItem, setTotalItem] = useState(0);
   const [currentPage, setCurrentPage] = useState(0); // Track current page
@@ -17,9 +15,6 @@ const ApplicationPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [keywords, setKeywords] = useState("");
   const [selectedSort, setSelectedSort] = useState("time"); // 新增狀態以追蹤選擇的排序
-  const [orderImages, setOrderImages] = useState({});
-  const [careTypeData, setCareTypeData] = useState(null);
-  const [isShow, setIsShow] = useState(true);
   const [orderCurrentPage, setOrderCurrentPage] = useState(1);
   const itemsPerPage = 1; // 每頁顯示 1 筆
   // 計算目前頁面的資料
@@ -228,7 +223,7 @@ const ApplicationPage = () => {
     page,
     pageSize = 5,
     keywords,
-    selectedSort,
+    selectedSort
   ) => {
     setIsLoading(true); // Set loading state to true while fetching data
     try {
@@ -240,7 +235,7 @@ const ApplicationPage = () => {
             "Cache-Control": "no-cache",
             Pragma: "no-cache",
           },
-        },
+        }
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -296,193 +291,233 @@ const ApplicationPage = () => {
   };
 
   return (
-    <div style={styles.main}>
-      {isLoading && (
-        <div
-          style={{
-            position: "fixed", // 確保 Loading 覆蓋整個畫面
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundColor: "rgba(255, 255, 255, 0.8)", // 透明度
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 9999, // 確保 Loading 在最上層
-          }}
-        >
-          <Loading />
-        </div>
-      )}
-      <>
-        <div style={styles.headerSetting}>
-          <img
-            src="/icon/arrowForward.svg"
-            alt="back"
-            onClick={() => router.back()}
-          />
-          <SettingForNanny />
-        </div>
-        <div style={styles.header}>
-          <div style={styles.headerTitleLayout}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="26"
-              height="25"
-              viewBox="0 0 26 25"
-              fill="none"
-            >
-              <path
-                d="M13 6.06508C10.3333 -0.194174 1 0.472493 1 8.47253C1 16.4726 13 23.1395 13 23.1395C13 23.1395 25 16.4726 25 8.47253C25 0.472493 15.6667 -0.194174 13 6.06508Z"
-                fill="#E3838E"
-                stroke="#E3838E"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-            <span style={styles.headerTitleFont}>收藏案件</span>
-          </div>
-        </div>
-        <div
-          style={{
-            backgroundColor: "#F3CCD4",
-            borderRadius: "40px 0 0px 0",
-            width: "100%",
-            border: "none",
-          }}
-        >
-          <div style={styles.contentLayout}>
-            <div style={styles.rollerLayout}>
-              <div style={styles.searchInput}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  onClick={() => handleFetchClick()}
-                >
-                  <path
-                    d="M8.94286 3C10.519 3 12.0306 3.62612 13.1451 4.74062C14.2596 5.85512 14.8857 7.36671 14.8857 8.94286C14.8857 10.4149 14.3463 11.768 13.4594 12.8103L13.7063 13.0571H14.4286L19 17.6286L17.6286 19L13.0571 14.4286V13.7063L12.8103 13.4594C11.768 14.3463 10.4149 14.8857 8.94286 14.8857C7.36671 14.8857 5.85512 14.2596 4.74062 13.1451C3.62612 12.0306 3 10.519 3 8.94286C3 7.36671 3.62612 5.85512 4.74062 4.74062C5.85512 3.62612 7.36671 3 8.94286 3ZM8.94286 4.82857C6.65714 4.82857 4.82857 6.65714 4.82857 8.94286C4.82857 11.2286 6.65714 13.0571 8.94286 13.0571C11.2286 13.0571 13.0571 11.2286 13.0571 8.94286C13.0571 6.65714 11.2286 4.82857 8.94286 4.82857Z"
-                    fill="#999999"
-                  />
-                </svg>
-                <input
-                  style={{ border: "none" }}
-                  placeholder="搜尋孩童暱稱"
-                  value={keywords || ""}
-                  onChange={(e) => setKeywords(e.target.value)}
-                ></input>
+    <div className="matching-main">
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <>
+          <div className="matching-body-header-background">
+            <div style={styles.header}>
+              <div style={styles.headerSetting}>
+                <img
+                  src="/icon/arrowForward.svg"
+                  alt="back"
+                  onClick={() => router.back()}
+                />
+                <SettingForNanny />
               </div>
-              <SearchBarSortOnly
-                keyword={keywords} // 將關鍵字傳遞給子組件
-                setKeyword={setKeywords} // 傳遞更新函數
-                onChange={handleFilterChange} // 傳遞選擇變更的處理函數
-              />
+              <div style={styles.header}>
+                <div style={styles.headerTitleLayout}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="26"
+                    height="25"
+                    viewBox="0 0 26 25"
+                    fill="none"
+                  >
+                    <path
+                      d="M13 6.06508C10.3333 -0.194174 1 0.472493 1 8.47253C1 16.4726 13 23.1395 13 23.1395C13 23.1395 25 16.4726 25 8.47253C25 0.472493 15.6667 -0.194174 13 6.06508Z"
+                      fill="#E3838E"
+                      stroke="#E3838E"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                  <span style={styles.headerTitleFont}>收藏案件</span>
+                </div>
+              </div>
             </div>
           </div>
+
           <div
             style={{
-              backgroundColor: "#f8ecec",
+              backgroundColor: "#F3CCD4",
+              borderRadius: "40px 0 0px 0",
               width: "100%",
-              display: "flex",
-              alignItems: "center",
-              flexDirection: "column",
+              border: "none",
             }}
           >
-            <div style={styles.nannyItemLayout}>
-              {orderInfo.map((order, index) => (
-                <div
-                  key={index}
-                  style={styles.nannyItem}
-                  onClick={() => {
-                    if (order.id) {
-                      router.push(`/nanny/order/${order.id}`);
-                    } else {
-                      console.error("Order ID not found");
-                    }
-                  }}
-                >
-                  <div style={styles.rightPart}>
-                    <div>
-                      <img
-                        src={order.image || "/orderCreate.png"}
-                        style={
-                          order.gender === "female"
-                            ? styles.orderIconFemale
-                            : styles.orderIconMale
-                        }
-                        alt="Nanny Icon"
-                      />
+            <div className="matching-body-layoff">
+              <div className="avatar-container">
+                <div style={styles.contentLayout}>
+                  <div style={styles.rollerLayout}>
+                    <div style={styles.searchInput}>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        onClick={() => handleFetchClick()}
+                      >
+                        <path
+                          d="M8.94286 3C10.519 3 12.0306 3.62612 13.1451 4.74062C14.2596 5.85512 14.8857 7.36671 14.8857 8.94286C14.8857 10.4149 14.3463 11.768 13.4594 12.8103L13.7063 13.0571H14.4286L19 17.6286L17.6286 19L13.0571 14.4286V13.7063L12.8103 13.4594C11.768 14.3463 10.4149 14.8857 8.94286 14.8857C7.36671 14.8857 5.85512 14.2596 4.74062 13.1451C3.62612 12.0306 3 10.519 3 8.94286C3 7.36671 3.62612 5.85512 4.74062 4.74062C5.85512 3.62612 7.36671 3 8.94286 3ZM8.94286 4.82857C6.65714 4.82857 4.82857 6.65714 4.82857 8.94286C4.82857 11.2286 6.65714 13.0571 8.94286 13.0571C11.2286 13.0571 13.0571 11.2286 13.0571 8.94286C13.0571 6.65714 11.2286 4.82857 8.94286 4.82857Z"
+                          fill="#999999"
+                        />
+                      </svg>
+                      <input
+                        style={{ border: "none" }}
+                        placeholder="搜尋孩童暱稱"
+                        value={keywords || ""}
+                        onChange={(e) => setKeywords(e.target.value)}
+                      ></input>
                     </div>
-                    <div style={styles.nannyFontLayout}>
-                      <div style={styles.nannyNameFont}>{order.nickname}</div>
-                      <div style={styles.wayLayout}>
-                        <div style={styles.wayStyle}>
-                          {order.choosetype === "suddenly"
-                            ? "臨時托育"
-                            : order.choosetype === "longTerm"
-                              ? "長期托育"
-                              : ""}
+                    <SearchBarSortOnly
+                      keyword={keywords} // 將關鍵字傳遞給子組件
+                      setKeyword={setKeywords} // 傳遞更新函數
+                      onChange={handleFilterChange} // 傳遞選擇變更的處理函數
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="matching-body-layoff-content-background">
+              <div className="matching-body-layoff-content">
+                {orderInfo.length === 0 ? (
+                  <div className="space-layout">
+                    <img
+                      src="/icon/spaceIcon.png"
+                      className="space-icon"
+                      alt="space icon"
+                    />
+                    <span className="matching-body-layoff-content-title">
+                      尚無資料
+                      <br />
+                      趕緊找到案件吧！
+                    </span>
+                  </div>
+                ) : (
+                  <></>
+                )}
+                {orderInfo.map((order, index) => (
+                  <div
+                    key={index}
+                    style={styles.nannyItem}
+                    onClick={() => {
+                      if (order.id) {
+                        router.push(`/nanny/order/${order.id}`);
+                      } else {
+                        console.error("Order ID not found");
+                      }
+                    }}
+                  >
+                    <div style={styles.rightPart}>
+                      <div>
+                        <img
+                          src={order.image || "/orderCreate.png"}
+                          style={
+                            order.gender === "female"
+                              ? styles.orderIconFemale
+                              : styles.orderIconMale
+                          }
+                          alt="Nanny Icon"
+                        />
+                      </div>
+                      <div style={styles.nannyFontLayout}>
+                        <div style={styles.nannyNameFont}>{order.nickname}</div>
+                        <div style={styles.wayLayout}>
+                          <div style={styles.wayStyle}>
+                            {order.choosetype === "suddenly"
+                              ? "臨時托育"
+                              : order.choosetype === "longTern"
+                                ? "長期托育"
+                                : ""}
+                          </div>
+                          <div style={styles.scenarioStyle}>
+                            {order.scenario === "home"
+                              ? "在宅托育"
+                              : order.scenario === "infantCareCenter"
+                                ? "定點托育"
+                                : order.scenario === "toHome"
+                                  ? "到宅托育"
+                                  : ""}
+                          </div>
                         </div>
-                        <div style={styles.scenarioStyle}>在宅</div>
+                      </div>
+                    </div>
+                    <div style={styles.scoreLayout}>
+                      <div style={styles.iconLayout}>
+                        {["1", "2"].map((num) => (
+                          <div key={num} style={styles.iconLayout}>
+                            {order.hope?.includes(num)
+                              ? icons[num].active
+                              : icons[num].default}
+                          </div>
+                        ))}
+                      </div>
+
+                      <div style={styles.iconLayout}>
+                        {["3", "4"].map((num) => (
+                          <div key={num} style={styles.iconLayout}>
+                            {order.hope?.includes(num)
+                              ? icons[num].active
+                              : icons[num].default}
+                          </div>
+                        ))}
+                      </div>
+
+                      <div style={styles.iconLayout}>
+                        {["5", "6"].map((num) => (
+                          <div key={num} style={styles.iconLayout}>
+                            {order.hope?.includes(num)
+                              ? icons[num].active
+                              : icons[num].default}
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </div>
-                  <div style={styles.scoreLayout}>
-                    <div style={styles.iconLayout}>
-                      {["1", "2"].map((num) => (
-                        <div key={num} style={styles.iconLayout}>
-                          {order.hope?.includes(num)
-                            ? icons[num].active
-                            : icons[num].default}
-                        </div>
-                      ))}
-                    </div>
-
-                    <div style={styles.iconLayout}>
-                      {["3", "4"].map((num) => (
-                        <div key={num} style={styles.iconLayout}>
-                          {order.hope?.includes(num)
-                            ? icons[num].active
-                            : icons[num].default}
-                        </div>
-                      ))}
-                    </div>
-
-                    <div style={styles.iconLayout}>
-                      {["5", "6"].map((num) => (
-                        <div key={num} style={styles.iconLayout}>
-                          {order.hope?.includes(num)
-                            ? icons[num].active
-                            : icons[num].default}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              ))}
-              {totalItem > 0 && (
+                ))}
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  backgroundColor: "#F3CCD4",
+                  width: "100%",
+                }}
+              >
                 <Pagination
-                  keyword={keywords}
                   totalItems={totalItem}
                   pageSize={pageSize}
                   currentPage={currentPage}
                   onPageChange={handlePageChange}
                   fetchNannyInfoList={fetchFavoriteList}
                 />
-              )}
+              </div>
             </div>
           </div>
-        </div>
-      </>
+        </>
+      )}
     </div>
   );
-};
+}
 
 const styles = {
+  headerTitleLayout: {
+    display: "flex",
+    gap: "10px",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  headerTitleFont: {
+    color: "var(---OutLine-OnSurfaceVariant, #504B49)",
+    textAlign: "center",
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: "24px",
+    fontStyle: "normal",
+    fontWeight: "700",
+    lineHeight: "normal",
+  },
+  headerSetting: {
+    display: "flex",
+    height: "50px",
+    justifyContent: "space-between",
+    alignItems: "center",
+    alignSelf: "stretch",
+    width: "100%",
+  },
   scenarioStyle: {
     display: "flex",
     padding: "1px 5px",
@@ -521,6 +556,33 @@ const styles = {
     gap: "4px",
     alignSelf: "stretch",
   },
+  scenarioStyle: {
+    display: "flex",
+    padding: "1px 5px",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "10px",
+    borderRadius: "20px",
+    border: "1px solid var(---Button-02, #FBC2EB)",
+    color: "var(---Outline-OnSurfaceVariant, #221E47)",
+    textAlign: "center",
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: "8px",
+    fontStyle: "normal",
+    fontWeight: "400",
+    lineHeight: "normal",
+  },
+  headSubTitle: {
+    color: "var(---Surface-Black-25, #252525)",
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: "8px",
+    fontStyle: "normal",
+    fontWeight: "400",
+    lineHeight: "normal",
+  },
+  orderItem: {
+    display: "flex",
+  },
   searchFont: {
     color: "#000",
     /* Line/medium/11pt */
@@ -546,6 +608,7 @@ const styles = {
   paginationContainer: {
     display: "flex",
     justifyContent: "center",
+    zIndex: "2",
   },
   timeFont: {
     color: "var(---Surface-Black-25, #252525)",
@@ -556,22 +619,104 @@ const styles = {
     fontWeight: "400",
     lineHeight: "normal",
   },
-
+  screen: {
+    display: "flex",
+    padding: "1px 5px",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "10px",
+    borderRadius: "20px",
+    border: "1px solid var(---Button-02, #FBC2EB)",
+    color: "var(---Outline-OnSurfaceVariant, #221E47)",
+    textAlign: "center",
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: "8px",
+    fontStyle: "normal",
+    fontWeight: "400",
+    lineHeight: "normal",
+  },
+  way: {
+    display: "flex",
+    padding: "1px 5px",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "10px",
+    borderRadius: "20px",
+    background:
+      "var(---Button-02, linear-gradient(90deg, #FBC2EB 0%, #A6C1EE 100%))",
+    color: "var(---Outline-OnSurfaceVariant, #221E47)",
+    textAlign: "center",
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: "8px",
+    fontStyle: "normal",
+    fontWeight: "400",
+    lineHeight: "normal",
+  },
+  nickname: {
+    color: "#1E1E1E",
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: "16px",
+    fontStyle: "normal",
+    fontWeight: "700",
+    lineHeight: "normal",
+  },
   orderInfo: {
     display: "flex",
     flexDirection: "column",
     gap: "6px",
   },
-  headIcon: {
-    width: "88px",
-    height: "88px",
-    flexShrink: 0,
-  },
-  titleLayout: {
+  nannyInfoLayout: {
     display: "flex",
+    width: "110px",
+    height: "82px",
     flexDirection: "column",
     alignItems: "flex-start",
+    gap: "6px",
+    flexShrink: "0",
+  },
+  headIcon: {
+    width: "87.772px",
+    height: "87.772px",
+    flexShrink: "0",
+    backgroundColor: "#E3838E",
+    borderRadius: "50%",
+    overflow: "hidden", // 添加這行來確保圖片不會溢出圓形區域
+    display: "flex", // 添加這行來居中圖片
+    justifyContent: "center", // 添加這行來居中圖片
+    alignItems: "center", // 添加這行來居中圖片
+  },
+  headIconImage: {
     width: "100%",
+    height: "100%",
+    objectFit: "cover", // 確保圖片填充整個空間並保持比例
+  },
+  createInfoLayout: {
+    display: "flex",
+    width: "218px",
+    alignItems: "center",
+    gap: "15px",
+    justifyContent: "center",
+  },
+  profilePic: {
+    width: "80px",
+    height: "80px",
+    borderRadius: "50%",
+    marginBottom: "10px",
+  },
+  nextBtn: {
+    padding: "10px 20px",
+    backgroundColor: "var(---Primary-Primary, #E3838E)",
+    color: "#fff",
+    border: "none",
+    borderRadius: "5px",
+    cursor: "pointer",
+  },
+  componentLayout: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    borderBottom: "1px solid #f4f4f4",
   },
   hopeLayout: {
     width: "100%",
@@ -606,6 +751,14 @@ const styles = {
     fontStyle: "normal",
     fontWeight: "700",
     linHeight: "normal",
+  },
+  nannySubInfo: {
+    color: "var(---Outline-OnSurface, #252525)",
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: "11px",
+    fontStyle: "normal",
+    fontWeight: "400",
+    lineHeight: "normal",
   },
   nannyNameFont: {
     color: "var(---Outline-OnSurface, #252525)",
@@ -657,6 +810,7 @@ const styles = {
     justifyContent: "space-between",
     alignItems: "center",
     borderRadius: "8px",
+    width: "100%",
     border: "2px solid var(---Button-01, #FBDBD6)",
     background: "var(---SurfaceContainer-Lowest, #FFF)",
   },
@@ -677,7 +831,6 @@ const styles = {
   buttonLayout: {
     display: "flex",
     flexDirection: "column",
-    gap: "10px",
     gap: "24px",
     width: "100%",
     marginBottom: "28px",
@@ -727,7 +880,8 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    height: "100vh",
+    backgroundColor: "#f8ecec",
+    minHeight: "100vh",
     width: "100%",
   },
   scoreLayout: {
@@ -749,17 +903,11 @@ const styles = {
     gap: "5px",
   },
   createInfoLayout: {
-    width: "100%",
     display: "flex",
-    height: "85px",
-    padding: "28.5px 38.5px 27.5px 39.5px",
-    justifyContent: "center",
+    width: "218px",
     alignItems: "center",
-    borderRadius: "12px",
-    border: "2px dashed var(---Primary-Container, #F3CCD4)",
-    background: "var(---SurfaceContainer-Lowest, #FFF)",
-    gap: "8px",
-    pointer: "cursor",
+    gap: "15px",
+    justifyContent: "center",
   },
   createInfoLayoutHave: {
     width: "100%",
@@ -772,45 +920,17 @@ const styles = {
     pointer: "cursor",
   },
   header: {
-    backgroundColor: "#F8ECEC",
-    width: "100%",
     display: "flex",
-    justifyContent: "center",
+    height: "147px",
+    padding: "15px 38px",
     alignItems: "center",
-    border: "none",
-  },
-  headerSetting: {
-    display: "flex",
-    height: "50px",
-    padding: "8px 25px",
+    flexDirection: "column",
     justifyContent: "space-between",
-    alignItems: "center",
+    gap: "20px",
     alignSelf: "stretch",
     width: "100%",
-  },
-  headerTitleLayout: {
-    display: "flex",
-    width: "100%",
-    height: "97px",
-    padding: "30px 124px",
-    alignItems: "center",
-    gap: "10px",
-    backgroundColor: "#FFFF",
-    borderRadius: "0px 0 30px 0",
-  },
-  headerTitleFont: {
-    color: "var(---OutLine-OnSurfaceVariant, #504B49)",
-    textAlign: "center",
-    fontFamily: "LINE Seed JP_TTF",
-    fontSize: "24px",
-    fontStyle: "normal",
-    fontWeight: "700",
-    lineHeight: "normal",
-  },
-  headerFont: {
-    fontSize: "24px",
-    fontWeight: "bold",
-    color: "#E3838E",
+    backgroundColor: "#fff",
+    borderRadius: "0px 0px 40px 0px", // 左上、右上、右下、左下的圓角
   },
   contentLayout: {
     display: "flex",
@@ -818,8 +938,8 @@ const styles = {
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
-    maxWidth: "600px",
-    backgroundColor: "#F8ECEC",
+    backgroundColor: "#f8ecec",
+    gap: "10px",
     borderRadius: "40px 0px 40px 0px", // 左上、右上、右下、左下的圓角
   },
   searchInput: {
@@ -835,9 +955,9 @@ const styles = {
   rollerLayout: {
     display: "flex",
     justifyContent: "center",
-    margin: "10px",
     alignItems: "center",
-    gap: "10px",
+    gap: "30px",
+    marginRight: "10px",
   },
   roller: {
     width: "42px",
@@ -859,18 +979,6 @@ const styles = {
     marginTop: "15px",
     marginBottom: "15px",
     color: "#E3838E",
-  },
-
-  lawLayout: {
-    display: "flex",
-    width: "320px",
-    padding: "18.5px 18px 19.5px 17px",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: "20px",
-    border: "2px solid var(---Button-01, #FBDBD6)",
-    gap: "20px",
   },
   suddenlyBtn: {
     display: "flex",
@@ -898,14 +1006,6 @@ const styles = {
     border: "none",
     borderRadius: "12px",
   },
-  spinner: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100vh",
-    fontSize: "24px",
-    color: "#E3838E",
-  },
   overlay: {
     position: "absolute",
     top: 0,
@@ -917,7 +1017,3 @@ const styles = {
     zIndex: 1,
   },
 };
-
-export default dynamic(() => Promise.resolve(ApplicationPage), {
-  ssr: false
-});

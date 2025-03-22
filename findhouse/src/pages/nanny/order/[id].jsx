@@ -557,14 +557,12 @@ export default function ProfilePage() {
                   <span className="imgFont">托育理念</span>
                   <span>{orderInfo.intro}</span>
                 </div>
+                <button className="submitButton" onClick={handleBookingClick} disabled={isMatching}>
+            + 馬上預約
+          </button>
               </div>
             </div>
           </div>
-        </div>
-        <div className="buttonLayout">
-          <button className="submitButton" onClick={handleBookingClick} disabled={isMatching}>
-            + 馬上預約
-          </button>
         </div>
       </div>
 
