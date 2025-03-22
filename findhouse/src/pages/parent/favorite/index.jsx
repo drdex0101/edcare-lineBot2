@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import React, { useState, useEffect } from "react";
+import "./matching.css";
+import "./profile.css";
 import Pagination from "../../../components/base/pagenation";
 import SearchBarSortOnly from "../../../components/base/SearchBarSortOnly";
-import "./favorite.css";
-import LoadingAnimation from "../../../components/base/Loading";
+import { useRouter } from "next/router";
+import Loading from "../../../components/base/Loading";
 import SettingForParent from "../../../components/base/SettingForParent";
-const ApplicationPage = () => {
+export default function HistoryPage() {
   const router = useRouter();
   const [totalItem, setTotalItem] = useState(0);
   const [currentPage, setCurrentPage] = useState(0); // Track current page
@@ -93,40 +94,45 @@ const ApplicationPage = () => {
   };
 
   return (
-    <div style={styles.main}>
+    <div className="matching-main">
       {isLoading ? (
-        <LoadingAnimation />
+        <Loading />
       ) : (
         <>
-          <div style={styles.headerSetting}>
-            <img
-              src="/icon/arrowForward.svg"
-              alt="back"
-              onClick={() => router.back()}
-            />
-            <SettingForParent />
-          </div>
-          <div style={styles.header}>
-            <div style={styles.headerTitleLayout}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="26"
-                height="25"
-                viewBox="0 0 26 25"
-                fill="none"
-              >
-                <path
-                  d="M13 6.06508C10.3333 -0.194174 1 0.472493 1 8.47253C1 16.4726 13 23.1395 13 23.1395C13 23.1395 25 16.4726 25 8.47253C25 0.472493 15.6667 -0.194174 13 6.06508Z"
-                  fill="#E3838E"
-                  stroke="#E3838E"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+          <div className="matching-body-header-background">
+            <div style={styles.header}>
+              <div style={styles.headerSetting}>
+                <img
+                  src="/icon/arrowForward.svg"
+                  alt="back"
+                  onClick={() => router.back()}
                 />
-              </svg>
-              <span style={styles.headerTitleFont}>收藏保母</span>
+                <SettingForParent />
+              </div>
+              <div style={styles.header}>
+                <div style={styles.headerTitleLayout}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="26"
+                    height="25"
+                    viewBox="0 0 26 25"
+                    fill="none"
+                  >
+                    <path
+                      d="M13 6.06508C10.3333 -0.194174 1 0.472493 1 8.47253C1 16.4726 13 23.1395 13 23.1395C13 23.1395 25 16.4726 25 8.47253C25 0.472493 15.6667 -0.194174 13 6.06508Z"
+                      fill="#E3838E"
+                      stroke="#E3838E"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                  <span style={styles.headerTitleFont}>收藏保母</span>
+                </div>
+              </div>
             </div>
           </div>
+
           <div
             style={{
               backgroundColor: "#F3CCD4",
@@ -135,111 +141,116 @@ const ApplicationPage = () => {
               border: "none",
             }}
           >
-            <div style={styles.contentLayout}>
-              <div style={styles.rollerLayout}>
-                <div style={styles.searchInput}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    onClick={() => handleFetchClick()}
-                  >
-                    <path
-                      d="M8.94286 3C10.519 3 12.0306 3.62612 13.1451 4.74062C14.2596 5.85512 14.8857 7.36671 14.8857 8.94286C14.8857 10.4149 14.3463 11.768 13.4594 12.8103L13.7063 13.0571H14.4286L19 17.6286L17.6286 19L13.0571 14.4286V13.7063L12.8103 13.4594C11.768 14.3463 10.4149 14.8857 8.94286 14.8857C7.36671 14.8857 5.85512 14.2596 4.74062 13.1451C3.62612 12.0306 3 10.519 3 8.94286C3 7.36671 3.62612 5.85512 4.74062 4.74062C5.85512 3.62612 7.36671 3 8.94286 3ZM8.94286 4.82857C6.65714 4.82857 4.82857 6.65714 4.82857 8.94286C4.82857 11.2286 6.65714 13.0571 8.94286 13.0571C11.2286 13.0571 13.0571 11.2286 13.0571 8.94286C13.0571 6.65714 11.2286 4.82857 8.94286 4.82857Z"
-                      fill="#999999"
-                    />
-                  </svg>
-                  <input
-                    style={{ border: "none" }}
-                    placeholder="搜尋保母名稱"
-                    value={keywords || ""}
-                    onChange={(e) => setKeywords(e.target.value)}
-                  ></input>
-                </div>
-                <SearchBarSortOnly
-                  keyword={keywords} // 將關鍵字傳遞給子組件
-                  setKeyword={setKeywords} // 傳遞更新函數
-                  onChange={handleFilterChange} // 傳遞選擇變更的處理函數
-                />
-              </div>
-            </div>
-            <div
-              style={{
-                backgroundColor: "#f8ecec",
-                width: "100%",
-                display: "flex",
-                alignItems: "center",
-                flexDirection: "column",
-              }}
-            >
-              <div style={styles.nannyItemLayout}>
-                {favoriteList.map((favorite, index) => (
-                  <div
-                    key={index}
-                    style={styles.nannyItem}
-                    onClick={() => {
-                      if (favorite.id) {
-                        router.push(`/nanny/profile/${favorite.id}`);
-                      } else {
-                        console.error("favorite ID not found");
-                      }
-                    }}
-                  >
-                    <div style={styles.rightPart}>
-                      <div>
-                        <img
-                          src={favorite.uploadId ? getImgUrl(favorite.uploadId) : "/nannyIcon.jpg" }
-                          style={styles.nannyIcon}
-                          alt="Nanny Icon"
-                        />
-                      </div>
-                      <div style={styles.nannyFontLayout}>
-                        <div style={styles.nannyNameFont}>{favorite.account}</div>
-                        <div style={styles.nannySubInfo}>
-                          托育經驗: {favorite.experienment} 年
-                        </div>
-                      </div>
-                    </div>
-                    <div style={styles.scoreLayout}>
-                      <span style={styles.scoreFont}>{favorite.score}</span>
+            <div className="matching-body-layoff">
+              <div className="avatar-container">
+                <div style={styles.contentLayout}>
+                  <div style={styles.rollerLayout}>
+                    <div style={styles.searchInput}>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"
-                        height="25"
-                        viewBox="0 0 24 25"
+                        height="24"
+                        viewBox="0 0 24 24"
                         fill="none"
+                        onClick={() => handleFetchClick()}
                       >
-                        <g clip-path="url(#clip0_75_7187)">
-                          <path
-                            d="M12 0.5C5.38 0.5 0 5.88 0 12.5C0 19.12 5.38 24.5 12 24.5C18.62 24.5 24 19.12 24 12.5C24 5.88 18.62 0.5 12 0.5ZM17.17 12.12L15 13.89L15.9 16.62C16.02 16.99 15.9 17.4 15.59 17.63C15.28 17.87 14.86 17.88 14.53 17.67L12.01 16.03L9.53 17.69C9.38 17.79 9.2 17.84 9.02 17.84C8.83 17.84 8.63 17.78 8.47 17.66C8.16 17.43 8.03 17.02 8.15 16.65L9.01 13.89L6.83 12.12C6.54 11.87 6.43 11.47 6.56 11.11C6.69 10.75 7.04 10.51 7.42 10.51H10.17L11.14 7.9C11.27 7.54 11.62 7.3 12 7.3C12.38 7.3 12.73 7.54 12.86 7.9L13.83 10.51H16.58C16.96 10.51 17.31 10.75 17.44 11.11C17.57 11.47 17.46 11.88 17.17 12.13V12.12Z"
-                            fill="#FFD22F"
-                          />
-                        </g>
-                        <defs>
-                          <clipPath id="clip0_75_7187)">
-                            <rect
-                              width="24"
-                              height="24"
-                              fill="white"
-                              transform="translate(0 0.5)"
-                            />
-                          </clipPath>
-                        </defs>
+                        <path
+                          d="M8.94286 3C10.519 3 12.0306 3.62612 13.1451 4.74062C14.2596 5.85512 14.8857 7.36671 14.8857 8.94286C14.8857 10.4149 14.3463 11.768 13.4594 12.8103L13.7063 13.0571H14.4286L19 17.6286L17.6286 19L13.0571 14.4286V13.7063L12.8103 13.4594C11.768 14.3463 10.4149 14.8857 8.94286 14.8857C7.36671 14.8857 5.85512 14.2596 4.74062 13.1451C3.62612 12.0306 3 10.519 3 8.94286C3 7.36671 3.62612 5.85512 4.74062 4.74062C5.85512 3.62612 7.36671 3 8.94286 3ZM8.94286 4.82857C6.65714 4.82857 4.82857 6.65714 4.82857 8.94286C4.82857 11.2286 6.65714 13.0571 8.94286 13.0571C11.2286 13.0571 13.0571 11.2286 13.0571 8.94286C13.0571 6.65714 11.2286 4.82857 8.94286 4.82857Z"
+                          fill="#999999"
+                        />
                       </svg>
+                      <input
+                        style={{ border: "none" }}
+                        placeholder="搜尋保母名稱"
+                        value={keywords || ""}
+                        onChange={(e) => setKeywords(e.target.value)}
+                      ></input>
                     </div>
+                    <SearchBarSortOnly
+                      keyword={keywords} // 將關鍵字傳遞給子組件
+                      setKeyword={setKeywords} // 傳遞更新函數
+                      onChange={handleFilterChange} // 傳遞選擇變更的處理函數
+                    />
                   </div>
-                ))}
-                {totalItem > 0 && (
-                  <Pagination
-                    keyword={keywords}
-                    totalItems={totalItem}
-                    pageSize={pageSize}
-                    currentPage={currentPage}
-                    onPageChange={handlePageChange}
-                  />
-                )}
+                </div>
+              </div>
+            </div>
+            <div className="matching-body-layoff-content-background">
+              <div className="matching-body-layoff-content">
+                  <div style={styles.nannyItemLayout}>
+                    {favoriteList.map((favorite, index) => (
+                      <div
+                        key={index}
+                        style={styles.nannyItem}
+                        onClick={() => {
+                          if (favorite.id) {
+                            router.push(`/nanny/profile/${favorite.id}`);
+                          } else {
+                            console.error("favorite ID not found");
+                          }
+                        }}
+                      >
+                        <div style={styles.rightPart}>
+                          <div>
+                            <img
+                              src={favorite.uploadId ? getImgUrl(favorite.uploadId) : "/nannyIcon.jpg" }
+                              style={styles.nannyIcon}
+                              alt="Nanny Icon"
+                            />
+                          </div>
+                          <div style={styles.nannyFontLayout}>
+                            <div style={styles.nannyNameFont}>{favorite.account}</div>
+                            <div style={styles.nannySubInfo}>
+                              托育經驗: {favorite.experienment} 年
+                            </div>
+                          </div>
+                        </div>
+                        <div style={styles.scoreLayout}>
+                          <span style={styles.scoreFont}>{favorite.score}</span>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="25"
+                            viewBox="0 0 24 25"
+                            fill="none"
+                          >
+                            <g clip-path="url(#clip0_75_7187)">
+                              <path
+                                d="M12 0.5C5.38 0.5 0 5.88 0 12.5C0 19.12 5.38 24.5 12 24.5C18.62 24.5 24 19.12 24 12.5C24 5.88 18.62 0.5 12 0.5ZM17.17 12.12L15 13.89L15.9 16.62C16.02 16.99 15.9 17.4 15.59 17.63C15.28 17.87 14.86 17.88 14.53 17.67L12.01 16.03L9.53 17.69C9.38 17.79 9.2 17.84 9.02 17.84C8.83 17.84 8.63 17.78 8.47 17.66C8.16 17.43 8.03 17.02 8.15 16.65L9.01 13.89L6.83 12.12C6.54 11.87 6.43 11.47 6.56 11.11C6.69 10.75 7.04 10.51 7.42 10.51H10.17L11.14 7.9C11.27 7.54 11.62 7.3 12 7.3C12.38 7.3 12.73 7.54 12.86 7.9L13.83 10.51H16.58C16.96 10.51 17.31 10.75 17.44 11.11C17.57 11.47 17.46 11.88 17.17 12.13V12.12Z"
+                                fill="#FFD22F"
+                              />
+                            </g>
+                            <defs>
+                              <clipPath id="clip0_75_7187)">
+                                <rect
+                                  width="24"
+                                  height="24"
+                                  fill="white"
+                                  transform="translate(0 0.5)"
+                                />
+                              </clipPath>
+                            </defs>
+                          </svg>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  backgroundColor: "#F3CCD4",
+                  width: "100%",
+                }}
+              >
+                <Pagination
+                  totalItems={totalItem}
+                  pageSize={pageSize}
+                  currentPage={currentPage}
+                  onPageChange={handlePageChange}
+                  fetchNannyInfoList={fetchFavoriteList}
+                />
               </div>
             </div>
           </div>
@@ -247,9 +258,97 @@ const ApplicationPage = () => {
       )}
     </div>
   );
-};
+}
 
 const styles = {
+  headerTitleLayout: {
+    display: "flex",
+    gap: "10px",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  headerTitleFont: {
+    color: "var(---OutLine-OnSurfaceVariant, #504B49)",
+    textAlign: "center",
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: "24px",
+    fontStyle: "normal",
+    fontWeight: "700",
+    lineHeight: "normal",
+  },
+  headerSetting: {
+    display: "flex",
+    height: "50px",
+    justifyContent: "space-between",
+    alignItems: "center",
+    alignSelf: "stretch",
+    width: "100%",
+  },
+  scenarioStyle: {
+    display: "flex",
+    padding: "1px 5px",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "10px",
+    borderRadius: "20px",
+    border: "1px solid var(---Button-02, #FBC2EB)",
+    color: "var(---Outline-OnSurfaceVariant, #221E47)",
+    textAlign: "center",
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: "8px",
+    fontStyle: "normal",
+    fontWeight: "400",
+    lineHeight: "normal",
+  },
+  wayStyle: {
+    display: "flex",
+    padding: "1px 5px",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "10px",
+    borderRadius: "20px",
+    background: "linear-gradient(81deg, #FBDBD6 10.58%, #D9DFF0 75.92%)",
+    color: "var(---Outline-OnSurfaceVariant, #221E47)",
+    textAlign: "center",
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: "8px",
+    fontStyle: "normal",
+    fontWeight: "400",
+    lineHeight: "normal",
+  },
+  wayLayout: {
+    display: "flex",
+    alignItems: "flex-start",
+    gap: "4px",
+    alignSelf: "stretch",
+  },
+  scenarioStyle: {
+    display: "flex",
+    padding: "1px 5px",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "10px",
+    borderRadius: "20px",
+    border: "1px solid var(---Button-02, #FBC2EB)",
+    color: "var(---Outline-OnSurfaceVariant, #221E47)",
+    textAlign: "center",
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: "8px",
+    fontStyle: "normal",
+    fontWeight: "400",
+    lineHeight: "normal",
+  },
+  headSubTitle: {
+    color: "var(---Surface-Black-25, #252525)",
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: "8px",
+    fontStyle: "normal",
+    fontWeight: "400",
+    lineHeight: "normal",
+  },
+  orderItem: {
+    display: "flex",
+  },
   searchFont: {
     color: "#000",
     /* Line/medium/11pt */
@@ -275,6 +374,7 @@ const styles = {
   paginationContainer: {
     display: "flex",
     justifyContent: "center",
+    zIndex: "2",
   },
   timeFont: {
     color: "var(---Surface-Black-25, #252525)",
@@ -285,16 +385,115 @@ const styles = {
     fontWeight: "400",
     lineHeight: "normal",
   },
-
+  screen: {
+    display: "flex",
+    padding: "1px 5px",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "10px",
+    borderRadius: "20px",
+    border: "1px solid var(---Button-02, #FBC2EB)",
+    color: "var(---Outline-OnSurfaceVariant, #221E47)",
+    textAlign: "center",
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: "8px",
+    fontStyle: "normal",
+    fontWeight: "400",
+    lineHeight: "normal",
+  },
+  way: {
+    display: "flex",
+    padding: "1px 5px",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "10px",
+    borderRadius: "20px",
+    background:
+      "var(---Button-02, linear-gradient(90deg, #FBC2EB 0%, #A6C1EE 100%))",
+    color: "var(---Outline-OnSurfaceVariant, #221E47)",
+    textAlign: "center",
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: "8px",
+    fontStyle: "normal",
+    fontWeight: "400",
+    lineHeight: "normal",
+  },
+  nickname: {
+    color: "#1E1E1E",
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: "16px",
+    fontStyle: "normal",
+    fontWeight: "700",
+    lineHeight: "normal",
+  },
   orderInfo: {
     display: "flex",
     flexDirection: "column",
     gap: "6px",
   },
+  nannyInfoLayout: {
+    display: "flex",
+    width: "110px",
+    height: "82px",
+    flexDirection: "column",
+    alignItems: "flex-start",
+    gap: "6px",
+    flexShrink: "0",
+  },
   headIcon: {
-    width: "88px",
-    height: "88px",
-    flexShrink: 0,
+    width: "87.772px",
+    height: "87.772px",
+    flexShrink: "0",
+    backgroundColor: "#E3838E",
+    borderRadius: "50%",
+    overflow: "hidden", // 添加這行來確保圖片不會溢出圓形區域
+    display: "flex", // 添加這行來居中圖片
+    justifyContent: "center", // 添加這行來居中圖片
+    alignItems: "center", // 添加這行來居中圖片
+  },
+  headIconImage: {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover", // 確保圖片填充整個空間並保持比例
+  },
+  createInfoLayout: {
+    display: "flex",
+    width: "218px",
+    alignItems: "center",
+    gap: "15px",
+    justifyContent: "center",
+  },
+  profilePic: {
+    width: "80px",
+    height: "80px",
+    borderRadius: "50%",
+    marginBottom: "10px",
+  },
+  nextBtn: {
+    padding: "10px 20px",
+    backgroundColor: "var(---Primary-Primary, #E3838E)",
+    color: "#fff",
+    border: "none",
+    borderRadius: "5px",
+    cursor: "pointer",
+  },
+  componentLayout: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    borderBottom: "1px solid #f4f4f4",
+  },
+  hopeLayout: {
+    width: "100%",
+    display: "flex",
+    padding: "5px 10px",
+    flexDirection: "column",
+    alignItems: "center",
+    alignSelf: "stretch",
+    borderRadius: "8px",
+    border: "1px solid var(---OutLine-OutLine, #78726D)",
+    background: "var(---SurfaceContainer-Lowest, #FFF)",
   },
   titleLayout: {
     display: "flex",
@@ -302,7 +501,23 @@ const styles = {
     alignItems: "flex-start",
     width: "100%",
   },
-
+  smallTitle: {
+    color: "var(---Primary-OnContainer, #6F2E2A)",
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: "16px",
+    fontWeight: "800",
+    lineHeight: "normal",
+    marginBottom: "15px",
+  },
+  typeFont: {
+    color: "var(---SurfaceContainer-Lowest, #FFF)",
+    /* Line/bold/24pt */
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: "24px",
+    fontStyle: "normal",
+    fontWeight: "700",
+    linHeight: "normal",
+  },
   nannySubInfo: {
     color: "var(---Outline-OnSurface, #252525)",
     fontFamily: "LINE Seed JP_TTF",
@@ -354,21 +569,16 @@ const styles = {
   nannyItemLayout: {
     display: "flex",
     flexDirection: "column",
-    gap: "10px",
     gap: "24px",
     width: "100%",
     marginBottom: "28px",
     justifyContent: "space-between",
     backgroundColor: "#F3CCD4",
-    paddingLeft: "35px",
-    paddingRight: "35px",
-    paddingTop: "20px",
     borderRadius: "40px 0px 0px 0px", // 左上、右上、右下、左下的圓角
   },
   buttonLayout: {
     display: "flex",
     flexDirection: "column",
-    gap: "10px",
     gap: "24px",
     width: "100%",
     marginBottom: "28px",
@@ -418,7 +628,8 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    height: "100vh",
+    backgroundColor: "#f8ecec",
+    minHeight: "100vh",
     width: "100%",
   },
   scoreLayout: {
@@ -426,9 +637,13 @@ const styles = {
     gap: "8px",
   },
   iconLayout: {
-    height: "38px",
     alignSelf: "stretch",
     fill: "var(---SurfaceContainer-High, #F5E5E5)",
+    gap: "10px",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
   },
   createButtonLayout: {
     display: "flex",
@@ -436,17 +651,11 @@ const styles = {
     gap: "5px",
   },
   createInfoLayout: {
-    width: "100%",
     display: "flex",
-    height: "85px",
-    padding: "28.5px 38.5px 27.5px 39.5px",
-    justifyContent: "center",
+    width: "218px",
     alignItems: "center",
-    borderRadius: "12px",
-    border: "2px dashed var(---Primary-Container, #F3CCD4)",
-    background: "var(---SurfaceContainer-Lowest, #FFF)",
-    gap: "8px",
-    pointer: "cursor",
+    gap: "15px",
+    justifyContent: "center",
   },
   createInfoLayoutHave: {
     width: "100%",
@@ -459,46 +668,17 @@ const styles = {
     pointer: "cursor",
   },
   header: {
-    backgroundColor: "#F8ECEC",
-    width: "100%",
     display: "flex",
-    justifyContent: "center",
+    height: "147px",
+    padding: "15px 38px",
     alignItems: "center",
-    border: "none",
-  },
-  headerSetting: {
-    display: "flex",
-    height: "50px",
-    padding: "8px 25px",
+    flexDirection: "column",
     justifyContent: "space-between",
-    alignItems: "center",
+    gap: "20px",
     alignSelf: "stretch",
     width: "100%",
-  },
-  headerTitleLayout: {
-    display: "flex",
-    width: "100%",
-    height: "97px",
-    padding: "30px 124px",
-    alignItems: "center",
-    gap: "10px",
-    backgroundColor: "#FFFF",
-    borderRadius: "0px 0 30px 0",
-  },
-  headerTitleFont: {
-    color: "var(---OutLine-OnSurfaceVariant, #504B49)",
-    textAlign: "center",
-    fontFamily: "LINE Seed JP_TTF",
-    fontSize: "24px",
-    fontStyle: "normal",
-    fontWeight: "700",
-    lineHeight: "normal",
-    width:'120px'
-  },
-  headerFont: {
-    fontSize: "24px",
-    fontWeight: "bold",
-    color: "#E3838E",
+    backgroundColor: "#fff",
+    borderRadius: "0px 0px 40px 0px", // 左上、右上、右下、左下的圓角
   },
   contentLayout: {
     display: "flex",
@@ -506,8 +686,8 @@ const styles = {
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
-    maxWidth: "600px",
-    backgroundColor: "#F8ECEC",
+    backgroundColor: "#f8ecec",
+    gap: "10px",
     borderRadius: "40px 0px 40px 0px", // 左上、右上、右下、左下的圓角
   },
   searchInput: {
@@ -523,9 +703,9 @@ const styles = {
   rollerLayout: {
     display: "flex",
     justifyContent: "center",
-    margin: "10px",
     alignItems: "center",
-    gap: "10px",
+    gap: "30px",
+    marginRight: "10px",
   },
   roller: {
     width: "42px",
@@ -547,18 +727,6 @@ const styles = {
     marginTop: "15px",
     marginBottom: "15px",
     color: "#E3838E",
-  },
-
-  lawLayout: {
-    display: "flex",
-    width: "320px",
-    padding: "18.5px 18px 19.5px 17px",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: "20px",
-    border: "2px solid var(---Button-01, #FBDBD6)",
-    gap: "20px",
   },
   suddenlyBtn: {
     display: "flex",
@@ -586,14 +754,6 @@ const styles = {
     border: "none",
     borderRadius: "12px",
   },
-  spinner: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    height: "100vh",
-    fontSize: "24px",
-    color: "#E3838E",
-  },
   overlay: {
     position: "absolute",
     top: 0,
@@ -605,5 +765,3 @@ const styles = {
     zIndex: 1,
   },
 };
-
-export default ApplicationPage;

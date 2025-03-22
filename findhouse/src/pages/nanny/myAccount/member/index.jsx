@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../myAccount.css";
 import { useRouter } from "next/router";
-import SettingForParent from "../../../../components/base/SettingForParent";
+import SettingForNanny from "../../../../components/base/SettingForNanny";
 export default function ProfilePage() {
   const router = useRouter();
   const [memberInfo, setMemberInfo] = useState([]);
@@ -24,7 +24,7 @@ export default function ProfilePage() {
           alt="back"
           onClick={() => router.back()}
         />
-        <SettingForParent />
+        <SettingForNanny />
       </div>
       <div className="member-body-header">
         <svg
