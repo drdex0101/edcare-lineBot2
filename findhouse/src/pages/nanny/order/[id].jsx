@@ -451,26 +451,21 @@ export default function ProfilePage() {
           <div className="tab-content">
             <span className="tab-tile">托育情境</span>
             <span className="tab-subTitle">
-              {orderInfo.scenario === "infantCareCenter"
-                ? "定點托育"
-                : "到宅托育"}
+              {orderInfo?.scenario === "home"
+                ? "在宅托育"
+                : orderInfo?.scenario === "infantCareCenter"
+                  ? "定點托育"
+                  : orderInfo?.scenario === "toHome"
+                    ? "到宅托育"
+                    : "未填寫"}
             </span>
           </div>
         </div>
         <div className="profile-location">
           <span className="location-subTitle">
-            {orderInfo.choosetype === "suddenly"
-              ? orderInfo.location
-              : orderInfo.scenario === "infantCareCenter"
-                ? orderInfo.location.slice(0, 6)
-                : orderInfo.location?.map((location, index) => (
-                    <span key={index}>
-                      {location}
-                      {index < orderInfo.location.length - 1
-                        ? "、"
-                        : ""}
-                    </span>
-                  ))}
+          {Array.isArray(orderInfo.location) && orderInfo.location.length > 0
+            ? orderInfo.location.join("、")
+            : "未填寫"}
           </span>
         </div>
        

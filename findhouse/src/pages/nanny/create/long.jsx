@@ -9,6 +9,7 @@ import CalendarWeekendPicker from "../../../components/base/CalendarWeekendPicke
 import Loading from "../../../components/base/Loading";
 import { MenuItem, InputLabel, FormControl } from "@mui/material";
 import useStore from "../../../lib/store";
+import Swal from "sweetalert2";
 
 const ApplicationPage = () => {
   const router = useRouter();
@@ -74,8 +75,11 @@ const ApplicationPage = () => {
   }
 
   const handleNextClick = async() => {
-    if (selectedDays.length === 0 || !selectedCareTime || !selectedScenario) {
-      alert("請填寫所有必填欄位。");
+    if (selectedDays.length === 0 || !selectedCareTime ) {
+      Swal.fire({
+        icon: "error",
+        title: "請填寫所有必填欄位。",
+      });
       return;
     }
     if (careData) {
@@ -341,43 +345,6 @@ const ApplicationPage = () => {
                   }}
                 />
               </div>
-              <FormControl>
-                <InputLabel id="gender-label">選擇情境</InputLabel>
-                <Select
-                  required
-                  labelId="scenario-label"
-                  id="scenario"
-                  value={selectedScenario}
-                  onChange={(e) => setSelectedScenario(e.target.value)}
-                  label="托育場景"
-                  InputProps={{
-                    sx: {
-                      padding: "0px 16px",
-                      borderRadius: "8px",
-                      backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
-                    },
-                  }}
-                  sx={{
-                    alignSelf: "stretch",
-                    borderRadius: "8px",
-                    "& .MuiOutlinedInput-root": {
-                      "& fieldset": {
-                        borderColor: "var(--OutLine-OutLine, #78726D)",
-                      },
-                      "&:hover fieldset": {
-                        borderColor: "#E3838E",
-                      },
-                      "&.Mui-focused fieldset": {
-                        borderColor: "#E3838E",
-                      },
-                    },
-                    backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
-                  }}
-                >
-                  <MenuItem value="toHome">到宅托育</MenuItem>
-                  <MenuItem value="home">在宅托育</MenuItem>
-                </Select>
-              </FormControl>
             </div>
             <div style={styles.buttonLayout}>
               <button style={styles.nextBtn} onClick={handleNextClick}>
