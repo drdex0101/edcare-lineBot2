@@ -44,11 +44,13 @@ export default function HistoryPage() {
     }
   };
 
-  const fetchNannyInfoList = async (page, pageSize = 5, keywords) => {
+  const fetchNannyInfoList = async (page, pageSize = 5, keywords="",locations=[],sort="time") => {
     setIsLoading(true); // Set loading state to true while fetching data
+    console.log(locations);
+    console.log(sort);
     try {
       const response = await fetch(
-        `/api/nanny/getNannyInfoList?page=${page}&pageSize=${pageSize}&locations=${selectedLocations}&sort=${selectedSort}&keyword=${keywords}`,
+        `/api/nanny/getNannyInfoList?page=${page}&pageSize=${pageSize}&locations=${locations}&sort=${sort}&keyword=${keywords}`,
         {
           method: "GET",
           headers: {
@@ -189,10 +191,9 @@ export default function HistoryPage() {
 
   const handleFilterChange = (region, locations, sorts) => {
     setSelectedRegion(region);
-    setSelectedLocations([...locations]); // 確保 locations 為新陣列
     setSelectedSort(sorts);
-
-    fetchNannyInfoList(currentPage, pageSize, keywords);
+    console.log(locations,'filter');
+    fetchNannyInfoList(currentPage, pageSize, keywords,locations,sorts);
   };
 
   return (
@@ -288,13 +289,11 @@ export default function HistoryPage() {
                       />
                     </div>
                     <SearchBar
-                      keyword={keywords} // 將關鍵字傳遞給子組件
-                      setKeyword={setKeywords} // 傳遞更新函數
-                      onChange={handleFilterChange} // 傳遞選擇變更的處理函數
-                      locationCount={locationCount}
-                      selectedSort={selectedSort}
-                      selectedRegion={selectedRegion}
-                      selectedLocations={selectedLocations}
+                      keyword={keywords}
+                      setKeyword={setKeywords}
+                      onChange={handleFilterChange}
+                      selectedLocations={selectedLocations} 
+                      setSelectedLocations={setSelectedLocations}
                     />
                   </div>
                   <div style={styles.titleLayout}></div>

@@ -83,6 +83,7 @@ export default async function handler(req, res) {
         WHERE 
             ($3::text IS NULL OR o.nickname ILIKE '%' || $3::text || '%')
             AND o.status = 'create'
+            AND ($5::varchar[] IS NULL OR c.location && $5::varchar[])
         ORDER BY 
             $4
         OFFSET 
@@ -96,6 +97,7 @@ export default async function handler(req, res) {
       limit,
       keywords,
       orderByClause,
+      locationArray
     ]);
 
     client.release();
