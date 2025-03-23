@@ -223,7 +223,7 @@ export default function HistoryPage() {
 
   const handleFilterChange = (regions, locations, sorts) => {
     setSelectedSort(sorts);
-    selectedLocations(locations)
+    setSelectedLocations(locations)
     fetchOrderInfoList(
       currentPage,
       pageSize,
@@ -247,6 +247,7 @@ export default function HistoryPage() {
     setNannyInfo(data.nannyProfile[0]);
     setNannyProfileImg(await getImgUrl(data.nannyProfile[0]?.uploadid));
     setIsLoading(false);
+    setIsShow(data.nannyProfile[0]?.isshow)
   };
 
   const getImgUrl = async (id) => {
@@ -291,10 +292,10 @@ export default function HistoryPage() {
   const handleVisibilityToggle = async () => {
     try {
       // Default to true if isShow is null
-      const currentIsShow = isShow === null ? true : isShow;
-
+      const currentIsShow = nannyProfile.isshow === null ? true : nannyProfile.isshow;
+      console.log(currentIsShow)
       const response = await fetch(
-        `/api/order/updateIsShow?isShow=${!currentIsShow}&id=${orderInfo[orderCurrentPage].id}`,
+        `/api/nanny/updateIsShow?isShow=${currentIsShow}&nannyId=${nannyProfile.nanny_id}`,
         {
           method: "PATCH",
           headers: {
@@ -307,10 +308,14 @@ export default function HistoryPage() {
         throw new Error("Failed to update visibility");
       }
 
-      setIsShow(!currentIsShow);
+      setIsShow(currentIsShow);
     } catch (error) {
       console.error("Error updating visibility:", error);
     }
+  };
+
+  const handleFetchClick = () => {
+    fetchOrderInfoList(currentPage, pageSize, keywords);
   };
 
   useEffect(() => {
@@ -419,7 +424,7 @@ export default function HistoryPage() {
               </svg>
             </div>
             <div style={styles.iconLayout} onClick={handleVisibilityToggle}>
-              {orderInfo[orderCurrentPage]?.isShow ? (
+              {!isShow ? (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="38"
@@ -565,7 +570,7 @@ export default function HistoryPage() {
                   <div style={styles.searchLayout}>
                     <div style={styles.searchTypeLayout}>
                       <span style={styles.searchFont}>
-                        地區: {locations.length}
+                        地區: {selectedLocations.length}
                       </span>
                     </div>
                     {selectedSort && (
@@ -1065,13 +1070,12 @@ const styles = {
     gap: "8px",
   },
   iconLayout: {
-    alignSelf: "stretch",
-    fill: "var(---SurfaceContainer-High, #F5E5E5)",
-    gap: "10px",
     display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
     alignItems: "center",
+    gap: "4px",
+    position: "relative", 
+    zIndex: 10,          
+    cursor: "pointer"    
   },
   createButtonLayout: {
     display: "flex",
@@ -1106,6 +1110,7 @@ const styles = {
     width: "100%",
     backgroundColor: "#fff",
     borderRadius: "0px 0px 40px 0px", // 左上、右上、右下、左下的圓角
+    position: "relative",
   },
   contentLayout: {
     display: "flex",

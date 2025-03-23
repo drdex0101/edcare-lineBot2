@@ -65,7 +65,6 @@ export default async function handler(req, res) {
           c.care_time,
           c.start_date ,
           c.end_date,
-          c.care_time,
           c.location,
           nanny.scenario,
           c.care_type

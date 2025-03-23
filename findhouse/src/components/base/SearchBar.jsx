@@ -7,11 +7,12 @@ export default function FilterButton({
   selectedSort: propSelectedSort,
   selectedRegion: propSelectedRegion,
   selectedLocations: propSelectedLocations,
-  setSelectedLocations: setSelectedLocations,
   from,
 }) {
   const [isFilterOpen, setIsFilterOpen] = useState(false); // 控制篩選框顯示
-  
+  const [selectedLocations, setSelectedLocations] = useState(
+    propSelectedLocations || [],
+  ); // 已選地區
   const [selectedRegion, setSelectedRegion] = useState(
     propSelectedRegion || "",
   ); // 當前選擇的區域
