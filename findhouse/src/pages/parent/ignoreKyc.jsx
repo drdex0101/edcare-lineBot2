@@ -38,6 +38,10 @@ const ApplicationPage = () => {
     }
   };
 
+  const closeWindow = () => {
+    window.close();
+  };
+
   useEffect(() => {
     const fetchAllData = async () => {
       try {
@@ -55,13 +59,7 @@ const ApplicationPage = () => {
   }, [isMember, haveKyc, haveOrder]);
 
   const handleClick = () => {
-    if (!isMember) {
-      router.push("/parent/apply");
-    } else if (!haveKyc) {
-      router.push("/parent/upload");
-    } else if (!haveOrder) {
-      router.push("/parent/create");
-    }
+    router.push("/parent/upload");
   };
 
   return (
@@ -159,11 +157,13 @@ const ApplicationPage = () => {
                   </span>
                 </div>
               </div>
-              {isMember && haveKyc && haveOrder ? (
-                <></>
-              ) : (
-                <button style={styles.goToLink} onClick={handleClick}>點我繼續填寫資料</button>
-              )}
+              <span style={styles.warning}>
+              *如要立即進行托育服務，請先完成身份驗證服務
+              </span>
+              <button style={styles.goToLink} onClick={handleClick}>點我前往身份驗證
+              </button>
+              <button style={styles.closeBtn} onClick={closeWindow}>立即開始
+              </button>
             </div>
           </div>
         </>
@@ -173,6 +173,35 @@ const ApplicationPage = () => {
 };
 
 const styles = {
+  closeBtn: {
+    width: "184px",
+    display: "flex",
+    height: "34px",
+    padding: "12px 16px",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "8px",
+    borderRadius: "32px",
+    background: "var(---Primary-Primary, #CCC)",
+    color: "var(---SurfaceContainer-Lowest, #FFF)",
+    fontFamily: "Source Sans Pro",
+    fontSize: "16px",
+    fontStyle: "normal",
+    fontWeight: "600",
+    lineHeight: "24px",
+    border: "none",
+    marginTop: "20px",
+  },
+  warning: {
+    color: "var(---Primary-Primary, #E3838E)",
+    textAlign: "center",
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: "12px",
+    fontStyle: "normal",
+    fontWeight: "400",
+    lineHeight: "normal",
+    marginTop: "10px",
+  },
   goToLink: {
     display: "flex",
     height: "34px",

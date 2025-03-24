@@ -10,7 +10,6 @@ import useStore from "../../../lib/store";
 import { useEffect } from "react";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import Loading from "../../../components/base/Loading";
-import zIndex from "@mui/material/styles/zIndex";
 
 const ApplicationPage = () => {
   const router = useRouter();
@@ -973,8 +972,8 @@ const styles = {
   },
   cameraIcon: {
     position: "absolute",
-    bottom: "0",
-    right: "0",
+    bottom: "10px",
+    right: "5px",
     width: "32px",
     height: "32px",
     borderRadius: "50%",
