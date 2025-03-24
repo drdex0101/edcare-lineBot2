@@ -160,7 +160,7 @@ export default function HistoryId() {
                 <span className="sub-title-font">
                   托育日期：
                   {orderInfo.choosetype === "suddenly"
-                    ? `${orderInfo?.start_date.slice(0, 10) || "無資料"} ~ ${orderInfo?.end_date.slice(0, 10) || "無資料"}`
+                    ? `${orderInfo?.start_date?.slice(0, 10) || "無資料"} ~ ${orderInfo?.end_date?.slice(0, 10) || "無資料"}`
                     : convertWeekdaysToString(orderInfo.weekdays) + " " + getCareTimeLabel(orderInfo.care_time)}
                 </span>
                 <span className="sub-title-font">

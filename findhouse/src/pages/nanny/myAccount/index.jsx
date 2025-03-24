@@ -12,8 +12,8 @@ export default function DetailsPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [favoriteList, setFavoriteList] = useState([]);
   const [favoriteCount, setFavoriteCount] = useState(0);
-  const [matchingList, setMatchingList] = useState([]);
   const [matchingCount, setMatchingCount] = useState(0);
+  const [onGoingCount, setOnGoingCount] = useState(0);
 
   const fetchHistoryList = async () => {
     setIsLoading(true);
@@ -32,18 +32,23 @@ export default function DetailsPage() {
     setIsLoading(false);
   };
 
-  const fetchMatchingList = async () => {
-    const response = await fetch("/api/matching/getMatchingList?page=1&pageSize=4");
+  const fetchMatchingCount = async () => {
+    const response = await fetch("/api/order/match/getMatchingCountByNanny?page=1&pageSize=50&status=matchByParent");
     const data = await response.json();
-    setMatchingList(data.matchings);
-    setMatchingCount(data.matchings.length);
-    setIsLoading(false);
+    setMatchingCount(data.orders.length || 0);
+  };
+
+  const fetchOnGoingCount = async () => {
+    const response = await fetch("/api/order/match/getMatchingCountByNanny?page=1&pageSize=50&status=onGoing");
+    const data = await response.json();
+    setOnGoingCount(data.orders.length || 0);
   };
 
   useEffect(() => {
     fetchHistoryList();
     fetchFavoriteList();
-    fetchMatchingList();
+    fetchMatchingCount();
+    fetchOnGoingCount();
   }, []);  
 
   return (
@@ -132,7 +137,7 @@ export default function DetailsPage() {
                 onClick={() => router.push("/nanny/matching")}
               >
                 <span className="details-four-layout-item-title">媒合訂單</span>
-                <span className="details-four-layout-item-content">{matchingCount}</span>
+                <span className="details-four-layout-item-content">{matchingCount+onGoingCount}</span>
               </div>
             </div>
           </div>

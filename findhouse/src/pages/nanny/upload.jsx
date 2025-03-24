@@ -50,8 +50,12 @@ const ApplicationPage = () => {
         communicateAddress: kycData.communicateaddress || '',
         welfareCertNo: kycData.welfarecertno || ''
       });
+      setSelectedDate(kycData.birthday ? dayjs(kycData.birthday) : null);
+      setGender(kycData.gender || "");
+      setFrontImg(kycData.identityfrontuploadid || null);
+      setBackImg(kycData.identitybackuploadid || null);
     }
-  }, [kycData]);
+  }, []);
 
   // 處理表單欄位變更
   const handleInputChange = (e) => {
@@ -187,63 +191,6 @@ const ApplicationPage = () => {
   const handleLastClick = () => {
     router.back(); // 替换 '/next-page' 为你想要跳转的路径
   };
-
-  const fetchKycData = async () => {
-    const response = await fetch("/api/kycInfo/getKycData", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await response.json();
-    setKycData(data.kycInfoList[0]);
-    if (data.kycInfoList.length === 0 || !data.kycInfoList[0]) {
-      console.log("No KYC Data found, clearing localStorage");
-      localStorage.removeItem("data-storage");  // 清空 localStorage
-      setKycData(null);  // 清空 state
-    } else {
-      setKycData(data.kycInfoList[0]);
-      console.log("kycData", data.kycInfoList[0]);
-    }
-  };
-
-  useEffect(() => {
-    const loadData = async () => {
-      await fetchKycData(); // Wait for KYC data to be fetched
-      
-      const storedData = localStorage.getItem('data-storage');
-      
-      if (storedData) {
-        try {
-          const parsedData = JSON.parse(storedData);
-          if (parsedData.state && parsedData.state.kycData) {
-            const storedKycData = parsedData.state.kycData;
-            setKycData(storedKycData);
-            setSelectedDate(storedKycData.birthday ? dayjs(storedKycData.birthday) : null);
-            setGender(storedKycData.gender || "");
-            console.log("storedKycData", storedKycData);
-            setFrontImg(storedKycData.identityfrontuploadid || null);
-            setBackImg(storedKycData.identitybackuploadid || null);
-          }
-        } catch (error) {
-          console.error("Error parsing stored data:", error);
-        }
-      }
-      
-      // If no stored data or parsing failed, use kycData from API
-      if (!storedData && kycData) {
-        setSelectedDate(kycData.birthday ? dayjs(kycData.birthday) : null);
-        setGender(kycData.gender || "");
-        setFrontImg(kycData.identityfrontuploadid || null);
-        setBackImg(kycData.identitybackuploadid || null);
-      }
-      
-      setIsLoading(false);
-    };
-    
-    setIsLoading(true);
-    loadData();
-  }, []);
 
   const handleUpload = async (file, type) => {
     setIsLoading(true);

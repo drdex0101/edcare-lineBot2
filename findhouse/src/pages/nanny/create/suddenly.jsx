@@ -35,11 +35,6 @@ const ApplicationPage = () => {
   const [selectedCareType, setSelectedCareType] = React.useState(() => "");
   const [selectedAddress, setSelectedAddress] = React.useState(() => []);
 
-  const handleCareTypeChange = (e) => {
-    setSelectedCareType(e.target.value);
-    setSelectedAddress([]); // Reset address when care type changes
-  };
-
   const createSuddenlyRecord = async () => {
     const locationArray = Array.isArray(selectedAddress)
       ? selectedAddress
@@ -103,22 +98,23 @@ const ApplicationPage = () => {
   };
 
   useEffect(() => {
-    const storedData = localStorage.getItem("data-storage");
-    const parsedData = JSON.parse(storedData)?.state?.careData;
-
-    const currentDate = new Date();
-    currentDate.setDate(currentDate.getDate() + 3);
-    const formattedStartDate = currentDate.toISOString().split("T")[0];
-
+    const parsedData = useStore.getState().careData;
+    console.log("storedCareData", parsedData);
     if (parsedData) {
       setSelectedRange({
-        startDate: parsedData.start_date || formattedStartDate,
+        startDate:
+          parsedData.start_date || (() => {
+            const threeDaysLater = new Date();
+            threeDaysLater.setDate(threeDaysLater.getDate() + 3);
+            return threeDaysLater.toISOString().split("T")[0];
+          })(),
         endDate: parsedData.end_date || null,
       });
       setSelectedCareType(parsedData.scenario);
       setSelectedAddress(parsedData.location);
       setCareData(parsedData);
     }
+    console.log("careData", careData);
   }, []);
 
   return (

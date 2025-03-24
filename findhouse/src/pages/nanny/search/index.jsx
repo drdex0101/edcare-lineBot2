@@ -369,7 +369,7 @@ export default function HistoryPage() {
                                   ? "定點托育"
                                   : nannyProfile?.scenario === "toHome"
                                     ? "到宅托育"
-                                    : ""}
+                                    : "未填寫"}
                   </div>
               </div>
               <span style={styles.headSubTitle}>
@@ -534,7 +534,7 @@ export default function HistoryPage() {
                       </svg>
                       <input
                         style={{ border: "none" }}
-                        placeholder="搜尋保母名稱"
+                        placeholder="搜尋孩童暱稱"
                         value={keywords}
                         onChange={handleChange}
                       />
@@ -1072,10 +1072,13 @@ const styles = {
   iconLayout: {
     display: "flex",
     alignItems: "center",
-    gap: "4px",
+    justifyContent: "center",
+    gap: "10px",
     position: "relative", 
     zIndex: 10,          
-    cursor: "pointer"    
+    cursor: "pointer",    
+    alignSelf: "stretch",
+    flexDirection: "column",
   },
   createButtonLayout: {
     display: "flex",

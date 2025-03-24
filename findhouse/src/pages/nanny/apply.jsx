@@ -2,7 +2,6 @@ import { useEffect, React } from "react";
 import { useRouter } from "next/router";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
-import axios from "axios";
 import Loading from "../../components/base/Loading";
 import { useState } from "react";
 import useStore from "../../lib/store";
@@ -15,15 +14,7 @@ const ApplicationPage = () => {
   const { memberInfo, setMemberInfo } = useStore();
   const { memberId, setMemberId } = useStore();
   const accountName = decodeURIComponent(Cookies.get("displayName"));
-  const fetchMemberInfo = async () => {
-    setIsLoading(true);
-    const response = await axios.get("/api/member/getMemberData");
-    setMemberInfo(response.data.member[0]);
-    setIsLoading(false);
-  };
-  useEffect(() => {
-    fetchMemberInfo();
-  }, []);
+
   useEffect(() => {
     fetch("/api/line/changeRichMenu", {
       method: "POST",
@@ -35,6 +26,7 @@ const ApplicationPage = () => {
       }),
     })
   }, []);
+
   const handleNextClick = async () => {
     const memberData = {
       memberId: memberInfo?.id,
