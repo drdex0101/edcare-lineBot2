@@ -11,12 +11,42 @@ export default function HistoryPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [matchingList, setMatchingList] = useState([]);
   const [onGoingList, setOnGoingList] = useState([]);
-  const { orderId,setOrderId } = useStore();
+  const { orderId, setOrderId } = useStore();
 
   const fetchMatchingCount = async () => {
-    const response = await fetch("/api/order/match/getMatchingCountByNanny?page=1&pageSize=10&status=matchByParent");
+    const response = await fetch("/api/order/match/getMatchingCountByNanny?page=1&pageSize=50&status=matchByParent");
     const data = await response.json();
     setMatchingList(data.orders || []);
+  };
+
+  const handlePageChange = (page) => {
+    console.log("page:", page);
+    setCurrentPage(page); // Update currentPage when a new page is selected
+  };
+
+  const calculateAge = (birthday) => {
+    const today = new Date();
+    const birthDate = new Date(birthday);
+    
+    let years = today.getFullYear() - birthDate.getFullYear();
+    let months = today.getMonth() - birthDate.getMonth();
+
+    if (months < 0) {
+      years--;
+      months += 12;
+    }
+  
+    if (months === 0 && today.getDate() < birthDate.getDate()) {
+      months = 11;
+      years--;
+    }
+    if (years === 0) {
+      return `${years}歲${months}個月`;
+    } else if (months === 0) {
+      return `${years}歲`;
+    } else {
+      return `${years}歲${months}個月`;
+    }
   };
 
   const getImgUrl = (id) => {
@@ -24,7 +54,7 @@ export default function HistoryPage() {
   };
 
   const fetchOnGoingCount = async () => {
-    const response = await fetch("/api/order/match/getMatchingCountByParent?page=1&pageSize=10&status=onGoing");
+    const response = await fetch("/api/order/match/getMatchingCountByNanny?page=1&pageSize=50&status=onGoing");
     const data = await response.json();
     setOnGoingList(data.orders || []);
     setTotalCount(data.totalCount || 0);
@@ -83,7 +113,7 @@ export default function HistoryPage() {
           <div className="avatar-container">
             {matchingList.map((avatar) => (
               <div className="avatar" key={avatar.id}>
-                 <img src={"/orderCreate.png"} alt="avatar" className="avatar-img" onClick={() => {router.push(`/nanny/matching/pair/${avatar.id}`);}}/>
+                <img src={"/orderCreate.png"} alt="avatar" className="avatar-img" onClick={() => { router.push(`/nanny/matching/pair/${avatar.id}`); }} />
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <span className="avatar-name">{avatar.nickname}</span>
                   <svg
@@ -138,18 +168,18 @@ export default function HistoryPage() {
               </div>
             ) : (
               <>
-                {historyList.map((avatar) => (
-                  <div className="nanny-layout" key={avatar.id} onClick={() => {router.push(`/nanny/matching/pair/${avatar.id}`); setOrderId(avatar.id)}}>
+                {onGoingList.map((avatar) => (
+                  <div className="nanny-layout" key={avatar.id}>
                     <div className="nanny-avatar">
                       <img
-                        src={avatar.imgSrc}
-                        className="nanny-avatar-icon"
+                        src={"/orderCreate.png"}
+                        className="avatar-img"
                         alt="nanny avatar"
                       />
                     </div>
                     <div className="nanny-intro">
                       <span className="nanny-intro-name">{avatar.name}</span>
-                      <span className="nanny-intro-exp">{avatar.age}岁</span>
+                      <span className="nanny-intro-exp">{calculateAge(avatar.birthday)}</span>
                     </div>
                     <div className="status">
                       <span className="status-content">已配對</span>
@@ -158,16 +188,6 @@ export default function HistoryPage() {
                 ))}
               </>
             )}
-          </div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              backgroundColor: "#F3CCD4",
-              width: "100%",
-            }}
-          >
-            <Pagination totalItems={historyList.length} pageSize={5} currentPage={1} />
           </div>
         </div>
       </div>

@@ -534,7 +534,7 @@ export default function HistoryPage() {
                       </svg>
                       <input
                         style={{ border: "none" }}
-                        placeholder="搜尋保母名稱"
+                        placeholder="搜尋孩童暱稱"
                         value={keywords}
                         onChange={handleChange}
                       />

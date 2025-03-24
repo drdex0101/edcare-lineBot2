@@ -76,6 +76,7 @@ export default async function handler(req, res) {
         c.start_date,
         c.end_date,
         c.location,
+        k.birthday as nannyBirthday,
         COUNT(*) OVER() AS totalCount
         FROM 
             orderinfo o

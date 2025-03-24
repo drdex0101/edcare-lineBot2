@@ -24,6 +24,7 @@ export default function ProfilePage() {
     endDate: null,
   });
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
 
   const [isFavorite, setIsFavorite] = useState(null);
 
@@ -338,6 +339,7 @@ export default function ProfilePage() {
   const [offset, setOffset] = useState(0);
 
   const handlApproval = async () => {
+    setIsDisabled(true);
     const response = await fetch(`/api/order/matchByParent`, {
       method: "PATCH",
       body: JSON.stringify({ id, orderId, status: 'onGoing' }),
@@ -351,6 +353,7 @@ export default function ProfilePage() {
   };
 
   const handlReject = async () => {
+    setIsDisabled(true);
     const response = await fetch(`/api/order/matchByParent`, {
       method: "PATCH",
       body: JSON.stringify({ id, orderId, status: 'cancel' }),
@@ -476,57 +479,25 @@ export default function ProfilePage() {
         </div>
         <div className="profile-location">
           <span className="location-subTitle">
-            {orderInfo.choosetype === "suddenly"
-              ? orderInfo.suddenly_location
-              : orderInfo.scenario === "infantCareCenter"
-                ? orderInfo.long_term_location.slice(0, 6)
-                : orderInfo.long_term_location?.map((location, index) => (
-                    <span key={index}>
-                      {location}
-                      {index < orderInfo.long_term_location.length - 1
-                        ? "、"
-                        : ""}
-                    </span>
-                  ))}
+            {Array.isArray(orderInfo.location) && orderInfo.location.length > 0
+            ? orderInfo.location.join("、")
+            : "未填寫"}
           </span>
         </div>
-        {/* 圖片輪播區域 */}
-        <div className="imageSection">
-          <span className="imgFont">托育環境</span>
-          <div className="carousel">
-            <img
-              src={urls[currentImageIndex]}
-              alt={`圖片 ${currentImageIndex + 1}`}
-              className="carouselImage"
-            />
-          </div>
-          {/* 圓點指示器 */}
-          {orderInfo.environmentpic && orderInfo.environmentpic.length > 0 && (
-            <div className="dotsContainer">
-              {orderInfo.environmentpic.map((_, index) => (
-                <span
-                  key={index}
-                  className={`dot ${index === currentImageIndex ? "active" : ""}`}
-                  onClick={() => handleDotClick(index)}
-                ></span>
-              ))}
-            </div>
-          )}
-        </div>
+       
         <div style={{ width: "100%",marginBottom:"14px",padding:"10px 40px" }}>
           {orderInfo.choosetype === "suddenly" &&
-            selectedRange.startDate &&
-            selectedRange.endDate && (
+            (
               <CalendarRangePicker
-                startDate={selectedRange.startDate}
-                endDate={selectedRange.endDate}
+                startDate={orderInfo.start_date}
+                endDate={orderInfo.end_date}
                 styles={{
                   calendar: { maxWidth: "400px" },
                   day: { width: "50px", height: "50px" },
                 }}
               />
             )}
-          {orderInfo.choosetype === "longTerm" && (
+          {orderInfo.choosetype === "longTern" && (
             <ServiceSchedule></ServiceSchedule>
           )}
         </div>
@@ -588,9 +559,33 @@ export default function ProfilePage() {
             gap: "10px",
           }}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="78" height="76" viewBox="0 0 78 76" fill="none">
-            <path d="M77.25 68V23.0588C77.25 21.078 76.4663 19.1775 75.0701 17.7724L60.1065 2.71355C58.6986 1.29672 56.7838 0.5 54.7864 0.5H8.75C4.60787 0.5 1.25 3.85786 1.25 8V52.1795C1.25 54.1613 2.0344 56.0625 3.43182 57.4678L19.1637 73.2884C20.5714 74.704 22.4855 75.5 24.4819 75.5H69.75C73.8921 75.5 77.25 72.1421 77.25 68Z" fill="#F5E5E5" fill-opacity="0.8" stroke="#F3CCD4" />
-            <image href="/icon/reject.svg" x="24" y="24" width="30" height="30" onClick={handlReject} />
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            width="78" 
+            height="76" 
+            viewBox="0 0 78 76" 
+            fill="none"
+            style={{
+              opacity: isDisabled ? 0.5 : 1,
+              pointerEvents: isDisabled ? 'none' : 'auto',
+              cursor: isDisabled ? 'not-allowed' : 'pointer'
+            }}
+          >
+            <path 
+              d="M77.25 68V23.0588C77.25 21.078 76.4663 19.1775 75.0701 17.7724L60.1065 2.71355C58.6986 1.29672 56.7838 0.5 54.7864 0.5H8.75C4.60787 0.5 1.25 3.85786 1.25 8V52.1795C1.25 54.1613 2.0344 56.0625 3.43182 57.4678L19.1637 73.2884C20.5714 74.704 22.4855 75.5 24.4819 75.5H69.75C73.8921 75.5 77.25 72.1421 77.25 68Z" 
+              fill={isDisabled ? "#CCCCCC" : "#F5E5E5"} 
+              fillOpacity="0.8" 
+              stroke={isDisabled ? "#CCCCCC" : "#F3CCD4"} 
+            />
+            <image 
+              href="/icon/reject.svg" 
+              x="24" 
+              y="24" 
+              width="30" 
+              height="30" 
+              onClick={!isDisabled ? handlReject : undefined}
+              style={{ opacity: isDisabled ? 0.5 : 1 }}
+            />
           </svg>
 
           <svg xmlns="http://www.w3.org/2000/svg" width="56" height="65" viewBox="0 0 56 65" fill="none">
@@ -610,9 +605,33 @@ export default function ProfilePage() {
             </g>
           </svg>
 
-          <svg xmlns="http://www.w3.org/2000/svg" width="78" height="76" viewBox="0 0 78 76" fill="none">
-            <path d="M0.75 68V23.0588C0.75 21.078 1.53366 19.1775 2.9299 17.7724L17.8935 2.71355C19.3014 1.29672 21.2162 0.5 23.2136 0.5H69.25C73.3921 0.5 76.75 3.85786 76.75 8V52.1795C76.75 54.1613 75.9656 56.0625 74.5682 57.4678L58.8363 73.2884C57.4286 74.704 55.5145 75.5 53.5181 75.5H8.25C4.10787 75.5 0.75 72.1421 0.75 68Z" fill="#F5E5E5" fill-opacity="0.8" stroke="#F3CCD4" />
-            <image href="/icon/approve.svg" x="24" y="24" width="30" height="30" onClick={handlApproval} />
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            width="78" 
+            height="76" 
+            viewBox="0 0 78 76" 
+            fill="none"
+            style={{
+              opacity: isDisabled ? 0.5 : 1,
+              pointerEvents: isDisabled ? 'none' : 'auto',
+              cursor: isDisabled ? 'not-allowed' : 'pointer'
+            }}
+          >
+            <path 
+              d="M0.75 68V23.0588C0.75 21.078 1.53366 19.1775 2.9299 17.7724L17.8935 2.71355C19.3014 1.29672 21.2162 0.5 23.2136 0.5H69.25C73.3921 0.5 76.75 3.85786 76.75 8V52.1795C76.75 54.1613 75.9656 56.0625 74.5682 57.4678L58.8363 73.2884C57.4286 74.704 55.5145 75.5 53.5181 75.5H8.25C4.10787 75.5 0.75 72.1421 0.75 68Z" 
+              fill={isDisabled ? "#CCCCCC" : "#F5E5E5"} 
+              fillOpacity="0.8" 
+              stroke={isDisabled ? "#CCCCCC" : "#F3CCD4"} 
+            />
+            <image 
+              href="/icon/approve.svg" 
+              x="24" 
+              y="24" 
+              width="30" 
+              height="30" 
+              onClick={!isDisabled ? handlApproval : undefined}
+              style={{ opacity: isDisabled ? 0.5 : 1 }}
+            />
           </svg>
         </div>
       </div>

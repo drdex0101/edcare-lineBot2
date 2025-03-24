@@ -343,7 +343,7 @@ export default function ProfilePage() {
   const handleBooking = async () => {
     const response = await fetch(`/api/order/matchByNanny`, {
       method: "PATCH",
-      body: JSON.stringify({ id, orderId, status: "matching" }),
+      body: JSON.stringify({ id, orderId, status: "matchByParent" }),
       headers: {
         "Content-Type": "application/json",
       },
