@@ -121,7 +121,24 @@ export default function ProfilePage() {
 
   useEffect(() => {
     setAge(calculateAge(nannyInfo.birthday));
+    console.log(nannyInfo.location)
   }, [nannyInfo]);
+
+  const renderLocation = (location) => {
+    let parsed = location;
+    console.log(location)
+    if (typeof location === "string") {
+      try {
+        parsed = JSON.parse(location);
+      } catch (e) {
+        parsed = [];
+      }
+    }
+  
+    return Array.isArray(parsed) && parsed.length > 0
+      ? parsed.join("、")
+      : "未填寫";
+  };
 
   const toSearch = () => {
     router.push("/parent/search");
@@ -448,7 +465,7 @@ export default function ProfilePage() {
                   ? "全天托育"
                   : nannyInfo.care_time === "morning"
                   ? "日間托育"
-                  : ""}
+                  : "未填寫"}
             </span>
           </div>
           <svg
@@ -474,24 +491,13 @@ export default function ProfilePage() {
                   ? "定點托育"
                   : nannyInfo.scenario === "toHome"
                     ? "到宅托育"
-                    : ""}
+                    : "未填寫"}
             </span>
           </div>
         </div>
         <div className="profile-location">
           <span className="location-subTitle">
-            {nannyInfo.choosetype === "suddenly"
-              ? nannyInfo.location
-              : nannyInfo.scenario === "infantCareCenter"
-                ? nannyInfo.location.slice(0, 6)
-                : nannyInfo.location?.map((location, index) => (
-                    <span key={index}>
-                      {location}
-                      {index < nannyInfo.location.length - 1
-                        ? "、"
-                        : ""}
-                    </span>
-                  ))}
+            {renderLocation(nannyInfo.location)}
           </span>
         </div>
         {/* 圖片輪播區域 */}

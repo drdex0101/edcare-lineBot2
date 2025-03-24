@@ -1,9 +1,18 @@
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
+import useStore from "../../lib/store";
 const ApplicationPage = () => {
   const router = useRouter();
   const { userId } = router.query;
   const [isChecked, setIsChecked] = React.useState(false); // 新增状态来跟踪复选框状态
+  const { memberInfo, setMemberInfo } = useStore();
+  const { kycData, setKycData } = useStore();
+  const {babyInfo, setBabyInfo} = useStore();
+  const {careData, setCareData} = useStore();
+  const {nannyInfo, setNannyInfo} = useStore();
+  const {orderId, setOrderId} = useStore();
+  const {item, setItem} = useStore();
+  
   const handleNextClick = () => {
     if (!isChecked) {
       // 检查复选框是否被勾选
@@ -23,6 +32,13 @@ const ApplicationPage = () => {
         richMenuId: "richmenu-e2577cc1b2bd4a59ad7fe9c3b99605ba",
       }),
     })
+    setMemberInfo(null);
+    setKycData(null);
+    setBabyInfo(null);
+    setCareData(null);
+    setNannyInfo(null);
+    setOrderId(null);
+    setItem(null);
   }, []);
   
   return (

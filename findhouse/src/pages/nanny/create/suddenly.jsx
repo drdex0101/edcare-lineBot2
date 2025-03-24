@@ -114,6 +114,7 @@ const ApplicationPage = () => {
       setSelectedAddress(parsedData.location);
       setCareData(parsedData);
     }
+    console.log("careData", careData);
   }, []);
 
   return (

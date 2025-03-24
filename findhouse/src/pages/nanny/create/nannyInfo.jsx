@@ -108,7 +108,7 @@ const ApplicationPage = () => {
       scenario: selectedCareType,
       environmentPic: uploadedImages,
       serviceLocation:
-        selectedCareType === "在宅托育" ? [address] : selectedAddress,
+        selectedCareType === "home" ? [address] : selectedAddress,
       service: Object.keys(switchStates).filter((key) => switchStates[key]),
       score: nannyInfo ? nannyInfo.score : "",
       isShow: true,
@@ -402,11 +402,11 @@ const ApplicationPage = () => {
               type="radio"
               name="careType"
               value="在宅托育"
-              checked={selectedCareType === "在宅托育"}
+              checked={selectedCareType === "home"}
               onChange={handleCareTypeChange}
               style={{
                 ...styles.radioButton,
-                ...(selectedCareType === "在宅托育" &&
+                ...(selectedCareType === "home" &&
                   styles.radioButtonChecked),
               }}
             />{" "}
@@ -415,11 +415,11 @@ const ApplicationPage = () => {
               type="radio"
               name="careType"
               value="到宅托育"
-              checked={selectedCareType === "到宅托育"}
+              checked={selectedCareType === "toHome"}
               onChange={handleCareTypeChange}
               style={{
                 ...styles.radioButton,
-                ...(selectedCareType === "到宅托育" &&
+                ...(selectedCareType === "toHome" &&
                   styles.radioButtonChecked),
               }}
             />{" "}
@@ -427,7 +427,7 @@ const ApplicationPage = () => {
           </div>
 
           <div style={styles.buttonLayout}>
-            {selectedCareType === "在宅托育" && (
+            {selectedCareType === "home" && (
               <TextField
                 required
                 id="address"
@@ -465,7 +465,7 @@ const ApplicationPage = () => {
             )}
 
             {/* 托育地區選擇 */}
-            {selectedCareType === "到宅托育" && (
+            {selectedCareType === "toHome" && (
               <FormControl
                 error={!selectedAddress.length}
                 style={{ width: "100%" }}
