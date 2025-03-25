@@ -15,7 +15,7 @@ export default function ServiceSchedule({ weekdays, care_time }) {
 
     // 設置激活的時段
     let newActiveSlots = [];
-    if (care_time === "allday") {
+    if (care_time === "allDay") {
       activeDayIndices.forEach((day) => {
         [0, 1, 2, 3].forEach((row) => {
           newActiveSlots.push(row * 7 + day-1);

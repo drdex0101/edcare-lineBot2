@@ -483,8 +483,20 @@ const ApplicationPage = () => {
                   id="address-select"
                   label="定點選擇"
                   multiple
-                  value={selectedAddress} // 選擇的地址
-                  onChange={(e) => setSelectedAddress(e.target.value)}
+                  value={selectedAddress}
+                  onChange={(e) => {
+                    const newValue = e.target.value;
+                    if (newValue.length > 5) {
+                      Swal.fire({
+                        icon: 'error',
+                        title: '超過選擇上限',
+                        text: '最多只能選擇5個托育地區',
+                        confirmButtonText: '確定'
+                      });
+                      return;
+                    }
+                    setSelectedAddress(newValue);
+                  }}
                   MenuProps={{
                     PaperProps: {
                       style: {

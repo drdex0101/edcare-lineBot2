@@ -8,6 +8,7 @@ import { MenuItem, InputLabel, FormControl } from "@mui/material";
 import useStore from "../../../lib/store";
 import Loading from "../../../components/base/Loading";
 import { useState } from "react";
+import Swal from "sweetalert2";
 const ApplicationPage = () => {
   const router = useRouter();
   const { careData, setCareData } = useStore();

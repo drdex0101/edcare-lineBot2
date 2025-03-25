@@ -103,6 +103,8 @@ const ApplicationPage = () => {
           },
           body: JSON.stringify(memberData),
         });
+        console.log(memberExistData.member[0].id);
+        setMemberId(memberExistData.member[0].id); // 保存到 Redux Store
       }
       router.push("/nanny/upload");
       setIsLoading(false);
