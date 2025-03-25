@@ -26,6 +26,7 @@ export default function HistoryPage() {
     setOnGoingList(data.orders || []);
     setTotalCount(data.totalCount || 0);
   };
+  
   const router = useRouter();
 
   useEffect(() => {
