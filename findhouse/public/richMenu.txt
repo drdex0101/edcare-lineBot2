@@ -4,3 +4,4 @@
 4.richmenu-48f0c719cfbfc92dd6ea5b8ce10b6cb3 家長選單
 5.richmenu-0e3bddda8e703d189f73cfcfc9a0d320 家長完成kyc
 6.richmenu-5a3e70f73ef6a2ad2a2380320e46b9f8 家長略過kyc
+7.richmenu-68478ea0366dde15b16b4caf79c12e35 保母完成kyc
