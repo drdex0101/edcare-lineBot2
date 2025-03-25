@@ -37,11 +37,7 @@ const ApplicationPage = () => {
       console.error("Error fetching order data:", error);
     }
   };
-
-  const closeWindow = () => {
-    window.close();
-  };
-
+  
   useEffect(() => {
     const fetchAllData = async () => {
       try {
@@ -161,8 +157,6 @@ const ApplicationPage = () => {
               *如要立即進行托育服務，請先完成身份驗證服務
               </span>
               <button style={styles.goToLink} onClick={handleClick}>點我前往身份驗證
-              </button>
-              <button style={styles.closeBtn} onClick={closeWindow}>立即開始
               </button>
             </div>
           </div>

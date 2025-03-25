@@ -176,7 +176,6 @@ const ApplicationPage = () => {
       setBabyHope(parsedData.intro);
       setSelectedOptions(parsedData.hope);
     }
-    console.log(babyInfo.orders);
   }, []);
 
   return (
@@ -620,8 +619,8 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    height: "100vh", // 占满整个视口高度
     backgroundColor: "#f8ecec",
+    minHeight: "100vh",
   },
   header: {
     display: "flex",

@@ -11,10 +11,17 @@ export default function DetailsPage() {
   const [kycData, setKycData] = useState(null);
   const [favoriteCount, setFavoriteCount] = useState(0);
   const [matchingCount, setMatchingCount] = useState(0);
-  const statusMap = {
-    pending: "待驗證",
-    check: "已驗證",
-    reject: "退件",
+  const getStatusText = (status) => {
+    switch (status) {
+      case 'pending':
+        return '待驗證';
+      case 'reject':
+        return '拒絕';
+      case 'approve':
+        return '已驗證';
+      default:
+        return '未填寫';
+    }
   };
 
   const fetchHistoryList = async () => {
@@ -104,7 +111,7 @@ export default function DetailsPage() {
             <div className="details-four-layout-item-coulumn">
               <span className="details-four-layout-item-title">身分驗證</span>
               <span className="details-four-layout-item-content">
-                {statusMap[kycData?.status] || "未填寫"}
+                {getStatusText(kycData?.status)}
               </span>
             </div>
           </div>

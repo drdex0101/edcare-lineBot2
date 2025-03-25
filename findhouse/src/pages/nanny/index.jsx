@@ -12,6 +12,7 @@ const ApplicationPage = () => {
   const {nannyInfo, setNannyInfo} = useStore();
   const {orderId, setOrderId} = useStore();
   const {item, setItem} = useStore();
+  const {memberId, setMemberId} = useStore();
   
   const handleNextClick = () => {
     if (!isChecked) {
@@ -39,6 +40,7 @@ const ApplicationPage = () => {
     setNannyInfo(null);
     setOrderId(null);
     setItem(null);
+    setMemberId(null);
   }, []);
   
   return (
