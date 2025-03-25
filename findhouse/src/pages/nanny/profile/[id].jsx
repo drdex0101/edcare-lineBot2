@@ -459,13 +459,15 @@ export default function ProfilePage() {
           <div className="tab-content">
             <span className="tab-tile">托育方式</span>
             <span className="tab-subTitle">
-              {nannyInfo.care_time === "night"
-                ? "夜間托育"
-                : nannyInfo.care_time === "allDay"
-                  ? "全天托育"
-                  : nannyInfo.care_time === "morning"
-                  ? "日間托育"
-                  : "未填寫"}
+              {nannyInfo.care_type === "suddenly" 
+                ? "臨時托育"
+                : nannyInfo.care_time === "night"
+                  ? "夜間托育"
+                  : nannyInfo.care_time === "allDay"
+                    ? "全天托育"
+                    : nannyInfo.care_time === "morning"
+                      ? "日間托育"
+                      : "未填寫"}
             </span>
           </div>
           <svg
@@ -497,7 +499,7 @@ export default function ProfilePage() {
         </div>
         <div className="profile-location">
           <span className="location-subTitle">
-            {renderLocation(nannyInfo.location)}
+            {renderLocation(nannyInfo.servicelocation)}
           </span>
         </div>
         {/* 圖片輪播區域 */}

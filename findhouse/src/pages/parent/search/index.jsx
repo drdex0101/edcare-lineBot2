@@ -39,9 +39,7 @@ export default function HistoryPage() {
 
   const handleChange = (e) => {
     const value = e.target.value;
-    if (!isComposing) {
-      setKeywords(value);
-    }
+    setKeywords(value);
   };
 
   const fetchNannyInfoList = async (page, pageSize = 5, keywords="",locations=[],sort="time") => {
@@ -167,7 +165,7 @@ export default function HistoryPage() {
     return () => {
       isCancelled = true; // 在組件卸載時取消請求
     };
-  }, [currentPage]); // 監聽關鍵依賴變數
+  }, [currentPage,keywords]); // 監聽關鍵依賴變數
 
   const handleNextClick = (careType) => {
     console.log("haveKyc", haveKyc);
@@ -281,10 +279,10 @@ export default function HistoryPage() {
                         placeholder="搜尋保母名稱"
                         value={keywords}
                         onChange={handleChange}
-                        onCompositionStart={() => setIsComposing(true)} // 開始輸入中文
+                        onCompositionStart={() => setIsComposing(true)}
                         onCompositionEnd={(e) => {
-                          setIsComposing(false); // 組字結束，確保更新最新的值
-                          setKeywords(e.target.value);
+                          setIsComposing(false);
+                          setKeywords(e.target.value);  // 在組字結束時更新最終值
                         }}
                       />
                     </div>
