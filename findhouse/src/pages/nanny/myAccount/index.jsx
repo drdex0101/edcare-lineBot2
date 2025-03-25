@@ -129,7 +129,7 @@ export default function DetailsPage() {
               </div>
               <div className="details-four-layout-item-coulumn">
                 <span className="details-four-layout-item-title">身分驗證</span>
-                <span className="details-four-layout-item-content">{getStatusText(kycInfo.status)}</span>
+                <span className="details-four-layout-item-content">{getStatusText(kycInfo?.status)}</span>
               </div>
             </div>
             <div className="details-four-layout-item">
