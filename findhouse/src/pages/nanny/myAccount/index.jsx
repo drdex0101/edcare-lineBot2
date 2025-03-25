@@ -14,6 +14,7 @@ export default function DetailsPage() {
   const [favoriteCount, setFavoriteCount] = useState(0);
   const [matchingCount, setMatchingCount] = useState(0);
   const [onGoingCount, setOnGoingCount] = useState(0);
+  const [kycInfo, setKycInfo] = useState(null);
 
   const fetchHistoryList = async () => {
     setIsLoading(true);
@@ -44,11 +45,32 @@ export default function DetailsPage() {
     setOnGoingCount(data.orders.length || 0);
   };
 
+  const getKycInfo = async () => {
+    const response = await fetch("/api/kycInfo/getKycData");
+    const data = await response.json();
+    setKycInfo(data.kycInfoList[0]);
+    console.log(data.kycInfoList[0])
+  };
+
+  const getStatusText = (status) => {
+    switch (status) {
+      case 'pending':
+        return '待驗證';
+      case 'reject':
+        return '拒絕';
+      case 'approve':
+        return '已驗證';
+      default:
+        return '未填寫';
+    }
+  };
+
   useEffect(() => {
     fetchHistoryList();
     fetchFavoriteList();
     fetchMatchingCount();
     fetchOnGoingCount();
+    getKycInfo();
   }, []);  
 
   return (
@@ -107,7 +129,7 @@ export default function DetailsPage() {
               </div>
               <div className="details-four-layout-item-coulumn">
                 <span className="details-four-layout-item-title">身分驗證</span>
-                <span className="details-four-layout-item-content">已驗證</span>
+                <span className="details-four-layout-item-content">{getStatusText(kycInfo?.status)}</span>
               </div>
             </div>
             <div className="details-four-layout-item">

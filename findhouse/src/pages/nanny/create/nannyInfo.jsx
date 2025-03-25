@@ -10,6 +10,7 @@ import useStore from "../../../lib/store";
 import { useEffect } from "react";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import Loading from "../../../components/base/Loading";
+import Swal from "sweetalert2";
 
 const ApplicationPage = () => {
   const router = useRouter();
@@ -244,14 +245,20 @@ const ApplicationPage = () => {
 
   const handleEnvironmentImageChange = (e) => {
     const files = Array.from(e.target.files);
-
-    if (uploadedImages.length + files.length > 6) {
-      alert("最多只能上傳6張照片");
+    const total = uploadedImages.length + files.length;
+  
+    if (total > 6) {
+      Swal.fire({
+        icon: 'error',
+        title: '最多只能上傳 6 張照片',
+        text: `您目前已上傳 ${uploadedImages.length} 張，將新增 ${files.length} 張`,
+        confirmButtonText: '確定'
+      });
       return;
     }
-
+  
     files.forEach((file) => {
-      handleUpload(file, "environment"); // Call handleUpload for each fil
+      handleUpload(file, "environment");
     });
   };
 
@@ -400,7 +407,7 @@ const ApplicationPage = () => {
             <input
               type="radio"
               name="careType"
-              value="在宅托育"
+              value="home"
               checked={selectedCareType === "home"}
               onChange={handleCareTypeChange}
               style={{
@@ -413,7 +420,7 @@ const ApplicationPage = () => {
             <input
               type="radio"
               name="careType"
-              value="到宅托育"
+              value="toHome"
               checked={selectedCareType === "toHome"}
               onChange={handleCareTypeChange}
               style={{

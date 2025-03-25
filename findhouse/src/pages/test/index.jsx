@@ -62,7 +62,7 @@ const ApplicationPage = () => {
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-      if (status == "通過") {
+      if (status == "approve") {
         if (job == "保母") {
           changeRichMenu("richmenu-3adb9975aee0c695e08c99ef572d4008");
         } else {
@@ -73,6 +73,19 @@ const ApplicationPage = () => {
     } catch (err) {
       console.error("Error updating status:", err);
       setError(err.message);
+    }
+  };
+
+  const getStatusText = (status) => {
+    switch (status) {
+      case 'pending':
+        return '待驗證';
+      case 'reject':
+        return '拒絕';
+      case 'approve':
+        return '已驗證';
+      default:
+        return '未填寫';
     }
   };
 
@@ -92,7 +105,6 @@ const ApplicationPage = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          width: "100%",
         }}
       >
         <div style={styles.contentLayout}>
@@ -108,15 +120,6 @@ const ApplicationPage = () => {
                 <td style={styles.tableCell}>id</td>
                 <td style={styles.tableCell}>name</td>
                 <td style={styles.tableCell}>job</td>
-                <td style={styles.tableCell}>identityCard</td>
-                <td style={styles.tableCell}>gender</td>
-                <td style={styles.tableCell}>birthday</td>
-                <td style={styles.tableCell}>address</td>
-                <td style={styles.tableCell}>communicateAddress</td>
-                <td style={styles.tableCell}>welfareCertNo</td>
-                <td style={styles.tableCell}>identityFrontUploadId</td>
-                <td style={styles.tableCell}>identityBackUploadId</td>
-                <td style={styles.tableCell}>iconUploadId</td>
                 <td style={styles.tableCell}>status</td>
                 <td style={styles.tableCell}>操作</td>
               </tr>
@@ -125,27 +128,14 @@ const ApplicationPage = () => {
                   <td style={styles.tableCell}>{kycInfo.id}</td>
                   <td style={styles.tableCell}>{kycInfo.name}</td>
                   <td style={styles.tableCell}>{kycInfo.job}</td>
-                  <td style={styles.tableCell}>{kycInfo.identityCard}</td>
-                  <td style={styles.tableCell}>{kycInfo.gender}</td>
-                  <td style={styles.tableCell}>{kycInfo.birthday}</td>
-                  <td style={styles.tableCell}>{kycInfo.address}</td>
-                  <td style={styles.tableCell}>{kycInfo.communicateAddress}</td>
-                  <td style={styles.tableCell}>{kycInfo.welfareCertNo}</td>
-                  <td style={styles.tableCell}>
-                    {kycInfo.identityFrontUploadId}
-                  </td>
-                  <td style={styles.tableCell}>
-                    {kycInfo.identityBackUploadId}
-                  </td>
-                  <td style={styles.tableCell}>{kycInfo.iconUploadId}</td>
-                  <td style={styles.tableCell}>{kycInfo.status}</td>
+                  <td style={styles.tableCell}>{getStatusText(kycInfo.status)}</td>
                   <td style={styles.tableCell}>
                     <button
                       style={styles.button}
                       onClick={() =>
                         updateStatus(
                           kycInfo.id,
-                          "通過",
+                          "approve",
                           kycInfo.line_id,
                           kycInfo.job,
                         )
@@ -158,7 +148,7 @@ const ApplicationPage = () => {
                       onClick={() =>
                         updateStatus(
                           kycInfo.id,
-                          "不通過",
+                          "reject",
                           kycInfo.line_id,
                           kycInfo.job,
                         )
@@ -250,6 +240,7 @@ const styles = {
     alignItems: "center",
     height: "100vh", // 占满整个视口高度
     backgroundColor: "#f8ecec",
+    width: "100%",
   },
   header: {
     display: "flex",
@@ -276,7 +267,9 @@ const styles = {
     paddingLeft: "35px",
     paddingRight: "35px",
     paddingTop: "20px",
-    borderRadius: "40px 0px 0px 0px", // 左上、右上、右下、左下的圓角
+    borderRadius: "40px 0px 0px 0px",
+    overflowX: "auto",
+    minWidth: "max-content"
   },
   rollerLayout: {
     display: "flex",
@@ -327,7 +320,7 @@ const styles = {
   },
   table: {
     borderCollapse: "collapse",
-    width: "100%",
+    minWidth: "100%",
     border: "1px solid black",
   },
   tableCell: {
