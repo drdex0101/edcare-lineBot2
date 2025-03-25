@@ -342,7 +342,7 @@ export default function ProfilePage() {
     setIsDisabled(true);
     const response = await fetch(`/api/order/matchByParent`, {
       method: "PATCH",
-      body: JSON.stringify({ id, orderId, status: 'onGoing' }),
+      body: JSON.stringify({ id, orderId, status: 'matchingByNanny' }),
       headers: {
         "Content-Type": "application/json",
       },
