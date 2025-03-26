@@ -40,7 +40,7 @@ export default async function handler(req, res) {
         o.id,
         o.parentLineId, 
         o.nannyId, 
-        o.status, 
+        p.status, 
         o.created_ts, 
         o.update_ts, 
         o.choosetype, 
@@ -64,6 +64,8 @@ export default async function handler(req, res) {
         care_data c ON o.caretypeid = c.id
     LEFT JOIN 
         nanny n ON o.nannyid = n.id
+    JOIN 
+        pair p ON o.id = p.order_id
     WHERE 
         o.parentLineId = $1 
         AND ($4::text IS NULL OR o.nickname ILIKE '%' || $4::text || '%')

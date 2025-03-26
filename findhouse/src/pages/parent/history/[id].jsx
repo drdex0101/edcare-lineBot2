@@ -50,7 +50,7 @@ export default function HistoryId() {
 
   const orderStatusSteps = [
     { key: "create", label: "媒合中" },
-    { key: "matching", label: "預約中" },
+    { key: "matchByParent" || "matchByNanny", label: "預約中" },
     { key: "signing", label: "簽約中" },
     { key: "onGoing", label: "合約履行中" },
     { key: "finish", label: "已完成" },

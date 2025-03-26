@@ -87,27 +87,53 @@ export default function DetailsPage() {
         <img src={"/icon/detailsIcon.png"} alt="details-icon" />
         <div className="details-four-layout">
           <div className="details-four-layout-item">
-            <div className="details-four-layout-item-icon">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="30"
-                height="30"
-                viewBox="0 0 30 30"
-                fill="none"
-              >
-                <circle
-                  cx="15"
-                  cy="15"
-                  r="15"
-                  fill="#14BDBD"
-                  fill-opacity="0.25"
-                />
-                <path
-                  d="M11.6637 19.8949L8.0146 16.0678C7.60798 15.6414 6.96157 15.6414 6.55496 16.0678C6.14835 16.4943 6.14835 17.1722 6.55496 17.5987L10.9234 22.1802C11.3301 22.6066 11.9869 22.6066 12.3935 22.1802L23.445 10.6006C23.8517 10.1742 23.8517 9.49627 23.445 9.06983C23.0384 8.64339 22.392 8.64339 21.9854 9.06983L11.6637 19.8949Z"
-                  fill="#14BDBD"
-                />
-              </svg>
-            </div>
+          <div className="details-four-layout-item-icon" 
+                   onClick={() => kycInfo?.status !== 'approve' && router.push("/nanny/verify/upload")}>
+                {kycData?.status === 'approve' ? (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="30"
+                    height="30"
+                    viewBox="0 0 30 30"
+                    fill="none"
+                  >
+                    <circle
+                      cx="15"
+                      cy="15"
+                      r="15"
+                      fill="#14BDBD"
+                      fill-opacity="0.25"
+                    />
+                    <path
+                      d="M11.6637 19.8949L8.0146 16.0678C7.60798 15.6414 6.96157 15.6414 6.55496 16.0678C6.14835 16.4943 6.14835 17.1722 6.55496 17.5987L10.9234 22.1802C11.3301 22.6066 11.9869 22.6066 12.3935 22.1802L23.445 10.6006C23.8517 10.1742 23.8517 9.49627 23.445 9.06983C23.0384 8.64339 22.392 8.64339 21.9854 9.06983L11.6637 19.8949Z"
+                      fill="#14BDBD"
+                    />
+                  </svg>
+                ) : (
+                  <div className="unfinish-bg" onClick={() => router.push("/nanny/verify/upload")}>
+                  <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    width="30" 
+                    height="30" 
+                    viewBox="0 0 30 30" 
+                    fill="none"
+                  >
+                    <path 
+                      d="M7.92969 7.92969L22.0718 22.0718" 
+                      stroke="#E34A35" 
+                      stroke-width="2" 
+                      stroke-linecap="round"
+                    />
+                    <path 
+                      d="M7.92969 22.0703L22.0718 7.92818" 
+                      stroke="#E34A35" 
+                      stroke-width="2" 
+                      stroke-linecap="round"
+                    />
+                  </svg>
+                  </div>
+                )}
+              </div>
             <div className="details-four-layout-item-coulumn">
               <span className="details-four-layout-item-title">身分驗證</span>
               <span className="details-four-layout-item-content">

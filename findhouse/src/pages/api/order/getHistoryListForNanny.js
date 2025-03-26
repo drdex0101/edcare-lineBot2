@@ -1,5 +1,5 @@
-import { Pool } from 'pg';
-import { verifyToken } from '../../../utils/jwtUtils';
+import { Pool } from "pg";
+import { verifyToken } from "../../../utils/jwtUtils";
 
 // 連線池設定
 const pool = new Pool({
@@ -8,28 +8,32 @@ const pool = new Pool({
 });
 
 export default async function handler(req, res) {
-  if (req.method !== 'GET') {
-    res.setHeader('Allow', ['GET']);
-    return res.status(405).json({ success: false, message: `Method ${req.method} Not Allowed` });
+  if (req.method !== "GET") {
+    res.setHeader("Allow", ["GET"]);
+    return res
+      .status(405)
+      .json({ success: false, message: `Method ${req.method} Not Allowed` });
   }
 
   const { page = 1, pageSize = 10, keyword = null, sort = null } = req.query;
   const token = req.cookies.authToken;
   const payload = await verifyToken(token);
   const userId = payload.userId;
-  
+
   if (!userId) {
-    return res.status(400).json({ success: false, message: 'ID parameter is required' });
+    return res
+      .status(400)
+      .json({ success: false, message: "ID parameter is required" });
   }
 
   const offset = (parseInt(page) - 1) * parseInt(pageSize);
   const limit = parseInt(pageSize);
 
-  let orderByClause = '';
-  if (sort === 'time') {
-    orderByClause = 'o.created_ts DESC';
-  } else if (sort === 'rating') {
-    orderByClause = 'o.rank DESC';
+  let orderByClause = "";
+  if (sort === "time") {
+    orderByClause = "o.created_ts DESC";
+  } else if (sort === "rating") {
+    orderByClause = "o.rank DESC";
   }
 
   try {
@@ -59,13 +63,15 @@ export default async function handler(req, res) {
         c.scenario,
         COUNT(*) OVER() AS totalCount
     FROM 
-        orderinfo o
+        pair p
     LEFT JOIN 
-        care_data c ON o.caretypeid = c.id
-    LEFT JOIN 
-        nanny n ON o.nannyid = n.id
+        nanny n ON p.nanny_id = n.id
     LEFT JOIN 
         member m ON n.memberid = m.id::VARCHAR
+     LEFT JOIN 
+        orderinfo o ON p.order_id = o.id
+    LEFT JOIN 
+        care_data c ON o.caretypeid = c.id
     WHERE 
         m.line_id = $1 
         AND ($4::text IS NULL OR o.nickname ILIKE '%' || $4::text || '%')
@@ -77,23 +83,30 @@ export default async function handler(req, res) {
         $3;
     `;
 
-    const { rows } = await client.query(query, [userId, offset, limit, keyword, orderByClause]);
+    const { rows } = await client.query(query, [
+      userId,
+      offset,
+      limit,
+      keyword,
+      orderByClause,
+    ]);
 
     client.release();
 
     if (rows.length === 0) {
-      return res.status(200).json({ success: true, orders: [], pageCount: 0, totalCount: 0 });
+      return res
+        .status(200)
+        .json({ success: true, orders: [], pageCount: 0, totalCount: 0 });
     }
 
-    return res.status(200).json({ 
+    return res.status(200).json({
       success: true,
       orders: rows,
-      pageCount: rows.length, 
+      pageCount: rows.length,
       totalCount: rows[0].totalcount, // 總筆數
     });
-
   } catch (error) {
-    console.error('Database error:', error);
-    return res.status(500).json({ success: false, error: 'Database error' });
+    console.error("Database error:", error);
+    return res.status(500).json({ success: false, error: "Database error" });
   }
 }

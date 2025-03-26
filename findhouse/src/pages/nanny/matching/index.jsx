@@ -10,11 +10,11 @@ export default function HistoryPage() {
   const [historyList, setHistoryList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [matchingList, setMatchingList] = useState([]);
-  const [onGoingList, setOnGoingList] = useState([]);
+  const [signingList, setSigningList] = useState([]);
   const { orderId, setOrderId } = useStore();
 
   const fetchMatchingCount = async () => {
-    const response = await fetch("/api/order/match/getMatchingCountByNanny?page=1&pageSize=50&status=matchByParent");
+    const response = await fetch("/api/pair/getList?page=1&pageSize=50&status=matchByParent");
     const data = await response.json();
     setMatchingList(data.orders || []);
   };
@@ -53,17 +53,17 @@ export default function HistoryPage() {
     return `/api/base/getImgUrl?id=${id}`;
   };
 
-  const fetchOnGoingCount = async () => {
-    const response = await fetch("/api/order/match/getMatchingCountByNanny?page=1&pageSize=50&status=onGoing");
+  const fetchSigningCount = async () => {
+    const response = await fetch("/api/pair/getList?page=1&pageSize=50&status=signing");
     const data = await response.json();
-    setOnGoingList(data.orders || []);
+    setSigningList(data.orders || []);
     setTotalCount(data.totalCount || 0);
   };
   const router = useRouter();
 
   useEffect(() => {
     fetchMatchingCount();
-    fetchOnGoingCount();
+    fetchSigningCount();
   }, []);
 
   return (
@@ -168,7 +168,7 @@ export default function HistoryPage() {
               </div>
             ) : (
               <>
-                {onGoingList.map((avatar) => (
+                {signingList.map((avatar) => (
                   <div className="nanny-layout" key={avatar.id}>
                     <div className="nanny-avatar">
                       <img
