@@ -1,0 +1,10 @@
+CREATE TABLE pair (
+  id BIGSERIAL PRIMARY KEY,
+  nanny_id INTEGER NOT NULL,
+  order_id INTEGER NOT NULL,
+  status VARCHAR(20) DEFAULT 'pending',
+  created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+  FOREIGN KEY (nanny_id) REFERENCES nanny(id),
+  FOREIGN KEY (order_id) REFERENCES orders(id)
+);

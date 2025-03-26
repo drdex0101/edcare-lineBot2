@@ -340,7 +340,7 @@ export default function ProfilePage() {
 
   const handlApproval = async () => {
     setIsDisabled(true);
-    const response = await fetch(`/api/order/matchByParent`, {
+    const response = await fetch(`/api/pair/update`, {
       method: "PATCH",
       body: JSON.stringify({ id, orderId, status: 'matchingByNanny' }),
       headers: {
@@ -354,7 +354,7 @@ export default function ProfilePage() {
 
   const handlReject = async () => {
     setIsDisabled(true);
-    const response = await fetch(`/api/order/matchByParent`, {
+    const response = await fetch(`/api/order/update`, {
       method: "PATCH",
       body: JSON.stringify({ id, orderId, status: 'cancel' }),
       headers: {
@@ -498,7 +498,7 @@ export default function ProfilePage() {
               />
             )}
           {orderInfo.choosetype === "longTern" && (
-            <ServiceSchedule></ServiceSchedule>
+            <ServiceSchedule weekdays={orderInfo.weekdays} care_time={orderInfo.care_time}></ServiceSchedule>
           )}
         </div>
         {/* Icon Navigation */}

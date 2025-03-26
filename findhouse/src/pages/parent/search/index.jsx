@@ -7,6 +7,7 @@ import OrderCarousel from "../../../components/nanny/search/OrderCarousel";
 import { useRouter } from "next/router";
 import useStore from "../../../lib/store";
 import Loading from "../../../components/base/Loading";
+import Swal from "sweetalert2";
 export default function HistoryPage() {
   const router = useRouter();
   const { setItem } = useStore();
@@ -161,20 +162,17 @@ export default function HistoryPage() {
     };
     fetchData();
     checkHaveKyc();
-    console.log("haveKyc", haveKyc);
     return () => {
       isCancelled = true; // 在組件卸載時取消請求
     };
   }, [currentPage,keywords]); // 監聽關鍵依賴變數
 
-  const handleNextClick = (careType) => {
-    console.log("haveKyc", haveKyc);
+  const handleNextClick = () => {
     if (!haveKyc) {
       setOpenKycModal(true);
-
     } else {
-      setCareData({});
-      setBabyInfo({});
+      setCareData(null);
+      setBabyInfo(null);
       router.push("/parent/search/create/choose");
     }
   };
@@ -202,7 +200,7 @@ export default function HistoryPage() {
         <>
           <div className="matching-body-header-background">
             <div style={styles.header}>
-              <OrderCarousel orderList={orderInfo} handleNextClick={handleNextClick}/>
+              <OrderCarousel orderList={orderInfo} handleNextClick={handleNextClick} setIsShow={setIsShow}/>
             </div>
           </div>
           {openKycModal && (
@@ -339,7 +337,15 @@ export default function HistoryPage() {
                     style={styles.nannyItem}
                     onClick={() => {
                       if (nanny.id) {
-                        router.push(`/nanny/profile/${nanny.id}`);
+                        if (!isShow) {
+                          Swal.fire({
+                            icon: 'error',
+                            title: '無訂單或是當前訂單已隱藏',
+                          });
+                        }
+                        else {
+                          router.push(`/nanny/profile/${nanny.id}`);
+                        }
                       } else {
                         console.error("Nanny ID not found");
                       }
@@ -755,13 +761,13 @@ const styles = {
     borderRadius: "100px",
     border: "1px solid #EBEBEB",
     background: "#FBFBFB",
+    marginRight:'20px'
   },
   rollerLayout: {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
     gap: "30px",
-    marginRight: "10px",
   },
   roller: {
     width: "42px",

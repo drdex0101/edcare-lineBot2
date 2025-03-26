@@ -32,13 +32,12 @@ const ApplicationPage = () => {
   const [uploadedEnvironmentImages, setUploadedEnvironmentImages] = useState(
     [],
   ); // State to track uploaded images
-  const [selectedCareType, setSelectedCareType] = useState(null);
+  const [selectedCareType, setSelectedCareType] = useState(() => nannyInfo?.scenario || "home");
   const [address, setAddress] = useState("");
   const [introduction, setIntroduction] = useState("");
   const [selectedAddress, setSelectedAddress] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const { careData, setCareData} = useStore();
-  const { memberId, setMemberId } = useStore();
   const [kyc_id, setKyc_id] = useState(null);
   const [age, setAge] = useState(0);
 
@@ -60,9 +59,9 @@ const ApplicationPage = () => {
     if (nannyInfo) {
       try {
         if (nannyInfo) {
-          setSelectedAddress(nannyInfo.serviceLocation || []);
+          setSelectedAddress(nannyInfo.servicelocation || []);
           setSelectedCareType(nannyInfo.scenario || "");
-          setAddress(nannyInfo.location?.[0] || "");
+          setAddress(nannyInfo.servicelocation?.[0] || "");
           setIntroduction(nannyInfo.introduction || "");
           if (nannyInfo.uploadid) {
             setHeadIcon(nannyInfo.uploadid);
@@ -76,7 +75,7 @@ const ApplicationPage = () => {
       }
     }
     console.log(nannyInfo, "nannyInfo");
-  }, []);
+  }, [nannyInfo]);
 
   useEffect(() => {
     const checkMemberExistence = async () => {
@@ -100,7 +99,7 @@ const ApplicationPage = () => {
 
   const handleNextClick = async () => {
     const nannyData = {
-      memberId: memberId,
+      memberId: nannyInfo.memberid,
       experienment: nannyInfo ? nannyInfo.experienment : null,
       age: nannyInfo ? nannyInfo.age : null,
       kidCount: nannyInfo ? nannyInfo.kidcount : null,
@@ -373,19 +372,25 @@ const ApplicationPage = () => {
               id="file-input"
             />
             <label htmlFor="file-input" style={styles.avatorLayout}>
-              {headIconUrl ? (
-                <img
-                  src={headIconUrl}
-                  alt="Uploaded avatar"
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                />
-              ) : (
-                <img
-                  src={"/headIconNanny.png"}
-                  alt="Uploaded avatar"
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                />
-              )}
+                {headIconUrl ? (
+                  <img
+                    src={headIconUrl}
+                    alt="Uploaded avatar"
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  />
+                ) : (
+                  <img
+                    src={"/headIconNanny.png"}
+                    alt="Uploaded avatar"
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  />
+                )}
+                <div style={styles.cameraIcon}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 15.2C13.7673 15.2 15.2 13.7673 15.2 12C15.2 10.2327 13.7673 8.8 12 8.8C10.2327 8.8 8.8 10.2327 8.8 12C8.8 13.7673 10.2327 15.2 12 15.2Z" fill="white"/>
+                    <path d="M9 3L7.17 5H4C2.9 5 2 5.9 2 7V19C2 20.1 2.9 21 4 21H20C21.1 21 22 20.1 22 19V7C22 5.9 21.1 5 20 5H16.83L15 3H9ZM12 17C9.24 17 7 14.76 7 12C7 9.24 9.24 7 12 7C14.76 7 17 9.24 17 12C17 14.76 14.76 17 12 17Z" fill="white"/>
+                  </svg>
+                </div>
             </label>
           </div>
 
@@ -701,6 +706,8 @@ const styles = {
     borderRadius: "1000px",
     border: "6px solid var(---Button-01, #FBDBD6)",
     background: "var(---SurfaceContainer-Lowest, #FFF)",
+    position: "relative",
+    overflow: "hidden",
   },
   uploadAvatorLayout: {
     display: "flex",
@@ -968,6 +975,20 @@ const styles = {
     display: "inline-block",
     position: "relative",
     cursor: "pointer",
+  },
+  cameraIcon: {
+    position: "absolute",
+    bottom: "10px",
+    right: "5px",
+    width: "32px",
+    height: "32px",
+    borderRadius: "50%",
+    backgroundColor: "#E3838E",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    cursor: "pointer",
+    zIndex: 999,
   },
   radioButtonChecked: {
     backgroundColor: "#e3838e",

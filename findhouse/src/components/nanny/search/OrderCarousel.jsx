@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import useStore from "../../../lib/store";
 
 
-const OrderCarousel = ({ orderList, handleNextClick = () => { }, itemsPerPage = 1 }) => {
+const OrderCarousel = ({ orderList, handleNextClick = () => { }, itemsPerPage = 1,setIsShow,isShow }) => {
   const router = useRouter();
   const { babyInfo,setBabyInfo } = useStore();
   const { careData,setCareData } = useStore();
@@ -66,6 +66,7 @@ const OrderCarousel = ({ orderList, handleNextClick = () => { }, itemsPerPage = 
       if (!response.ok) {
         throw new Error("Failed to update visibility");
       }
+      setIsShow(!currentIsShow);
 
       setIsShowMap((prev) => ({ ...prev, [orderId]: !currentIsShow }));
     } catch (error) {
@@ -88,14 +89,16 @@ const OrderCarousel = ({ orderList, handleNextClick = () => { }, itemsPerPage = 
       if (scrollRef.current) {
         const newIndex = Math.round(scrollRef.current.scrollLeft / scrollRef.current.offsetWidth) + 1;
         setOrderCurrentPage(newIndex);
-        console.log("newIndex", newIndex);
-        console.log("orderList", orderList[newIndex-2]);
-        console.log("isShowMap", isShowMap);
-        
-        // 確保當前選單的 isShow 跟隨 orderList 變化
-        if (orderList[newIndex - 2]) {
-          setIsShowMap((prev) => ({ ...prev, [orderList[newIndex - 2].id]: orderList[newIndex - 2].isshow }));
-        }
+        setIsShow(orderList[newIndex - 2]?.isshow);
+        setIsShowMap((prevMap) => {
+          const newMap = { ...prevMap };
+          orderList.forEach((order) => {
+            if (!(order.id in newMap)) {
+              newMap[order.id] = order.isshow;
+            }
+          });
+          return newMap;
+        });
       }
     };
     
@@ -205,10 +208,13 @@ const OrderCarousel = ({ orderList, handleNextClick = () => { }, itemsPerPage = 
               <div className="time">
                 <span className="time-text">托育時間:</span>
                 {order.choosetype === "suddenly" ? (
-                  <span className="time-text">{careData?.start_date.slice(0, 10)}~{careData?.end_date.slice(0, 10)}</span>
+                  <span className="time-text">
+                    {(order?.start_date ?? '').slice(0, 10)}~
+                    {(order?.end_date ?? '').slice(0, 10)}
+                  </span>
                 ) : (
                   <span className="time-text">
-                    {convertWeekdays(careData?.weekdays)}
+                    {convertWeekdays(order?.weekdays)}
                   </span>
                 )}
               </div>
@@ -221,7 +227,7 @@ const OrderCarousel = ({ orderList, handleNextClick = () => { }, itemsPerPage = 
                 </svg>
               </div>
               <div onClick={() => handleVisibilityToggle(order.id,order.isshow)}>
-                    {order.isshow ? <svg
+                    {isShowMap[order.id] ? <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="38"
                       height="38"

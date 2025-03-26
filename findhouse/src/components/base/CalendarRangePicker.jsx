@@ -132,7 +132,7 @@ export default function CustomCalendar({ startDate, endDate }) {
 const styles = {
   container: {
     width: "100%",
-    padding: "20px",
+    padding: "10px 40px",
     borderRadius: "12px",
     backgroundColor: "#fff",
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",

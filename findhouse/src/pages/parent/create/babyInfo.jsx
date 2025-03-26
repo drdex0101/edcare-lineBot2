@@ -166,15 +166,14 @@ const ApplicationPage = () => {
 
   useEffect(() => {
     const parsedData = useStore.getState().babyInfo;
-    console.log(parsedData);
-    if (parsedData.orders?.length > 0) {
+    if (parsedData?.orders?.length > 0) {
       setBabyInfo(parsedData);
       setBabyName(parsedData.nickname);
       setBabyGender(parsedData.gender);
       setSelectedDate( parsedData?.birthday ? dayjs(parsedData?.birthday) : null);
-      setBabyBirthOrder(parsedData.rank);
-      setBabyHope(parsedData.intro);
-      setSelectedOptions(parsedData.hope);
+      setBabyBirthOrder(parsedData?.rank);
+      setBabyHope(parsedData?.intro);
+      setSelectedOptions(parsedData?.hope);
     }
   }, []);
 

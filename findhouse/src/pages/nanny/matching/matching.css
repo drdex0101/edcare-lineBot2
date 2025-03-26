@@ -24,13 +24,11 @@
     height: 97px;
     padding: 30px 124px;
     align-items: center;
-    gap: 10px;
     background-color: #FFFF;
     border-radius: 0px 0 30px 0;
 }
 
 .matching-body-header-background{
-    background-color: #F8ECEC;
     width: 100%;
     display: flex;
     justify-content: center;

@@ -10,6 +10,18 @@
     z-index: 1000;
 }
 
+.unfinish-bg {
+    display: flex;
+    width: 30px;
+    height: 30px;
+    padding: 1px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border-radius: 15px;
+    background: var(---SurfaceContainer-Highest, #F1DADA);
+}
+
 .details-header{
     display: flex;
     height: 50px;
