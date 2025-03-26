@@ -18,7 +18,6 @@ export default function ProfilePage() {
   const [iconUrl, setIconUrl] = useState("/assets/images/resource/error.png");
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isActive, setIsActive] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const [isMatching, setIsMatching] = useState(false);
   const [kycId, setKycId] = useState(0);
@@ -360,26 +359,15 @@ export default function ProfilePage() {
       });
       return;
     }
-    const response = await fetch(`/api/order/matchByParent`, {
-      method: "PATCH",
+    const response = await fetch(`/api/pair/create`, {
+      method: "POST",
       body: JSON.stringify({ id, orderId, status: "matchByParent" }),
       headers: {
         "Content-Type": "application/json",
       },
     });
-    const data = await response.json();
     setIsModalOpen(false);
-    if (data.success) {
-      const response = await fetch(`/api/nanny/updateNannyPair`, {
-        method: "PATCH",
-        body: JSON.stringify({ isPaired: true, nannyId: id }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await response.json();
-      setIsBookingModalOpen(true);
-    }
+    setIsBookingModalOpen(true);
     setIsMatching(true);
   };
 
@@ -540,7 +528,7 @@ export default function ProfilePage() {
             </div>
           )}
         </div>
-        <div style={{ width: "100%",marginBottom:"14px",padding:"10px 40px" }}>
+        <div style={{ width: "100%",marginBottom:"14px"}}>
           {nannyInfo.care_type === "longTern" && (
             <ServiceSchedule weekdays={nannyInfo.weekdays} care_time={nannyInfo.care_time}></ServiceSchedule>
           )}
@@ -676,7 +664,7 @@ export default function ProfilePage() {
                 </defs>
               </svg>
             </button>
-            <span className="bookingFont">預約成功！待等家長回覆...</span>
+            <span className="bookingFont">預約成功！等待保母回覆...</span>
             <img src="/review.png" alt="check" />
             <button className="bookingBtn" onClick={toSearch}>點我前往查看回覆</button>
           </div>

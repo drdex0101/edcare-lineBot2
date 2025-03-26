@@ -110,7 +110,7 @@ const ApplicationPage = () => {
         });
         return;
       }
-      if (careData.id) {
+      if (careData?.id) {
         await updateCareData();
       } else {
         await createCareData();

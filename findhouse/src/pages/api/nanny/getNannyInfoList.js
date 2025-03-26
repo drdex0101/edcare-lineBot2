@@ -33,13 +33,20 @@ export default async function handler(req, res) {
           n.id, n.memberId, n.experienment, n.age, n.kidCount, n.way, n.scenario, 
           n.environmentPic, n.serviceLocation, n.introduction, n.service, 
           n.score, n.isShow, n.location, n.kycId, n.uploadId, n.created_ts,
-          m.account, u.upload_url
+          m.account, u.upload_url,
+          c.weekdays,
+          c.care_time,
+          c.scenario,
+          c.start_date,
+          c.end_date,
+          c.location
         FROM nanny n
         LEFT JOIN member m ON n.memberId = m.id::VARCHAR  -- Cast m.id to VARCHAR for comparison
         LEFT JOIN upload u ON n.uploadId = u.id
+        LEFT JOIN care_data c ON n.care_type_id = c.id
         WHERE ($1::varchar[] IS NULL OR n.serviceLocation && $1::varchar[])
         AND ($2::text IS NULL OR m.account ILIKE '%' || $2::text || '%')  -- Filter by account if keyword is provided
-        AND n.is_paired = FALSE
+        AND n.isshow = TRUE
         ${orderByClause}  -- Add the order by cause if applicable
         LIMIT $3 OFFSET $4;
       `;

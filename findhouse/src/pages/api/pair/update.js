@@ -5,6 +5,7 @@ export default async function handler(req, res) {
   if (req.method === 'PATCH') {
     const { 
       id,
+      orderId,
       status,
      } = req.body;
 

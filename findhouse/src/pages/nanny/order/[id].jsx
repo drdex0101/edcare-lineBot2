@@ -11,7 +11,6 @@ export default function ProfilePage() {
   const router = useRouter();
   const { id } = router.query;
   const { orderId } = useStore();
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [orderInfo, setOrderInfo] = useState({});
   const [urls, setUrls] = useState([]);
   const [iconUrl, setIconUrl] = useState("/orderCreate.png");
@@ -47,11 +46,6 @@ export default function ProfilePage() {
     } catch (error) {
       console.error("Error handling favorite:", error);
     }
-  };
-
-  // 處理點擊圓點來跳轉到對應圖片
-  const handleDotClick = (index) => {
-    setCurrentImageIndex(index);
   };
 
   const getIsFavorite = async () => {
@@ -341,18 +335,16 @@ export default function ProfilePage() {
   };
 
   const handleBooking = async () => {
-    const response = await fetch(`/api/order/matchByNanny`, {
-      method: "PATCH",
-      body: JSON.stringify({ id, orderId, status: "matchByParent" }),
+    const response = await fetch(`/api/pair/create`, {
+      method: "POST",
+      body: JSON.stringify({ id:0, orderId:id, status: "matchByNanny" }),
       headers: {
         "Content-Type": "application/json",
       },
     });
     const data = await response.json();
     setIsModalOpen(false);
-    if (data.success) {
-      setIsBookingModalOpen(true);
-    }
+    setIsBookingModalOpen(true);
     setIsMatching(true);
   };
 
