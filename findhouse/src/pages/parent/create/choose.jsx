@@ -14,12 +14,12 @@ const ApplicationPage = () => {
   const { careData, setCareData } = useStore();
 
   const handleToLong = () => {
-    setCareData({});
+    setCareData(null);
     router.push("/parent/create/long");
   };
 
   const handleToSuddenly = () => {
-    setCareData({});
+    setCareData(null);
     router.push("/parent/create/suddenly");
   };
 

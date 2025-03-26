@@ -292,10 +292,11 @@ export default function HistoryPage() {
   const handleVisibilityToggle = async () => {
     try {
       // Default to true if isShow is null
-      const currentIsShow = nannyProfile.isshow === null ? true : nannyProfile.isshow;
-      console.log(currentIsShow)
+      console.log(nannyProfile.isshow)
+      const currentIsShow = isShow === null ? true : isShow;
+      console.log('currentIsSho',currentIsShow)
       const response = await fetch(
-        `/api/nanny/updateIsShow?isShow=${currentIsShow}&nannyId=${nannyProfile.nanny_id}`,
+        `/api/nanny/updateIsShow?isShow=${!currentIsShow}&nannyId=${nannyProfile.nanny_id}`,
         {
           method: "PATCH",
           headers: {
@@ -308,7 +309,7 @@ export default function HistoryPage() {
         throw new Error("Failed to update visibility");
       }
 
-      setIsShow(currentIsShow);
+      setIsShow(!currentIsShow);
     } catch (error) {
       console.error("Error updating visibility:", error);
     }

@@ -9,10 +9,6 @@ const ApplicationPage = () => {
     router.back(); // 替换 '/next-page' 为你想要跳转的路径
   };
 
-  const handleLongClick = () => {
-    router.push("/parent/search/create/long"); // 替换 '/next-page' 为你想要跳转的路径
-  };
-
   return (
     <div style={styles.main}>
       <div style={styles.header}>
