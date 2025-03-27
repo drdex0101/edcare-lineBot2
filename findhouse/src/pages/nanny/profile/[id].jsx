@@ -133,7 +133,7 @@ export default function ProfilePage() {
         parsed = [];
       }
     }
-  
+
     return Array.isArray(parsed) && parsed.length > 0
       ? parsed.join("、")
       : "未填寫";
@@ -447,7 +447,7 @@ export default function ProfilePage() {
           <div className="tab-content">
             <span className="tab-tile">托育方式</span>
             <span className="tab-subTitle">
-              {nannyInfo.care_type === "suddenly" 
+              {nannyInfo.care_type === "suddenly"
                 ? "臨時托育"
                 : nannyInfo.care_time === "night"
                   ? "夜間托育"

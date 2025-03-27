@@ -15,6 +15,9 @@ const ApplicationPage = () => {
     if (!selectedRange.startDate || !selectedRange.endDate) {
       alert("請填寫所有必填欄位。");
       return;
+    } else if (selectedRange.endDate < selectedRange.startDate) {
+      alert("開始日期不能晚於結束日期。");
+      return;
     }
     await createSuddenlyRecord();
     router.push("/nanny/search/create/nannyInfo"); // 替换 '/next-page' 为你想要跳转的路径
@@ -204,8 +207,15 @@ const ApplicationPage = () => {
                   id="datepicker2"
                   name="endDate"
                   min={
-                    selectedRange.startDate
-                      ? selectedRange.startDate.split("T")[0]
+                    (() => {
+                      const minDate = new Date();
+                      minDate.setDate(minDate.getDate() + 3);
+                      return minDate.toISOString().split("T")[0];
+                    })()
+                  }
+                  max={
+                    selectedRange.endDate
+                      ? selectedRange.endDate.split("T")[0]
                       : ""
                   }
                   value={
