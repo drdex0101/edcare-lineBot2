@@ -62,16 +62,16 @@ export default function ProfilePage() {
       `/api/favorite/getIsFavorite?itemId=${id}&&type=${"parent"}`,
     );
     const data = await response.json();
-    console.log("data", data.favorite);
-    if (data.favorite) {
+    console.log("data", data.favorite.length);
+    if (data.favorite.length > 0 ) {
       setIsFavorite(true);
     }
   };
 
   const handlApproval = async () => {
-    const response = await fetch(`/api/order/matchByParent`, {
+    const response = await fetch(`/api/pair/update`, {
       method: "PATCH",
-      body: JSON.stringify({ id, orderId, status: 'onGoing' }),
+      body: JSON.stringify({ id, orderId, status: 'signing',preStatus: 'matchByNanny' }),
       headers: {
         "Content-Type": "application/json",
       },
@@ -82,9 +82,9 @@ export default function ProfilePage() {
   };
 
   const handlReject = async () => {
-    const response = await fetch(`/api/order/matchByParent`, {
+    const response = await fetch(`/api/pair/update`, {
       method: "PATCH",
-      body: JSON.stringify({ id, orderId, status: 'cancel' }),
+      body: JSON.stringify({ id, orderId, status: 'cancel',preStatus: 'matchByNanny' }),
       headers: {
         "Content-Type": "application/json",
       },
@@ -407,9 +407,9 @@ export default function ProfilePage() {
           <div className="tab-content">
             <span className="tab-tile">托育方式</span>
             <span className="tab-subTitle">
-              {nannyInfo?.way === "suddenly"
+              {nannyInfo?.care_type === "suddenly"
                 ? "臨時托育"
-                : nannyInfo?.way === "longTerm"
+                : nannyInfo?.care_type === "longTern"
                   ? "長期托育"
                   : ""}
             </span>
@@ -430,7 +430,15 @@ export default function ProfilePage() {
           </svg>
           <div className="tab-content">
             <span className="tab-tile">托育情境</span>
-            <span className="tab-subTitle">{nannyInfo?.scenario}</span>
+            <span className="tab-subTitle">
+            {nannyInfo?.scenario === "home"
+                ? "在宅托育"
+                : nannyInfo?.scenario === "infantCareCenter"
+                  ? "定點托育"
+                  : nannyInfo?.scenario === "toHome"
+                    ? "到宅托育"
+                    : "未填寫"}
+            </span>
           </div>
         </div>
         {/* 圖片輪播區域 */}

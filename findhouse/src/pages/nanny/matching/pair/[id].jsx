@@ -50,16 +50,12 @@ export default function ProfilePage() {
     }
   };
 
-  // 處理點擊圓點來跳轉到對應圖片
-  const handleDotClick = (index) => {
-    setCurrentImageIndex(index);
-  };
-
   const getIsFavorite = async () => {
     const response = await fetch(
       `/api/favorite/getIsFavorite?itemId=${id}&&type=${"nanny"}`,
     );
     const data = await response.json();
+    console.log("data.favorite.length", data.favorite.length);
     if (data.favorite.length > 0) {
       setIsFavorite(true);
     }
@@ -342,7 +338,7 @@ export default function ProfilePage() {
     setIsDisabled(true);
     const response = await fetch(`/api/pair/update`, {
       method: "PATCH",
-      body: JSON.stringify({ id, orderId, status: 'matchingByNanny' }),
+      body: JSON.stringify({ id:orderId, orderId:id, status: 'signing',preStatus: 'matchByParent' }),
       headers: {
         "Content-Type": "application/json",
       },
@@ -354,9 +350,9 @@ export default function ProfilePage() {
 
   const handlReject = async () => {
     setIsDisabled(true);
-    const response = await fetch(`/api/order/update`, {
+    const response = await fetch(`/api/pair/update`, {
       method: "PATCH",
-      body: JSON.stringify({ id, orderId, status: 'cancel' }),
+      body: JSON.stringify({ id:orderId, orderId:id, status: 'cancel',preStatus: 'matchByParent' }),
       headers: {
         "Content-Type": "application/json",
       },
@@ -471,9 +467,13 @@ export default function ProfilePage() {
           <div className="tab-content">
             <span className="tab-tile">托育情境</span>
             <span className="tab-subTitle">
-              {orderInfo.scenario === "infantCareCenter"
-                ? "定點托育"
-                : "到宅托育"}
+              {orderInfo?.scenario === "home"
+                ? "在宅托育"
+                : orderInfo?.scenario === "infantCareCenter"
+                  ? "定點托育"
+                  : orderInfo?.scenario === "toHome"
+                    ? "到宅托育"
+                    : "未填寫"}
             </span>
           </div>
         </div>

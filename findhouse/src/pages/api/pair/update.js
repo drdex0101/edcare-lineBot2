@@ -7,6 +7,7 @@ export default async function handler(req, res) {
       id,
       orderId,
       status,
+      preStatus
      } = req.body;
 
     // Debugging: Log the data object to check its structure
@@ -37,15 +38,16 @@ export default async function handler(req, res) {
       const query = `
         UPDATE pair
         SET status = $2
-        WHERE id = $1
+        WHERE nanny_id = $1 and order_id = $3 and status = $4
         RETURNING *;
       `;
 
       const values = [
           id ? parseInt(id) : null,
-          status];
-
-
+          status,
+          orderId,
+          preStatus
+        ];
 
 
       const result = await client.query(query, values);

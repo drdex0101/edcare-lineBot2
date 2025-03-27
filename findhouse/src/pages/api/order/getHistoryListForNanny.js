@@ -29,10 +29,10 @@ export default async function handler(req, res) {
   const offset = (parseInt(page) - 1) * parseInt(pageSize);
   const limit = parseInt(pageSize);
 
-  let orderByClause = "";
-  if (sort === "time") {
-    orderByClause = "o.created_ts DESC";
-  } else if (sort === "rating") {
+  // 確保這邊不是空字串，也不是 $5！而是直接拼入 SQL 的合法語法
+  let orderByClause = "o.created_ts DESC"; // 預設排序
+
+  if (sort === "rating") {
     orderByClause = "o.rank DESC";
   }
 
@@ -40,7 +40,7 @@ export default async function handler(req, res) {
     const client = await pool.connect();
 
     const query = `
-        SELECT 
+      SELECT DISTINCT ON (o.id)
         o.id,
         o.parentLineId, 
         o.nannyId, 
@@ -62,33 +62,26 @@ export default async function handler(req, res) {
         n.score,
         c.scenario,
         COUNT(*) OVER() AS totalCount
-    FROM 
+      FROM 
         pair p
-    LEFT JOIN 
-        nanny n ON p.nanny_id = n.id
-    LEFT JOIN 
-        member m ON n.memberid = m.id::VARCHAR
-     LEFT JOIN 
-        orderinfo o ON p.order_id = o.id
-    LEFT JOIN 
-        care_data c ON o.caretypeid = c.id
-    WHERE 
+      LEFT JOIN nanny n ON p.nanny_id = n.id
+      LEFT JOIN member m ON n.memberid = m.id::VARCHAR
+      LEFT JOIN orderinfo o ON p.order_id = o.id
+      LEFT JOIN care_data c ON o.caretypeid = c.id
+      WHERE 
         m.line_id = $1 
         AND ($4::text IS NULL OR o.nickname ILIKE '%' || $4::text || '%')
-    ORDER BY 
-        $5
-    OFFSET 
-        $2 
-    LIMIT 
-        $3;
+      ORDER BY 
+        o.id, ${orderByClause}  -- ⚠️ 插入實際欄位排序語法
+      OFFSET $2
+      LIMIT $3;
     `;
 
     const { rows } = await client.query(query, [
       userId,
       offset,
       limit,
-      keyword,
-      orderByClause,
+      keyword
     ]);
 
     client.release();

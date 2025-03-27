@@ -33,7 +33,7 @@ export default async function handler(req, res) {
       const result = await client.query(query, values);
 
       console.log('favorite created successfully:',  values );
-      const favoriteData = result.rows.length > 0 ? result.rows[0] : []; // 若無結果則回傳 []
+      const favoriteData = result.rows.length > 0 ? [result.rows[0]] : []; // 正確的寫法
 
       return res.status(201).json({ success: true, favorite: favoriteData });
     } catch (error) {

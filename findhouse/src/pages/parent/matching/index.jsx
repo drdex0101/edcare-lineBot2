@@ -63,7 +63,7 @@ export default function HistoryPage() {
           <span className="matching-body-layoff-title">新配對</span>
           <div className="avatar-container">
             {matchingList.map((avatar) => (
-              <div className="avatar" key={avatar.id} onClick={() => {router.push(`/parent/matching/pair/${avatar.nannyid}`); setOrderId(avatar.id)}}>
+              <div className="avatar" key={avatar.id} onClick={() => {router.push(`/parent/matching/pair/${avatar.nanny_id}`); setOrderId(avatar.order_id)}}>
                 <img src={"/nannyIcon.jpg" || getImgUrl(avatar.uploadid)} alt="avatar" className="avatar-img" />
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <span className="avatar-name">{avatar.name}</span>
