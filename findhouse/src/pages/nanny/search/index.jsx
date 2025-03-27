@@ -24,7 +24,7 @@ export default function HistoryPage() {
   const [searchLocation, setSearchLocation] = useState([]);
   const [openKycModal, setOpenKycModal] = useState(false);
   const [selectedLocations, setSelectedLocations] = useState([]);
-
+  const [page, setPage] = useState(1);
   const handleChange = (e) => {
     const value = e.target.value;
     setKeywords(value);
@@ -316,12 +316,12 @@ export default function HistoryPage() {
   };
 
   const handleFetchClick = () => {
-    fetchOrderInfoList(currentPage, pageSize, keywords);
+    fetchOrderInfoList(page, pageSize, keywords);
   };
 
   useEffect(() => {
-    fetchOrderInfoList(currentPage, pageSize, keywords); // Fetch data when the page is loaded or currentPage changes
-  }, [currentPage, keywords]);
+    fetchOrderInfoList(page, pageSize, keywords); // Fetch data when the page is loaded or currentPage changes
+  }, [page, keywords]);
 
   useEffect(() => {
     fetchNannyProfile();
@@ -329,7 +329,7 @@ export default function HistoryPage() {
 
   const handlePageChange = (page) => {
     console.log("page:", page);
-    setCurrentPage(page); // Update currentPage when a new page is selected
+    setPage(page); // Update currentPage when a new page is selected
   };
 
   const handleNextClick = () => {
@@ -678,9 +678,9 @@ export default function HistoryPage() {
                 <Pagination
                 totalItems={totalItem}
                 pageSize={pageSize}
-                currentPage={currentPage}
                 onPageChange={handlePageChange}
                 fetchOrderInfoList={fetchOrderInfoList}
+                setPage={setPage}
               />
               </div>
             </div>
