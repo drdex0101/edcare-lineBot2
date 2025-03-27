@@ -181,11 +181,6 @@ const ApplicationPage = () => {
                           return minDate.toISOString().split("T")[0];
                         })()
                       }
-                      max={
-                        selectedRange.endDate
-                          ? selectedRange.endDate.split("T")[0]
-                          : ""
-                      }
                       value={
                         selectedRange.startDate
                           ? selectedRange.startDate.split("T")[0]
