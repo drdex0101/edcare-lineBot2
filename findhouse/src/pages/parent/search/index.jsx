@@ -37,16 +37,22 @@ export default function HistoryPage() {
   const [openKycModal, setOpenKycModal] = useState(false);
 
   const [isComposing, setIsComposing] = useState(false);
+  const [page, setPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
   const handleChange = (e) => {
     const value = e.target.value;
     setKeywords(value);
   };
 
+  const handlePageChange = (newPage) => {
+    alert(newPage);
+    setPage(newPage);
+  };
+
+
   const fetchNannyInfoList = async (page, pageSize = 5, keywords="",locations=[],sort="time") => {
     setIsLoading(true); // Set loading state to true while fetching data
-    console.log(locations);
-    console.log(sort);
     try {
       const response = await fetch(
         `/api/nanny/getNannyInfoList?page=${page}&pageSize=${pageSize}&locations=${locations}&sort=${sort}&keyword=${keywords}`,
@@ -78,7 +84,7 @@ export default function HistoryPage() {
       const nanniesWithImages = await Promise.all(nannyImagePromises);
       console.log(nanniesWithImages);
       setNannyInfo(nanniesWithImages);
-      console.log("nannyInfo", nannyInfo.length);
+      setTotalCount(data.totalCount);
       setTotalItem(nanniesWithImages.length);
     } catch (error) {
       console.error("Error fetching nanny info:", error);
@@ -88,7 +94,7 @@ export default function HistoryPage() {
   };
 
   const handleFetchClick = () => {
-    fetchNannyInfoList(currentPage, pageSize, keywords);
+    fetchNannyInfoList(page, pageSize, keywords);
     fetchOrderInfo();
   };
 
@@ -149,7 +155,7 @@ export default function HistoryPage() {
       try {
         setIsLoading(true);
         if (!isCancelled) {
-          await fetchNannyInfoList(currentPage, pageSize, keywords);
+          await fetchNannyInfoList(page-1, pageSize, keywords);
           await fetchOrderInfo();
           setIsLoading(true);
           setIsShow(orderInfo.isShow);
@@ -165,7 +171,7 @@ export default function HistoryPage() {
     return () => {
       isCancelled = true; // 在組件卸載時取消請求
     };
-  }, [currentPage,keywords]); // 監聽關鍵依賴變數
+  }, [page,keywords]); // 監聽關鍵依賴變數
 
   const handleNextClick = () => {
     if (!haveKyc) {
@@ -404,11 +410,7 @@ export default function HistoryPage() {
                   width: "100%",
                 }}
               >
-                <Pagination
-                  totalItems={nannyInfo.length}
-                  pageSize={5}
-                  currentPage={1}
-                />
+                <Pagination totalItems={totalCount} pageSize={pageSize} setPage={setPage} onPageChange={handlePageChange}/>
               </div>
             </div>
           </div>

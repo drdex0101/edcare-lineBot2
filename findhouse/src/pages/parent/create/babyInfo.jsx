@@ -13,7 +13,7 @@ import  useStore from "../../../lib/store";
 import { useEffect } from "react";
 import dayjs from "dayjs";
 import Swal from "sweetalert2";
-
+import Loading from "../../../components/base/Loading";
 import { MenuItem, InputLabel, FormControl } from "@mui/material";
 import Cookies from "js-cookie";
 
@@ -27,6 +27,7 @@ const ApplicationPage = () => {
   const [babyHope, setBabyHope] = useState("");
   const { babyInfo, setBabyInfo } = useStore();
   const { careData, setCareData } = useStore();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleNextClick = () => {
     createBabyRecord();
@@ -37,6 +38,7 @@ const ApplicationPage = () => {
   };
 
   const createBabyRecord = async () => {
+    setIsLoading(true);
     const babyRecordData = {
       parentLineId: Cookies.get("userId"),
       nannyid: "",
@@ -93,24 +95,13 @@ const ApplicationPage = () => {
     }
     
     try {
-      let response;
-      if (babyInfo.orders!=null) {
-        response = await fetch("/api/order/updateOrderData", {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(babyRecordData),
-        });
-      } else {
-        response = await fetch("/api/order/createOrder", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(babyRecordData),
-        });
-      }
+      const response = await fetch("/api/order/createOrder", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(babyRecordData),
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP 錯誤！狀態碼: ${response.status}`);
@@ -120,6 +111,7 @@ const ApplicationPage = () => {
       console.log("訂單建立成功:", responseData);
       setBabyInfo(responseData);
       console.log("babyInfo", babyInfo);
+      setIsLoading(false);
       router.push("/parent/finish");
 
     } catch (error) {
@@ -179,6 +171,24 @@ const ApplicationPage = () => {
 
   return (
     <div style={styles.main}>
+       {isLoading && (
+        <div
+          style={{
+            position: "fixed", // 確保 Loading 覆蓋整個畫面
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(255, 255, 255, 0.8)", // 透明度
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999, // 確保 Loading 在最上層
+          }}
+        >
+          <Loading />
+        </div>
+      )}
       <div style={styles.header}>
         <span style={styles.headerFont}>托育資料填寫</span>
         <button onClick={handleLastClick} style={styles.lastButton}>

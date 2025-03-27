@@ -666,7 +666,7 @@ export default function ProfilePage() {
             </button>
             <span className="bookingFont">預約成功！等待保母回覆...</span>
             <img src="/review.png" alt="check" />
-            <button className="bookingBtn" onClick={toSearch}>點我前往查看回覆</button>
+            <button className="bookingBtn" onClick={toSearch}>點我前往查看保母</button>
           </div>
         </div>
       )}

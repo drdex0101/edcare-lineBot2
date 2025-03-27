@@ -72,12 +72,11 @@ const Pagination = ({ totalItems, pageSize, currentPage, onPageChange }) => {
   );
 };
 
-const App = ({ totalItems, keyword }) => {
+const App = ({ totalItems, keyword,setPage, pageSize=5 }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 5; // Example page size
-
   const handlePageChange = (page) => {
     setCurrentPage(page);
+    setPage(page);
   };
 
   return (

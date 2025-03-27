@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 export default function HistoryPage() {
   const [keywords, setKeywords] = useState("");
   const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(10);
+  const [total, setTotal] = useState(0);
   const [historyList, setHistoryList] = useState([]);
   const [selectedSort, setSelectedSort] = useState(null);
   const router = useRouter();
@@ -24,13 +24,15 @@ export default function HistoryPage() {
   const fetchHistoryList = async () => {
     try {
       const response = await fetch(
-        `/api/order/getHistoryList?page=${page}&pageSize=10&keyword=${keywords}&sort=${selectedSort}`,
+        `/api/order/getHistoryList?page=${page}&pageSize=5&keyword=${keywords}&sort=${selectedSort}`,
       );
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
       const data = await response.json();
-      setTotal(data.totalCount);
+      if (total == 0) {
+        setTotal(data.totalCount);
+      }
       setHistoryList(data.orders);
     } catch (error) {
       console.error("Failed to fetch history list:", error);
@@ -122,6 +124,7 @@ export default function HistoryPage() {
             page={page}
             totalItems={total}
             onPageChange={handlePageChange}
+            setPage={setPage}
           />
         )}
       </div>

@@ -64,7 +64,7 @@ export default async function handler(req, res) {
         care_data c ON o.caretypeid = c.id
     LEFT JOIN 
         nanny n ON o.nannyid = n.id
-    JOIN 
+    LEFT JOIN 
         pair p ON o.id = p.order_id
     WHERE 
         o.parentLineId = $1 
