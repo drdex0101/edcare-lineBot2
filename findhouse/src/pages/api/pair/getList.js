@@ -43,9 +43,9 @@ export default async function handler(req, res) {
     console.log('locationArray:',locationArray);
     const query = `
        SELECT 
-        o.id,
-        o.nannyId, 
-        o.status, 
+        p.order_id,
+        p.nanny_id, 
+        p.status, 
         o.created_ts, 
         o.update_ts, 
         o.choosetype, 
@@ -68,6 +68,7 @@ export default async function handler(req, res) {
         c.end_date,
         c.location,
         n.uploadid,
+        u.upload_url,
         k.birthday as nannyBirthday,
         COUNT(*) OVER() AS totalCount
         FROM 
@@ -78,6 +79,8 @@ export default async function handler(req, res) {
             nanny n ON o.nannyid = n.id
         LEFT JOIN 
             kyc_info k ON n.kycId = k.id
+        LEFT JOIN 
+            upload u ON n.uploadid = u.id
         JOIN 
             pair p ON o.id = p.order_id
         WHERE 
