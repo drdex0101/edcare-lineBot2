@@ -20,6 +20,9 @@ const ApplicationPage = () => {
     if (!selectedRange.startDate || !selectedRange.endDate) {
       alert("請填寫所有必填欄位。");
       return;
+    } else if (selectedRange.endDate < selectedRange.startDate) {
+      alert("開始日期不能晚於結束日期。");
+      return;
     }
     await createSuddenlyRecord();
     setIsLoading(false);
@@ -30,7 +33,7 @@ const ApplicationPage = () => {
   const [selectedRange, setSelectedRange] = useState(() => {
     const today = new Date();
     const threeDaysLater = new Date();
-    threeDaysLater.setDate(today.getDate() + 3); 
+    threeDaysLater.setDate(today.getDate() + 3);
     return {
       startDate: threeDaysLater.toISOString().split("T")[0],
       endDate: null,
@@ -190,12 +193,18 @@ const ApplicationPage = () => {
                       type="date"
                       id="datepicker1"
                       name="startDate"
-                      min={(() => {
-                        const today = new Date();
-                        const threeDaysLater = new Date();
-                        threeDaysLater.setDate(today.getDate() + 3);
-                        return threeDaysLater.toISOString().split("T")[0];
-                      })()}
+                      min={
+                        (() => {
+                          const minDate = new Date();
+                          minDate.setDate(minDate.getDate() + 3);
+                          return minDate.toISOString().split("T")[0];
+                        })()
+                      }
+                      max={
+                        selectedRange.endDate
+                          ? selectedRange.endDate.split("T")[0]
+                          : ""
+                      }
                       value={selectedRange.startDate || ""}
                       style={styles.dateInput}
                       onChange={(e) =>

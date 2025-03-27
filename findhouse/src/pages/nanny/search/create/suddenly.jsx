@@ -15,6 +15,9 @@ const ApplicationPage = () => {
     if (!selectedRange.startDate || !selectedRange.endDate) {
       alert("請填寫所有必填欄位。");
       return;
+    } else if (selectedRange.endDate < selectedRange.startDate) {
+      alert("開始日期不能晚於結束日期。");
+      return;
     }
     await createSuddenlyRecord();
     router.push("/nanny/search/create/nannyInfo"); // 替换 '/next-page' 为你想要跳转的路径
