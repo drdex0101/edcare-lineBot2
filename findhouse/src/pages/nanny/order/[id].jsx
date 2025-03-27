@@ -460,7 +460,7 @@ export default function ProfilePage() {
             : "未填寫"}
           </span>
         </div>
-       
+
         <div style={{ width: "100%",marginBottom:"14px",padding:"10px 40px" }}>
           {orderInfo.choosetype === "longTern" && (
             <ServiceSchedule weekdays={orderInfo.weekdays} care_time={orderInfo.care_time}></ServiceSchedule>
@@ -514,7 +514,7 @@ export default function ProfilePage() {
                 </div>
               ))}
             </div>
-           
+
           </div>
           <div>
             <div style={{ backgroundColor: "#F8ECEC" }}>
@@ -599,7 +599,7 @@ export default function ProfilePage() {
                 </defs>
               </svg>
             </button>
-            <span className="bookingFont">預約成功！待等家長回覆...</span>
+            <span className="bookingFont">預約成功！等待家長回覆...</span>
             <img src="/review.png" alt="check" />
             <button className="bookingBtn" onClick={toMatching}>點我前往查看回覆</button>
           </div>
