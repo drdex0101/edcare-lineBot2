@@ -11,6 +11,7 @@ export default function DetailsPage() {
   const [kycData, setKycData] = useState(null);
   const [favoriteCount, setFavoriteCount] = useState(0);
   const [matchingCount, setMatchingCount] = useState(0);
+  const [page, setPage] = useState(1);
   const getStatusText = (status) => {
     switch (status) {
       case 'pending':
@@ -25,7 +26,7 @@ export default function DetailsPage() {
   };
 
   const fetchHistoryList = async () => {
-    const response = await fetch("/api/order/getHistoryList?page=1&pageSize=4");
+    const response = await fetch(`/api/order/getHistoryList?page=${page}&pageSize=5`);
     const data = await response.json();
     setHistoryList(data.orders);
     setTotalCount(data.totalCount || 0);
@@ -39,16 +40,20 @@ export default function DetailsPage() {
 
   const fetchFavoriteCount = async () => {
     const response = await fetch(
-      "/api/favorite/getFavoriteList?type=parent&page=1&pageSize=10"
+      `/api/favorite/getFavoriteList?type=parent&page=${page}&pageSize=10`
     );
     const data = await response.json();
     setFavoriteCount(data.favorite.length || 0);
   };
 
   const fetchMatchingCount = async () => {
-    const response = await fetch("/api/order/match/getMatchingCountByParent?page=1&pageSize=10&status=matching");
+    const response = await fetch(`/api/order/match/getMatchingCountByParent?page=${page}&pageSize=10&status=matching`);
     const data = await response.json();
     setMatchingCount(data.totalCount || 0);
+  };
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
   };
 
   const toMatching = () => {
@@ -72,6 +77,10 @@ export default function DetailsPage() {
     fetchFavoriteCount();
     fetchMatchingCount();
   }, []);
+
+  useEffect(() => {
+    fetchHistoryList();
+  }, [page]);
 
   return (
     <div className="details-main">
@@ -245,7 +254,7 @@ export default function DetailsPage() {
               </div>
             </>
           )}
-          <Pagination totalItems={totalCount} pageSize={4} />
+          <Pagination totalItems={totalCount} pageSize={5} setPage={setPage} onPageChange={handlePageChange}/>
         </div>
       </div>
     </div>

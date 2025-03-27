@@ -67,7 +67,7 @@ const OrderHistoryItem = ({
                       ? "合約履行中"
                       : status === "finish"
                         ? "已完成"
-                        : ""}
+                        : "未配對"}
         </span>
       </div>
     </div>
