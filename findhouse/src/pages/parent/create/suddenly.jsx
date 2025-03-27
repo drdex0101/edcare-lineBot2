@@ -100,7 +100,6 @@ const ApplicationPage = () => {
       threeDaysLater.setDate(threeDaysLater.getDate() + 3);
       return threeDaysLater.toISOString().split("T")[0];
     })();
-    console.log("parsedData", parsedData.start_date);
   
     if (parsedData) {
       setSelectedRange({
@@ -187,7 +186,11 @@ const ApplicationPage = () => {
                           ? selectedRange.endDate.split("T")[0]
                           : ""
                       }
-                      value={selectedRange.startDate || ""}
+                      value={
+                        selectedRange.startDate
+                          ? selectedRange.startDate.split("T")[0]
+                          : ""
+                      }
                       style={styles.dateInput}
                       onChange={(e) =>
                         handleDateChange({
