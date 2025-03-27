@@ -51,48 +51,27 @@ const ApplicationPage = () => {
       ? selectedAddress
       : [selectedAddress];
     let response;
-    if (careData.id) {
-      response = await fetch("/api/base/updateCareData", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          startDate: selectedRange.startDate,
-          endDate: selectedRange.endDate,
-          scenario: selectedCareType,
-          location: locationArray,
-          careTime: "",
-          idType: "parent",
-          careDataId: careData.id,
-          careType: "suddenly",
-          weekdays: [],
-        }),
-      });
-    } else {
-      response = await fetch("/api/base/createCareData", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          orderId: "",
-          startDate: selectedRange.startDate,
-          endDate: selectedRange.endDate,
-          scenario: selectedCareType,
-          location: locationArray,
-          careTime: "",
-          idType: "parent",
-          careType: "suddenly",
-          weekdays: [],
-        }),
-      });
-    }
+    response = await fetch("/api/base/createCareData", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        orderId: "",
+        startDate: selectedRange.startDate,
+        endDate: selectedRange.endDate,
+        scenario: selectedCareType,
+        location: locationArray,
+        careTime: "",
+        idType: "parent",
+        careType: "suddenly",
+        weekdays: [],
+      }),
+    });
     if (!response.ok) {
       throw new Error("Failed to insert data into care_data table");
     }
     const data = await response.json();
-    console.log(data.careData);
     setCareData(data.careData);
     localStorage.setItem("careTypeId", data.careData.id);
     localStorage.setItem("choosetype", "suddenly");
@@ -113,22 +92,25 @@ const ApplicationPage = () => {
 
   useEffect(() => {
     const parsedData = useStore.getState().careData;
-    console.log("storedCareData", parsedData);
+    const fallbackStartDate = (() => {
+      const threeDaysLater = new Date();
+      threeDaysLater.setDate(threeDaysLater.getDate() + 3);
+      return threeDaysLater.toISOString().split("T")[0];
+    })();
+    console.log("parsedData", parsedData.start_date);
+  
     if (parsedData) {
       setSelectedRange({
-        startDate:
-          parsedData.start_date || (() => {
-            const threeDaysLater = new Date();
-            threeDaysLater.setDate(threeDaysLater.getDate() + 3);
-            return threeDaysLater.toISOString().split("T")[0];
-          })(),
+        startDate: parsedData.start_date || fallbackStartDate,
         endDate: parsedData.end_date || null,
       });
       setSelectedCareType(parsedData.scenario);
       setSelectedAddress(parsedData.location);
       setCareData(parsedData);
     }
+    console.log("selectedRange", selectedRange.startDate);
   }, []);
+  
 
   return (
     <div style={styles.main}>
@@ -196,7 +178,11 @@ const ApplicationPage = () => {
                         threeDaysLater.setDate(today.getDate() + 3);
                         return threeDaysLater.toISOString().split("T")[0];
                       })()}
-                      value={selectedRange.startDate || ""}
+                      value={
+                        selectedRange.startDate
+                          ? selectedRange.startDate.split("T")[0]
+                          : ""
+                      }
                       style={styles.dateInput}
                       onChange={(e) =>
                         handleDateChange({
