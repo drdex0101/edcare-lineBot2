@@ -207,15 +207,8 @@ const ApplicationPage = () => {
                   id="datepicker2"
                   name="endDate"
                   min={
-                    (() => {
-                      const minDate = new Date();
-                      minDate.setDate(minDate.getDate() + 3);
-                      return minDate.toISOString().split("T")[0];
-                    })()
-                  }
-                  max={
-                    selectedRange.endDate
-                      ? selectedRange.endDate.split("T")[0]
+                    selectedRange.startDate
+                      ? selectedRange.startDate.split("T")[0]
                       : ""
                   }
                   value={
