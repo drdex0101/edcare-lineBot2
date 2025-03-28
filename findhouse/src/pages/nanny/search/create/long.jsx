@@ -16,19 +16,19 @@ const ApplicationPage = () => {
   const handleLastClick = () => {
     router.back(); // 替换 '/next-page' 为你想要跳转的路径
   };
-  const { careData, setCareData } = useStore();
+  const { nannyInfo, setNannyInfo } = useStore();
 
   useEffect(() => {
-    if (careData) {
-      setSelectedDays(careData?.weekdays || []);
-      setSelectedCareTime(careData?.care_time || "");
-      setSelectedScenario(careData?.scenario || "");
-      console.log(careData);
+    if (nannyInfo) {
+      setSelectedDays(nannyInfo?.weekdays || []);
+      setSelectedCareTime(nannyInfo?.care_time || "");
+      setSelectedScenario(nannyInfo?.scenario || "");
+      console.log(nannyInfo);
     }
     else {
       localStorage.removeItem("data-storage");
     }
-  }, [careData]);
+  }, [nannyInfo]);
 
   const createCareData = async () => {
     setIsLoading(true);
