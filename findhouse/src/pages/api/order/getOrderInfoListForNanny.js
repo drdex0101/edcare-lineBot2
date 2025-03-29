@@ -84,6 +84,7 @@ export default async function handler(req, res) {
             ($3::text IS NULL OR o.nickname ILIKE '%' || $3::text || '%')
             AND o.status = 'create'
             AND ($5::varchar[] IS NULL OR c.location && $5::varchar[])
+            and o.isshow = true
         ORDER BY 
             $4
         OFFSET 

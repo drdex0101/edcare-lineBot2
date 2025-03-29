@@ -2,8 +2,8 @@ import { Client } from 'pg';
 
 export default async function handler(req, res) {
   if (req.method === 'PATCH') {
-    const { isShow, nannyId } = req.query;
-    console.log(isShow, nannyId)
+    const { isShow, id } = req.body;
+
     // 創建 PostgreSQL 客戶端
     const client = new Client({
       connectionString: process.env.POSTGRES_URL,
@@ -24,8 +24,8 @@ export default async function handler(req, res) {
         WHERE id = $2 
         RETURNING *;
       `;
-      const values = [isShow, nannyId];
-      console.log(values)
+      const values = [isShow, id];
+
       const result = await client.query(query, values);
       return res.status(201).json({ success: true, member: result.rows[0] });
     } catch (error) {

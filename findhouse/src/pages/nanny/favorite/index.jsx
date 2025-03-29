@@ -6,6 +6,25 @@ import SettingForNanny from "../../../components/base/SettingForNanny";
 import SearchBarSortOnly from "../../../components/base/SearchBarSortOnly";
 import { useRouter } from "next/router";
 import Loading from "../../../components/base/Loading";
+
+// Add this helper function at the top of your file, outside the component
+const calculateAge = (birthday) => {
+  if (!birthday) return null;
+  
+  const birthDate = new Date(birthday);
+  const today = new Date();
+  
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+  
+  // Adjust age if birthday hasn't occurred this year
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  
+  return age;
+};
+
 export default function HistoryPage() {
   const router = useRouter();
   const [orderInfo, setOrderInfo] = useState([]);
