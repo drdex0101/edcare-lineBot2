@@ -38,7 +38,7 @@ const ApplicationPage = () => {
       body: JSON.stringify({
         weekdays: selectedDays,
         careTime: selectedCareTime,
-        scenario: selectedScenario,
+        scenario: '',
         idType: "parent",
         careType: "longTern",
         startDate: null,
@@ -60,7 +60,7 @@ const ApplicationPage = () => {
         careDataId: careData.id,
         weekdays: selectedDays,
         careTime: selectedCareTime,
-        scenario: selectedScenario,
+        scenario: '',
         idType: "nanny",
         careType: "longTern",
         startDate: null,
@@ -340,43 +340,6 @@ const ApplicationPage = () => {
                   }}
                 />
               </div>
-              <FormControl>
-                <InputLabel id="gender-label">選擇情境</InputLabel>
-                <Select
-                  required
-                  labelId="scenario-label"
-                  id="scenario"
-                  value={selectedScenario}
-                  onChange={(e) => setSelectedScenario(e.target.value)}
-                  label="托育場景"
-                  InputProps={{
-                    sx: {
-                      padding: "0px 16px",
-                      borderRadius: "8px",
-                      backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
-                    },
-                  }}
-                  sx={{
-                    alignSelf: "stretch",
-                    borderRadius: "8px",
-                    "& .MuiOutlinedInput-root": {
-                      "& fieldset": {
-                        borderColor: "var(--OutLine-OutLine, #78726D)",
-                      },
-                      "&:hover fieldset": {
-                        borderColor: "#E3838E",
-                      },
-                      "&.Mui-focused fieldset": {
-                        borderColor: "#E3838E",
-                      },
-                    },
-                    backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
-                  }}
-                >
-                  <MenuItem value="toHome">到宅托育</MenuItem>
-                  <MenuItem value="home">在宅托育</MenuItem>
-                </Select>
-              </FormControl>
             </div>
             <div style={styles.buttonLayout}>
               <button style={styles.nextBtn} onClick={handleNextClick}>

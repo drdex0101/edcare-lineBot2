@@ -68,21 +68,18 @@ export default async function handler(req, res) {
         c.end_date,
         c.location,
         n.uploadid,
-        u.upload_url,
         k.birthday as nannyBirthday,
         COUNT(*) OVER() AS totalCount
         FROM 
             orderinfo o
         LEFT JOIN 
             care_data c ON o.caretypeid = c.id
-        LEFT JOIN 
-            nanny n ON o.nannyid = n.id
-        LEFT JOIN 
-            kyc_info k ON n.kycId = k.id
-        LEFT JOIN 
-            upload u ON n.uploadid = u.id
         JOIN 
             pair p ON o.id = p.order_id
+        LEFT JOIN 
+            nanny n ON p.nanny_id = n.id
+        LEFT JOIN 
+            kyc_info k ON n.kycid = k.id
         WHERE 
             o.parentLineId = $1
             AND ($4::text IS NULL OR o.nickname ILIKE '%' || $4::text || '%')

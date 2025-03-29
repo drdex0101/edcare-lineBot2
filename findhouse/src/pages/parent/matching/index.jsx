@@ -16,8 +16,45 @@ export default function HistoryPage() {
     setMatchingList(data.orders || []);
   };
 
-  const getImgUrl = (id) => {
-    return `/api/base/getImgUrl?id=${id}`;
+  const [imgUrls, setImgUrls] = useState({});
+
+  // 透過 useEffect，只在 signingList 變動時才載入圖片
+  useEffect(() => {
+    signingList.forEach(async (avatar) => {
+      if (avatar.uploadid) {
+        const url = await getImgUrl(avatar.uploadid);
+        setImgUrls(prev => ({ ...prev, [avatar.uploadid]: url }));
+      }
+      else {
+        setImgUrls(prev => ({ ...prev, [avatar.uploadid]: "/nannyIcon.jpg" }));
+      }
+    });
+  }, [signingList]);
+
+  const getImgUrl = async (id) => {
+    const response = await fetch(`/api/base/getImgUrl?id=${id}`);
+    const data = await response.json();
+    console.log(data.url);
+    return data.url;
+  };
+
+  const calculateAge = (birthday) => {
+    const today = new Date();
+    const birthDate = new Date(birthday);
+    
+    let years = today.getFullYear() - birthDate.getFullYear();
+    let months = today.getMonth() - birthDate.getMonth();
+
+    if (months < 0) {
+      years--;
+      months += 12;
+    }
+  
+    if (months === 0 && today.getDate() < birthDate.getDate()) {
+      months = 11;
+      years--;
+    }
+    return `${years}歲`;
   };
 
   const fetchSigningCount = async () => {
@@ -122,11 +159,11 @@ export default function HistoryPage() {
                 {signingList.map((avatar) => (
                   <div className="nanny-layout" key={avatar.id}>
                     <div className="nanny-avatar">
-                      <img src={"/nannyIcon.jpg" || getImgUrl(avatar.uploadid)} alt="avatar" className="avatar-img" />
+                    <img className="avatar-img" src={avatar.uploadid ? (imgUrls[avatar.uploadid] || "/nannyIcon.jpg") : "/nannyIcon.jpg"} />
                     </div>
                     <div className="nanny-intro">
                       <span className="nanny-intro-name">{avatar.name}</span>
-                      <span className="nanny-intro-exp">{avatar.age}歲</span>
+                      <span className="nanny-intro-exp">{calculateAge(avatar.nannybirthday)}</span>
                     </div>
                     <div className="status">
                       <span className="status-content">已配對</span>

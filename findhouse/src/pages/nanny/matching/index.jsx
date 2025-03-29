@@ -14,7 +14,7 @@ export default function HistoryPage() {
   const { orderId, setOrderId } = useStore();
 
   const fetchMatchingCount = async () => {
-    const response = await fetch("/api/pair/getList?page=1&pageSize=50&status=matchByParent");
+    const response = await fetch("/api/pair/getListForNanny?page=1&pageSize=50&status=matchByParent");
     const data = await response.json();
     setMatchingList(data.orders || []);
   };
@@ -45,7 +45,7 @@ export default function HistoryPage() {
   };
 
   const fetchSigningCount = async () => {
-    const response = await fetch("/api/pair/getList?page=1&pageSize=50&status=signing");
+    const response = await fetch("/api/pair/getListForNanny?page=1&pageSize=50&status=signing");
     const data = await response.json();
     setSigningList(data.orders || []);
     setTotalCount(data.totalCount || 0);

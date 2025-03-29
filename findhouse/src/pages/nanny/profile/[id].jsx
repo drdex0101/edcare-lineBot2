@@ -344,7 +344,6 @@ export default function ProfilePage() {
   };
 
   const handleBookingClick = () => {
-
     setIsModalOpen(true);
   };
 

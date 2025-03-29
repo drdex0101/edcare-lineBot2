@@ -13,7 +13,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ success: false, message: `Method ${req.method} Not Allowed` });
   }
 
-  const { page = 1, pageSize = 10, keywords, sort, locations } = req.query;
+  const { page = 1, pageSize = 10, keywords, sort, locations, status } = req.query;
   const token = req.cookies.authToken;
   const payload = await verifyToken(token);
   const userId = payload.userId;
@@ -96,13 +96,14 @@ export default async function handler(req, res) {
         LEFT JOIN 
             care_data c ON o.caretypeid = c.id
         LEFT JOIN 
-            nanny n ON o.nannyid = n.id
+            nanny n ON p.nanny_id = n.id
         LEFT JOIN 
             kyc_info k ON n.kycId = k.id
         LEFT JOIN 
             upload u ON n.uploadid = u.id
         WHERE 
             p.nanny_id = $1
+            AND p.status = $6
             AND ($4::text IS NULL OR o.nickname ILIKE '%' || $4::text || '%')
         ORDER BY 
             $5
@@ -123,7 +124,7 @@ export default async function handler(req, res) {
     // Log the constructed query
     console.log('Executing query with parameters:', parameterizedQuery);
 
-    const { rows } = await client.query(query, [memberId, offset, limit, keywords, orderByClause]);
+    const { rows } = await client.query(query, [memberId, offset, limit, keywords, orderByClause,status]);
 
     client.release();
 

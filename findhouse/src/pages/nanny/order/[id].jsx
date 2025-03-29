@@ -532,8 +532,8 @@ export default function ProfilePage() {
                   <span>{orderInfo.intro}</span>
                 </div>
                 <button className="submitButton" onClick={handleBookingClick} disabled={isMatching}>
-            + 馬上預約
-          </button>
+                  + 馬上預約
+                </button>
               </div>
             </div>
           </div>

@@ -60,7 +60,7 @@ const OrderHistoryItem = ({
           {status === "create"
                 ? "媒合中"
                 : status === "matchByParent" || status === "matchByNanny"
-                  ? "媒合中"
+                  ? "預約中"
                   : status === "signing"
                     ? "簽約中"
                     : status === "onGoing"
