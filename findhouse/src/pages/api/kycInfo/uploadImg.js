@@ -4,7 +4,7 @@ import getClient from '../../../utils/getClient';
 
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  limits: { fileSize: 10 * 1024 * 1024 }, // 5MB
 });
 
 export const config = {
@@ -26,7 +26,7 @@ export default function handler(req, res) {
 
     upload.single('file')(req, res, async (err) => {
       if (err) {
-        return res.status(500).json({ success: false, message: '文件上传失败。' });
+        return res.status(500).json({ success: false, message: '文件上傳失敗。' });
       }
 
       try {
