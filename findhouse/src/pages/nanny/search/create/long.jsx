@@ -17,6 +17,7 @@ const ApplicationPage = () => {
     router.back(); // 替换 '/next-page' 为你想要跳转的路径
   };
   const { nannyInfo, setNannyInfo } = useStore();
+  const { careData, setCareData } = useStore();
 
   useEffect(() => {
     if (nannyInfo) {
@@ -83,7 +84,7 @@ const ApplicationPage = () => {
     } else {
       await createCareData();
     }
-    router.push("/nanny/create/nannyInfo");
+    router.push("/nanny/search/create/nannyInfo");
   };
 
   const [selectedDays, setSelectedDays] = useState([]);

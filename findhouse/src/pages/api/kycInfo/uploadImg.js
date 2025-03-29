@@ -2,7 +2,10 @@ import multer from 'multer';
 import { v2 as cloudinary } from 'cloudinary';
 import getClient from '../../../utils/getClient';
 
-const upload = multer({ storage: multer.memoryStorage() });
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+});
 
 export const config = {
   api: {

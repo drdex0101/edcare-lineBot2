@@ -40,6 +40,7 @@ const ApplicationPage = () => {
 
   useEffect(() => {
     const fetchAllData = async () => {
+      setIsLoading(true);
       try {
         await Promise.all([fetchData(), fetchNanny()]);
       } finally {
@@ -49,10 +50,6 @@ const ApplicationPage = () => {
     
     fetchAllData();
   }, []);
-
-  useEffect(() => {
-    console.log('Status updated:', { isMember, haveKyc, haveNanny });
-  }, [isMember, haveKyc, haveNanny]);
 
   const handleClick = () => {
     if (!isMember) {

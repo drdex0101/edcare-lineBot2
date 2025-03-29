@@ -20,8 +20,9 @@ export default async function handler(req, res) {
 
       // Query to get the paginated results
       const query = `
-       SELECT k.*
+       SELECT k.*, m.job as job
         FROM kyc_info k
+        LEFT JOIN member m ON k.id = m.kyc_id::bigint
       `;
       const result = await client.query(query);
 
