@@ -1,3 +1,23 @@
+.tabs-suddenly {
+  display: flex;
+  max-width: 260px;
+  width:100%;
+  padding: 6px 14px;
+  align-items: center;
+  justify-content:space-around;
+  border-radius: 8px;
+  background: var(---Button-02, linear-gradient(90deg, #FBC2EB 0%, #A6C1EE 100%));
+  box-shadow: -1px 6px 12px -6px rgba(186, 186, 186, 0.25), 0px 8px 24px -4px rgba(186, 186, 186, 0.25);
+}
+.tab-tile-suddenly {
+  color: var(---SurfaceContainer-Lowest, #FFF);
+  text-align: center;
+  font-family: "LINE Seed JP_TTF";
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
 .bookingBtn {
   display: flex;
   height: 34px;
@@ -354,11 +374,13 @@ background: #FFF;
   }
 
   .tab-subTitle {
-      font-family: LINE Seed JP_TTF;
-      font-size: 18px;
-      font-weight: 700;
-      line-height: 28.98px;
-      text-align: center;
+    color: var(---Outline-OnSurface, #252525);
+    text-align: center;
+    font-family: "LINE Seed JP_TTF";
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
   }
 
 

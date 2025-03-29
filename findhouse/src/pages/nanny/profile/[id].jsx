@@ -15,7 +15,7 @@ export default function ProfilePage() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [nannyInfo, setNannyInfo] = useState({});
   const [urls, setUrls] = useState([]);
-  const [iconUrl, setIconUrl] = useState("/assets/images/resource/error.png");
+  const [iconUrl, setIconUrl] = useState("/nannyIcon.jpg");
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -367,10 +367,17 @@ export default function ProfilePage() {
       },
     });
     setIsModalOpen(false);
-    setIsBookingModalOpen(true);
-    setIsMatching(true);
+    if (response.ok) {
+      setIsBookingModalOpen(true);
+      setIsMatching(true);
+    }
+    else {
+      Swal.fire({
+        icon: 'error',
+        title: '已經建立配對，請選擇另一位',
+      });
+    }
   };
-
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setIsBookingModalOpen(false);
@@ -422,9 +429,13 @@ export default function ProfilePage() {
         </svg>
       </div>
       <div className="profileSection">
-        <img className="profilePic" src={iconUrl} alt="Profile" />{" "}
+        <img 
+          className="profilePic" 
+          src={iconUrl || "/nannyIcon.jpg"} 
+          alt="Profile" 
+        />{" "}
         {/* 頭貼圓形 */}
-        <h2 className="profileName">{nannyInfo.name}</h2>
+        <h2 className="profileName">{nannyInfo.name?.[0]}保母</h2>
         <div className="rating">
           <RatingComponent score={nannyInfo.score} />
         </div>
@@ -443,9 +454,9 @@ export default function ProfilePage() {
           </div>
         </div>
         {/* Tabs */}
-        <div className="tabs">
+        <div className={`${nannyInfo.care_type === "suddenly" ? "tabs-suddenly" : "tabs"}`}>
           <div className="tab-content">
-            <span className="tab-tile">托育方式</span>
+            <span className={`${nannyInfo.care_type === "suddenly" ? "tab-tile-suddenly" : "tab-tile"}`}>托育方式</span>
             <span className="tab-subTitle">
               {nannyInfo.care_type === "suddenly"
                 ? "臨時托育"
@@ -473,7 +484,7 @@ export default function ProfilePage() {
             />
           </svg>
           <div className="tab-content">
-            <span className="tab-tile">托育情境</span>
+          <span className={`${nannyInfo.care_type === "suddenly" ? "tab-tile-suddenly" : "tab-tile"}`}>托育情境</span>
             <span className="tab-subTitle">
               {nannyInfo.scenario === "home"
                 ? "在宅托育"

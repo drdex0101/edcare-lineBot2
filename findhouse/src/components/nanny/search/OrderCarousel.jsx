@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import useStore from "../../../lib/store";
 
 
-const OrderCarousel = ({ orderList, handleNextClick = () => { }, itemsPerPage = 1,setIsShow,isShow }) => {
+const OrderCarousel = ({ orderList, handleNextClick = () => { }, itemsPerPage = 1,setIsShow,isShow,setOrderId }) => {
   const router = useRouter();
   const { babyInfo,setBabyInfo } = useStore();
   const { careData,setCareData } = useStore();
@@ -44,6 +44,14 @@ const OrderCarousel = ({ orderList, handleNextClick = () => { }, itemsPerPage = 
 
   const handleOrderPageChange = (newPage) => {
     setOrderCurrentPage(newPage);
+    console.log(newPage);
+    const orderPage=newPage-2;
+    if (orderPage>=0) {
+      setOrderId(orderList[orderPage].id);
+    }
+    else {
+      setOrderId(null);
+    }
     if (scrollRef.current) {
       scrollRef.current.scrollTo({ left: (newPage - 1) * scrollRef.current.offsetWidth, behavior: "smooth" });
     }

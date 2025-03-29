@@ -199,7 +199,7 @@ export default function HistoryPage() {
                             />
                           </div>
                           <div style={styles.nannyFontLayout}>
-                            <div style={styles.nannyNameFont}>{favorite.account}</div>
+                            <div style={styles.nannyNameFont}>{favorite.name?.[0]}保母</div>
                             <div style={styles.nannySubInfo}>
                               托育經驗: {favorite.experienment} 年
                             </div>

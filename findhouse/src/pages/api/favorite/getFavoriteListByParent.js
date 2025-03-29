@@ -33,6 +33,7 @@ export default async function handler(req, res) {
           n.environmentPic, n.serviceLocation, n.introduction, n.service, 
           n.score, n.isShow, n.location, n.kycId, n.uploadId, n.created_ts,
           m.account,
+          k.name,
         COUNT(*) OVER() AS totalCount
         FROM 
             favorites f
@@ -40,6 +41,8 @@ export default async function handler(req, res) {
             nanny n ON f.item_id::bigint = n.id
         LEFT JOIN 
             member m ON n.memberId = m.id::VARCHAR
+        LEFT JOIN 
+            kyc_info k ON n.kycId = k.id
         WHERE 
             f.user_id = $1
             AND f.type = $2

@@ -19,11 +19,6 @@ export default function HistoryPage() {
     setMatchingList(data.orders || []);
   };
 
-  const handlePageChange = (page) => {
-    console.log("page:", page);
-    setCurrentPage(page); // Update currentPage when a new page is selected
-  };
-
   const calculateAge = (birthday) => {
     const today = new Date();
     const birthDate = new Date(birthday);
@@ -47,10 +42,6 @@ export default function HistoryPage() {
     } else {
       return `${years}歲${months}個月`;
     }
-  };
-
-  const getImgUrl = (id) => {
-    return `/api/base/getImgUrl?id=${id}`;
   };
 
   const fetchSigningCount = async () => {
@@ -178,7 +169,7 @@ export default function HistoryPage() {
                       />
                     </div>
                     <div className="nanny-intro">
-                      <span className="nanny-intro-name">{avatar.name}</span>
+                      <span className="nanny-intro-name">{avatar.nickname}</span>
                       <span className="nanny-intro-exp">{calculateAge(avatar.birthday)}</span>
                     </div>
                     <div className="status">
