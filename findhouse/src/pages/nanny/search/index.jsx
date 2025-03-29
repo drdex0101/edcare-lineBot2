@@ -11,6 +11,7 @@ import Swal from "sweetalert2";
 export default function HistoryPage() {
   const router = useRouter();
   const { setNannyInfo } = useStore();
+  const { careData, setCareData } = useStore();
   const [orderInfo, setOrderInfo] = useState([]);
   const [totalItem, setTotalItem] = useState(0);
   const [currentPage, setCurrentPage] = useState(0); // Track current page
@@ -320,12 +321,31 @@ export default function HistoryPage() {
     fetchOrderInfoList(page, pageSize, keywords);
   };
 
+  const fetchCareData = async (careId) => {
+    const response = await fetch(`/api/base/getCareData?id=${careId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  
+    if (!response.ok) {
+      throw new Error("Failed to fetch care data");
+    }
+  
+    const data = await response.json();
+    setCareData(data.data);
+  };
+
   useEffect(() => {
     fetchOrderInfoList(page, pageSize, keywords); // Fetch data when the page is loaded or currentPage changes
   }, [page, keywords]);
 
   useEffect(() => {
     fetchNannyProfile();
+    if (nannyProfile.care_type_id) {
+      fetchCareData(nannyProfile.care_type_id);
+    }
   }, []);
 
   const handlePageChange = (page) => {
