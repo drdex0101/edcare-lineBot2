@@ -126,6 +126,7 @@ const ApplicationPage = () => {
       scenario: "托育情境",
       serviceLocation: "服務地點",
       introduction: "自我介紹",
+      uploadId: "個人照",
     };
 
     // 檢查是否有未填寫的欄位
@@ -134,45 +135,32 @@ const ApplicationPage = () => {
       .map(([_, label]) => label);
 
     if (missingFields.length > 0) {
-      alert(`請填寫以下必填欄位：\n${missingFields.join("\n")}`);
+      Swal.fire({
+        icon: "error",
+        title: "請填寫以下必填欄位",
+        text: missingFields.join("\n"),
+        confirmButtonText: "確定",
+      });
       return; // 終止函數執行
     }
 
     try {
       setIsLoading(true);
-      if (nannyInfo) {
-        const response = await fetch("/api/nanny/updateNannyProfile", {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(nannyData),
-        });
+      const response = await fetch("/api/nanny/createNanny", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(nannyData),
+      });
 
-        if (response.ok) {
-          const data = await response.json();
-          setNannyInfo(data.nanny);
-          console.log(data);
-        } else {
-          console.error("请求失败，状态码：", response.status);
-        }
+      if (response.ok) {
+        let data = await response.json();
+        setNannyInfo(data.nanny);
+        console.log(data.nanny.id);
+        setIsLoading(false);
       } else {
-        const response = await fetch("/api/nanny/createNanny", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(nannyData),
-        });
-
-        if (response.ok) {
-          let data = await response.json();
-          setNannyInfo(data.nanny);
-          console.log(data.nanny.id);
-          setIsLoading(false);
-        } else {
-          console.error("請求失敗：", response.status);
-        }
+        console.error("請求失敗：", response.status);
       }
 
       setIsLoading(false);
