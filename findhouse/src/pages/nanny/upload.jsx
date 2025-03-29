@@ -224,7 +224,7 @@ const ApplicationPage = () => {
         setIsLoading(false);
         Swal.fire({
           icon: 'error',
-          title: '上傳失敗，請重新嘗試。',
+          title: result.message,
         });
         if (type === "ID Front") {
           setFileName("");
@@ -237,7 +237,7 @@ const ApplicationPage = () => {
       setIsLoading(false);
       Swal.fire({
         icon: 'error',
-        title: '上傳失敗，請重新嘗試。',
+        title: error,
       });
       if (type === "ID Front") {
         setFrontImg(null);
