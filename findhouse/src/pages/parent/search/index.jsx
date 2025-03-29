@@ -206,7 +206,7 @@ export default function HistoryPage() {
         <>
           <div className="matching-body-header-background">
             <div style={styles.header}>
-              <OrderCarousel orderList={orderInfo} handleNextClick={handleNextClick} setIsShow={setIsShow}/>
+              <OrderCarousel orderList={orderInfo} handleNextClick={handleNextClick} setIsShow={setIsShow} setOrderId={setOrderId}/>
             </div>
           </div>
           {openKycModal && (
@@ -366,7 +366,7 @@ export default function HistoryPage() {
                         />
                       </div>
                       <div style={styles.nannyFontLayout}>
-                        <div style={styles.nannyNameFont}>{nanny.account}</div>
+                        <div style={styles.nannyNameFont}>{nanny.kyc_name[0]}保母</div>
                         <div style={styles.nannySubInfo}>
                           托育經驗: {nanny.experienment} 年
                         </div>

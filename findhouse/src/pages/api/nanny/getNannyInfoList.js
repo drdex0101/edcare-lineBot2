@@ -39,13 +39,15 @@ export default async function handler(req, res) {
           c.scenario,
           c.start_date,
           c.end_date,
-          c.location
+          c.location,
+          k.name as kyc_name
         FROM nanny n
         LEFT JOIN member m ON n.memberId = m.id::VARCHAR  -- Cast m.id to VARCHAR for comparison
         LEFT JOIN upload u ON n.uploadId = u.id
         LEFT JOIN care_data c ON n.care_type_id = c.id
+        LEFT JOIN kyc_info k ON n.kycid = k.id
         WHERE ($1::varchar[] IS NULL OR n.serviceLocation && $1::varchar[])
-        AND ($2::text IS NULL OR m.account ILIKE '%' || $2::text || '%')  -- Filter by account if keyword is provided
+        AND ($2::text IS NULL OR k.name ILIKE '%' || $2::text || '%')  -- Filter by account if keyword is provided
         AND n.isshow = TRUE
         ${orderByClause}  -- Add the order by cause if applicable
         LIMIT $3 OFFSET $4;

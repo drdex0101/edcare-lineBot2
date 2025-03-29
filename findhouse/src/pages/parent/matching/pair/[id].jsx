@@ -384,7 +384,7 @@ export default function ProfilePage() {
       <div className="profileSection">
         <img className="profilePic" src={iconUrl} alt="Profile" />{" "}
         {/* 頭貼圓形 */}
-        <h2 className="profileName">{nannyInfo?.name}</h2>
+        <h2 className="profileName">{nannyInfo.name?.[0]}保母</h2>
         <div className="rating">
           <RatingComponent score={nannyInfo?.score} />
         </div>
@@ -403,15 +403,19 @@ export default function ProfilePage() {
           </div>
         </div>
         {/* Tabs */}
-        <div className="tabs">
+        <div className={`${nannyInfo.care_type === "suddenly" ? "tabs-suddenly" : "tabs"}`}>
           <div className="tab-content">
-            <span className="tab-tile">托育方式</span>
+            <span className={`${nannyInfo.care_type === "suddenly" ? "tab-tile-suddenly" : "tab-tile"}`}>托育方式</span>
             <span className="tab-subTitle">
-              {nannyInfo?.care_type === "suddenly"
+              {nannyInfo.care_type === "suddenly"
                 ? "臨時托育"
-                : nannyInfo?.care_type === "longTern"
-                  ? "長期托育"
-                  : ""}
+                : nannyInfo.care_time === "night"
+                  ? "夜間托育"
+                  : nannyInfo.care_time === "allDay"
+                    ? "全天托育"
+                    : nannyInfo.care_time === "morning"
+                      ? "日間托育"
+                      : "未填寫"}
             </span>
           </div>
           <svg
@@ -429,13 +433,13 @@ export default function ProfilePage() {
             />
           </svg>
           <div className="tab-content">
-            <span className="tab-tile">托育情境</span>
+          <span className={`${nannyInfo.care_type === "suddenly" ? "tab-tile-suddenly" : "tab-tile"}`}>托育情境</span>
             <span className="tab-subTitle">
-            {nannyInfo?.scenario === "home"
+              {nannyInfo.scenario === "home"
                 ? "在宅托育"
-                : nannyInfo?.scenario === "infantCareCenter"
+                : nannyInfo.scenario === "infantCareCenter"
                   ? "定點托育"
-                  : nannyInfo?.scenario === "toHome"
+                  : nannyInfo.scenario === "toHome"
                     ? "到宅托育"
                     : "未填寫"}
             </span>
@@ -449,6 +453,7 @@ export default function ProfilePage() {
               src={urls[currentImageIndex]}
               alt={`圖片 ${currentImageIndex + 1}`}
               className="carouselImage"
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
             <div
               style={{

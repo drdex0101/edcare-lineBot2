@@ -7,6 +7,7 @@ import OrderCarousel from "../../../components/nanny/search/OrderCarousel";
 import { useRouter } from "next/router";
 import useStore from "../../../lib/store";
 import Loading from "../../../components/base/Loading";
+import Swal from "sweetalert2";
 export default function HistoryPage() {
   const router = useRouter();
   const { setNannyInfo } = useStore();
@@ -330,6 +331,7 @@ export default function HistoryPage() {
   const handlePageChange = (page) => {
     console.log("page:", page);
     setPage(page); // Update currentPage when a new page is selected
+    setCurrentPage(page);
   };
 
   const handleNextClick = () => {
@@ -592,10 +594,13 @@ export default function HistoryPage() {
                   key={index}
                   style={styles.nannyItem}
                   onClick={() => {
-                    if (order.id) {
+                    if (order.id && isShow) {
                       router.push(`/nanny/order/${order.id}`);
                     } else {
-                      console.error("Order ID not found");
+                      Swal.fire({
+                        icon: 'error',
+                        title: '目前為隱藏階段無法配對',
+                      });
                     }
                   }}
                 >
@@ -681,6 +686,8 @@ export default function HistoryPage() {
                 onPageChange={handlePageChange}
                 fetchOrderInfoList={fetchOrderInfoList}
                 setPage={setPage}
+                setCurrentPage={setCurrentPage}
+                currentPage={page}
               />
               </div>
             </div>

@@ -344,12 +344,20 @@ export default function ProfilePage() {
     });
     const data = await response.json();
     setIsModalOpen(false);
-    setIsBookingModalOpen(true);
-    setIsMatching(true);
+    if (response.ok) {  
+      setIsBookingModalOpen(true);
+      setIsMatching(true);
+    }
+    else {
+      Swal.fire({
+        icon: 'error',
+        title: '已經建立配對，請選擇另一位',
+      });
+    }
   };
 
-  const toMatching = () => {
-    router.push("/nanny/matching");
+  const toSearch = () => {
+    router.push("/nanny/search");
   };
 
   const handleCloseModal = () => {
@@ -601,7 +609,7 @@ export default function ProfilePage() {
             </button>
             <span className="bookingFont">預約成功！等待家長回覆...</span>
             <img src="/review.png" alt="check" />
-            <button className="bookingBtn" onClick={toMatching}>點我前往查看回覆</button>
+            <button className="bookingBtn" onClick={toSearch}>點我前往查看回覆</button>
           </div>
         </div>
       )}

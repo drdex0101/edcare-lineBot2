@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import Loading from "../../../components/base/Loading";
 import Swal from "sweetalert2";
+import "../css/profile.css";
 
 const ApplicationPage = () => {
   const router = useRouter();
@@ -30,17 +31,17 @@ const ApplicationPage = () => {
   const [message, setMessage] = useState("");
   const [uploadedImages, setUploadedImages] = useState([]); // State to track uploaded images
   const [uploadedEnvironmentImages, setUploadedEnvironmentImages] = useState(
-    [],
+    []
   ); // State to track uploaded images
   const [selectedCareType, setSelectedCareType] = useState(null);
   const [address, setAddress] = useState("");
   const [introduction, setIntroduction] = useState("");
   const [selectedAddress, setSelectedAddress] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { careData, setCareData} = useStore();
+  const { careData, setCareData } = useStore();
   const { memberId, setMemberId } = useStore();
   const [kyc_id, setKyc_id] = useState(null);
-  const [age, setAge] = useState(0);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
     if (nannyInfo?.service) {
@@ -68,8 +69,8 @@ const ApplicationPage = () => {
           if (parsedData.state.nannyInfo.uploadid) {
             setHeadIcon(parsedData.state.nannyInfo.uploadid);
             getUrl(parsedData.state.nannyInfo.uploadid)
-              .then(url => setHeadIconUrl(url))
-              .catch(error => console.error("Error fetching URL:", error));
+              .then((url) => setHeadIconUrl(url))
+              .catch((error) => console.error("Error fetching URL:", error));
           }
         }
       } catch (error) {
@@ -185,6 +186,10 @@ const ApplicationPage = () => {
     router.back(); // 替换 '/next-page' 为你想要跳转的路径
   };
 
+  const handleDotClick = (index) => {
+    setCurrentImageIndex(index);
+  };
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setFile(file);
@@ -204,7 +209,6 @@ const ApplicationPage = () => {
     console.log("file:", file);
     formData.append("file", file);
 
-
     try {
       const res = await fetch("/api/kycInfo/uploadImg", {
         method: "POST",
@@ -223,12 +227,14 @@ const ApplicationPage = () => {
         ]);
       } else {
         setHeadIcon(uploadId);
-        getUrl(uploadId).then(url => {
-          console.log("Image URL:", url);
-          setHeadIconUrl(url);
-        }).catch(error => {
-          console.error("Error fetching URL:", error);
-        });
+        getUrl(uploadId)
+          .then((url) => {
+            console.log("Image URL:", url);
+            setHeadIconUrl(url);
+          })
+          .catch((error) => {
+            console.error("Error fetching URL:", error);
+          });
       }
 
       if (result.success) {
@@ -246,17 +252,17 @@ const ApplicationPage = () => {
   const handleEnvironmentImageChange = (e) => {
     const files = Array.from(e.target.files);
     const total = uploadedImages.length + files.length;
-  
+
     if (total > 6) {
       Swal.fire({
-        icon: 'error',
-        title: '最多只能上傳 6 張照片',
+        icon: "error",
+        title: "最多只能上傳 6 張照片",
         text: `您目前已上傳 ${uploadedImages.length} 張，將新增 ${files.length} 張`,
-        confirmButtonText: '確定'
+        confirmButtonText: "確定",
       });
       return;
     }
-  
+
     files.forEach((file) => {
       handleUpload(file, "environment");
     });
@@ -395,9 +401,21 @@ const ApplicationPage = () => {
                 />
               )}
               <div style={styles.cameraIcon}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 15.2C13.7673 15.2 15.2 13.7673 15.2 12C15.2 10.2327 13.7673 8.8 12 8.8C10.2327 8.8 8.8 10.2327 8.8 12C8.8 13.7673 10.2327 15.2 12 15.2Z" fill="white"/>
-                  <path d="M9 3L7.17 5H4C2.9 5 2 5.9 2 7V19C2 20.1 2.9 21 4 21H20C21.1 21 22 20.1 22 19V7C22 5.9 21.1 5 20 5H16.83L15 3H9ZM12 17C9.24 17 7 14.76 7 12C7 9.24 9.24 7 12 7C14.76 7 17 9.24 17 12C17 14.76 14.76 17 12 17Z" fill="white"/>
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M12 15.2C13.7673 15.2 15.2 13.7673 15.2 12C15.2 10.2327 13.7673 8.8 12 8.8C10.2327 8.8 8.8 10.2327 8.8 12C8.8 13.7673 10.2327 15.2 12 15.2Z"
+                    fill="white"
+                  />
+                  <path
+                    d="M9 3L7.17 5H4C2.9 5 2 5.9 2 7V19C2 20.1 2.9 21 4 21H20C21.1 21 22 20.1 22 19V7C22 5.9 21.1 5 20 5H16.83L15 3H9ZM12 17C9.24 17 7 14.76 7 12C7 9.24 9.24 7 12 7C14.76 7 17 9.24 17 12C17 14.76 14.76 17 12 17Z"
+                    fill="white"
+                  />
                 </svg>
               </div>
             </label>
@@ -412,24 +430,27 @@ const ApplicationPage = () => {
               onChange={handleCareTypeChange}
               style={{
                 ...styles.radioButton,
-                ...(selectedCareType === "home" &&
-                  styles.radioButtonChecked),
+                ...(selectedCareType === "home" && styles.radioButtonChecked),
               }}
-            />{" "}
+            />
             在宅托育
-            <input
-              type="radio"
-              name="careType"
-              value="toHome"
-              checked={selectedCareType === "toHome"}
-              onChange={handleCareTypeChange}
-              style={{
-                ...styles.radioButton,
-                ...(selectedCareType === "toHome" &&
-                  styles.radioButtonChecked),
-              }}
-            />{" "}
-            到宅托育
+            {careData?.care_type === "longTern" && (
+              <>
+                <input
+                  type="radio"
+                  name="careType"
+                  value="toHome"
+                  checked={selectedCareType === "toHome"}
+                  onChange={handleCareTypeChange}
+                  style={{
+                    ...styles.radioButton,
+                    ...(selectedCareType === "toHome" &&
+                      styles.radioButtonChecked),
+                  }}
+                />
+                到宅托育
+              </>
+            )}
           </div>
 
           <div style={styles.buttonLayout}>
@@ -488,10 +509,10 @@ const ApplicationPage = () => {
                     const newValue = e.target.value;
                     if (newValue.length > 5) {
                       Swal.fire({
-                        icon: 'error',
-                        title: '超過選擇上限',
-                        text: '最多只能選擇5個托育地區',
-                        confirmButtonText: '確定'
+                        icon: "error",
+                        title: "超過選擇上限",
+                        text: "最多只能選擇5個托育地區",
+                        confirmButtonText: "確定",
                       });
                       return;
                     }
@@ -614,7 +635,7 @@ const ApplicationPage = () => {
                       <img
                         src={
                           uploadedEnvironmentImages[
-                            uploadedEnvironmentImages.length - 1
+                            currentImageIndex
                           ]
                         }
                         alt="Latest uploaded environment"
@@ -630,8 +651,19 @@ const ApplicationPage = () => {
                   </label>
                   <span
                     style={styles.imgCountLayout}
-                  >{`${uploadedEnvironmentImages.length}/6`}</span>
+                  >{`${currentImageIndex + 1}/6`}</span>
                 </div>
+                {uploadedEnvironmentImages.length > 0 && (
+                  <div className="dotsContainer">
+                    {uploadedEnvironmentImages.map((_, index) => (
+                    <span
+                      key={index}
+                      className={`dot ${index === currentImageIndex ? "active" : ""}`}
+                      onClick={() => handleDotClick(index)}
+                    ></span>
+                  ))}
+                </div>
+              )}
               </div>
             </div>
 
