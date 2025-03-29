@@ -11,7 +11,7 @@ import { useEffect } from "react";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import Loading from "../../../../components/base/Loading";
 import Swal from "sweetalert2";
-
+import "../../css/profile.css";
 const ApplicationPage = () => {
   const router = useRouter();
   const { nannyInfo, setNannyInfo } = useStore();
@@ -40,6 +40,12 @@ const ApplicationPage = () => {
   const { careData, setCareData} = useStore();
   const [kyc_id, setKyc_id] = useState(null);
   const [age, setAge] = useState(0);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+
+  const handleDotClick = (index) => {
+    setCurrentImageIndex(index);
+  };
 
   useEffect(() => {
     if (nannyInfo?.service) {
@@ -57,25 +63,32 @@ const ApplicationPage = () => {
 
   useEffect(() => {
     if (nannyInfo) {
-      try {
-        if (nannyInfo) {
-          setSelectedAddress(nannyInfo.servicelocation || []);
-          setSelectedCareType(nannyInfo.scenario || "");
-          setAddress(nannyInfo.servicelocation?.[0] || "");
-          setIntroduction(nannyInfo.introduction || "");
-          if (nannyInfo.uploadid) {
-            setHeadIcon(nannyInfo.uploadid);
-            getUrl(nannyInfo.uploadid)
-              .then(url => setHeadIconUrl(url))
-              .catch(error => console.error("Error fetching URL:", error));
-          }
-        }
-      } catch (error) {
-        console.error("Error parsing stored data:", error);
+      setSelectedAddress(nannyInfo.servicelocation || []);
+      setSelectedCareType(nannyInfo.scenario || "");
+      setAddress(nannyInfo.servicelocation?.[0] || "");
+      setIntroduction(nannyInfo.introduction || []);
+  
+      if (Array.isArray(nannyInfo.environmentpic) && nannyInfo.environmentpic.length > 0) {
+        setUploadedImages(nannyInfo.environmentpic); // 保存 uploadId 陣列
+  
+        // 用 Promise.all 批量取回 URL
+        Promise.all(nannyInfo.environmentpic.map(id => getUrl(id)))
+          .then(urls => {
+            setUploadedEnvironmentImages(urls); // 保存所有圖片網址
+          })
+          .catch(error => {
+            console.error("Error loading environment images:", error);
+          });
+      }
+  
+      if (nannyInfo.uploadid) {
+        setHeadIcon(nannyInfo.uploadid);
+        getUrl(nannyInfo.uploadid)
+          .then(url => setHeadIconUrl(url))
+          .catch(error => console.error("Error fetching head icon:", error));
       }
     }
-    console.log(nannyInfo, "nannyInfo");
-  }, [nannyInfo]);
+  }, [nannyInfo]);  
 
   useEffect(() => {
     const checkMemberExistence = async () => {
@@ -202,8 +215,6 @@ const ApplicationPage = () => {
     const formData = new FormData();
     console.log("file:", file);
     formData.append("file", file);
-
-
     try {
       const res = await fetch("/api/kycInfo/uploadImg", {
         method: "POST",
@@ -604,9 +615,7 @@ const ApplicationPage = () => {
                     {uploadedEnvironmentImages.length > 0 ? (
                       <img
                         src={
-                          uploadedEnvironmentImages[
-                            uploadedEnvironmentImages.length - 1
-                          ]
+                          uploadedEnvironmentImages[currentImageIndex]
                         }
                         alt="Latest uploaded environment"
                         style={{
@@ -621,8 +630,19 @@ const ApplicationPage = () => {
                   </label>
                   <span
                     style={styles.imgCountLayout}
-                  >{`${uploadedEnvironmentImages.length}/6`}</span>
+                  >{`${currentImageIndex+1 }/6`}</span>
                 </div>
+                {uploadedEnvironmentImages.length > 0 && (
+                  <div className="dotsContainer">
+                    {uploadedEnvironmentImages.map((_, index) => (
+                    <span
+                      key={index}
+                      className={`dot ${index === currentImageIndex ? "active" : ""}`}
+                      onClick={() => handleDotClick(index)}
+                    ></span>
+                  ))}
+                </div>
+              )}
               </div>
             </div>
 

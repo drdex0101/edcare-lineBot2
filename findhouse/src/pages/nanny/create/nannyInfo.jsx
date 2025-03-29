@@ -651,7 +651,7 @@ const ApplicationPage = () => {
                   </label>
                   <span
                     style={styles.imgCountLayout}
-                  >{`${currentImageIndex + 1}/6`}</span>
+                  >{`${currentImageIndex+1 }/6`}</span>
                 </div>
                 {uploadedEnvironmentImages.length > 0 && (
                   <div className="dotsContainer">

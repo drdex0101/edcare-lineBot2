@@ -62,6 +62,7 @@ const ApplicationPage = () => {
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
+      console.log("job:", job);
       if (status == "approve") {
         if (job == "保母") {
           changeRichMenu("richmenu-3adb9975aee0c695e08c99ef572d4008");
