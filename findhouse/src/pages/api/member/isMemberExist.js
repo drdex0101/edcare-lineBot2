@@ -7,42 +7,37 @@ export default async function handler(req, res) {
     const accountName = req.cookies.accountName;
     const payload = await verifyToken(token);
     const userId = payload.userId;
-    console.log(userId);
-      
+
     if (!userId) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'ID parameter is required' 
-      });
+      return res.status(400).json({ success: false, message: 'ID parameter is required' });
     }
 
-    const client = getClient();
+    const pool = getClient();
+    const client = await pool.connect();
 
     try {
-      await client.connect();
-
       const query = `
-        SELECT 
-          member.id,
-          member.kyc_id
+        SELECT member.id, member.kyc_id
         FROM member
         WHERE member.line_id = $1;
       `;
-      
-      // Convert id to integer if it's a numeric string
+
       const result = await client.query(query, [userId]);
 
-      console.log('memberInfo retrieved successfully:', result.rows);
       return res.status(200).json({ 
         success: true, 
         member: result.rows, 
         pageCount: result.rowCount,
         accountName: accountName
       });
+
     } catch (error) {
       console.error('Database error:', error);
       res.status(500).json({ error: 'Database error' });
-    } 
+    } finally {
+      client.release(); // ✅ 正確用法
+    }
+
   } else {
     res.setHeader('Allow', ['GET']);
     res.status(405).end(`Method ${req.method} Not Allowed`);
