@@ -54,16 +54,6 @@ const ApplicationPage = () => {
     console.log('Status updated:', { isMember, haveKyc, haveOrder });
   }, [isMember, haveKyc, haveOrder]);
 
-  const handleClick = () => {
-    if (!isMember) {
-      router.push("/parent/apply");
-    } else if (!haveKyc) {
-      router.push("/parent/verify/upload");
-    } else if (!haveOrder) {
-      router.push("/parent/create");
-    }
-  };
-
   return (
     <div style={styles.main}>
       {isLoading ? (

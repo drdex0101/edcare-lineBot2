@@ -226,7 +226,7 @@ export default function HistoryId() {
                   <span className="sub-title-font">
                     配對時間：
                     {orderInfo
-                      ? orderInfo.created_time.slice(0, 10)
+                      ? orderInfo?.created_time?.slice(0, 10)
                       : "無資料"}
                   </span>
                 </div>
