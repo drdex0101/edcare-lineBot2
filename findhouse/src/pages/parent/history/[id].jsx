@@ -30,8 +30,8 @@ export default function HistoryId() {
       const data = await response.json();
       if (data.orders) {
         setOrderInfo(data.orders[0]);
-        if (data.orders[0].nannyid) {
-          getNannyInfo(data.orders[0].nannyid);
+        if (data.orders[0].nanny_id) {
+          getNannyInfo(data.orders[0].nanny_id);
         }
       } else {
         console.error("API 响应中缺少 'orders' 属性:", data);
@@ -54,6 +54,7 @@ export default function HistoryId() {
     { key: "signing", label: "簽約中" },
     { key: "onGoing", label: "合約履行中" },
     { key: "finish", label: "已完成" },
+    { key: "cancel", label: "已取消" },
   ];
 
   const careTime = [
@@ -63,11 +64,14 @@ export default function HistoryId() {
   ];
 
   // 確保 orderInfo 存在
-  const currentStatus = orderInfo?.status || "create";
+  let currentStatus = orderInfo?.status || "create";
 
   // 找到目前 status 在列表中的索引
-  const currentIndex = orderStatusSteps.findIndex((step) => step.key === currentStatus);
-
+  let currentIndex = orderStatusSteps.findIndex((step) => step.key === currentStatus);
+  // 如果找不到，就預設為第一個狀態 "媒合中"
+  if (currentIndex === -1) {
+    currentIndex = 0;
+  }
   // Function to get the label for a given care_time key
   const getCareTimeLabel = (careTimeKey) => {
     const careTimeItem = careTime.find(item => item.key === careTimeKey);
@@ -221,8 +225,8 @@ export default function HistoryId() {
                   </span>
                   <span className="sub-title-font">
                     配對時間：
-                    {orderInfo && orderInfo.status === "matching" && orderInfo.update_ts
-                      ? orderInfo.update_ts.slice(0, 10)
+                    {orderInfo
+                      ? orderInfo.created_time.slice(0, 10)
                       : "無資料"}
                   </span>
                 </div>

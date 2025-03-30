@@ -106,7 +106,7 @@ const ApplicationPage = () => {
       age: nannyInfo ? nannyInfo.age : null,
       kidCount: nannyInfo ? nannyInfo.kidcount : null,
       way: careData?.care_type,
-      scenario: careData?.care_type === "suddenly" ? "在宅托育" : selectedCareType,
+      scenario: careData?.care_type === "suddenly" ? "home" : selectedCareType,
       environmentPic: uploadedImages,
       serviceLocation:
         careData?.care_type === "suddenly"

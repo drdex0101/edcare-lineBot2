@@ -22,12 +22,14 @@ const ApplicationPage = () => {
         icon: 'error',
         title: '請填寫必填欄位。',
       });
+      setIsLoading(false);
       return;
     } else if (selectedRange.endDate < selectedRange.startDate) {
       Swal.fire({
         icon: 'error',
         title: '開始日期不能晚於結束日期。',
       });
+      setIsLoading(false);
       return;
     }
     await createSuddenlyRecord();
