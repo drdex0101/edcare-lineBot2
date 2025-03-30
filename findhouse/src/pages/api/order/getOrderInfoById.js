@@ -31,6 +31,7 @@ export default async function handler(req, res) {
         o.id,
         p.nanny_id, 
         p.status, 
+        p.created_time,
         o.created_ts, 
         o.update_ts, 
         o.choosetype, 
@@ -58,13 +59,13 @@ export default async function handler(req, res) {
     LEFT JOIN 
         care_data c ON o.caretypeid = c.id
     LEFT JOIN 
-        member m ON o.nannyid = m.id
-    LEFT JOIN 
-        nanny n ON o.nannyid = n.id
-    LEFT JOIN 
-        kyc_info k ON m.kyc_id::bigint = k.id
-     LEFT JOIN 
         pair p ON o.id = p.order_id
+     LEFT JOIN 
+        member m ON p.nanny_id = m.id
+    LEFT JOIN 
+        nanny n ON p.nanny_id = n.id
+     LEFT JOIN 
+        kyc_info k ON n.kycid::bigint = k.id
     WHERE 
         o.id = $1
       `;

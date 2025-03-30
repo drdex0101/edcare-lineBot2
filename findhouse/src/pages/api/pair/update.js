@@ -37,7 +37,8 @@ export default async function handler(req, res) {
 
       const query = `
         UPDATE pair
-        SET status = $2
+        SET status = $2,
+        created_time = now()
         WHERE nanny_id = $1 and order_id = $3 and status = $4
         RETURNING *;
       `;
