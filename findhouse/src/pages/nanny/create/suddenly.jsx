@@ -7,16 +7,23 @@ import CalendarRangePicker from "../../../components/base/CalendarRangePicker";
 import { MenuItem, InputLabel, FormControl } from "@mui/material";
 import useStore from "../../../lib/store";
 import { useState } from "react";
+import Swal from "sweetalert2";
 
 const ApplicationPage = () => {
   const router = useRouter();
   const { careData, setCareData } = useStore();
   const handleNextClick = async () => {
     if (!selectedRange.startDate || !selectedRange.endDate) {
-      alert("請填寫所有必填欄位。");
+      Swal.fire({
+        icon: 'error',
+        title: '請填寫必填欄位。',
+      });
       return;
     } else if (selectedRange.endDate < selectedRange.startDate) {
-      alert("開始日期不能晚於結束日期。");
+      Swal.fire({
+        icon: 'error',
+        title: '開始日期不能晚於結束日期。',
+      });
       return;
     }
     await createSuddenlyRecord();

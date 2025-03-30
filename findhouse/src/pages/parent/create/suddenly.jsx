@@ -18,10 +18,16 @@ const ApplicationPage = () => {
   const handleNextClick = async () => {
     setIsLoading(true);
     if (!selectedRange.startDate || !selectedRange.endDate) {
-      alert("請填寫所有必填欄位。");
+      Swal.fire({
+        icon: 'error',
+        title: '請填寫必填欄位。',
+      });
       return;
     } else if (selectedRange.endDate < selectedRange.startDate) {
-      alert("開始日期不能晚於結束日期。");
+      Swal.fire({
+        icon: 'error',
+        title: '開始日期不能晚於結束日期。',
+      });
       return;
     }
     await createSuddenlyRecord();
