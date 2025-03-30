@@ -23,9 +23,9 @@ const ApplicationPage = () => {
     }
   };
 
-  const changeRichMenu = async (richMenuId) => {
+  const changeRichMenu = async (richMenuId, kycId) => {
     try {
-      const response = await fetch("/api/line/changeRichMenu", {
+      const response = await fetch("/api/line/changeRichMenuTest", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -33,6 +33,7 @@ const ApplicationPage = () => {
         },
         body: JSON.stringify({
           richMenuId: richMenuId,
+          kycId: kycId,
         }),
       });
 
@@ -65,9 +66,9 @@ const ApplicationPage = () => {
       console.log("job:", job);
       if (status == "approve") {
         if (job == "保母") {
-          changeRichMenu("richmenu-3adb9975aee0c695e08c99ef572d4008");
+          changeRichMenu("richmenu-3adb9975aee0c695e08c99ef572d4008",id);
         } else {
-          changeRichMenu("richmenu-48f0c719cfbfc92dd6ea5b8ce10b6cb3");
+          changeRichMenu("richmenu-48f0c719cfbfc92dd6ea5b8ce10b6cb3",id);
         }
       }
       //window.location.reload();
