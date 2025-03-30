@@ -17,8 +17,9 @@ export default async function handler(req, res) {
 
     try {
       const query = `
-        SELECT member.id, member.kyc_id
+        SELECT member.id, member.kyc_id,nanny.id as nanny_id
         FROM member
+        Left join nanny on member.id = nanny.memberid::bigint
         WHERE member.line_id = $1;
       `;
 

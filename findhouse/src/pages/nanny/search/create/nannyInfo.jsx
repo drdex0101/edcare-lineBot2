@@ -30,18 +30,19 @@ const ApplicationPage = () => {
   const [message, setMessage] = useState("");
   const [uploadedImages, setUploadedImages] = useState([]); // State to track uploaded images
   const [uploadedEnvironmentImages, setUploadedEnvironmentImages] = useState(
-    [],
+    []
   ); // State to track uploaded images
-  const [selectedCareType, setSelectedCareType] = useState(() => nannyInfo?.scenario || "home");
+  const [selectedCareType, setSelectedCareType] = useState(
+    () => nannyInfo?.scenario || "home"
+  );
   const [address, setAddress] = useState("");
   const [introduction, setIntroduction] = useState("");
   const [selectedAddress, setSelectedAddress] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { careData, setCareData} = useStore();
+  const { careData, setCareData } = useStore();
   const [kyc_id, setKyc_id] = useState(null);
   const [age, setAge] = useState(0);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
 
   const handleDotClick = (index) => {
     setCurrentImageIndex(index);
@@ -67,28 +68,31 @@ const ApplicationPage = () => {
       setSelectedCareType(nannyInfo.scenario || "");
       setAddress(nannyInfo.servicelocation?.[0] || "");
       setIntroduction(nannyInfo.introduction || []);
-  
-      if (Array.isArray(nannyInfo.environmentpic) && nannyInfo.environmentpic.length > 0) {
+
+      if (
+        Array.isArray(nannyInfo.environmentpic) &&
+        nannyInfo.environmentpic.length > 0
+      ) {
         setUploadedImages(nannyInfo.environmentpic); // 保存 uploadId 陣列
-  
+
         // 用 Promise.all 批量取回 URL
-        Promise.all(nannyInfo.environmentpic.map(id => getUrl(id)))
-          .then(urls => {
+        Promise.all(nannyInfo.environmentpic.map((id) => getUrl(id)))
+          .then((urls) => {
             setUploadedEnvironmentImages(urls); // 保存所有圖片網址
           })
-          .catch(error => {
+          .catch((error) => {
             console.error("Error loading environment images:", error);
           });
       }
-  
+
       if (nannyInfo.uploadid) {
         setHeadIcon(nannyInfo.uploadid);
         getUrl(nannyInfo.uploadid)
-          .then(url => setHeadIconUrl(url))
-          .catch(error => console.error("Error fetching head icon:", error));
+          .then((url) => setHeadIconUrl(url))
+          .catch((error) => console.error("Error fetching head icon:", error));
       }
     }
-  }, [nannyInfo]);  
+  }, [nannyInfo]);
 
   useEffect(() => {
     const checkMemberExistence = async () => {
@@ -120,7 +124,11 @@ const ApplicationPage = () => {
       scenario: selectedCareType,
       environmentPic: uploadedImages,
       serviceLocation:
-        selectedCareType === "home" ? [address] : selectedAddress,
+        careData?.care_type === "suddenly"
+          ? ['']
+          : selectedCareType === "home"
+          ? [address]
+          : selectedAddress,
       service: Object.keys(switchStates).filter((key) => switchStates[key]),
       score: nannyInfo ? nannyInfo.score : "",
       isShow: true,
@@ -129,7 +137,7 @@ const ApplicationPage = () => {
       introduction: introduction,
       nannyId: nannyInfo ? nannyInfo.nanny_id : null,
       careTypeId: careData.id,
-      uploadId: headIcon
+      uploadId: headIcon,
     };
 
     // 必填欄位列表
@@ -233,12 +241,14 @@ const ApplicationPage = () => {
         ]);
       } else {
         setHeadIcon(uploadId);
-        getUrl(uploadId).then(url => {
-          console.log("Image URL:", url);
-          setHeadIconUrl(url);
-        }).catch(error => {
-          console.error("Error fetching URL:", error);
-        });
+        getUrl(uploadId)
+          .then((url) => {
+            console.log("Image URL:", url);
+            setHeadIconUrl(url);
+          })
+          .catch((error) => {
+            console.error("Error fetching URL:", error);
+          });
       }
 
       if (result.success) {
@@ -383,59 +393,75 @@ const ApplicationPage = () => {
               id="file-input"
             />
             <label htmlFor="file-input" style={styles.avatorLayout}>
-                {headIconUrl ? (
-                  <img
-                    src={headIconUrl}
-                    alt="Uploaded avatar"
-                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              {headIconUrl ? (
+                <img
+                  src={headIconUrl}
+                  alt="Uploaded avatar"
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+              ) : (
+                <img
+                  src={"/headIconNanny.png"}
+                  alt="Uploaded avatar"
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+              )}
+              <div style={styles.cameraIcon}>
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M12 15.2C13.7673 15.2 15.2 13.7673 15.2 12C15.2 10.2327 13.7673 8.8 12 8.8C10.2327 8.8 8.8 10.2327 8.8 12C8.8 13.7673 10.2327 15.2 12 15.2Z"
+                    fill="white"
                   />
-                ) : (
-                  <img
-                    src={"/headIconNanny.png"}
-                    alt="Uploaded avatar"
-                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  <path
+                    d="M9 3L7.17 5H4C2.9 5 2 5.9 2 7V19C2 20.1 2.9 21 4 21H20C21.1 21 22 20.1 22 19V7C22 5.9 21.1 5 20 5H16.83L15 3H9ZM12 17C9.24 17 7 14.76 7 12C7 9.24 9.24 7 12 7C14.76 7 17 9.24 17 12C17 14.76 14.76 17 12 17Z"
+                    fill="white"
                   />
-                )}
-                <div style={styles.cameraIcon}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 15.2C13.7673 15.2 15.2 13.7673 15.2 12C15.2 10.2327 13.7673 8.8 12 8.8C10.2327 8.8 8.8 10.2327 8.8 12C8.8 13.7673 10.2327 15.2 12 15.2Z" fill="white"/>
-                    <path d="M9 3L7.17 5H4C2.9 5 2 5.9 2 7V19C2 20.1 2.9 21 4 21H20C21.1 21 22 20.1 22 19V7C22 5.9 21.1 5 20 5H16.83L15 3H9ZM12 17C9.24 17 7 14.76 7 12C7 9.24 9.24 7 12 7C14.76 7 17 9.24 17 12C17 14.76 14.76 17 12 17Z" fill="white"/>
-                  </svg>
-                </div>
+                </svg>
+              </div>
             </label>
           </div>
 
           <div style={styles.checkBoxLayout}>
-            <input
-              type="radio"
-              name="careType"
-              value="home"
-              checked={selectedCareType === "home"}
-              onChange={handleCareTypeChange}
-              style={{
-                ...styles.radioButton,
-                ...(selectedCareType === "home" &&
-                  styles.radioButtonChecked),
-              }}
-            />{" "}
-            在宅托育
-            <input
-              type="radio"
-              name="careType"
-              value="toHome"
-              checked={selectedCareType === "toHome"}
-              onChange={handleCareTypeChange}
-              style={{
-                ...styles.radioButton,
-                ...(selectedCareType === "toHome" &&
-                  styles.radioButtonChecked),
-              }}
-            />{" "}
-            到宅托育
+            {careData?.care_type === "longTern" && (
+              <>
+                <input
+                  type="radio"
+                  name="careType"
+                  value="home"
+                  checked={selectedCareType === "home"}
+                  onChange={handleCareTypeChange}
+                  style={{
+                    ...styles.radioButton,
+                    ...(selectedCareType === "home" &&
+                      styles.radioButtonChecked),
+                  }}
+                />
+                在宅托育
+                <input
+                  type="radio"
+                  name="careType"
+                  value="toHome"
+                  checked={selectedCareType === "toHome"}
+                  onChange={handleCareTypeChange}
+                  style={{
+                    ...styles.radioButton,
+                    ...(selectedCareType === "toHome" &&
+                      styles.radioButtonChecked),
+                  }}
+                />
+                到宅托育
+              </>
+            )}
           </div>
 
           <div style={styles.buttonLayout}>
-            {selectedCareType === "home" && (
+            {careData?.care_type === "suddenly" || selectedCareType === "home" && (
               <TextField
                 required
                 id="address"
@@ -491,8 +517,7 @@ const ApplicationPage = () => {
                     const values = e.target.value;
                     if (values.length <= 5) {
                       setSelectedAddress(values);
-                    }
-                    else {
+                    } else {
                       Swal.fire({
                         icon: "error",
                         title: "最多只能選擇5個地區",
@@ -614,9 +639,7 @@ const ApplicationPage = () => {
                   >
                     {uploadedEnvironmentImages.length > 0 ? (
                       <img
-                        src={
-                          uploadedEnvironmentImages[currentImageIndex]
-                        }
+                        src={uploadedEnvironmentImages[currentImageIndex]}
                         alt="Latest uploaded environment"
                         style={{
                           width: "100%",
@@ -630,19 +653,19 @@ const ApplicationPage = () => {
                   </label>
                   <span
                     style={styles.imgCountLayout}
-                  >{`${currentImageIndex+1 }/6`}</span>
+                  >{`${currentImageIndex + 1}/6`}</span>
                 </div>
                 {uploadedEnvironmentImages.length > 0 && (
                   <div className="dotsContainer">
                     {uploadedEnvironmentImages.map((_, index) => (
-                    <span
-                      key={index}
-                      className={`dot ${index === currentImageIndex ? "active" : ""}`}
-                      onClick={() => handleDotClick(index)}
-                    ></span>
-                  ))}
-                </div>
-              )}
+                      <span
+                        key={index}
+                        className={`dot ${index === currentImageIndex ? "active" : ""}`}
+                        onClick={() => handleDotClick(index)}
+                      ></span>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 

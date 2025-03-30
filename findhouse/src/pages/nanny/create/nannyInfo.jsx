@@ -416,6 +416,19 @@ const ApplicationPage = () => {
           <div style={styles.checkBoxLayout}>
             {careData?.care_type === "longTern" && (
               <>
+              <input
+                  type="radio"
+                  name="careType"
+                  value="home"
+                  checked={selectedCareType === "home"}
+                  onChange={handleCareTypeChange}
+                  style={{
+                    ...styles.radioButton,
+                    ...(selectedCareType === "home" &&
+                      styles.radioButtonChecked),
+                  }}
+                />
+                在宅托育
                 <input
                   type="radio"
                   name="careType"
@@ -434,7 +447,7 @@ const ApplicationPage = () => {
           </div>
 
           <div style={styles.buttonLayout}>
-            {careData?.care_type === "suddenly" && (
+            {careData?.care_type === "suddenly" || selectedCareType === "home" && (
               <TextField
                 required
                 id="address"

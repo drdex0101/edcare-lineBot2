@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import useStore from "../../lib/store";
 const ApplicationPage = () => {
@@ -13,6 +13,19 @@ const ApplicationPage = () => {
   const {orderId, setOrderId} = useStore();
   const {item, setItem} = useStore();
   const {memberId, setMemberId} = useStore();
+  const [scrolledToBottom, setScrolledToBottom] = useState(false);
+  const contentRef = useRef(null);
+
+  const handleScroll = () => {
+    const el = contentRef.current;
+    if (el) {
+      const isBottom =
+        el.scrollHeight - el.scrollTop <= el.clientHeight + 5; // 允許誤差5px
+      if (isBottom) {
+        setScrolledToBottom(true);
+      }
+    }
+  };
   
   const handleNextClick = () => {
     if (!isChecked) {
@@ -71,8 +84,12 @@ const ApplicationPage = () => {
           </div>
           <div style={styles.lawLayout}>
             <div style={styles.topTitle}>個資蒐集、處理及利用同意書</div>
-            <div style={styles.mainContent}>
-            雲林縣社會局(以下簡稱本局)為遵守個人資料保護法規定，並保障當事人之權利，依法告知下列事項：
+            <div
+          style={styles.mainContentScroll}
+          ref={contentRef}
+          onScroll={handleScroll}
+        >
+           雲林縣社會局(以下簡稱本局)為遵守個人資料保護法規定，並保障當事人之權利，依法告知下列事項：
             蒐集個人資料之目的：為辦理線上媒合病患、年長者及其家屬所需之就醫或回診接送、陪診之服務，於符合個人資料保護法之相關規定下，正當蒐集、處理及利用之相關個人資料。
             蒐集之個人資料類別：
             C001辨識個人者：例如姓名、職稱、住址、工作地址、住家電話號碼、行動電話、通訊及戶籍地址、相片、電子郵遞地址及其他任何可辨識資料本人者等。
@@ -94,15 +111,17 @@ const ApplicationPage = () => {
             台端同意提供個人資料之聲明：
             台端已充分了解上述告知事項、權利行使事項及注意事項之內容，且本局、關係企業得依法變更或新增該內容，並以口頭、書面、電話、簡訊、電子郵件、傳真、電子文件、新聞雜誌、政府公報等方式或網站公告方式供台端知悉及查閱。
             台端謹同意本局、關係企業得依上述告知事項，對台端之個人資料為蒐集、處理及利用。
-            </div>
-            <div style={styles.checkBox}>
-              <input
-                type="checkbox"
-                checked={isChecked}
-                onChange={() => setIsChecked(!isChecked)} // 更新复选框状态
-              ></input>
-              <span style={styles.inputFont}>我上述之合約內容</span>
-            </div>
+        </div>
+            {scrolledToBottom && (
+                <div style={styles.checkBox}>
+                  <input
+                    type="checkbox"
+                    checked={isChecked}
+                    onChange={() => setIsChecked(!isChecked)}
+                  />
+                  <span style={styles.inputFont}>我同意上述之合約內容</span>
+                </div>
+              )}
           </div>
           <div style={styles.buttonLayout}>
             <button style={styles.nextBtn} onClick={handleNextClick}>
@@ -156,6 +175,16 @@ const styles = {
     fontStyle: "normal",
     fontWeight: "400",
     lineHeight: "normal",
+  },
+  mainContentScroll: {
+    overflowY: "auto",
+    flex: 1,
+    padding: "10px",
+    width: "100%",
+    maxHeight: "440px", // 固定高度
+    marginBottom: "10px",
+    fontSize: "11px",
+    lineHeight: "1.4",
   },
   topTitle: {
     color: "var(---Surface-Black-25, #252525)",
