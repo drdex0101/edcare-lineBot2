@@ -110,7 +110,7 @@ const ApplicationPage = () => {
       environmentPic: uploadedImages,
       serviceLocation:
         careData?.care_type === "suddenly"
-          ? []
+          ? ['']
           : selectedCareType === "home"
           ? [address]
           : selectedAddress,
