@@ -461,7 +461,7 @@ const ApplicationPage = () => {
           </div>
 
           <div style={styles.buttonLayout}>
-            {careData?.care_type === "suddenly" || selectedCareType === "home" && (
+            {(careData?.care_type === "suddenly" || selectedCareType === "home") && (
               <TextField
                 required
                 id="address"
