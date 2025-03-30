@@ -519,7 +519,7 @@ background: #FFF;
     background: var(---Primary-Primary, #E3838E);
     box-shadow: -1px 6px 12px -6px rgba(186, 186, 186, 0.25), 0px 8px 24px -4px rgba(186, 186, 186, 0.25);
     border:none;
-    width:100%;
+    width:300px;
     color:#fff
   }
 

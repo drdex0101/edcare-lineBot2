@@ -29,8 +29,8 @@ export default async function handler(req, res) {
       const query = `
        SELECT 
         o.id,
-        o.nannyId, 
-        o.status, 
+        p.nanny_id, 
+        p.status, 
         o.created_ts, 
         o.update_ts, 
         o.choosetype, 
@@ -63,6 +63,8 @@ export default async function handler(req, res) {
         nanny n ON o.nannyid = n.id
     LEFT JOIN 
         kyc_info k ON m.kyc_id::bigint = k.id
+     LEFT JOIN 
+        pair p ON o.id = p.order_id
     WHERE 
         o.id = $1
       `;

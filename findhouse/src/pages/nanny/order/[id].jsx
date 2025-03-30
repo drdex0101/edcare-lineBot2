@@ -7,6 +7,7 @@ import "../css/profile.css";
 import "./order.css";
 import Loading from "../../../components/base/Loading";
 import useStore from "../../../lib/store";
+import Swal from "sweetalert2";
 export default function ProfilePage() {
   const router = useRouter();
   const { id } = router.query;
@@ -536,14 +537,16 @@ export default function ProfilePage() {
                   <span>{orderInfo.intro}</span>
                 </div>
               </div>
+              <div style={{backgroundColor:"#F3CCD4",display:"flex", justifyContent:"center", alignItems:"center"}}>
+                  <button
+                    className="submitButton"
+                    onClick={handleBookingClick}
+                  disabled={isMatching}
+                >
+                    + 馬上預約
+                  </button>
+              </div>
             </div>
-            <button
-              className="submitButton"
-              onClick={handleBookingClick}
-              disabled={isMatching}
-            >
-              + 馬上預約
-            </button>
           </div>
         </div>
       </div>
