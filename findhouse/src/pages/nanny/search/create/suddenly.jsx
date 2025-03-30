@@ -24,6 +24,12 @@ const ApplicationPage = () => {
         title: '開始日期不能晚於結束日期。',
       });
       return;
+    }else if (dayjs(selectedRange.startDate).isBefore(todayPlus3)) {
+      Swal.fire({
+        icon: 'error',
+        title: '開始日期需至少在三天後。',
+      });
+      return;
     }
     await createSuddenlyRecord();
     router.push("/nanny/search/create/nannyInfo"); // 替换 '/next-page' 为你想要跳转的路径

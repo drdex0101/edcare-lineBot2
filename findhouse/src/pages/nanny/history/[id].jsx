@@ -14,6 +14,22 @@ export default function HistoryId() {
     fetchOrderInfo(id);
   }, [router.isReady]);
 
+  const orderStatusSteps = [
+    { key: "create", label: "媒合中" },
+    { key: "matchByParent" || "matchByNanny", label: "預約中" },
+    { key: "signing", label: "簽約中" },
+    { key: "onGoing", label: "合約履行中" },
+    { key: "finish", label: "已完成" },
+    { key: "cancel", label: "已取消" },
+  ];
+
+  // 找到目前 status 在列表中的索引
+  let currentIndex = orderStatusSteps.findIndex((step) => step.key === currentStatus);
+  // 如果找不到，就預設為第一個狀態 "媒合中"
+  if (currentIndex === -1) {
+    currentIndex = 0;
+  }
+
   const fetchOrderInfo = async (id) => {
     setIsLoading(true);
     try {
@@ -144,26 +160,18 @@ export default function HistoryId() {
           </div>
         )}
 
-        <div className="status-layout">
-          <span className="title-font">訂單狀態</span>
-          <div className="status-process-layout">
-            <div className="status-process-on">
-              <span className="status-process-font-on">媒合中</span>
+          <div className="status-layout">
+              <span className="title-font">訂單狀態</span>
+              <div className="status-process-layout">
+                {orderStatusSteps.map((step, index) => (
+                  <div key={step.key} className={index <= currentIndex ? "status-process-on" : "status-process-off"}>
+                    <span className={index <= currentIndex ? "status-process-font-on" : "status-process-font-off"}>
+                      {step.label}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="status-process-off">
-              <span className="status-process-font-off">預約中</span>
-            </div>
-            <div className="status-process-off">
-              <span className="status-process-font-off">簽約中</span>
-            </div>
-            <div className="status-process-off">
-              <span className="status-process-font-off">合約履行中</span>
-            </div>
-            <div className="status-process-off">
-              <span className="status-process-font-off">已完成</span>
-            </div>
-          </div>
-        </div>
 
         {orderInfo && (
           <div className="about-nanny">

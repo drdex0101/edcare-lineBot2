@@ -14,7 +14,7 @@ const ApplicationPage = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        richMenuId: "richmenu-5a3e70f73ef6a2ad2a2380320e46b9f8",
+        richMenuId: "richmenu-48f0c719cfbfc92dd6ea5b8ce10b6cb3",
       }),
     })
     router.push("/parent/ignoreKyc"); // 替换 '/next-page' 为你想要跳转的路径

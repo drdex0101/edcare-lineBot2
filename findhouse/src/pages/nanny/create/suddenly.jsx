@@ -12,6 +12,7 @@ import Swal from "sweetalert2";
 const ApplicationPage = () => {
   const router = useRouter();
   const { careData, setCareData } = useStore();
+  const todayPlus3 = dayjs().add(3, 'day').startOf('day');
   const handleNextClick = async () => {
     if (!selectedRange.startDate || !selectedRange.endDate) {
       Swal.fire({
@@ -23,6 +24,12 @@ const ApplicationPage = () => {
       Swal.fire({
         icon: 'error',
         title: '開始日期不能晚於結束日期。',
+      });
+      return;
+    }else if (dayjs(selectedRange.startDate).isBefore(todayPlus3)) {
+      Swal.fire({
+        icon: 'error',
+        title: '開始日期需至少在三天後。',
       });
       return;
     }

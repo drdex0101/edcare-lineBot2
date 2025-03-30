@@ -47,7 +47,7 @@ const ApplicationPage = () => {
     } else if (!haveKyc) {
       router.push("/nanny/upload");
     } else if (!haveNanny) {
-      router.push("/nanny/create");
+      router.push("/nanny/create/choose");
     }
   };
 
