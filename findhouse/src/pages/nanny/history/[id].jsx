@@ -23,6 +23,9 @@ export default function HistoryId() {
     { key: "cancel", label: "已取消" },
   ];
 
+  // 確保 orderInfo 存在
+  let currentStatus = orderInfo?.status || "create";
+
   // 找到目前 status 在列表中的索引
   let currentIndex = orderStatusSteps.findIndex((step) => step.key === currentStatus);
   // 如果找不到，就預設為第一個狀態 "媒合中"
