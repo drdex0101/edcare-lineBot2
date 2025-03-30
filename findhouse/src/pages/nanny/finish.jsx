@@ -21,20 +21,11 @@ const ApplicationPage = () => {
       if (data.member[0].kyc_id) {
         setHaveKyc(true);
       }
-    } catch (error) {
-      console.error("Error fetching member data:", error);
-    }
-  };
-
-  const fetchNanny = async () => {
-    try {
-      const response = await fetch("/api/nanny/getNannyProfile");
-      const data = await response.json();
-      if (data.nannyProfile.length > 0) {
+      if (data.member[0].nanny_id) {
         setHaveNanny(true);
       }
     } catch (error) {
-      console.error("Error fetching nanny data:", error);
+      console.error("Error fetching member data:", error);
     }
   };
 
@@ -42,12 +33,11 @@ const ApplicationPage = () => {
     const fetchAllData = async () => {
       setIsLoading(true);
       try {
-        await Promise.all([fetchData(), fetchNanny()]);
+        await Promise.all([fetchData()]);
       } finally {
         setIsLoading(false);
       }
     };
-    
     fetchAllData();
   }, []);
 
