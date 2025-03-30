@@ -61,6 +61,7 @@ export default async function handler(req, res) {
         o.caretypeid,
         n.score,
         c.scenario,
+        p.order_id,
         COUNT(*) OVER() AS totalCount
       FROM 
         pair p

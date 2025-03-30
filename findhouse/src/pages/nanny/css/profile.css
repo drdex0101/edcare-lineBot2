@@ -170,12 +170,12 @@ background: #FFF;
     width: 7px;
     height: 7px;
     flex-shrink: 0;
-    background-color: var(---Surface-LT, #F2F2F2);
+    background-color: var(---Surface-LT, #b7b4b4);
     border-radius: 50%;
   } 
 
   .dot.active {
-    background-color: #CCC;
+    background-color: #cc9d9d;
   }
 
   .serviceTimeContainer {

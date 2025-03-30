@@ -105,11 +105,15 @@ const ApplicationPage = () => {
       experienment: nannyInfo ? nannyInfo.experienment : null,
       age: nannyInfo ? nannyInfo.age : null,
       kidCount: nannyInfo ? nannyInfo.kidcount : null,
-      way: localStorage.getItem("way"),
-      scenario: selectedCareType,
+      way: careData?.care_type,
+      scenario: careData?.care_type === "suddenly" ? "在宅托育" : selectedCareType,
       environmentPic: uploadedImages,
       serviceLocation:
-        selectedCareType === "home" ? [address] : selectedAddress,
+        careData?.care_type === "suddenly"
+          ? "臨時托育"
+          : selectedCareType === "home"
+          ? [address]
+          : selectedAddress,
       service: Object.keys(switchStates).filter((key) => switchStates[key]),
       score: nannyInfo ? nannyInfo.score : "",
       isShow: true,
@@ -410,18 +414,6 @@ const ApplicationPage = () => {
           </div>
 
           <div style={styles.checkBoxLayout}>
-            <input
-              type="radio"
-              name="careType"
-              value="home"
-              checked={selectedCareType === "home"}
-              onChange={handleCareTypeChange}
-              style={{
-                ...styles.radioButton,
-                ...(selectedCareType === "home" && styles.radioButtonChecked),
-              }}
-            />
-            在宅托育
             {careData?.care_type === "longTern" && (
               <>
                 <input
@@ -442,7 +434,7 @@ const ApplicationPage = () => {
           </div>
 
           <div style={styles.buttonLayout}>
-            {selectedCareType === "home" && (
+            {careData?.care_type === "suddenly" && (
               <TextField
                 required
                 id="address"

@@ -50,7 +50,7 @@ export default function ProfilePage() {
 
   const getIsFavorite = async () => {
     const response = await fetch(
-      `/api/favorite/getIsFavorite?itemId=${id}&&type=${"nanny"}`,
+      `/api/favorite/getIsFavorite?itemId=${id}&&type=${"nanny"}`
     );
     const data = await response.json();
     if (data.favorite.length > 0) {
@@ -74,18 +74,18 @@ export default function ProfilePage() {
     let ageYears = today.getFullYear() - birthday.getFullYear(); // 計算年數
     let ageMonths = today.getMonth() - birthday.getMonth(); // 計算月數
     if (today.getDate() < birthday.getDate()) {
-        ageMonths--;
+      ageMonths--;
     }
     if (ageMonths < 0) {
-        ageYears--;
-        ageMonths += 12;
+      ageYears--;
+      ageMonths += 12;
     }
     if (ageYears < 1) {
-        return `${ageMonths}個月`;
+      return `${ageMonths}個月`;
     }
 
     return `${ageYears}歲${ageMonths}個月`;
-  }
+  };
 
   useEffect(() => {
     const fetchOrderInfo = async () => {
@@ -99,7 +99,10 @@ export default function ProfilePage() {
         setAge(calculateAge(data.orders[0].birthday));
         setOrderInfo(data.orders[0]);
         // 如果有環境照片，則獲取每張照片的URL
-        if (data.orders[0].environmentpic && data.orders[0].environmentpic.length > 0) {
+        if (
+          data.orders[0].environmentpic &&
+          data.orders[0].environmentpic.length > 0
+        ) {
           for (const picId of data.orders[0].environmentpic) {
             const response2 = await fetch(`/api/base/getImgUrl?id=${picId}`);
             const data2 = await response2.json();
@@ -109,7 +112,7 @@ export default function ProfilePage() {
         }
         if (data.orders[0].uploadid) {
           const response3 = await fetch(
-            `/api/base/getImgUrl?id=${data.orders[0].uploadid}`,
+            `/api/base/getImgUrl?id=${data.orders[0].uploadid}`
           );
           const data3 = await response3.json();
           setIconUrl(data3.url);
@@ -337,21 +340,20 @@ export default function ProfilePage() {
   const handleBooking = async () => {
     const response = await fetch(`/api/pair/create`, {
       method: "POST",
-      body: JSON.stringify({ id:0, orderId:id, status: "matchByNanny" }),
+      body: JSON.stringify({ id: 0, orderId: id, status: "matchByNanny" }),
       headers: {
         "Content-Type": "application/json",
       },
     });
     const data = await response.json();
     setIsModalOpen(false);
-    if (response.ok) {  
+    if (response.ok) {
       setIsBookingModalOpen(true);
       setIsMatching(true);
-    }
-    else {
+    } else {
       Swal.fire({
-        icon: 'error',
-        title: '已經建立配對，請選擇另一位',
+        icon: "error",
+        title: "已經建立配對，請選擇另一位",
       });
     }
   };
@@ -463,29 +465,32 @@ export default function ProfilePage() {
         </div>
         <div className="profile-location">
           <span className="location-subTitle">
-          {Array.isArray(orderInfo.location) && orderInfo.location.length > 0
-            ? orderInfo.location.join("、")
-            : "未填寫"}
+            {Array.isArray(orderInfo.location) && orderInfo.location.length > 0
+              ? orderInfo.location.join("、")
+              : "未填寫"}
           </span>
         </div>
-
-        <div style={{ width: "100%",marginBottom:"14px",padding:"10px 40px" }}>
+        <div
+          style={{ width: "100%", marginBottom: "14px", padding: "10px 40px" }}
+        >
           {orderInfo.choosetype === "longTern" && (
-            <ServiceSchedule weekdays={orderInfo.weekdays} care_time={orderInfo.care_time}></ServiceSchedule>
+            <ServiceSchedule
+              weekdays={orderInfo.weekdays}
+              care_time={orderInfo.care_time}
+            ></ServiceSchedule>
           )}
           {orderInfo.choosetype === "suddenly" && (
-           <CalendarRangePicker
-            startDate={orderInfo.start_date}
-            endDate={orderInfo.end_date}
-            locale="zh-TW"
-            styles={{
-              calendar: { maxWidth: "400px" },
-              day: { width: "50px", height: "50px" },
-            }}
-          />
+            <CalendarRangePicker
+              startDate={orderInfo.start_date}
+              endDate={orderInfo.end_date}
+              locale="zh-TW"
+              styles={{
+                calendar: { maxWidth: "400px" },
+                day: { width: "50px", height: "50px" },
+              }}
+            />
           )}
         </div>
-
         {/* Icon Navigation */}
         <div style={{ backgroundColor: "#fff", border: "none" }}>
           <div
@@ -522,7 +527,6 @@ export default function ProfilePage() {
                 </div>
               ))}
             </div>
-
           </div>
           <div>
             <div style={{ backgroundColor: "#F8ECEC" }}>
@@ -531,11 +535,15 @@ export default function ProfilePage() {
                   <span className="imgFont">托育理念</span>
                   <span>{orderInfo.intro}</span>
                 </div>
-                <button className="submitButton" onClick={handleBookingClick} disabled={isMatching}>
-                  + 馬上預約
-                </button>
               </div>
             </div>
+            <button
+              className="submitButton"
+              onClick={handleBookingClick}
+              disabled={isMatching}
+            >
+              + 馬上預約
+            </button>
           </div>
         </div>
       </div>
@@ -609,7 +617,9 @@ export default function ProfilePage() {
             </button>
             <span className="bookingFont">預約成功！等待家長回覆...</span>
             <img src="/review.png" alt="check" />
-            <button className="bookingBtn" onClick={toSearch}>點我前往查看回覆</button>
+            <button className="bookingBtn" onClick={toSearch}>
+              點我前往查看回覆
+            </button>
           </div>
         </div>
       )}
