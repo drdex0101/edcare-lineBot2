@@ -124,7 +124,7 @@ const ApplicationPage = () => {
                 <div className="flexColumnSecond">
                   <span className="secondTitle">我可以修改資料嗎？</span>
                   <span className="secondSubTitle">
-                    可以的，您送出資料後，可以在此頁進入修改申請資料頁面，若您有修改手機號碼，必須重新驗證。
+                  可以的，您送出資料後，可以在此頁進入修改申請資料頁面，若您有修改身份驗證，必須重新驗證。
                   </span>
                 </div>
               </div>

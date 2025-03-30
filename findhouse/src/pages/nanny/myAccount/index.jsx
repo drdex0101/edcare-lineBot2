@@ -18,6 +18,7 @@ export default function DetailsPage() {
   const [page, setPage] = useState(1);
   const [keywords, setKeywords] = useState("");
   const [selectedSort, setSelectedSort] = useState(null);
+  const [pageSize, setPageSize] = useState(5);
 
   const fetchHistoryList = async () => {
     setIsLoading(true);
@@ -31,10 +32,22 @@ export default function DetailsPage() {
   };
 
   const fetchFavoriteList = async () => {
-    const response = await fetch("/api/favorite/getFavoriteList?page=1&pageSize=4");
+    const response = await fetch(
+      `/api/favorite/getFavoriteList?page=${page}&pageSize=${pageSize}&sort=${selectedSort}&keyword=${keywords}&type=nanny`,
+      {
+        method: "GET",
+        headers: {
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache",
+        },
+      }
+    );
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
     const data = await response.json();
     setFavoriteList(data.favorite);
-    setFavoriteCount(data.favorite?.length);
+    setFavoriteCount(data.favorite?.length || 0);
     setIsLoading(false);
   };
 
