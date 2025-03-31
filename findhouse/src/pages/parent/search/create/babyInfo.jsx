@@ -213,8 +213,6 @@ const ApplicationPage = () => {
             <div style={styles.rollerActive}></div>
             <div style={styles.rollerActive}></div>
             <div style={styles.rollerActive}></div>
-            <div style={styles.rollerActive}></div>
-            <div style={styles.roller}></div>
           </div>
           <div style={styles.titleLayout}>
             <span style={styles.subTitle}>托育資料填寫</span>

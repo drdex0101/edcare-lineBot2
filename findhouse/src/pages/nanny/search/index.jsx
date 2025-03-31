@@ -3,7 +3,6 @@ import "./matching.css";
 import "./profile.css";
 import Pagination from "../../../components/base/pagenation";
 import SearchBar from "../../../components/base/SearchBar";
-import OrderCarousel from "../../../components/nanny/search/OrderCarousel";
 import { useRouter } from "next/router";
 import useStore from "../../../lib/store";
 import Loading from "../../../components/base/Loading";
