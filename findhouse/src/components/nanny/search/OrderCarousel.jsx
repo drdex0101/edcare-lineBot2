@@ -98,6 +98,7 @@ const OrderCarousel = ({ orderList, handleNextClick = () => { }, itemsPerPage = 
         const newIndex = Math.round(scrollRef.current.scrollLeft / scrollRef.current.offsetWidth) + 1;
         setOrderCurrentPage(newIndex);
         setIsShow(orderList[newIndex - 2]?.isshow);
+        setOrderId(orderList[newIndex - 2]?.id);
         setIsShowMap((prevMap) => {
           const newMap = { ...prevMap };
           orderList.forEach((order) => {
