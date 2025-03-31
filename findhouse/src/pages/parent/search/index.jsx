@@ -116,7 +116,7 @@ export default function HistoryPage() {
       const data = await response.json();
       if (data.orders.length > 0) {
         setOrderInfo(data.orders);
-        setOrderId(data.orders[0].id);
+        //setOrderId(data.orders[0].id);
         setItem(data.orders[0]);
         setCurrentOrderCareType(data.orders[0].choosetype);
         const careTypeResponse = await fetch(
@@ -158,7 +158,9 @@ export default function HistoryPage() {
           await fetchNannyInfoList(page-1, pageSize, keywords);
           await fetchOrderInfo();
           setIsLoading(true);
-          setIsShow(orderInfo.isShow);
+          if (page >0) {
+            setIsShow(orderInfo.isShow);
+          }
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -343,7 +345,7 @@ export default function HistoryPage() {
                     style={styles.nannyItem}
                     onClick={() => {
                       if (nanny.id) {
-                        if (!isShow) {
+                        if (!isShow && orderId != null) {
                           Swal.fire({
                             icon: 'error',
                             title: '無訂單或是當前訂單已隱藏',

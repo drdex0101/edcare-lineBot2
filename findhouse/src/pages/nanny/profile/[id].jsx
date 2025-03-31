@@ -350,6 +350,14 @@ export default function ProfilePage() {
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
 
   const handleBooking = async () => {
+    if (orderId == null) {
+      setIsModalOpen(false);
+      Swal.fire({
+        icon: 'error',
+        title: '請先建立訂單。',
+      });
+      return;
+    }
     if (kycId == 0) {
       setIsModalOpen(false);
       Swal.fire({
