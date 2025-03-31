@@ -159,8 +159,11 @@ export default function HistoryId() {
                   建立時間：{orderInfo.created_ts.slice(0, 10)}
                 </span>
                 <div className="about-baby-img-layout">
-                  <div className="about-baby-img-background">
-                    <img src="/orderCreate.png" alt="" />
+                  <div className={`order-icon ${orderInfo.gender === "female" ? "female" : "male"}`}>
+                      <img
+                        src={"/orderCreate.png"}
+                        alt="Nanny Icon"
+                      />
                   </div>
                   <span>{orderInfo.nickname}</span>
                 </div>

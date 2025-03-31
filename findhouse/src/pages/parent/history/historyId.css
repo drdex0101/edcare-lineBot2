@@ -14,6 +14,31 @@
     z-index: 1000;
 }
 
+.order-icon.female {
+    display: flex;
+    width: 130px;
+    height: 130px;
+    padding: 10px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    background-color: #F3CCD4;
+    border-radius: 50%;
+  }
+  .order-icon.male {
+    display: flex;
+    width: 130px;
+    height: 130px;
+    padding: 10px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    background-color: #BCE8F7;
+    border-radius: 50%;
+  }
+
 .history-header {
     display: flex;
     height: 50px;
