@@ -8,6 +8,7 @@ import "../css/profile.css";
 import Loading from "../../../components/base/Loading";
 import useStore from "../../../lib/store";
 import Swal from "sweetalert2";
+
 export default function ProfilePage() {
   const router = useRouter();
   const { id } = router.query;
@@ -22,6 +23,7 @@ export default function ProfilePage() {
   const [isMatching, setIsMatching] = useState(false);
   const [kycId, setKycId] = useState(0);
   const [age, setAge] = useState(0);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   const handleSvgClick = async () => {
     try {
@@ -390,6 +392,75 @@ export default function ProfilePage() {
     setIsBookingModalOpen(false);
   };
 
+  const ImagePreview = ({ src, isOpen, onClose }) => {
+    if (!isOpen) return null;
+
+    return (
+      <div 
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000,
+          cursor: 'pointer',
+        }}
+        onClick={onClose}
+      >
+        <div style={{ padding: '20px', maxWidth: '90vw', maxHeight: '90vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <img 
+            src={src} 
+            alt="Preview" 
+            style={{
+              maxWidth: '100%',
+              maxHeight: '90vh',
+              objectFit: 'contain',
+              borderRadius: '8px',
+              cursor: 'default',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      </div>
+    );
+  };
+
+  const styles = {
+    previewOverlay: {
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 1000,
+      cursor: 'pointer',
+    },
+    previewContainer: {
+      padding: '20px',
+      maxWidth: '90vw',
+      maxHeight: '90vh',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    previewImage: {
+      maxWidth: '100%',
+      maxHeight: '90vh',
+      objectFit: 'contain',
+      borderRadius: '8px',
+      cursor: 'default',
+    },
+  };
+
   return (
     <div className="container">
       {isLoading && (
@@ -440,8 +511,14 @@ export default function ProfilePage() {
           className="profilePic" 
           src={iconUrl || "/nannyIcon.jpg"} 
           alt="Profile" 
+          onClick={() => setIsPreviewOpen(true)}
+          style={{ cursor: 'pointer' }}
         />{" "}
-        {/* 頭貼圓形 */}
+        <ImagePreview 
+          src={iconUrl || "/nannyIcon.jpg"}
+          isOpen={isPreviewOpen}
+          onClose={() => setIsPreviewOpen(false)}
+        />
         <h2 className="profileName">{nannyInfo.name?.[0]}保母</h2>
         <div className="rating">
           <RatingComponent score={nannyInfo.score} />

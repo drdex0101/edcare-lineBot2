@@ -72,6 +72,7 @@ const ApplicationPage = () => {
               <img src="/ID-f.png" alt="Description of image F" />
             </div>
           </div>
+          <span>進行身份驗證需要上傳身分證，如不慎關閉畫面資料不會緩存</span>
           <div style={styles.buttonLayout}>
             <button style={styles.nextBtn} onClick={handleNextClick}>
               <svg
