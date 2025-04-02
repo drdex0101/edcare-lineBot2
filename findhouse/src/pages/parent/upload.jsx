@@ -12,7 +12,10 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import Loading from "../../components/base/Loading";
 import useStore from "../../lib/store";
 import dayjs from 'dayjs';
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
+import 'dayjs/locale/zh-tw'; // or 'zh-cn' 根據你想要用的語系
+
+dayjs.locale('zh-tw'); // 設定為繁體中文
 
 const ApplicationPage = () => {
   const router = useRouter();
