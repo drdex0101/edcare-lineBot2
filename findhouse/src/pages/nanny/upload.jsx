@@ -11,8 +11,11 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import Loading from "../../components/base/Loading";
 import useStore from "../../lib/store";
-import dayjs from 'dayjs';
-import Swal from 'sweetalert2'
+import dayjs from "dayjs";
+import Swal from "sweetalert2";
+import "dayjs/locale/zh-tw"; // or 'zh-cn' 根據你想要用的語系
+
+dayjs.locale("zh-tw"); // 設定為繁體中文
 
 const ApplicationPage = () => {
   const router = useRouter();
@@ -29,26 +32,26 @@ const ApplicationPage = () => {
   const { kycData, setKycData } = useStore();
 
   // 计算最大可选日期，即当前日期减去12年
-  const maxSelectableDate = dayjs().subtract(12, 'year');
+  const maxSelectableDate = dayjs().subtract(12, "year");
 
   // 新增表單資料的 state
   const [formData, setFormData] = useState({
-    name: '',
-    identityCard: '',
-    address: '',
-    communicateAddress: '',
-    welfareCertNo: ''
+    name: "",
+    identityCard: "",
+    address: "",
+    communicateAddress: "",
+    welfareCertNo: "",
   });
 
   // 當 kycData 載入時更新表單資料
   useEffect(() => {
     if (kycData) {
       setFormData({
-        name: kycData.name || '',
-        identityCard: kycData.identitycard || '',
-        address: kycData.address || '',
-        communicateAddress: kycData.communicateaddress || '',
-        welfareCertNo: kycData.welfarecertno || ''
+        name: kycData.name || "",
+        identityCard: kycData.identitycard || "",
+        address: kycData.address || "",
+        communicateAddress: kycData.communicateaddress || "",
+        welfareCertNo: kycData.welfarecertno || "",
       });
       setSelectedDate(kycData.birthday ? dayjs(kycData.birthday) : null);
       setGender(kycData.gender || "");
@@ -60,9 +63,9 @@ const ApplicationPage = () => {
   // 處理表單欄位變更
   const handleInputChange = (e) => {
     const { id, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [id]: value
+      [id]: value,
     }));
   };
 
@@ -87,13 +90,12 @@ const ApplicationPage = () => {
       setIsLoading(false);
       return; // 阻止表單提交
     }
-    
-  
+
     // 取得缺少的欄位
     const missingFields = Object.entries(requiredFields)
       .filter(([key]) => !formData[key] && !eval(key)) // 檢查 formData 和 state 變數
       .map(([_, label]) => label);
-  
+
     if (missingFields.length > 0) {
       Swal.fire({
         icon: "warning",
@@ -102,7 +104,7 @@ const ApplicationPage = () => {
       });
       setIsLoading(false);
       return; // 停止提交
-    }  
+    }
 
     const kycInfoData = {
       name: formData.name,
@@ -135,8 +137,8 @@ const ApplicationPage = () => {
           router.push("/nanny/create/choose");
         } catch (error) {
           Swal.fire({
-            icon: 'error',
-            title: '更新失敗，請重新嘗試。',
+            icon: "error",
+            title: "更新失敗，請重新嘗試。",
           });
           console.error("Error updating kyc info:", error);
           setIsLoading(false);
@@ -178,8 +180,8 @@ const ApplicationPage = () => {
     } catch (error) {
       setIsLoading(false);
       Swal.fire({
-        icon: 'error',
-        title: '申請失敗，請重新嘗試。',
+        icon: "error",
+        title: "申請失敗，請重新嘗試。",
       });
       console.error("Error creating member:", error);
     }
@@ -223,7 +225,7 @@ const ApplicationPage = () => {
       } else {
         setIsLoading(false);
         Swal.fire({
-          icon: 'error',
+          icon: "error",
           title: result.message,
         });
         if (type === "ID Front") {
@@ -236,7 +238,7 @@ const ApplicationPage = () => {
     } catch (error) {
       setIsLoading(false);
       Swal.fire({
-        icon: 'error',
+        icon: "error",
         title: error,
       });
       if (type === "ID Front") {
@@ -424,7 +426,7 @@ const ApplicationPage = () => {
               }}
             />
 
-            <FormControl required  fullWidth sx={{ alignSelf: "stretch" }}>
+            <FormControl required fullWidth sx={{ alignSelf: "stretch" }}>
               <InputLabel id="gender-label">性別</InputLabel>
               <Select
                 labelId="gender-label"
@@ -589,6 +591,8 @@ const ApplicationPage = () => {
               <span style={styles.mainCode}>證件照正面</span>
               <input
                 type="file"
+                accept="image/*"
+                capture="environment"
                 onChange={handleFileChange}
                 style={{ display: "none" }}
                 id="file-upload"
@@ -664,6 +668,8 @@ const ApplicationPage = () => {
               <span style={styles.mainCode}>證件照反面</span>
               <input
                 type="file"
+                accept="image/*"
+                capture="environment"
                 onChange={handleFileChangeBack}
                 style={{ display: "none" }}
                 id="file-backend"

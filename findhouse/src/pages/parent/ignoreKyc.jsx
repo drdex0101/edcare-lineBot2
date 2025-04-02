@@ -55,7 +55,7 @@ const ApplicationPage = () => {
   }, [isMember, haveKyc, haveOrder]);
 
   const handleClick = () => {
-    router.push("/parent/upload");
+    router.push("/parent/search");
   };
 
   return (
