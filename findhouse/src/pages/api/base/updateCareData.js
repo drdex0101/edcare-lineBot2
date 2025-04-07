@@ -13,6 +13,8 @@ export default async function handler(req, res) {
         scenario,
         location,
         careTime,
+        startTime,
+        endTime,
         careDataId
     } = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
 
@@ -35,17 +37,19 @@ export default async function handler(req, res) {
         SET 
           weekdays = $2,
           care_time = $3,
-          id_type = $4,
-          scenario = $5,
-          start_date = $6,
-          end_date = $7,
-          location = $8,
-          care_type = $9
+          start_time = $4,
+          end_time = $5,
+          id_type = $6,
+          scenario = $7,
+          start_date = $8,
+          end_date = $9,
+          location = $10,
+          care_type = $11
         WHERE id = $1
         RETURNING *;
       `;
       const weekdaysArray = weekdays.map((day) => day.toString());
-      const values = [careDataId, weekdaysArray, careTime, idType, scenario, startDate, endDate, location, careType];
+      const values = [careDataId, weekdaysArray, careTime, startTime, endTime, idType, scenario, startDate, endDate, location, careType];
 
       const result = await client.query(query, values);
 

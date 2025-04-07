@@ -13,6 +13,9 @@ const ApplicationPage = () => {
   const router = useRouter();
   const { careData, setCareData } = useStore();
   const [isLoading, setIsLoading] = useState(false);
+  const [totalTime, setTotalTime] = useState(0);
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
 
   const today = new Date();
   const threeDaysLater = new Date(today);
@@ -22,15 +25,15 @@ const ApplicationPage = () => {
     setIsLoading(true);
     if (!selectedRange.startDate || !selectedRange.endDate) {
       Swal.fire({
-        icon: 'error',
-        title: '請填寫必填欄位。',
+        icon: "error",
+        title: "請填寫必填欄位。",
       });
       setIsLoading(false);
       return;
     } else if (selectedRange.endDate < selectedRange.startDate) {
       Swal.fire({
-        icon: 'error',
-        title: '開始日期不能晚於結束日期。',
+        icon: "error",
+        title: "開始日期不能晚於結束日期。",
       });
       setIsLoading(false);
       return;
@@ -77,6 +80,8 @@ const ApplicationPage = () => {
           careDataId: careData.id,
           careType: "suddenly",
           weekdays: [],
+          startTime: startTime,
+          endTime: endTime,
         }),
       });
     } else {
@@ -95,6 +100,8 @@ const ApplicationPage = () => {
           idType: "parent",
           careType: "suddenly",
           weekdays: [],
+          startTime: startTime,
+          endTime: endTime,
         }),
       });
     }
@@ -112,6 +119,25 @@ const ApplicationPage = () => {
     router.back(); // 替换 '/next-page' 为你想要跳转的路径
   };
 
+  const calculateTotalTime = () => {
+    const start = new Date(`1970-01-01T${startTime}:00`);
+    const end = new Date(`1970-01-01T${endTime}:00`);
+
+    let diff = (end - start) / (1000 * 60 * 60); // 毫秒 → 小時
+
+    if (diff < 0) {
+      diff += 24; // 如果跨午夜，補 24 小時
+    }
+
+    setTotalTime(diff);
+  };
+
+  useEffect(() => {
+    if (startTime && endTime) {
+      calculateTotalTime();
+    }
+  }, [startTime, endTime]);
+
   const handleDateChange = (range) => {
     console.log("Date change:", range);
     setSelectedRange({
@@ -125,13 +151,16 @@ const ApplicationPage = () => {
     console.log("storedCareData", parsedData);
     if (parsedData) {
       // Check if start_date is less than 3 days from now
-      const startDate = parsedData.start_date ? new Date(parsedData.start_date) : null;
+      const startDate = parsedData.start_date
+        ? new Date(parsedData.start_date)
+        : null;
       const minStartDate = threeDaysLater;
 
       setSelectedRange({
-        startDate: (startDate && startDate >= minStartDate)
-          ? parsedData.start_date
-          : threeDaysLater.toISOString().split("T")[0],
+        startDate:
+          startDate && startDate >= minStartDate
+            ? parsedData.start_date
+            : threeDaysLater.toISOString().split("T")[0],
         endDate: parsedData.end_date || null,
       });
       setSelectedCareType(parsedData.scenario);
@@ -198,13 +227,11 @@ const ApplicationPage = () => {
                       type="date"
                       id="datepicker1"
                       name="startDate"
-                      min={
-                        (() => {
-                          const minDate = new Date();
-                          minDate.setDate(minDate.getDate() + 3);
-                          return minDate.toISOString().split("T")[0];
-                        })()
-                      }
+                      min={(() => {
+                        const minDate = new Date();
+                        minDate.setDate(minDate.getDate() + 3);
+                        return minDate.toISOString().split("T")[0];
+                      })()}
                       max={
                         selectedRange.endDate
                           ? selectedRange.endDate.split("T")[0]
@@ -223,47 +250,84 @@ const ApplicationPage = () => {
                     />
                   </div>
                 </div>
-                <div style={styles.dateLayout}>
-                  <label style={styles.dateLabel}>結束日期</label>
-                  <div style={styles.inputField}>
-                    <input
-                      type="date"
-                      id="datepicker2"
-                      name="endDate"
-                      min={
-                        selectedRange.startDate
-                          ? selectedRange.startDate.split("T")[0]
-                          : ""
-                      }
-                      value={
-                        selectedRange.endDate
-                          ? selectedRange.endDate.split("T")[0]
-                          : ""
-                      }
-                      style={styles.dateInput}
-                      onChange={(e) =>
-                        handleDateChange({
-                          ...selectedRange,
-                          endDate: e.target.value,
-                        })
-                      }
-                      placeholder="請選擇結束日期"
-                      lang="zh-TW"
-                    />
-                  </div>
-                </div>
-                <div style={{ width: "100%" }}>
-                  <CalendarRangePicker
-                    startDate={selectedRange.startDate}
-                    endDate={selectedRange.endDate}
-                    onDateChange={handleDateChange}
-                    locale="zh-TW"
-                    styles={{
-                      calendar: { maxWidth: "400px" },
-                      day: { width: "50px", height: "50px" },
+                <FormControl>
+                  <InputLabel id="startTime-label">托育開始時間</InputLabel>
+                  <Select
+                    required
+                    labelId="startTime-label"
+                    id="startTime"
+                    label="托育開始時間"
+                    value={startTime}
+                    onChange={(e) => setStartTime(e.target.value)}
+                    sx={{
+                      alignSelf: "stretch",
+                      borderRadius: "8px",
+                      "& .MuiOutlinedInput-root": {
+                        "& fieldset": {
+                          borderColor: "var(--OutLine-OutLine, #78726D)",
+                        },
+                        "&:hover fieldset": {
+                          borderColor: "#E3838E",
+                        },
+                        "&.Mui-focused fieldset": {
+                          borderColor: "#E3838E",
+                        },
+                      },
+                      backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
                     }}
-                  />
+                  >
+                    {Array.from({ length: 24 }).map((_, i) => {
+                      const time = `${String(i).padStart(2, "0")}:00`;
+                      return (
+                        <MenuItem key={time} value={time}>
+                          {time}
+                        </MenuItem>
+                      );
+                    })}
+                  </Select>
+                </FormControl>
+                <FormControl>
+                  <InputLabel id="endTime-label">托育結束時間</InputLabel>
+                  <Select
+                    required
+                    labelId="endTime-label"
+                    id="endTime"
+                    label="托育結束時間"
+                    value={endTime}
+                    onChange={(e) => setEndTime(e.target.value)}
+                    sx={{
+                      alignSelf: "stretch",
+                      borderRadius: "8px",
+                      "& .MuiOutlinedInput-root": {
+                        "& fieldset": {
+                          borderColor: "var(--OutLine-OutLine, #78726D)",
+                        },
+                        "&:hover fieldset": {
+                          borderColor: "#E3838E",
+                        },
+                        "&.Mui-focused fieldset": {
+                          borderColor: "#E3838E",
+                        },
+                      },
+                      backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
+                    }}
+                  >
+                    {Array.from({ length: 24 }).map((_, i) => {
+                      const time = `${String(i).padStart(2, "0")}:00`;
+                      return (
+                        <MenuItem key={time} value={time}>
+                          {time}
+                        </MenuItem>
+                      );
+                    })}
+                  </Select>
+                </FormControl>
+                <div style={styles.totalTimeLayout}>
+                  <span style={styles.totalTimeFont}>總記</span>
+                  <span style={styles.totalTime}>{totalTime}</span>
+                  <span style={styles.totalTimeFont}>小時</span>
                 </div>
+
                 <FormControl>
                   <InputLabel id="gender-label">選擇情境</InputLabel>
                   <Select
@@ -298,12 +362,18 @@ const ApplicationPage = () => {
                   >
                     <MenuItem value="home">
                       <span style={styles.addressName}>在宅托育</span>
+                      <span style={styles.address}>(至保母居服處)</span>
                     </MenuItem>
                     <MenuItem
                       style={styles.addressName}
                       value="infantCareCenter"
                     >
                       <span style={styles.addressName}>定點托育</span>
+                      <span style={styles.address}>(指定托嬰中心)</span>
+                    </MenuItem>
+                    <MenuItem style={styles.addressName} value="toHome">
+                      <span style={styles.addressName}>到宅托育</span>
+                      <span style={styles.address}>(至家長住所)</span>
                     </MenuItem>
                   </Select>
                 </FormControl>
@@ -443,7 +513,8 @@ const ApplicationPage = () => {
                     </Select>
                   </FormControl>
                 )}
-                {selectedCareType === "home" && (
+                {(selectedCareType === "home" ||
+                  selectedCareType === "toHome") && (
                   <FormControl>
                     <InputLabel id="gender-label">托育地區</InputLabel>
                     <Select
@@ -455,7 +526,6 @@ const ApplicationPage = () => {
                       value={selectedAddress}
                       onChange={(e) => {
                         const value = e.target.value;
-                        // Limit selection to 5 items
                         if (value.length <= 5) {
                           setSelectedAddress(value);
                         } else {
@@ -465,22 +535,6 @@ const ApplicationPage = () => {
                             confirmButtonText: "確定",
                           });
                         }
-                      }}
-                      MenuProps={{
-                        PaperProps: {
-                          style: {
-                            maxHeight: 24 * 7,
-                            overflowY: "auto",
-                          },
-                        },
-                      }}
-                      InputProps={{
-                        sx: {
-                          padding: "0px 16px",
-                          borderRadius: "8px",
-                          backgroundColor:
-                            "var(--SurfaceContainer-Lowest, #FFF)",
-                        },
                       }}
                       sx={{
                         alignSelf: "stretch",
@@ -499,246 +553,32 @@ const ApplicationPage = () => {
                         backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
                       }}
                     >
-                      <MenuItem
-                        value="斗六"
-                        sx={{
-                          color: "#410002",
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "flex-start",
-                          alignItems: "flex-start",
-                        }}
-                      >
-                        <span style={styles.addressName}>斗六</span>
-                      </MenuItem>
-                      <MenuItem
-                        value="斗南"
-                        sx={{
-                          color: "#410002",
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "flex-start",
-                          alignItems: "flex-start",
-                        }}
-                      >
-                        <span style={styles.addressName}>斗南</span>
-                      </MenuItem>
-                      <MenuItem
-                        value="林內"
-                        sx={{
-                          color: "#410002",
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "flex-start",
-                          alignItems: "flex-start",
-                        }}
-                      >
-                        <span style={styles.addressName}>林內</span>
-                      </MenuItem>
-                      <MenuItem
-                        value="古坑"
-                        sx={{
-                          color: "#410002",
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "flex-start",
-                          alignItems: "flex-start",
-                        }}
-                      >
-                        <span style={styles.addressName}>古坑</span>
-                      </MenuItem>
-                      <MenuItem
-                        value="莿桐"
-                        sx={{
-                          color: "#410002",
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "flex-start",
-                          alignItems: "flex-start",
-                        }}
-                      >
-                        <span style={styles.addressName}>莿桐</span>
-                      </MenuItem>
-                      <MenuItem
-                        value="虎尾"
-                        sx={{
-                          color: "#410002",
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "flex-start",
-                          alignItems: "flex-start",
-                        }}
-                      >
-                        <span style={styles.addressName}>虎尾</span>
-                      </MenuItem>
-                      <MenuItem
-                        value="西螺"
-                        sx={{
-                          color: "#410002",
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "flex-start",
-                          alignItems: "flex-start",
-                        }}
-                      >
-                        <span style={styles.addressName}>西螺</span>
-                      </MenuItem>
-                      <MenuItem
-                        value="二崙"
-                        sx={{
-                          color: "#410002",
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "flex-start",
-                          alignItems: "flex-start",
-                        }}
-                      >
-                        <span style={styles.addressName}>二崙</span>
-                      </MenuItem>
-                      <MenuItem
-                        value="土庫"
-                        sx={{
-                          color: "#410002",
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "flex-start",
-                          alignItems: "flex-start",
-                        }}
-                      >
-                        <span style={styles.addressName}>土庫</span>
-                      </MenuItem>
-                      <MenuItem
-                        value="大埤"
-                        sx={{
-                          color: "#410002",
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "flex-start",
-                          alignItems: "flex-start",
-                        }}
-                      >
-                        <span style={styles.addressName}>大埤</span>
-                      </MenuItem>
-                      <MenuItem
-                        value="北港"
-                        sx={{
-                          color: "#410002",
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "flex-start",
-                          alignItems: "flex-start",
-                        }}
-                      >
-                        <span style={styles.addressName}>北港</span>
-                      </MenuItem>
-                      <MenuItem
-                        value="元長"
-                        sx={{
-                          color: "#410002",
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "flex-start",
-                          alignItems: "flex-start",
-                        }}
-                      >
-                        <span style={styles.addressName}>元長</span>
-                      </MenuItem>
-                      <MenuItem
-                        value="四湖"
-                        sx={{
-                          color: "#410002",
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "flex-start",
-                          alignItems: "flex-start",
-                        }}
-                      >
-                        <span style={styles.addressName}>四湖</span>
-                      </MenuItem>
-                      <MenuItem
-                        value="水林"
-                        sx={{
-                          color: "#410002",
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "flex-start",
-                          alignItems: "flex-start",
-                        }}
-                      >
-                        <span style={styles.addressName}>水林</span>
-                      </MenuItem>
-                      <MenuItem
-                        value="口湖"
-                        sx={{
-                          color: "#410002",
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "flex-start",
-                          alignItems: "flex-start",
-                        }}
-                      >
-                        <span style={styles.addressName}>口湖</span>
-                      </MenuItem>
-                      <MenuItem
-                        value="麥寮"
-                        sx={{
-                          color: "#410002",
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "flex-start",
-                          alignItems: "flex-start",
-                        }}
-                      >
-                        <span style={styles.addressName}>麥寮</span>
-                      </MenuItem>
-                      <MenuItem
-                        value="崙背"
-                        sx={{
-                          color: "#410002",
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "flex-start",
-                          alignItems: "flex-start",
-                        }}
-                      >
-                        <span style={styles.addressName}>崙背</span>
-                      </MenuItem>
-                      <MenuItem
-                        value="褒忠"
-                        sx={{
-                          color: "#410002",
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "flex-start",
-                          alignItems: "flex-start",
-                        }}
-                      >
-                        <span style={styles.addressName}>褒忠</span>
-                      </MenuItem>
-                      <MenuItem
-                        value="東勢"
-                        sx={{
-                          color: "#410002",
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "flex-start",
-                          alignItems: "flex-start",
-                        }}
-                      >
-                        <span style={styles.addressName}>東勢</span>
-                      </MenuItem>
-                      <MenuItem
-                        value="台西"
-                        sx={{
-                          color: "#410002",
-                          display: "flex",
-                          flexDirection: "column",
-                          justifyContent: "flex-start",
-                          alignItems: "flex-start",
-                        }}
-                      >
-                        <span style={styles.addressName}>台西</span>
-                      </MenuItem>
+                      {[
+                        "斗六",
+                        "斗南",
+                        "林內",
+                        "古坑",
+                        "莿桐",
+                        "虎尾",
+                        "西螺",
+                        "二崙",
+                        "土庫",
+                        "大埤",
+                        "北港",
+                        "元長",
+                        "四湖",
+                        "水林",
+                        "口湖",
+                        "麥寮",
+                        "崙背",
+                        "褒忠",
+                        "東勢",
+                        "台西",
+                      ].map((location) => (
+                        <MenuItem key={location} value={location}>
+                          {location}
+                        </MenuItem>
+                      ))}
                     </Select>
                   </FormControl>
                 )}
@@ -778,6 +618,28 @@ const ApplicationPage = () => {
 };
 
 const styles = {
+  totalTimeLayout: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    gap: "10px",
+  },
+  totalTimeFont: {
+    color: "var(---Surface-Black-25, #252525)",
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: "12px",
+    fontStyle: "normal",
+    fontWeight: "700",
+    lineHeight: "normal",
+  },
+  totalTime: {
+    color: "var(---Primary-Primary, #E3838E)",
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: "20px",
+    fontStyle: "normal",
+    fontWeight: "700",
+    lineHeight: "normal",
+  },
   inputContainer: {
     position: "relative",
     display: "inline-block",

@@ -86,6 +86,8 @@ const ApplicationPage = () => {
             <button style={styles.nextVerifyBtn} onClick={finishClick}>
               <span style={styles.nextBtnFont}>稍後再建立</span>
             </button>
+            <span style={styles.verifyText}>需先完成身分驗證</span>
+            <span style={styles.verifyText}>才能申請托育媒合服務</span>
           </div>
         </div>
       </div>

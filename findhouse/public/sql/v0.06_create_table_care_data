@@ -3,6 +3,8 @@ CREATE TABLE care_data (
     order_id VARCHAR(50),
     start_date DATE, -- 臨時才有
     end_date DATE, -- 臨時才有
+    start_time VARCHAR(100),
+    end_time VARCHAR(100),
     scenario VARCHAR(100),
     location VARCHAR[],
     care_time VARCHAR(50), -- 長期才有
