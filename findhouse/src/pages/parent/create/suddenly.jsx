@@ -139,6 +139,8 @@ const ApplicationPage = () => {
       setSelectedCareType(parsedData.scenario);
       setSelectedAddress(parsedData.location);
       setCareData(parsedData);
+      setStartTime(parsedData.start_time);
+      setEndTime(parsedData.end_time);
     }
     console.log("selectedRange", selectedRange.startDate);
   }, []);
@@ -620,12 +622,6 @@ const styles = {
     display: "inline-block",
     width: "100%",
   },
-  dateInput: {
-    width: "100%",
-    padding: "10px 5px",
-    fontSize: "16px",
-    boxSizing: "border-box",
-  },
   floatingLabel: {
     position: "absolute",
     top: "50%",
@@ -634,16 +630,6 @@ const styles = {
     transition: "0.2s ease all",
     color: "#aaa",
     pointerEvents: "none",
-  },
-  dateInput: {
-    "&:focus + floatingLabel, &:not(:placeholder-shown) + floatingLabel": {
-      top: 0,
-      left: 5,
-      fontSize: "12px",
-      color: "#555",
-      background: "#fff",
-      padding: "0 2px", // Fixed padding syntax
-    },
   },
   address: {
     color: "var(---Surface-Black-25, #252525)",

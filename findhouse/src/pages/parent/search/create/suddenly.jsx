@@ -166,6 +166,8 @@ const ApplicationPage = () => {
       setSelectedCareType(parsedData.scenario);
       setSelectedAddress(parsedData.location);
       setCareData(parsedData);
+      setStartTime(parsedData.start_time);
+      setEndTime(parsedData.end_time);
     }
   }, []);
 
