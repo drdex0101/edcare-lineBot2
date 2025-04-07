@@ -64,6 +64,7 @@ const ApplicationPage = () => {
             >
               <button style={styles.suddenlyBtn}>
                 <span style={styles.typeFont}>臨時托育</span>
+                <span style={styles.typeSubFont}>(單日托育)</span>
               </button>
             </Link>
             <Link
@@ -74,6 +75,7 @@ const ApplicationPage = () => {
             >
               <button style={styles.longBtn}>
                 <span style={styles.typeFont}>長期托育</span>
+                <span style={styles.typeSubFont}>(兩日以上托育)</span>
               </button>
             </Link>
           </div>
@@ -84,6 +86,14 @@ const ApplicationPage = () => {
 };
 
 const styles = {
+  typeSubFont: {
+    color: "var(---SurfaceContainer-Lowest, #FFF)",
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: "14px",
+    fontStyle: "normal",
+    fontWeight: "700",
+    lineHeight: "normal",
+  },
   titleLayout: {
     display: "flex",
     height: "43px",

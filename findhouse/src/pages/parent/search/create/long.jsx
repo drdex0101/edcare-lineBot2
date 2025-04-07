@@ -19,12 +19,26 @@ const ApplicationPage = () => {
     router.back(); // 替换 '/next-page' 为你想要跳转的路径
   };
   const { careData, setCareData } = useStore();
+  const [selectedRange, setSelectedRange] = useState(() => {
+    const today = new Date();
+    const threeDaysLater = new Date();
+    threeDaysLater.setDate(today.getDate() + 3);
+    return {
+      startDate: threeDaysLater.toISOString().split("T")[0],
+      endDate: null,
+    };
+  });
+
+  const [selectedAddress, setSelectedAddress] = React.useState(() => []);
 
   useEffect(() => {
     if (careData) {
-      setSelectedDays(careData?.weekdays || []);
       setSelectedCareTime(careData?.care_time || "");
       setSelectedScenario(careData?.scenario || "");
+      setSelectedRange({
+        startDate: careData?.start_date || "",
+        endDate: careData?.end_date || "",
+      });
       setLocation(careData?.location || []);
       console.log(careData);
     }
@@ -32,7 +46,9 @@ const ApplicationPage = () => {
 
   const createCareData = async () => {
     setIsLoading(true);
-    const formattedLocation = Array.isArray(location) ? location : [location];
+    const locationArray = Array.isArray(selectedAddress)
+      ? selectedAddress
+      : [selectedAddress];
     const response = await fetch("/api/base/createCareData", {
       method: "POST",
       body: JSON.stringify({
@@ -41,9 +57,9 @@ const ApplicationPage = () => {
         scenario: selectedScenario,
         idType: "parent",
         careType: "longTern",
-        startDate: null,
-        endDate: null,
-        location: formattedLocation,
+        startDate: selectedRange.startDate,
+        endDate: selectedRange.endDate,
+        location: locationArray,
       }),
     });
     const data = await response.json();
@@ -55,7 +71,9 @@ const ApplicationPage = () => {
 
   const updateCareData = async () => {
     setIsLoading(true);
-    const formattedLocation = Array.isArray(location) ? location : [location];
+    const locationArray = Array.isArray(selectedAddress)
+      ? selectedAddress
+      : [selectedAddress];
     const response = await fetch("/api/base/updateCareData", {
       method: "PATCH",
       body: JSON.stringify({
@@ -65,9 +83,9 @@ const ApplicationPage = () => {
         scenario: selectedScenario,
         idType: "parent",
         careType: "longTern",
-        startDate: null,
-        endDate: null,
-        location: formattedLocation,
+        startDate: selectedRange.startDate,
+        endDate: selectedRange.endDate,
+        location: locationArray,
       }),
     });
     const data = await response.json();
@@ -77,32 +95,9 @@ const ApplicationPage = () => {
     setIsLoading(false);
   }
 
-  const handleDayChange = (day) => {
-    setSelectedDays((prev) => {
-      const dayNumber =
-        typeof day === "string"
-          ? [
-              "sunday",
-              "monday",
-              "tuesday",
-              "wednesday",
-              "thursday",
-              "friday",
-              "saturday",
-            ].indexOf(day.toLowerCase())
-          : day;
-
-      if (dayNumber === -1) return prev;
-
-      return prev.includes(dayNumber)
-        ? prev.filter((d) => d !== dayNumber)
-        : [...prev, dayNumber].sort((a, b) => a - b);
-    });
-  };
-
   const handleNextClick = async () => {
     try {
-      if (selectedDays.length === 0 || !selectedCareTime || !selectedScenario) {
+      if (!selectedCareTime || !selectedScenario || !selectedRange.startDate || !selectedRange.endDate) {
         Swal.fire({
           icon: "error",
           title: "錯誤",
@@ -124,6 +119,14 @@ const ApplicationPage = () => {
         text: "請稍後再試。",
       });
     }
+  };
+
+  const handleDateChange = (range) => {
+    console.log("Date change:", range); // 添加日誌來調試
+    setSelectedRange({
+      startDate: range.startDate || new Date().toISOString().split("T")[0],
+      endDate: range.endDate || null,
+    });
   };
 
   const [selectedDays, setSelectedDays] = useState([]);
@@ -236,128 +239,64 @@ const ApplicationPage = () => {
                   <MenuItem value="night">夜間</MenuItem>
                 </Select>
               </FormControl>
-              <div style={styles.hopeLayout}>
-                <div style={styles.componentLayout}>
-                  <span>星期一</span>
-                  <FormGroup>
-                    <FormControlLabel
-                      control={
-                        <IOSSwitch
-                          sx={{ m: 1 }}
-                          checked={selectedDays.includes(1)}
-                          onChange={() => handleDayChange(1)}
-                        />
+              <div style={styles.dateLayout}>
+                  <label style={styles.dateLabel}>開始日期</label>
+                  <div style={styles.inputField}>
+                    <input
+                      type="date"
+                      id="datepicker1"
+                      name="startDate"
+                      min={(() => {
+                        const minDate = new Date();
+                        minDate.setDate(minDate.getDate() + 3);
+                        return minDate.toISOString().split("T")[0];
+                      })()}
+                      value={
+                        selectedRange.startDate
+                          ? selectedRange.startDate.split("T")[0]
+                          : ""
                       }
-                      style={{ marginRight: "0px" }}
-                    />
-                  </FormGroup>
-                </div>
-                <div style={styles.componentLayout}>
-                  <span>星期二</span>
-                  <FormGroup>
-                    <FormControlLabel
-                      control={
-                        <IOSSwitch
-                          sx={{ m: 1 }}
-                          checked={selectedDays.includes(2)}
-                          onChange={() => handleDayChange(2)}
-                        />
+                      style={styles.dateInput}
+                      onChange={(e) =>
+                        handleDateChange({
+                          ...selectedRange,
+                          startDate: e.target.value,
+                        })
                       }
-                      style={{ marginRight: "0px" }}
+                      placeholder="請選擇開始日期"
+                      lang="zh-TW"
                     />
-                  </FormGroup>
+                  </div>
                 </div>
-                <div style={styles.componentLayout}>
-                  <span>星期三</span>
-                  <FormGroup>
-                    <FormControlLabel
-                      control={
-                        <IOSSwitch
-                          sx={{ m: 1 }}
-                          checked={selectedDays.includes(3)}
-                          onChange={() => handleDayChange(3)}
-                        />
+                <div style={styles.dateLayout}>
+                  <label style={styles.dateLabel}>結束日期</label>
+                  <div style={styles.inputField}>
+                    <input
+                      type="date"
+                      id="datepicker2"
+                      name="endDate"
+                      min={(() => {
+                        const minDate = new Date();
+                        minDate.setDate(minDate.getDate() + 3);
+                        return minDate.toISOString().split("T")[0];
+                      })()}
+                      value={
+                        selectedRange.endDate
+                          ? selectedRange.endDate.split("T")[0]
+                          : ""
                       }
-                      style={{ marginRight: "0px" }}
-                    />
-                  </FormGroup>
-                </div>
-                <div style={styles.componentLayout}>
-                  <span>星期四</span>
-                  <FormGroup>
-                    <FormControlLabel
-                      control={
-                        <IOSSwitch
-                          sx={{ m: 1 }}
-                          checked={selectedDays.includes(4)}
-                          onChange={() => handleDayChange(4)}
-                        />
+                      style={styles.dateInput}
+                      onChange={(e) =>
+                        handleDateChange({
+                          ...selectedRange,
+                          endDate: e.target.value,
+                        })
                       }
-                      style={{ marginRight: "0px" }}
+                      placeholder="請選擇結束日期"
+                      lang="zh-TW"
                     />
-                  </FormGroup>
+                  </div>
                 </div>
-                <div style={styles.componentLayout}>
-                  <span>星期五</span>
-                  <FormGroup>
-                    <FormControlLabel
-                      control={
-                        <IOSSwitch
-                          sx={{ m: 1 }}
-                          checked={selectedDays.includes(5)}
-                          onChange={() => handleDayChange(5)}
-                        />
-                      }
-                      style={{ marginRight: "0px" }}
-                    />
-                  </FormGroup>
-                </div>
-                <div
-                  style={{ ...styles.componentLayout, borderBottom: "none" }}
-                >
-                  <span>星期六</span>
-                  <FormGroup>
-                    <FormControlLabel
-                      control={
-                        <IOSSwitch
-                          sx={{ m: 1 }}
-                          checked={selectedDays.includes(6)}
-                          onChange={() => handleDayChange(6)}
-                        />
-                      }
-                      style={{ marginRight: "0px" }}
-                    />
-                  </FormGroup>
-                </div>
-                <div
-                  style={{ ...styles.componentLayout, borderBottom: "none" }}
-                >
-                  <span>星期日</span>
-                  <FormGroup>
-                    <FormControlLabel
-                      control={
-                        <IOSSwitch
-                          sx={{ m: 1 }}
-                          checked={selectedDays.includes(0)}
-                          onChange={() => handleDayChange(0)}
-                        />
-                      }
-                      style={{ marginRight: "0px" }}
-                    />
-                  </FormGroup>
-                </div>
-              </div>
-              <div style={{ width: "100%" }}>
-                <CalendarWeekendPicker
-                  selectedWeekday={selectedDays}
-                  handleDayChange={handleDayChange}
-                  locale="zh-TW"
-                  styles={{
-                    calendar: { maxWidth: "400px" },
-                    day: { width: "50px", height: "50px" },
-                  }}
-                />
-              </div>
               <FormControl>
                 <InputLabel id="gender-label">選擇情境</InputLabel>
                 <Select
@@ -391,46 +330,86 @@ const ApplicationPage = () => {
                     backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
                   }}
                 >
-                  <MenuItem value="toHome">到宅托育</MenuItem>
-                  <MenuItem value="home">在宅托育</MenuItem>
+                  <MenuItem value="home">
+                      <span style={styles.addressName}>在宅托育</span>
+                      <span style={styles.address}>(至保母居服處)</span>
+                    </MenuItem>
+                    <MenuItem style={styles.addressName} value="toHome">
+                      <span style={styles.addressName}>到宅托育</span>
+                      <span style={styles.address}>(至家長住所)</span>
+                    </MenuItem>
                 </Select>
               </FormControl>
+              {(selectedScenario === "home" ||
+                  selectedScenario === "toHome") && (
+                  <FormControl>
+                    <InputLabel id="gender-label">托育地區</InputLabel>
+                    <Select
+                      required
+                      multiple
+                      labelId="gender-label"
+                      id="gender"
+                      label="托育地區"
+                      value={selectedAddress}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        if (value.length <= 5) {
+                          setSelectedAddress(value);
+                        } else {
+                          Swal.fire({
+                            icon: "error",
+                            title: "最多只能選擇5個地區",
+                            confirmButtonText: "確定",
+                          });
+                        }
+                      }}
+                      sx={{
+                        alignSelf: "stretch",
+                        borderRadius: "8px",
+                        "& .MuiOutlinedInput-root": {
+                          "& fieldset": {
+                            borderColor: "var(--OutLine-OutLine, #78726D)",
+                          },
+                          "&:hover fieldset": {
+                            borderColor: "#E3838E",
+                          },
+                          "&.Mui-focused fieldset": {
+                            borderColor: "#E3838E",
+                          },
+                        },
+                        backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
+                      }}
+                    >
+                      {[
+                        "斗六",
+                        "斗南",
+                        "林內",
+                        "古坑",
+                        "莿桐",
+                        "虎尾",
+                        "西螺",
+                        "二崙",
+                        "土庫",
+                        "大埤",
+                        "北港",
+                        "元長",
+                        "四湖",
+                        "水林",
+                        "口湖",
+                        "麥寮",
+                        "崙背",
+                        "褒忠",
+                        "東勢",
+                        "台西",
+                      ].map((location) => (
+                        <MenuItem key={location} value={location}>
+                          {location}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                )}
             </div>
-            {
-              selectedScenario == 'toHome' && (
-                <TextField
-                  required
-                  id="name"
-                  label="托育地址"
-                  variant="outlined"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  InputProps={{
-                    sx: {
-                      padding: "0px 16px",
-                      borderRadius: "8px",
-                      marginBottom: "20px",
-                      backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
-                    },
-                  }}
-                  sx={{
-                    alignSelf: "stretch",
-                    borderRadius: "8px",
-                    "& .MuiOutlinedInput-root": {
-                      "& fieldset": {
-                        borderColor: "var(--OutLine-OutLine, #78726D)",
-                      },
-                      "&:hover fieldset": {
-                        borderColor: "#E3838E",
-                      },
-                      "&.Mui-focused fieldset": {
-                        borderColor: "#E3838E",
-                      },
-                    },
-                  }}
-                />
-              )
-            }
             <div style={styles.buttonLayout}>
               <button style={styles.nextBtn} onClick={handleNextClick}>
                 下一步
@@ -444,6 +423,36 @@ const ApplicationPage = () => {
 };
 
 const styles = {
+  inputField: {
+    padding: "25px 14px",
+    borderRadius: "8px",
+    border: "1px solid #d4d4d4",
+    background: "var(---SurfaceContainer-Lowest, #FFF)",
+    color: "gray",
+    width: "100%",
+    position: "relative",
+    cursor: "pointer",
+  },
+  dateInput: {
+    opacity: 1,
+    cursor: "pointer",
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    top: 0,
+    left: 0,
+    border: "none",
+    zIndex: 999,
+    outline: "none",
+    background: "transparent",
+    padding: "10px",
+  },
+  dateLayout: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "10px",
+    width: "100%",
+  },
   nextBtn: {
     padding: "10px 20px",
     backgroundColor: "var(---Primary-Primary, #E3838E)",
@@ -506,13 +515,6 @@ const styles = {
     alignSelf: "stretch",
     boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
     backgroundColor: "#FFF",
-  },
-  inputField: {
-    padding: "16.5px 14px",
-    borderRadius: "8px",
-    border: "1px solid #E3838E",
-    background: "var(---SurfaceContainer-Lowest, #FFF)",
-    color: "gray",
   },
   lastButton: {
     border: "none",

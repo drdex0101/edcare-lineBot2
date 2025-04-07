@@ -362,14 +362,14 @@ const ApplicationPage = () => {
             <div style={styles.hopeLayout}>
               <label style={styles.hopeLabel}>托育服務期望</label>
               <div style={styles.componentLayout}>
-                <span>可接送小朋友</span>
+                <span>寶寶衣物清洗</span>
                 <FormGroup>
                   <FormControlLabel
                     control={
                       <IOSSwitch
                         sx={{ m: 1 }}
                         onChange={(e) =>
-                          handleSwitchChange('1', e.target.checked)
+                          handleSwitchChange(1, e.target.checked)
                         }
                       />
                     }
@@ -379,7 +379,7 @@ const ApplicationPage = () => {
                 </FormGroup>
               </div>
               <div style={styles.componentLayout}>
-                <span>寶寶衣物清洗</span>
+                <span>製作副食品</span>
                 <FormGroup>
                   <FormControlLabel
                     control={
@@ -396,7 +396,7 @@ const ApplicationPage = () => {
                 </FormGroup>
               </div>
               <div style={styles.componentLayout}>
-                <span>製作副食品</span>
+                <span>可遠端查看育兒情形</span>
                 <FormGroup>
                   <FormControlLabel
                     control={
@@ -413,7 +413,7 @@ const ApplicationPage = () => {
                 </FormGroup>
               </div>
               <div style={styles.componentLayout}>
-                <span>可遠端查看育兒情形</span>
+                <span>可配合不使用3C育兒</span>
                 <FormGroup>
                   <FormControlLabel
                     control={
@@ -429,8 +429,11 @@ const ApplicationPage = () => {
                   />
                 </FormGroup>
               </div>
-              <div style={styles.componentLayout}>
-                <span>可配合不使用3C育兒</span>
+              <div style={{ ...styles.componentLayout, borderBottom: "none" }}>
+              <div style={{display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center"}}>
+                  <span>可配合保母外出</span>
+                  <span style={styles.hopeSubFont}>ex：公園散步、戶外活動...）</span>
+                </div>
                 <FormGroup>
                   <FormControlLabel
                     control={
@@ -442,23 +445,6 @@ const ApplicationPage = () => {
                       />
                     }
                     checked={selectedOptions?.includes('5')}
-                    style={{ marginRight: "0px" }}
-                  />
-                </FormGroup>
-              </div>
-              <div style={{ ...styles.componentLayout, borderBottom: "none" }}>
-                <span>可配合家長外出</span>
-                <FormGroup>
-                  <FormControlLabel
-                    control={
-                      <IOSSwitch
-                        sx={{ m: 1 }}
-                        onChange={(e) =>
-                          handleSwitchChange(6, e.target.checked)
-                        }
-                      />
-                    }
-                    checked={selectedOptions?.includes('6')}
                     style={{ marginRight: "0px" }}
                   />
                 </FormGroup>
@@ -510,6 +496,15 @@ const ApplicationPage = () => {
 };
 
 const styles = {
+  hopeSubFont:{
+    opacity: 0.8,
+    color: "var(---Surface-Black-25, #252525)",
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: "8px",
+    fontStyle: "normal",
+    fontWeight: "400",
+    lineHeight: "normal",
+  },
   nextBtn: {
     padding: "10px 20px",
     backgroundColor: "var(---Primary-Primary, #E3838E)",

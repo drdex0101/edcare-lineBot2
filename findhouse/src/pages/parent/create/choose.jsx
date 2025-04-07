@@ -72,16 +72,14 @@ const ApplicationPage = () => {
             <span style={styles.smallTitle}>選擇托育方式</span>
           </div>
           <div style={styles.buttonLayout}>
-           
               <button style={styles.suddenlyBtn} onClick={handleToSuddenly}>
                 <span style={styles.typeFont}>臨時托育</span>
+                <span style={styles.typeSubFont}>(單日托育)</span>
               </button>
-
-            
               <button style={styles.longBtn} onClick={handleToLong}>
                 <span style={styles.typeFont}>長期托育</span>
+                <span style={styles.typeSubFont}>(兩日以上托育)</span>
               </button>
-
           </div>
         </div>
       </div>
@@ -104,6 +102,14 @@ const styles = {
     color: "var(---Primary-OnContainer, #6F2E2A)",
     fontFamily: "LINE Seed JP_TTF",
     fontSize: "16px",
+    fontStyle: "normal",
+    fontWeight: "700",
+    lineHeight: "normal",
+  },
+  typeSubFont: {
+    color: "var(---SurfaceContainer-Lowest, #FFF)",
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: "14px",
     fontStyle: "normal",
     fontWeight: "700",
     lineHeight: "normal",

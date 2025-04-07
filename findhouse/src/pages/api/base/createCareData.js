@@ -14,7 +14,9 @@ export default async function handler(req, res) {
         endDate,
         scenario,
         location,
-        careTime
+        careTime,
+        startTime,
+        endTime
     } = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
 
     const token = req.cookies.authToken;
@@ -33,10 +35,10 @@ export default async function handler(req, res) {
 
       const query = `
         INSERT INTO care_data (
-          order_id, weekdays, care_time, care_type, id_type, scenario, start_date, end_date, location
+          order_id, weekdays, care_time, care_type, id_type, scenario, start_date, end_date, location, start_time, end_time
         )
         VALUES (
-          $1, $2, $3, $4, $5, $6, $7, $8, $9
+          $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
         )
         RETURNING *;
       `;
@@ -51,7 +53,9 @@ export default async function handler(req, res) {
         scenario,
         startDate,
         endDate,
-        location
+        location,
+        startTime,
+        endTime
       ];
       
       console.log('Final query values:', values);
