@@ -17,8 +17,6 @@ export default async function handler(req, res) {
   const token = req.cookies.authToken;
   const payload = await verifyToken(token);
   const userId = payload.userId;
-
-  console.log('locations:',locations);
   
   if (!userId) {
     return res.status(400).json({ success: false, message: 'ID parameter is required' });
@@ -67,6 +65,8 @@ export default async function handler(req, res) {
         c.start_date,
         c.end_date,
         c.location,
+        c.start_time,
+        c.end_time,
         COUNT(*) OVER() AS totalCount
         FROM 
             orderinfo o

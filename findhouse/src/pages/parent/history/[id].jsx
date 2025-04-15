@@ -211,7 +211,7 @@ export default function HistoryId() {
               <div className="status-process-layout">
                 {orderStatusSteps.map((step, index) => (
                   <div key={step.key} className={index <= currentIndex ? "status-process-on" : "status-process-off"}>
-                    <span className={index <= currentIndex ? "status-process-font-on" : "status-process-font-off"}>
+                    <span className="status-process-font-on">
                       {step.label}
                     </span>
                   </div>

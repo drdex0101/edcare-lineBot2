@@ -1,3 +1,20 @@
+.left-arrow {
+    left: 10px;
+    border-radius: 50%;
+    height: 24px;
+    width: 24px;
+    background: #FFF;
+    border: none;
+}
+  
+.right-arrow {
+    right: 10px;
+    border-radius: 50%;
+    height: 24px;
+    width: 24px;
+    background: #FFF;
+    border: none;
+}
 .main {
     display: flex;
     align-items: center;
@@ -10,8 +27,6 @@
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    min-width: 100%;
-    width: 500px;
 }
 
 .addIcon {

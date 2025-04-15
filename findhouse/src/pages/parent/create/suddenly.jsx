@@ -26,10 +26,10 @@ const ApplicationPage = () => {
       });
       setIsLoading(false);
       return;
-    } else if (selectedRange.endDate < selectedRange.startDate) {
+    } else if (selectedRange.endTime < selectedRange.startTime) {
       Swal.fire({
         icon: "error",
-        title: "開始日期不能晚於結束日期。",
+        title: "開始時間不能晚於結束時間。",
       });
       setIsLoading(false);
       return;
@@ -42,16 +42,25 @@ const ApplicationPage = () => {
   const calculateTotalTime = () => {
     const start = new Date(`1970-01-01T${startTime}:00`);
     const end = new Date(`1970-01-01T${endTime}:00`);
-  
+
+    if (start > end) {
+      Swal.fire({
+        icon: "error",
+        title: "開始時間不能晚於結束時間。",
+      });
+      setTotalTime(0);
+      return;
+    }
+
     let diff = (end - start) / (1000 * 60 * 60); // 毫秒 → 小時
-  
+
     if (diff < 0) {
       diff += 24; // 如果跨午夜，補 24 小時
     }
-  
+
     setTotalTime(diff);
   };
-  
+
   useEffect(() => {
     if (startTime && endTime) {
       calculateTotalTime();
@@ -408,9 +417,26 @@ const ApplicationPage = () => {
                         }}
                       >
                         <span style={styles.addressName}>虎尾親子館-</span>
-                        <span style={styles.address}>
-                          雲林縣斗六市保庄里3鄰建興路27-10號
-                        </span>
+                        <div style={styles.informationLayout}>
+                          <span style={styles.address}>
+                            雲林縣斗六市保庄里3鄰建興路27-10號
+                          </span>
+                          <div style={styles.serviceLayout}>
+                            <div style={styles.serviceFontLayout}>
+                              <span style={styles.serviceFont}>服務</span>
+                              <span style={styles.serviceFont}>時段</span>
+                            </div>
+                            <div style={styles.timeLayout}>
+                              <span style={styles.timeFont}>週二～週日。</span>
+                              <span style={styles.timeFont}>
+                                上午9:00~12:00，
+                              </span>
+                              <span style={styles.timeFont}>
+                                下午 13:30~16:30
+                              </span>
+                            </div>
+                          </div>
+                        </div>
                       </MenuItem>
                       <MenuItem
                         value="斗六親子館-雲林縣斗六市府前街58號"
@@ -423,9 +449,26 @@ const ApplicationPage = () => {
                         }}
                       >
                         <span style={styles.addressName}>斗六親子館-</span>
-                        <span style={styles.address}>
-                          雲林縣斗六市府前街58號-10號
-                        </span>
+                        <div style={styles.informationLayout}>
+                          <span style={styles.address}>
+                          雲林縣斗六市府前街58號
+                          </span>
+                          <div style={styles.serviceLayout}>
+                            <div style={styles.serviceFontLayout}>
+                              <span style={styles.serviceFont}>服務</span>
+                              <span style={styles.serviceFont}>時段</span>
+                            </div>
+                            <div style={styles.timeLayout}>
+                              <span style={styles.timeFont}>週二～週六。</span>
+                              <span style={styles.timeFont}>
+                                上午9:00~12:00，
+                              </span>
+                              <span style={styles.timeFont}>
+                                下午 13:30~16:30
+                              </span>
+                            </div>
+                          </div>
+                        </div>
                       </MenuItem>
                       <MenuItem
                         value="斗南親子館-雲林縣斗南鎮莒光街31號"
@@ -438,9 +481,26 @@ const ApplicationPage = () => {
                         }}
                       >
                         <span style={styles.addressName}>斗南親子館-</span>
-                        <span style={styles.address}>
+                        <div style={styles.informationLayout}>
+                          <span style={styles.address}>
                           雲林縣斗南鎮莒光街31號-10號
-                        </span>
+                          </span>
+                          <div style={styles.serviceLayout}>
+                            <div style={styles.serviceFontLayout}>
+                              <span style={styles.serviceFont}>服務</span>
+                              <span style={styles.serviceFont}>時段</span>
+                            </div>
+                            <div style={styles.timeLayout}>
+                              <span style={styles.timeFont}>週二～週六。</span>
+                              <span style={styles.timeFont}>
+                                上午9:00~12:00，
+                              </span>
+                              <span style={styles.timeFont}>
+                                下午 13:30~16:30
+                              </span>
+                            </div>
+                          </div>
+                        </div>
                       </MenuItem>
                       <MenuItem
                         value="北港親子館-雲林縣北港鎮文化路246號3樓"
@@ -453,9 +513,26 @@ const ApplicationPage = () => {
                         }}
                       >
                         <span style={styles.addressName}>北港親子館-</span>
-                        <span style={styles.address}>
+                        <div style={styles.informationLayout}>
+                          <span style={styles.address}>
                           雲林縣北港鎮文化路246號3樓-10號
-                        </span>
+                          </span>
+                          <div style={styles.serviceLayout}>
+                            <div style={styles.serviceFontLayout}>
+                              <span style={styles.serviceFont}>服務</span>
+                              <span style={styles.serviceFont}>時段</span>
+                            </div>
+                            <div style={styles.timeLayout}>
+                              <span style={styles.timeFont}>週二～週六。</span>
+                              <span style={styles.timeFont}>
+                                上午9:00~12:00，
+                              </span>
+                              <span style={styles.timeFont}>
+                                下午 13:30~17:00
+                              </span>
+                            </div>
+                          </div>
+                        </div>
                       </MenuItem>
                       <MenuItem
                         value="西螺親子館-雲林縣西螺鎮中山路227號2樓"
@@ -468,9 +545,26 @@ const ApplicationPage = () => {
                         }}
                       >
                         <span style={styles.addressName}>西螺親子館-</span>
-                        <span style={styles.address}>
-                          雲林縣西螺鎮中山路227號2樓-10號
-                        </span>
+                        <div style={styles.informationLayout}>
+                          <span style={styles.address}>
+                          雲林縣西螺鎮中山路227號2樓
+                          </span>
+                          <div style={styles.serviceLayout}>
+                            <div style={styles.serviceFontLayout}>
+                              <span style={styles.serviceFont}>服務</span>
+                              <span style={styles.serviceFont}>時段</span>
+                            </div>
+                            <div style={styles.timeLayout}>
+                              <span style={styles.timeFont}>週二～週六。</span>
+                              <span style={styles.timeFont}>
+                                上午9:00~12:00，
+                              </span>
+                              <span style={styles.timeFont}>
+                                下午 13:30~17:00
+                              </span>
+                            </div>
+                          </div>
+                        </div>
                       </MenuItem>
                       <MenuItem
                         value="麥寮親子館-雲林縣台西鄉民生路52號"
@@ -483,9 +577,26 @@ const ApplicationPage = () => {
                         }}
                       >
                         <span style={styles.addressName}>麥寮親子館-</span>
-                        <span style={styles.address}>
-                          雲林縣台西鄉民生路52號-10號
-                        </span>
+                        <div style={styles.informationLayout}>
+                          <span style={styles.address}>
+                          雲林縣台西鄉民生路52號
+                          </span>
+                          <div style={styles.serviceLayout}>
+                            <div style={styles.serviceFontLayout}>
+                              <span style={styles.serviceFont}>服務</span>
+                              <span style={styles.serviceFont}>時段</span>
+                            </div>
+                            <div style={styles.timeLayout}>
+                              <span style={styles.timeFont}>週二～週六。</span>
+                              <span style={styles.timeFont}>
+                                上午9:00~12:00，
+                              </span>
+                              <span style={styles.timeFont}>
+                                下午 13:30~16:30
+                              </span>
+                            </div>
+                          </div>
+                        </div>
                       </MenuItem>
                     </Select>
                   </FormControl>
@@ -595,6 +706,50 @@ const ApplicationPage = () => {
 };
 
 const styles = {
+  serviceFontLayout: {
+    display: "flex",
+    alignItems: "center",
+    flexDirection: "column",
+    gap: "4px",
+  },
+  timeLayout: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "flex-start",
+    gap: "4px",
+  },
+  timeFont: {
+    color: "var(---Outline-OnSurfaceVariant, #402626)",
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: "8px",
+    fontStyle: "normal",
+    fontWeight: "400",
+    lineHeight: "normal",
+  },
+  serviceFont: {
+    color: "var(---Outline-Outline, #955959)",
+    fontFamily: "LINE Seed JP_TTF",
+    fontSize: "8px",
+    fontStyle: "normal",
+    fontWeight: "400",
+    lineHeight: "normal",
+  },
+  serviceLayout: {
+    display: "flex",
+    width: "128px",
+    padding: "2px 6px",
+    alignItems: "flex-start",
+    gap: "8px",
+    borderRadius: "4px",
+    background: "var(---Outline-OutlineVariant, #D2C5C5)",
+  },
+  informationLayout: {
+    display: "flex",
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
+    gap: "4px",
+    width: "100%",
+  },
   totalTimeLayout: {
     display: "flex",
     alignItems: "center",
@@ -638,6 +793,8 @@ const styles = {
     fontStyle: "normal",
     fontWeight: "400",
     lineHeight: "normal",
+    width:"156px",
+    whiteSpace: "wrap",
   },
   addressName: {
     color: "var(---Error-OnContainer, #410002)",

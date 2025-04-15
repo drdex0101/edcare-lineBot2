@@ -24,6 +24,16 @@ export default function ProfilePage() {
   const [kycId, setKycId] = useState(0);
   const [age, setAge] = useState(0);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [isPaired, setIsPaired] = useState(false);
+
+  const isPair = async () => {
+    const response = await fetch(`/api/pair/isPair?nanny_id=${id}&&order_id=${orderId}`);
+    const data = await response.json();
+    console.log("data", data);
+    if (data.orders?.length > 0) {
+      setIsPaired(true);
+    }
+  };
 
   const handleSvgClick = async () => {
     try {
@@ -121,8 +131,10 @@ export default function ProfilePage() {
   }, [id, router.isReady]); // 添加 router.isReady 作為依賴
 
   useEffect(() => {
-    setAge(calculateAge(nannyInfo.birthday));
-    console.log(nannyInfo.location)
+    if (nannyInfo?.id && nannyInfo?.birthday) {
+      setAge(calculateAge(nannyInfo.birthday));
+      isPair();
+    }
   }, [nannyInfo]);
 
   const renderLocation = (location) => {
@@ -151,7 +163,7 @@ export default function ProfilePage() {
     3: "製作副食品",
     4: "可配合不使用3C育兒",
     5: "寶寶衣物清洗",
-    6: "可配合家長外出",
+    6: "可配合保母外出(公園散步)",
   };
 
   const icons = {
@@ -346,6 +358,13 @@ export default function ProfilePage() {
   };
 
   const handleBookingClick = () => {
+    if (isPaired || isMatching) {
+      Swal.fire({
+        icon: 'error',
+        title: '已經配對請回保母搜尋頁面',
+      });
+      return
+    }
     setIsModalOpen(true);
   };
 
@@ -358,7 +377,6 @@ export default function ProfilePage() {
         icon: 'error',
         title: '請先建立訂單。',
       });
-      return;
     }
     if (kycId == 0) {
       setIsModalOpen(false);
@@ -648,7 +666,7 @@ export default function ProfilePage() {
             }}
           >
             <div className="iconNav">
-              {["1", "2", "3", "4", "5", "6"].map((number) => (
+              {[ "2", "3", "4", "5", "6"].map((number) => (
                 <div
                   key={number}
                   style={{
@@ -683,7 +701,7 @@ export default function ProfilePage() {
                   <span className="imgFont">保母自介</span>
                   {nannyInfo.introduction}
                 </div>
-                <button className="submitButton" onClick={handleBookingClick} disabled={isMatching}>
+                <button className="submitButton" onClick={handleBookingClick} >
                   + 馬上預約
                 </button>
               </div>

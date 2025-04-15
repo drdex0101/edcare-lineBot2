@@ -64,6 +64,10 @@ const ApplicationPage = () => {
     }
   };
 
+  const handleGoToLink = () => {
+    router.push("/parent/search");
+  };
+
   return (
     <div style={styles.main}>
       {isLoading ? (
@@ -156,7 +160,7 @@ const ApplicationPage = () => {
                 <div className="flexColumnSecond">
                   <span className="secondTitle">什麼時候會通過審核？</span>
                   <span className="secondSubTitle">
-                    審核時間約2~3天的時間，我們會撥電話給您做身分確認與審核。
+                  審核時間為上班日的 8:30~17:30，通常需要 2~3 天。我們會主動以電話聯絡您，確認您的身分並完成審核程序，請留意來電喔！
                   </span>
                 </div>
                 <div className="flexColumnSecond">
@@ -167,7 +171,7 @@ const ApplicationPage = () => {
                 </div>
               </div>
               {isMember && haveKyc && haveOrder ? (
-                <></>
+                <button style={styles.goToLink} onClick={handleGoToLink}>前往查看平台保母</button>
               ) : (
                 <button style={styles.goToLink} onClick={handleClick}>點我繼續填寫資料</button>
               )}
