@@ -208,7 +208,7 @@ export default function HistoryPage() {
         <>
           <div className="matching-body-header-background">
             <div style={styles.header}>
-              <OrderCarousel orderList={orderInfo} handleNextClick={handleNextClick} setIsShow={setIsShow} setOrderId={setOrderId}/>
+              <OrderCarousel orderList={orderInfo} handleNextClick={handleNextClick} setIsShow={setIsShow} isShow={isShow}/>
             </div>
           </div>
           {openKycModal && (
@@ -345,11 +345,12 @@ export default function HistoryPage() {
                     style={styles.nannyItem}
                     onClick={() => {
                       if (nanny.id) {
-                        if (!isShow && orderId != null) {
+                        if (orderId == null) {
                           Swal.fire({
                             icon: 'error',
-                            title: '無訂單或是當前訂單已隱藏',
+                            title: '請選擇小孩資料或新增小孩資料',
                           });
+                          console.log(isShow, orderId);
                         }
                         else {
                           router.push(`/nanny/profile/${nanny.id}`);
@@ -732,7 +733,6 @@ const styles = {
   header: {
     display: "flex",
     height: "147px",
-    padding: "15px 38px",
     alignItems: "center",
     justifyContent:"space-between",
     gap: "20px",

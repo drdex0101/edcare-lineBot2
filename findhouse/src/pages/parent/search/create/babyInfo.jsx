@@ -17,6 +17,9 @@ import Swal from "sweetalert2";
 import { MenuItem, InputLabel, FormControl } from "@mui/material";
 import Cookies from "js-cookie";
 
+import "dayjs/locale/zh-tw";
+dayjs.locale("zh-tw");
+
 const ApplicationPage = () => {
   const router = useRouter();
   const [selectedDate, setSelectedDate] = useState(null); // 避免 undefined
@@ -92,7 +95,7 @@ const ApplicationPage = () => {
 
     try {
       let response;
-      if (babyInfo) {
+      if (babyInfo?.id) {
         response = await fetch("/api/order/updateOrderData", {
           method: "PATCH",
           headers: {

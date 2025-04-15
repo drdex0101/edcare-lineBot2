@@ -19,6 +19,23 @@ export default function ProfilePage() {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isMatching, setIsMatching] = useState(false);
   const { orderId, setOrderId } = useStore();
+  const [warningText, setWarningText] = useState("");
+  const [isSuccess, setIsSuccess] = useState(true);
+
+  const isPair = async () => {
+    const response = await fetch(
+      `/api/pair/isPair?nanny_id=${id}&&order_id=${orderId}`
+    );
+    const data = await response.json();
+    if (
+      data.orders[0].status == "signing" ||
+      data.orders[0].status == "cancel"
+    ) {
+      setIsSuccess(true);
+    } else {
+      setIsSuccess(false);
+    }
+  };
 
   const handleSvgClick = async () => {
     try {
@@ -49,6 +66,10 @@ export default function ProfilePage() {
   const [offset, setOffset] = useState(0);
 
   useEffect(() => {
+    isPair();
+  }, [warningText]);
+
+  useEffect(() => {
     const handleScroll = () => {
       setOffset(window.scrollY);
     };
@@ -59,11 +80,11 @@ export default function ProfilePage() {
 
   const getIsFavorite = async () => {
     const response = await fetch(
-      `/api/favorite/getIsFavorite?itemId=${id}&&type=${"parent"}`,
+      `/api/favorite/getIsFavorite?itemId=${id}&&type=${"parent"}`
     );
     const data = await response.json();
     console.log("data", data.favorite.length);
-    if (data.favorite.length > 0 ) {
+    if (data.favorite.length > 0) {
       setIsFavorite(true);
     }
   };
@@ -71,26 +92,38 @@ export default function ProfilePage() {
   const handlApproval = async () => {
     const response = await fetch(`/api/pair/update`, {
       method: "PATCH",
-      body: JSON.stringify({ id, orderId, status: 'signing',preStatus: 'matchByNanny' }),
+      body: JSON.stringify({
+        id,
+        orderId,
+        status: "signing",
+        preStatus: "matchByNanny",
+      }),
       headers: {
         "Content-Type": "application/json",
       },
     });
     const data = await response.json();
-    setIsModalOpen(false);
+    setIsModalOpen(true);
+    setWarningText("配對成功");
     setIsMatching(true);
   };
 
   const handlReject = async () => {
     const response = await fetch(`/api/pair/update`, {
       method: "PATCH",
-      body: JSON.stringify({ id, orderId, status: 'cancel',preStatus: 'matchByNanny' }),
+      body: JSON.stringify({
+        id,
+        orderId,
+        status: "cancel",
+        preStatus: "matchByNanny",
+      }),
       headers: {
         "Content-Type": "application/json",
       },
     });
     const data = await response.json();
-    setIsModalOpen(false);
+    setIsModalOpen(true);
+    setWarningText("已拒絕配對");
     setIsMatching(true);
   };
 
@@ -116,7 +149,7 @@ export default function ProfilePage() {
         }
         if (data.nannies[0].uploadid) {
           const response3 = await fetch(
-            `/api/base/getImgUrl?id=${data.nannies[0].uploadid}`,
+            `/api/base/getImgUrl?id=${data.nannies[0].uploadid}`
           );
           const data3 = await response3.json();
           setIconUrl(data3.url);
@@ -132,7 +165,6 @@ export default function ProfilePage() {
   }, [id, router.isReady]);
 
   const serviceNames = {
-    1: "可接送小朋友",
     2: "可遠端查看育兒情形",
     3: "製作副食品",
     4: "可配合不使用3C育兒",
@@ -140,38 +172,7 @@ export default function ProfilePage() {
     6: "可配合家長外出",
   };
 
-
   const icons = {
-    1: {
-      active: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-        >
-          <path
-            d="M23.861 8H13V0H15C15.083 0 22.746 0.0999999 23.861 8ZM5.5 10L4 8C3.53293 7.38045 2.92873 6.87747 2.23476 6.53049C1.54078 6.1835 0.775884 6.00193 0 6L0 8C0.46553 8.00116 0.924469 8.1101 1.34085 8.31829C1.75724 8.52648 2.11976 8.82827 2.4 9.2L4 11.333V13C4 13.7956 4.31607 14.5587 4.87868 15.1213C5.44129 15.6839 6.20435 16 7 16H11.865L9.257 19.129C7.935 18.511 5.837 20.046 6.004 21.64C6.02797 22.0042 6.13163 22.3586 6.30766 22.6783C6.48369 22.998 6.7278 23.2752 7.02272 23.4901C7.31764 23.7051 7.65618 23.8527 8.01442 23.9224C8.37265 23.9922 8.74183 23.9824 9.09586 23.8937C9.44989 23.8051 9.78013 23.6398 10.0632 23.4095C10.3463 23.1792 10.5754 22.8895 10.7342 22.5609C10.8931 22.2323 10.9778 21.8728 10.9824 21.5079C10.987 21.143 10.9115 20.7815 10.761 20.449L14 16.562L17.239 20.449C17.0904 20.7814 17.0164 21.1423 17.0223 21.5063C17.0282 21.8704 17.1138 22.2287 17.2731 22.5561C17.4323 22.8835 17.6614 23.1721 17.9442 23.4014C18.2269 23.6308 18.5565 23.7954 18.9097 23.8837C19.263 23.972 19.6312 23.9818 19.9887 23.9124C20.3461 23.8431 20.684 23.6963 20.9785 23.4823C21.2731 23.2683 21.5172 22.9924 21.6937 22.6739C21.8702 22.3555 21.9747 22.0022 22 21.639C22.167 20.047 20.069 18.51 18.747 19.129L16.135 16H21C21.7956 16 22.5587 15.6839 23.1213 15.1213C23.6839 14.5587 24 13.7956 24 13V10H5.5Z"
-            fill="#E3838E"
-          />
-        </svg>
-      ),
-      default: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-        >
-          <path
-            d="M23.861 8H13V0H15C15.083 0 22.746 0.0999999 23.861 8ZM5.5 10L4 8C3.53293 7.38045 2.92873 6.87747 2.23476 6.53049C1.54078 6.1835 0.775884 6.00193 0 6L0 8C0.46553 8.00116 0.924469 8.1101 1.34085 8.31829C1.75724 8.52648 2.11976 8.82827 2.4 9.2L4 11.333V13C4 13.7956 4.31607 14.5587 4.87868 15.1213C5.44129 15.6839 6.20435 16 7 16H11.865L9.257 19.129C7.935 18.511 5.837 20.046 6.004 21.64C6.02797 22.0042 6.13163 22.3586 6.30766 22.6783C6.48369 22.998 6.7278 23.2752 7.02272 23.4901C7.31764 23.7051 7.65618 23.8527 8.01442 23.9224C8.37265 23.9922 8.74183 23.9824 9.09586 23.8937C9.44989 23.8051 9.78013 23.6398 10.0632 23.4095C10.3463 23.1792 10.5754 22.8895 10.7342 22.5609C10.8931 22.2323 10.9778 21.8728 10.9824 21.5079C10.987 21.143 10.9115 20.7815 10.761 20.449L14 16.562L17.239 20.449C17.0904 20.7814 17.0164 21.1423 17.0223 21.5063C17.0282 21.8704 17.1138 22.2287 17.2731 22.5561C17.4323 22.8835 17.6614 23.1721 17.9442 23.4014C18.2269 23.6308 18.5565 23.7954 18.9097 23.8837C19.263 23.972 19.6312 23.9818 19.9887 23.9124C20.3461 23.8431 20.684 23.6963 20.9785 23.4823C21.2731 23.2683 21.5172 22.9924 21.6937 22.6739C21.8702 22.3555 21.9747 22.0022 22 21.639C22.167 20.047 20.069 18.51 18.747 19.129L16.135 16H21C21.7956 16 22.5587 15.6839 23.1213 15.1213C23.6839 14.5587 24 13.7956 24 13V10H5.5Z"
-            fill="#F2F2F2"
-          />
-        </svg>
-      ),
-    },
     5: {
       active: (
         <svg
@@ -403,9 +404,15 @@ export default function ProfilePage() {
           </div>
         </div>
         {/* Tabs */}
-        <div className={`${nannyInfo.care_type === "suddenly" ? "tabs-suddenly" : "tabs"}`}>
+        <div
+          className={`${nannyInfo.care_type === "suddenly" ? "tabs-suddenly" : "tabs"}`}
+        >
           <div className="tab-content">
-            <span className={`${nannyInfo.care_type === "suddenly" ? "tab-tile-suddenly" : "tab-tile"}`}>托育方式</span>
+            <span
+              className={`${nannyInfo.care_type === "suddenly" ? "tab-tile-suddenly" : "tab-tile"}`}
+            >
+              托育方式
+            </span>
             <span className="tab-subTitle">
               {nannyInfo.care_type === "suddenly"
                 ? "臨時托育"
@@ -433,7 +440,11 @@ export default function ProfilePage() {
             />
           </svg>
           <div className="tab-content">
-          <span className={`${nannyInfo.care_type === "suddenly" ? "tab-tile-suddenly" : "tab-tile"}`}>托育情境</span>
+            <span
+              className={`${nannyInfo.care_type === "suddenly" ? "tab-tile-suddenly" : "tab-tile"}`}
+            >
+              托育情境
+            </span>
             <span className="tab-subTitle">
               {nannyInfo.scenario === "home"
                 ? "在宅托育"
@@ -471,17 +482,18 @@ export default function ProfilePage() {
             </div>
           </div>
           {/* 圓點指示器 */}
-          {nannyInfo?.environmentpic && nannyInfo?.environmentpic?.length > 0 && (
-            <div className="dotsContainer">
-              {nannyInfo?.environmentpic?.map((_, index) => (
-                <span
-                  key={index}
-                  className={`dot ${index === currentImageIndex ? "active" : ""}`}
-                  onClick={() => handleDotClick(index)}
-                ></span>
-              ))}
-            </div>
-          )}
+          {nannyInfo?.environmentpic &&
+            nannyInfo?.environmentpic?.length > 0 && (
+              <div className="dotsContainer">
+                {nannyInfo?.environmentpic?.map((_, index) => (
+                  <span
+                    key={index}
+                    className={`dot ${index === currentImageIndex ? "active" : ""}`}
+                    onClick={() => handleDotClick(index)}
+                  ></span>
+                ))}
+              </div>
+            )}
         </div>
         <div style={{ backgroundColor: "#F8ECEC" }}>
           <ServiceSchedule></ServiceSchedule>
@@ -495,7 +507,7 @@ export default function ProfilePage() {
             }}
           >
             <div className="iconNav">
-              {["1", "2", "3", "4", "5", "6"].map((number) => (
+              {["2", "3", "4", "5", "6"].map((number) => (
                 <div
                   key={number}
                   style={{
@@ -544,16 +556,62 @@ export default function ProfilePage() {
             gap: "10px",
           }}
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="78" height="76" viewBox="0 0 78 76" fill="none">
-            <path d="M77.25 68V23.0588C77.25 21.078 76.4663 19.1775 75.0701 17.7724L60.1065 2.71355C58.6986 1.29672 56.7838 0.5 54.7864 0.5H8.75C4.60787 0.5 1.25 3.85786 1.25 8V52.1795C1.25 54.1613 2.0344 56.0625 3.43182 57.4678L19.1637 73.2884C20.5714 74.704 22.4855 75.5 24.4819 75.5H69.75C73.8921 75.5 77.25 72.1421 77.25 68Z" fill="#F5E5E5" fill-opacity="0.8" stroke="#F3CCD4" />
-            <image href="/icon/reject.svg" x="24" y="24" width="30" height="30" onClick={handlReject} />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="78"
+            height="76"
+            viewBox="0 0 78 76"
+            fill="none"
+            style={{
+              opacity: isSuccess ? 1 : 0.4,
+              pointerEvents: isSuccess ? "auto" : "none",
+              cursor: isSuccess ? "pointer" : "not-allowed",
+            }}
+          >
+            <path
+              d="M77.25 68V23.0588C77.25 21.078 76.4663 19.1775 75.0701 17.7724L60.1065 2.71355C58.6986 1.29672 56.7838 0.5 54.7864 0.5H8.75C4.60787 0.5 1.25 3.85786 1.25 8V52.1795C1.25 54.1613 2.0344 56.0625 3.43182 57.4678L19.1637 73.2884C20.5714 74.704 22.4855 75.5 24.4819 75.5H69.75C73.8921 75.5 77.25 72.1421 77.25 68Z"
+              fill="#F5E5E5"
+              fill-opacity="0.8"
+              stroke="#F3CCD4"
+            />
+            <image
+              href="/icon/reject.svg"
+              x="24"
+              y="24"
+              width="30"
+              height="30"
+              onClick={handlReject}
+            />
           </svg>
 
-          <svg xmlns="http://www.w3.org/2000/svg" width="56" height="65" viewBox="0 0 56 65" fill="none">
-            <path d="M22.6564 61.8784L3.42644 43.7484C1.978 42.3828 1.16481 40.5303 1.16604 38.5991L1.17355 26.8226C1.17477 24.8944 1.98777 23.0455 3.43394 21.682L23.4296 2.83016C26.4434 -0.0113071 31.3299 -0.0113093 34.3437 2.83016L53.2013 20.6091C54.6504 21.9753 55.4636 23.8288 55.4617 25.761L55.4489 38.2446C55.4469 40.1719 54.634 42.0197 53.1885 43.3825L33.5705 61.8784C30.5567 64.7198 25.6702 64.7198 22.6564 61.8784Z" fill="#F5E5E5" fill-opacity="0.8" stroke="#F3CCD4" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="56"
+            height="65"
+            viewBox="0 0 56 65"
+            fill="none"
+          >
+            <path
+              d="M22.6564 61.8784L3.42644 43.7484C1.978 42.3828 1.16481 40.5303 1.16604 38.5991L1.17355 26.8226C1.17477 24.8944 1.98777 23.0455 3.43394 21.682L23.4296 2.83016C26.4434 -0.0113071 31.3299 -0.0113093 34.3437 2.83016L53.2013 20.6091C54.6504 21.9753 55.4636 23.8288 55.4617 25.761L55.4489 38.2446C55.4469 40.1719 54.634 42.0197 53.1885 43.3825L33.5705 61.8784C30.5567 64.7198 25.6702 64.7198 22.6564 61.8784Z"
+              fill="#F5E5E5"
+              fill-opacity="0.8"
+              stroke="#F3CCD4"
+            />
 
             <g onClick={handleSvgClick} style={{ cursor: "pointer" }}>
-              <svg x="18" y="25" width="20" height="18" viewBox="0 0 20 18" fill="none">
+              <svg
+                x="18"
+                y="25"
+                width="20"
+                height="18"
+                viewBox="0 0 20 18"
+                fill="none"
+                style={{
+                  opacity: isSuccess ? 1 : 0.4,
+                  pointerEvents: isSuccess ? "auto" : "none",
+                  cursor: isSuccess ? "pointer" : "not-allowed",
+                }}
+              >
                 <path
                   d="M10 4.15428C8 -0.540161 1 -0.0401611 1 5.95987C1 11.9599 10 16.9601 10 16.9601C10 16.9601 19 11.9599 19 5.95987C19 -0.0401611 12 -0.540161 10 4.15428Z"
                   stroke="#E3838E"
@@ -566,9 +624,27 @@ export default function ProfilePage() {
             </g>
           </svg>
 
-          <svg xmlns="http://www.w3.org/2000/svg" width="78" height="76" viewBox="0 0 78 76" fill="none">
-            <path d="M0.75 68V23.0588C0.75 21.078 1.53366 19.1775 2.9299 17.7724L17.8935 2.71355C19.3014 1.29672 21.2162 0.5 23.2136 0.5H69.25C73.3921 0.5 76.75 3.85786 76.75 8V52.1795C76.75 54.1613 75.9656 56.0625 74.5682 57.4678L58.8363 73.2884C57.4286 74.704 55.5145 75.5 53.5181 75.5H8.25C4.10787 75.5 0.75 72.1421 0.75 68Z" fill="#F5E5E5" fill-opacity="0.8" stroke="#F3CCD4" />
-            <image href="/icon/approve.svg" x="24" y="24" width="30" height="30" onClick={handlApproval} />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="78"
+            height="76"
+            viewBox="0 0 78 76"
+            fill="none"
+          >
+            <path
+              d="M0.75 68V23.0588C0.75 21.078 1.53366 19.1775 2.9299 17.7724L17.8935 2.71355C19.3014 1.29672 21.2162 0.5 23.2136 0.5H69.25C73.3921 0.5 76.75 3.85786 76.75 8V52.1795C76.75 54.1613 75.9656 56.0625 74.5682 57.4678L58.8363 73.2884C57.4286 74.704 55.5145 75.5 53.5181 75.5H8.25C4.10787 75.5 0.75 72.1421 0.75 68Z"
+              fill="#F5E5E5"
+              fill-opacity="0.8"
+              stroke="#F3CCD4"
+            />
+            <image
+              href="/icon/approve.svg"
+              x="24"
+              y="24"
+              width="30"
+              height="30"
+              onClick={handlApproval}
+            />
           </svg>
         </div>
       </div>
@@ -597,22 +673,7 @@ export default function ProfilePage() {
                 </defs>
               </svg>
             </button>
-            <span className="modalTitle">{ }</span>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                gap: "16px",
-              }}
-            >
-              <button className="cancelBtn" onClick={handleCloseModal}>
-                取消
-              </button>
-              <button className="confirmBtn" onClick={handleCloseModal}>
-                確認
-              </button>
-            </div>
+            <span className="modalTitle">配對成功</span>
           </div>
         </div>
       )}
