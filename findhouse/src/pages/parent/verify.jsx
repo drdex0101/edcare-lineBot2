@@ -95,6 +95,7 @@ const ApplicationPage = () => {
             </button>
             <span style={styles.verifyText}>需先完成身分驗證</span>
             <span style={styles.verifyText}>才能申請托育媒合服務</span>
+            <span style={styles.verifyText}>請先備妥身分證在進行身份驗證</span>
           </div>
         </div>
       </div>
@@ -107,7 +108,7 @@ const styles = {
     color: "var(---Primary-Primary, #E3838E)",
     textAlign: "center",
     fontFamily: "LINE Seed JP_TTF",
-    fontSize: "11px",
+    fontSize: "16px",
     fontStyle: "normal",
     fontWeight: "400",
     lineHeight: "normal",
