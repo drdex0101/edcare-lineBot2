@@ -77,7 +77,7 @@ export default function HistoryPage() {
         <img
           src="/icon/arrowForward.svg"
           alt="back"
-          onClick={() => router.back()}
+          onClick={() => router.back("/parent/search")}
         />
         <SettingForParent />
       </div>
@@ -162,7 +162,7 @@ export default function HistoryPage() {
                     <img className="avatar-img" src={avatar.uploadid ? (imgUrls[avatar.uploadid] || "/nannyIcon.jpg") : "/nannyIcon.jpg"} />
                     </div>
                     <div className="nanny-intro">
-                      <span className="nanny-intro-name">{avatar.name}</span>
+                      <span className="nanny-intro-name">{avatar.name[0]}保母</span>
                       <span className="nanny-intro-exp">{calculateAge(avatar.nannybirthday)}</span>
                     </div>
                     <div className="status">

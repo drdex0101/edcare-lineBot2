@@ -208,7 +208,7 @@ export default function HistoryPage() {
         <>
           <div className="matching-body-header-background">
             <div style={styles.header}>
-              <OrderCarousel orderList={orderInfo} handleNextClick={handleNextClick} setIsShow={setIsShow} isShow={isShow}/>
+              <OrderCarousel orderList={orderInfo} handleNextClick={handleNextClick} setIsShow={setIsShow} isShow={isShow} setOpenKycModal={setOpenKycModal} haveKyc={haveKyc}/>
             </div>
           </div>
           {openKycModal && (

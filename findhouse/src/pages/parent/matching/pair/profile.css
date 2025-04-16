@@ -418,7 +418,7 @@ background: #FFF;
   .iconNav button {
     display: flex;
     width: 48px;
-    height: 76px;
+    height: 100px;
     flex-direction: column;
     align-items: center;
     gap: 12px;
@@ -443,7 +443,7 @@ background: #FFF;
     color: var(---Primary-Primary, #E3838E);
     text-align: center;
     font-family: "LINE Seed JP_TTF";
-    font-size: 8px;
+    font-size: 11px;
     font-style: normal;
     font-weight: 400;
     line-height: normal;
@@ -483,14 +483,47 @@ background: #FFF;
   }
 
   .buttonLayout {
-    position: absolute;
-    bottom: 0;
     display: flex;
-    width: 200px;
+    width: 100%;
+    padding: 0 10px;
     height: 113px;
+    gap: 10px;
+    background-color: #F3CCD4;
     justify-content: space-between;
     align-items: flex-start;
     flex-shrink: 0;
+  }
+
+  .appoveButton {
+    display: flex;
+    padding: 8px 12px;
+    width: 200px;
+    height: 40px;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    align-self: stretch;
+    border-radius: 6px;
+    background: var(---Primary-Primary, #E3838E);
+    border:none;
+    width:100%;
+    color:#fff
+  }
+
+  .rejectButton {
+    display: flex;
+    padding: 8px 12px;
+    width: 200px;
+    height: 40px;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    align-self: stretch;
+    border-radius: 6px;
+    background: var(---Primary-Primary, #E3838E);
+    border:none;
+    width:100%;
+    color:#fff
   }
 
   .submitButton {

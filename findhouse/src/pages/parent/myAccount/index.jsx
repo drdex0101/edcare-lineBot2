@@ -88,7 +88,7 @@ export default function DetailsPage() {
         <img
           src="/icon/arrowForward.svg"
           alt="back"
-          onClick={() => router.back()}
+          onClick={() => router.back("/parent/search")}
         />
         <SettingForParent />
       </div>

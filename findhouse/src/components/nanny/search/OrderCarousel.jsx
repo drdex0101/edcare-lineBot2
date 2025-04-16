@@ -3,7 +3,7 @@ import "./orderCarousal.css";
 import { useRouter } from "next/router";
 import useStore from "../../../lib/store";
 import Swal from "sweetalert2";
-const OrderCarousel = ({ orderList, itemsPerPage = 1, setIsShow, isShow }) => {
+const OrderCarousel = ({ orderList, itemsPerPage = 1, setIsShow, isShow, haveKyc, setOpenKycModal }) => {
   const router = useRouter();
   const { babyInfo, setBabyInfo } = useStore();
   const { careData, setCareData } = useStore();
@@ -30,10 +30,21 @@ const OrderCarousel = ({ orderList, itemsPerPage = 1, setIsShow, isShow }) => {
     setCareData(data.data);
   };
 
-  const goToEdit = (order) => {
-    fetchCareData(order.caretypeid);
-    setBabyInfo(order);
-    router.push("/parent/search/create/choose");
+  const goToEdit = async (order) => {
+    const result = await Swal.fire({
+      title: "確定要修改此訂單嗎？",
+      text: "修改訂單將會移除已配對之保母，是否繼續？",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "確認",
+      cancelButtonText: "取消",
+    });
+  
+    if (result.isConfirmed) {
+      await fetchCareData(order.caretypeid);
+      setBabyInfo(order);
+      router.push("/parent/search/create/choose");
+    }
   };
 
   const deleteOrder = async (orderId) => {
@@ -59,7 +70,12 @@ const OrderCarousel = ({ orderList, itemsPerPage = 1, setIsShow, isShow }) => {
     const index = Math.max(orderCurrentPage - 1, 0);
     const current = orderList[index];
     console.log("🚀 orderCurrentPage updated:", orderCurrentPage);
-
+    if (orderList.length > 0) {
+      setOrderCurrentPage(1);
+    }
+    else {
+      setOrderCurrentPage(0);
+    }
     setCurrentOrder(current);
     setBabyInfo(current);
     setIsShow(current?.isshow);
@@ -105,7 +121,11 @@ const OrderCarousel = ({ orderList, itemsPerPage = 1, setIsShow, isShow }) => {
   const goToAddOrder = () => {
     setCareData({});
     setBabyInfo({});
-    router.push("/parent/search/create/choose");
+    if (!haveKyc) {
+      setOpenKycModal(true);
+    } else {
+      router.push("/parent/search/create/choose");
+    }
   };
 
   return (

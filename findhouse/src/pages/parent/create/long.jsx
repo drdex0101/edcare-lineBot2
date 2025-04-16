@@ -85,15 +85,33 @@ const ApplicationPage = () => {
     localStorage.setItem("choosetype", "longTern");
     setCareData(data.careData);
     setIsLoading(false);
-  }
+  };
 
   const handleNextClick = async () => {
     try {
-      if (!selectedCareTime || !selectedScenario || !selectedRange.startDate || !selectedRange.endDate) {
+      if (
+        !selectedCareTime ||
+        !selectedScenario ||
+        !selectedRange.startDate ||
+        !selectedRange.endDate ||
+        !selectedAddress
+      ) {
         Swal.fire({
           icon: "error",
           title: "錯誤",
           text: "請填寫所有必填欄位。",
+        });
+        return;
+      }
+      // ✅ 檢查結束日期是否早於開始日期
+      const startDate = new Date(selectedRange.startDate);
+      const endDate = new Date(selectedRange.endDate);
+      if (endDate < startDate) {
+        console.log(startDate,endDate);
+        Swal.fire({
+          icon: "error",
+          title: "日期錯誤",
+          text: "結束日期不可早於開始日期，請修改資料。",
         });
         return;
       }
@@ -114,7 +132,6 @@ const ApplicationPage = () => {
   };
 
   const handleDateChange = (range) => {
-    console.log("Date change:", range); // 添加日誌來調試
     setSelectedRange({
       startDate: range.startDate || new Date().toISOString().split("T")[0],
       endDate: range.endDate || null,
@@ -243,63 +260,63 @@ const ApplicationPage = () => {
                 </Select>
               </FormControl>
               <div style={styles.dateLayout}>
-                  <label style={styles.dateLabel}>開始日期</label>
-                  <div style={styles.inputField}>
-                    <input
-                      type="date"
-                      id="datepicker1"
-                      name="startDate"
-                      min={(() => {
-                        const minDate = new Date();
-                        minDate.setDate(minDate.getDate() + 3);
-                        return minDate.toISOString().split("T")[0];
-                      })()}
-                      value={
-                        selectedRange.startDate
-                          ? selectedRange.startDate.split("T")[0]
-                          : ""
-                      }
-                      style={styles.dateInput}
-                      onChange={(e) =>
-                        handleDateChange({
-                          ...selectedRange,
-                          startDate: e.target.value,
-                        })
-                      }
-                      placeholder="請選擇開始日期"
-                      lang="zh-TW"
-                    />
-                  </div>
+                <label style={styles.dateLabel}>開始日期</label>
+                <div style={styles.inputField}>
+                  <input
+                    type="date"
+                    id="datepicker1"
+                    name="startDate"
+                    min={(() => {
+                      const minDate = new Date();
+                      minDate.setDate(minDate.getDate() + 3);
+                      return minDate.toISOString().split("T")[0];
+                    })()}
+                    value={
+                      selectedRange.startDate
+                        ? selectedRange.startDate.split("T")[0]
+                        : ""
+                    }
+                    style={styles.dateInput}
+                    onChange={(e) =>
+                      handleDateChange({
+                        ...selectedRange,
+                        startDate: e.target.value,
+                      })
+                    }
+                    placeholder="請選擇開始日期"
+                    lang="zh-TW"
+                  />
                 </div>
-                <div style={styles.dateLayout}>
-                  <label style={styles.dateLabel}>結束日期</label>
-                  <div style={styles.inputField}>
-                    <input
-                      type="date"
-                      id="datepicker2"
-                      name="endDate"
-                      min={(() => {
-                        const minDate = new Date();
-                        minDate.setDate(minDate.getDate() + 3);
-                        return minDate.toISOString().split("T")[0];
-                      })()}
-                      value={
-                        selectedRange.endDate
-                          ? selectedRange.endDate.split("T")[0]
-                          : ""
-                      }
-                      style={styles.dateInput}
-                      onChange={(e) =>
-                        handleDateChange({
-                          ...selectedRange,
-                          endDate: e.target.value,
-                        })
-                      }
-                      placeholder="請選擇結束日期"
-                      lang="zh-TW"
-                    />
-                  </div>
+              </div>
+              <div style={styles.dateLayout}>
+                <label style={styles.dateLabel}>結束日期</label>
+                <div style={styles.inputField}>
+                  <input
+                    type="date"
+                    id="datepicker2"
+                    name="endDate"
+                    min={(() => {
+                      const minDate = new Date();
+                      minDate.setDate(minDate.getDate() + 3);
+                      return minDate.toISOString().split("T")[0];
+                    })()}
+                    value={
+                      selectedRange.endDate
+                        ? selectedRange.endDate.split("T")[0]
+                        : ""
+                    }
+                    style={styles.dateInput}
+                    onChange={(e) =>
+                      handleDateChange({
+                        ...selectedRange,
+                        endDate: e.target.value,
+                      })
+                    }
+                    placeholder="請選擇結束日期"
+                    lang="zh-TW"
+                  />
                 </div>
+              </div>
               <FormControl>
                 <InputLabel id="gender-label">選擇情境</InputLabel>
                 <Select
@@ -333,85 +350,85 @@ const ApplicationPage = () => {
                     backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
                   }}
                 >
-                    <MenuItem value="home">
-                      <span style={styles.addressName}>在宅托育</span>
-                      <span style={styles.address}>(至保母居服處)</span>
-                    </MenuItem>
-                    <MenuItem style={styles.addressName} value="toHome">
-                      <span style={styles.addressName}>到宅托育</span>
-                      <span style={styles.address}>(至家長住所)</span>
-                    </MenuItem>
+                  <MenuItem value="home">
+                    <span style={styles.addressName}>在宅托育</span>
+                    <span style={styles.address}>(至保母居服處)</span>
+                  </MenuItem>
+                  <MenuItem style={styles.addressName} value="toHome">
+                    <span style={styles.addressName}>到宅托育</span>
+                    <span style={styles.address}>(至家長住所)</span>
+                  </MenuItem>
                 </Select>
               </FormControl>
               {(selectedScenario === "home" ||
-                  selectedScenario === "toHome") && (
-                  <FormControl>
-                    <InputLabel id="gender-label">托育地區</InputLabel>
-                    <Select
-                      required
-                      multiple
-                      labelId="gender-label"
-                      id="gender"
-                      label="托育地區"
-                      value={selectedAddress}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        if (value.length <= 5) {
-                          setSelectedAddress(value);
-                        } else {
-                          Swal.fire({
-                            icon: "error",
-                            title: "最多只能選擇5個地區",
-                            confirmButtonText: "確定",
-                          });
-                        }
-                      }}
-                      sx={{
-                        alignSelf: "stretch",
-                        borderRadius: "8px",
-                        "& .MuiOutlinedInput-root": {
-                          "& fieldset": {
-                            borderColor: "var(--OutLine-OutLine, #78726D)",
-                          },
-                          "&:hover fieldset": {
-                            borderColor: "#E3838E",
-                          },
-                          "&.Mui-focused fieldset": {
-                            borderColor: "#E3838E",
-                          },
+                selectedScenario === "toHome") && (
+                <FormControl>
+                  <InputLabel id="gender-label">托育地區</InputLabel>
+                  <Select
+                    required
+                    multiple
+                    labelId="gender-label"
+                    id="gender"
+                    label="托育地區"
+                    value={selectedAddress}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value.length <= 5) {
+                        setSelectedAddress(value);
+                      } else {
+                        Swal.fire({
+                          icon: "error",
+                          title: "最多只能選擇5個地區",
+                          confirmButtonText: "確定",
+                        });
+                      }
+                    }}
+                    sx={{
+                      alignSelf: "stretch",
+                      borderRadius: "8px",
+                      "& .MuiOutlinedInput-root": {
+                        "& fieldset": {
+                          borderColor: "var(--OutLine-OutLine, #78726D)",
                         },
-                        backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
-                      }}
-                    >
-                      {[
-                        "斗六",
-                        "斗南",
-                        "林內",
-                        "古坑",
-                        "莿桐",
-                        "虎尾",
-                        "西螺",
-                        "二崙",
-                        "土庫",
-                        "大埤",
-                        "北港",
-                        "元長",
-                        "四湖",
-                        "水林",
-                        "口湖",
-                        "麥寮",
-                        "崙背",
-                        "褒忠",
-                        "東勢",
-                        "台西",
-                      ].map((location) => (
-                        <MenuItem key={location} value={location}>
-                          {location}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                )}
+                        "&:hover fieldset": {
+                          borderColor: "#E3838E",
+                        },
+                        "&.Mui-focused fieldset": {
+                          borderColor: "#E3838E",
+                        },
+                      },
+                      backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
+                    }}
+                  >
+                    {[
+                      "斗六",
+                      "斗南",
+                      "林內",
+                      "古坑",
+                      "莿桐",
+                      "虎尾",
+                      "西螺",
+                      "二崙",
+                      "土庫",
+                      "大埤",
+                      "北港",
+                      "元長",
+                      "四湖",
+                      "水林",
+                      "口湖",
+                      "麥寮",
+                      "崙背",
+                      "褒忠",
+                      "東勢",
+                      "台西",
+                    ].map((location) => (
+                      <MenuItem key={location} value={location}>
+                        {location}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
             </div>
             <div style={styles.buttonLayout}>
               <button style={styles.nextBtn} onClick={handleNextClick}>

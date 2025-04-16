@@ -97,7 +97,7 @@ const ApplicationPage = () => {
 
   const handleNextClick = async () => {
     try {
-      if (!selectedCareTime || !selectedScenario || !selectedRange.startDate || !selectedRange.endDate) {
+      if (!selectedCareTime || !selectedScenario || !selectedRange.startDate || !selectedRange.endDate || !selectedAddress) {
         Swal.fire({
           icon: "error",
           title: "錯誤",
@@ -105,6 +105,19 @@ const ApplicationPage = () => {
         });
         return;
       }
+      // ✅ 檢查結束日期是否早於開始日期
+      const startDate = new Date(selectedRange.startDate);
+      const endDate = new Date(selectedRange.endDate);
+      if (endDate < startDate) {
+        console.log(startDate,endDate);
+        Swal.fire({
+          icon: "error",
+          title: "日期錯誤",
+          text: "結束日期不可早於開始日期，請修改資料。",
+        });
+        return;
+      }
+      
       if (careData?.id) {
         await updateCareData();
       } else {

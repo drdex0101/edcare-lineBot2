@@ -607,21 +607,26 @@ const ApplicationPage = () => {
                     <InputLabel id="gender-label">托育地區</InputLabel>
                     <Select
                       required
-                      multiple
+                      multiple={selectedCareType === "home"} // ✅ 判斷是否啟用多選
                       labelId="gender-label"
                       id="gender"
                       label="托育地區"
                       value={selectedAddress}
                       onChange={(e) => {
                         const value = e.target.value;
-                        if (value.length <= 5) {
-                          setSelectedAddress(value);
+                    
+                        if (selectedCareType === "home") {
+                          if (value.length <= 5) {
+                            setSelectedAddress(value);
+                          } else {
+                            Swal.fire({
+                              icon: "error",
+                              title: "最多只能選擇5個地區",
+                              confirmButtonText: "確定",
+                            });
+                          }
                         } else {
-                          Swal.fire({
-                            icon: "error",
-                            title: "最多只能選擇5個地區",
-                            confirmButtonText: "確定",
-                          });
+                          setSelectedAddress(value);
                         }
                       }}
                       sx={{
