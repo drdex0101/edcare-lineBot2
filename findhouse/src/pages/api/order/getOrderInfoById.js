@@ -34,7 +34,6 @@ export default async function handler(req, res) {
         p.created_time,
         o.created_ts, 
         o.update_ts, 
-        o.choosetype, 
         o.orderstatus, 
         o.caretypeid, 
         o.nickname, 
@@ -49,9 +48,12 @@ export default async function handler(req, res) {
         n.environmentpic,
         c.weekdays,
         c.care_time,
+        c.care_type,
         c.scenario,
         c.start_date,
         c.end_date,
+        c.start_time,
+        c.end_time,
         c.location,
         COUNT(*) OVER() AS totalCount
     FROM 

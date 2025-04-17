@@ -169,23 +169,23 @@ export default function HistoryId() {
                 </div>
                 <span className="sub-title-font">
                   托育方式：
-                  {orderInfo.choosetype
-                    ? orderInfo.choosetype === "suddenly"
-                      ? "臨時托育"
-                      : "長期托育"
+                  {orderInfo.care_type
+                      ? orderInfo.care_type === "suddenly"
+                        ? "臨時托育"
+                        : "長期托育"
                     : "無資料"}
                 </span>
                 <span className="sub-title-font">
                   托育時間：
-                  {orderInfo.choosetype === "suddenly"
-                    ? getCareTimeLabel(orderInfo.care_time)
+                  {orderInfo.care_type === "suddenly"
+                    ? getCareTimeLabel(orderInfo.start_time) + " ~ " + getCareTimeLabel(orderInfo.end_time)
                     : getCareTimeLabel(orderInfo.care_time)}
                 </span>
                 <span className="sub-title-font">
                   托育日期：
-                  {orderInfo.choosetype === "suddenly"
-                    ? `${orderInfo?.start_date?.slice(0, 10) || "無資料"} ~ ${orderInfo?.end_date?.slice(0, 10) || "無資料"}`
-                    : convertWeekdaysToString(orderInfo.weekdays) + " " + getCareTimeLabel(orderInfo.care_time)}
+                  {orderInfo.care_type === "suddenly"
+                    ? `${orderInfo?.start_date?.slice(0, 10) || "無資料"}`
+                    : `${orderInfo?.start_date?.slice(0, 10) || "無資料"} ~ ${orderInfo?.end_date?.slice(0, 10) || "無資料"}`}
                 </span>
                 <span className="sub-title-font">
                   托育情境：
@@ -199,7 +199,7 @@ export default function HistoryId() {
                 </span>
                 <span className="sub-title-font">
                   托育地址：
-                  {orderInfo.choosetype === "suddenly"
+                  {orderInfo.care_type === "suddenly"
                     ? orderInfo?.location || "無資料"
                     : "無資料"}
                 </span>
@@ -224,7 +224,7 @@ export default function HistoryId() {
                 <span className="title-font">托育人員</span>
                 <div className="about-nanny-font-layout">
                   <span className="sub-title-font">
-                    保母姓名：{nannyInfo?.name ? nannyInfo?.name : "無"}
+                    保母姓名：{nannyInfo?.name ? nannyInfo?.name[0] + "保母" : "無"}
                   </span>
                   <span className="sub-title-font">
                     配對時間：
