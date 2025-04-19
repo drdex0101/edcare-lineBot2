@@ -147,13 +147,23 @@ const ApplicationPage = () => {
   }, [startTime, endTime]);
 
   const handleDateChange = (range) => {
-    console.log("Date change:", range);
+    const selected = new Date(range.startDate);
+    const minDate = new Date();
+    minDate.setDate(minDate.getDate() + 3);
+
+    if (selected < minDate) {
+      Swal.fire({
+        icon: "error",
+        title: "日期錯誤",
+        text: "請選擇三天後的日期",
+      });
+      return;
+    }
     setSelectedRange({
-      startDate: range.startDate || threeDaysLater.toISOString().split("T")[0], // Use threeDaysLater as fallback
+      startDate: range.startDate || new Date().toISOString().split("T")[0],
       endDate: range.endDate || null,
     });
   };
-
   useEffect(() => {
     const parsedData = useStore.getState().careData;
     console.log("storedCareData", parsedData);

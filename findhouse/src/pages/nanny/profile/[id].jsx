@@ -163,7 +163,7 @@ export default function ProfilePage() {
     3: "製作副食品",
     4: "可配合不使用3C育兒",
     5: "寶寶衣物清洗",
-    6: "可配合保母外出(公園散步)",
+    6: "可配合保母外出",
   };
 
   const icons = {
@@ -641,22 +641,6 @@ export default function ProfilePage() {
             </div>
           )}
         </div>
-        <div style={{ width: "100%",marginBottom:"14px"}}>
-          {nannyInfo.care_type === "longTern" && (
-            <ServiceSchedule weekdays={nannyInfo.weekdays} care_time={nannyInfo.care_time}></ServiceSchedule>
-          )}
-          {nannyInfo.care_type === "suddenly" && (
-           <CalendarRangePicker
-            startDate={nannyInfo.start_date}
-            endDate={nannyInfo.end_date}
-            locale="zh-TW"
-            styles={{
-              calendar: { maxWidth: "400px" },
-              day: { width: "50px", height: "50px" },
-            }}
-          />
-          )}
-        </div>
         {/* Icon Navigation */}
         <div style={{ backgroundColor: "#fff", border: "none" }}>
           <div
@@ -666,7 +650,33 @@ export default function ProfilePage() {
             }}
           >
             <div className="iconNav">
-              {[ "2", "3", "4", "5", "6"].map((number) => (
+              {[ "2", "3", "4"].map((number) => (
+                <div
+                  key={number}
+                  style={{
+                    display: "flex",
+                    width: "48px",
+                    height: "76px",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: "12px",
+                  }}
+                >
+                  <div
+                    className={`iconStyle ${nannyInfo.service?.includes(number) ? "active" : "inactive"}`}
+                  >
+                    {nannyInfo.service?.includes(number)
+                      ? icons[number].active
+                      : icons[number].default}
+                  </div>
+                  <span
+                    className={`fontSpan ${nannyInfo.service?.includes(number) ? "active" : "inactive"}`}
+                  >
+                    {serviceNames[number]}
+                  </span>
+                </div>
+              ))}
+              {[ "5", "6"].map((number) => (
                 <div
                   key={number}
                   style={{

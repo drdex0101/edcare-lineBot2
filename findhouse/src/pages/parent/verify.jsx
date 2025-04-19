@@ -95,7 +95,7 @@ const ApplicationPage = () => {
             </button>
             <span style={styles.verifyText}>需先完成身分驗證</span>
             <span style={styles.verifyText}>才能申請托育媒合服務</span>
-            <span style={styles.verifyText}>請先備妥身分證在進行身份驗證</span>
+            <span style={styles.verifyText}>請先備妥身分證再進行身份驗證</span>
           </div>
         </div>
       </div>

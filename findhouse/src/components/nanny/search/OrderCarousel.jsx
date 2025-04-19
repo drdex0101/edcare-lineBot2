@@ -3,7 +3,14 @@ import "./orderCarousal.css";
 import { useRouter } from "next/router";
 import useStore from "../../../lib/store";
 import Swal from "sweetalert2";
-const OrderCarousel = ({ orderList, itemsPerPage = 1, setIsShow, isShow, haveKyc, setOpenKycModal }) => {
+const OrderCarousel = ({
+  orderList,
+  itemsPerPage = 1,
+  setIsShow,
+  isShow,
+  haveKyc,
+  setOpenKycModal,
+}) => {
   const router = useRouter();
   const { babyInfo, setBabyInfo } = useStore();
   const { careData, setCareData } = useStore();
@@ -39,7 +46,7 @@ const OrderCarousel = ({ orderList, itemsPerPage = 1, setIsShow, isShow, haveKyc
       confirmButtonText: "確認",
       cancelButtonText: "取消",
     });
-  
+
     if (result.isConfirmed) {
       await fetchCareData(order.caretypeid);
       setBabyInfo(order);
@@ -57,33 +64,42 @@ const OrderCarousel = ({ orderList, itemsPerPage = 1, setIsShow, isShow, haveKyc
     });
     if (response.ok) {
       Swal.fire({
-        icon: 'success',
-        title: '訂單已刪除',
+        icon: "success",
+        title: "訂單已刪除",
         showConfirmButton: false,
-        timer: 1500
+        timer: 1500,
       });
       window.location.reload();
     }
   };
 
+  const [isInitialized, setIsInitialized] = useState(false); // 新增這一行
+
   useEffect(() => {
-    const index = Math.max(orderCurrentPage - 1, 0);
-    const current = orderList[index];
-    console.log("🚀 orderCurrentPage updated:", orderCurrentPage);
-    if (orderList.length > 0) {
+    if (!orderList || orderList.length === 0) {
+      setCurrentOrder(null);
+      setBabyInfo(null);
+      setIsShow(false);
+      setOrderId(null);
+      return;
+    }
+
+    // 初始化時才設定第一筆為預設頁
+    if (!isInitialized && orderList.length > 0) {
       setOrderCurrentPage(1);
+      setIsInitialized(true);
+      return; // 等下次再進入這 useEffect，才會抓 currentOrder
     }
-    else {
-      setOrderCurrentPage(0);
-    }
+
+    const index = Math.max(orderCurrentPage - 1, 0);
+    const current = orderCurrentPage === 0 ? null : orderList[index];
+
     setCurrentOrder(current);
     setBabyInfo(current);
-    setIsShow(current?.isshow);
-    if (orderCurrentPage > 0) {
-      setOrderId(current?.id); // 確保每次切換都同步 orderId
-    } else {
-      setOrderId(null);
-    }
+    setIsShow(current?.isshow ?? false);
+    setOrderId(orderCurrentPage > 0 ? current?.id : null);
+
+    console.log("🚀 orderCurrentPage updated:", orderCurrentPage);
   }, [orderCurrentPage, orderList]);
 
   // Using an array for mapping
@@ -158,7 +174,7 @@ const OrderCarousel = ({ orderList, itemsPerPage = 1, setIsShow, isShow, haveKyc
         </svg>
       </button>
       {/* 新增訂單資料區塊 */}
-      {orderCurrentPage <= 0 ? (
+      {orderCurrentPage === 0 ? (
         <div key={-1} className="zero" onClick={goToAddOrder}>
           <span className="zero-text">+ 新增小孩資料</span>
         </div>
@@ -177,11 +193,11 @@ const OrderCarousel = ({ orderList, itemsPerPage = 1, setIsShow, isShow, haveKyc
             <span className="name">{currentOrder?.nickname}</span>
             <div className="order-item-text-careType">
               <div className="careType">
-                {currentOrder?.choosetype === "suddenly"
+                {currentOrder?.care_type === "suddenly"
                   ? "臨時托育"
-                  : currentOrder?.choosetype === "longTern"
+                  : currentOrder?.care_type === "longTern"
                     ? "長期托育"
-                    : currentOrder?.choosetype}
+                    : currentOrder?.care_type}
               </div>
               <div className="scenario">
                 {currentOrder?.scenario === "home"
@@ -195,7 +211,7 @@ const OrderCarousel = ({ orderList, itemsPerPage = 1, setIsShow, isShow, haveKyc
             </div>
             <div className="time">
               <span className="time-text">托育時間:</span>
-              {currentOrder?.choosetype === "suddenly" ? (
+              {currentOrder?.care_type === "suddenly" ? (
                 <>
                   <span className="time-text">
                     日期:{(currentOrder?.start_date ?? "").slice(0, 10)}
@@ -233,24 +249,24 @@ const OrderCarousel = ({ orderList, itemsPerPage = 1, setIsShow, isShow, haveKyc
               </svg>
             </div>
             <div onClick={() => deleteOrder(currentOrder?.id)}>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="38"
-              height="38"
-              viewBox="0 0 38 38"
-              fill="none"
-            >
-              <rect width="38" height="38" rx="4" fill="#F5E5E5" />
-              <path
-                d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14Z"
-                stroke="#000"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                fill="#E3838E"
-                transform="translate(8,6)" 
-              />
-            </svg>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="38"
+                height="38"
+                viewBox="0 0 38 38"
+                fill="none"
+              >
+                <rect width="38" height="38" rx="4" fill="#F5E5E5" />
+                <path
+                  d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14Z"
+                  stroke="#000"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  fill="#E3838E"
+                  transform="translate(8,6)"
+                />
+              </svg>
             </div>
           </div>
         </div>

@@ -45,8 +45,7 @@ export default async function handler(req, res) {
         o.nannyId, 
         o.status, 
         o.created_ts, 
-        o.update_ts, 
-        o.choosetype, 
+        o.update_ts,  
         o.orderstatus, 
         o.caretypeid, 
         o.nickname, 
@@ -65,8 +64,7 @@ export default async function handler(req, res) {
         c.start_date,
         c.end_date,
         c.location,
-        c.start_time,
-        c.end_time,
+        c.care_type,
         COUNT(*) OVER() AS totalCount
         FROM 
             orderinfo o

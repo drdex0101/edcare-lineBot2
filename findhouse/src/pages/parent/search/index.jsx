@@ -39,7 +39,7 @@ export default function HistoryPage() {
   const [isComposing, setIsComposing] = useState(false);
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
-
+  const [kycStatus, setKycStatus] = useState(false);
   const handleChange = (e) => {
     const value = e.target.value;
     setKeywords(value);
@@ -147,6 +147,7 @@ export default function HistoryPage() {
     } else {
       setHaveKyc(true);
     }
+    setKycStatus(memberExistData.member[0].kyc_status);
   }
 
   useEffect(() => {
@@ -345,12 +346,17 @@ export default function HistoryPage() {
                     style={styles.nannyItem}
                     onClick={() => {
                       if (nanny.id) {
-                        if (orderId == null) {
+                        if (kycStatus == 'pending') {
+                          Swal.fire({
+                            icon: 'error',
+                            title: '尚未完成身分驗證',
+                          });
+                        }
+                        else if (orderId == null) {
                           Swal.fire({
                             icon: 'error',
                             title: '請選擇小孩資料或新增小孩資料',
                           });
-                          console.log(isShow, orderId);
                         }
                         else {
                           router.push(`/nanny/profile/${nanny.id}`);
