@@ -54,7 +54,6 @@ export default function HistoryId() {
     { key: "signing", label: "簽約中" },
     { key: "onGoing", label: "合約履行中" },
     { key: "finish", label: "已完成" },
-    { key: "cancel", label: "已取消" },
   ];
 
   const careTime = [

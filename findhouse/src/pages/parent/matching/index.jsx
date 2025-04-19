@@ -103,7 +103,7 @@ export default function HistoryPage() {
               <div className="avatar" key={avatar.id} onClick={() => {router.push(`/parent/matching/pair/${avatar.nanny_id}`); setOrderId(avatar.order_id)}}>
                 <img src={"/nannyIcon.jpg" || getImgUrl(avatar.uploadid)} alt="avatar" className="avatar-img" />
                 <div style={{ display: "flex", alignItems: "center" }}>
-                  <span className="avatar-name">{avatar.name}</span>
+                  <span className="avatar-name">{avatar.name[0] + "保母"}</span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="18"
@@ -157,7 +157,7 @@ export default function HistoryPage() {
             ) : (
               <>
                 {signingList.map((avatar) => (
-                  <div className="nanny-layout" key={avatar.id}>
+                  <div className="nanny-layout" key={avatar.id}  onClick={() => {router.push(`/parent/matching/signing/${avatar.nanny_id}`); setOrderId(avatar.order_id)}}>
                     <div className="nanny-avatar">
                     <img className="avatar-img" src={avatar.uploadid ? (imgUrls[avatar.uploadid] || "/nannyIcon.jpg") : "/nannyIcon.jpg"} />
                     </div>

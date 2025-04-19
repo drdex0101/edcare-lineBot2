@@ -372,13 +372,13 @@ background: #FFF;
   
   .iconNav {
     display: flex;
-    height: 108px;
     padding: 18px 26px 0px 26px;
     align-items: center;
     gap: 10px;
     flex-shrink: 0;
     align-self: stretch;
     width:100%;
+    height: 130px;
     justify-content: space-around;
     background-color: #F8ECEC;
     border-radius: 50px 0px 50px 0px; 
@@ -412,7 +412,8 @@ background: #FFF;
     color: var(---Primary-Primary, #E3838E);
     text-align: center;
     font-family: "LINE Seed JP_TTF";
-    font-size: 8px;
+    font-size: 12px;
+    width: 60px;
     font-style: normal;
     font-weight: 400;
     line-height: normal;

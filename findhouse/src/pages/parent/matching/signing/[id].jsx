@@ -116,7 +116,7 @@ export default function ProfilePage() {
       body: JSON.stringify({
         id,
         orderId,
-        status: "create",
+        status: "cancel",
         preStatus: "matchByNanny",
       }),
       headers: {
@@ -595,41 +595,8 @@ export default function ProfilePage() {
               </div>
             </div>
           </div>
-          <div className="buttonLayout">
-              <button className="appoveButton" onClick={handlApproval}>媒合</button>
-              <button className="rejectButton" onClick={handlReject}>拒絕</button>
-            </div>
         </div>
       </div>
-
-      {isModalOpen && (
-        <div className="modalOverlay">
-          <div className="modalContent">
-            <button className="closeButton" onClick={handleCloseModal}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 20 20"
-                fill="none"
-              >
-                <g clip-path="url(#clip0_304_31413)">
-                  <path
-                    d="M14.7782 5.22943C14.4824 4.93364 14.0045 4.93364 13.7088 5.22943L10 8.9306L6.29124 5.22184C5.99545 4.92605 5.51763 4.92605 5.22184 5.22184C4.92605 5.51763 4.92605 5.99545 5.22184 6.29124L8.9306 10L5.22184 13.7088C4.92605 14.0045 4.92605 14.4824 5.22184 14.7782C5.51763 15.0739 5.99545 15.0739 6.29124 14.7782L10 11.0694L13.7088 14.7782C14.0045 15.0739 14.4824 15.0739 14.7782 14.7782C15.0739 14.4824 15.0739 14.0045 14.7782 13.7088L11.0694 10L14.7782 6.29124C15.0664 6.00303 15.0664 5.51763 14.7782 5.22943Z"
-                    fill="#252525"
-                  />
-                </g>
-                <defs>
-                  <clipPath id="clip0_304_31413">
-                    <rect width="20" height="20" fill="white" />
-                  </clipPath>
-                </defs>
-              </svg>
-            </button>
-            <span className="modalTitle">{warningText}</span>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
