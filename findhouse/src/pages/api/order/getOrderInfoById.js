@@ -27,11 +27,38 @@ export default async function handler(req, res) {
       await client.connect();
 
       const query = `
-       SELECT 
+       WITH main_pair AS (
+        SELECT *
+        FROM pair
+        WHERE order_id = $1
+        ORDER BY 
+          CASE 
+            WHEN status = 'onGoing' THEN 1
+            WHEN status = 'signing' THEN 2
+            WHEN status = 'finish' THEN 3
+            WHEN status IN ('matchByParent', 'matchByNanny') THEN 4
+            ELSE 5
+          END,
+          created_time DESC
+        LIMIT 1
+      ),
+      order_status AS (
+        SELECT 
+          $1::bigint AS order_id, -- 明確補上 order_id 欄位
+          CASE
+            WHEN EXISTS (SELECT 1 FROM pair WHERE order_id = $1 AND status = 'onGoing') THEN 'onGoing'
+            WHEN EXISTS (SELECT 1 FROM pair WHERE order_id = $1 AND status = 'signing') THEN 'signing'
+            WHEN EXISTS (SELECT 1 FROM pair WHERE order_id = $1 AND status = 'finish') THEN 'finish'
+            WHEN EXISTS (SELECT 1 FROM pair WHERE order_id = $1 AND status IN ('matchByParent', 'matchByNanny')) THEN 'match'
+            ELSE 'create'
+          END AS pair_status
+      )
+
+      SELECT 
         o.id,
-        p.nanny_id, 
-        p.status, 
-        p.created_time,
+        mp.nanny_id,
+        mp.status,
+        mp.created_time,
         o.created_ts, 
         o.update_ts, 
         o.orderstatus, 
@@ -55,21 +82,25 @@ export default async function handler(req, res) {
         c.start_time,
         c.end_time,
         c.location,
-        COUNT(*) OVER() AS totalCount
-    FROM 
+        os.pair_status,
+        1 AS totalCount
+
+      FROM 
         orderinfo o
-    LEFT JOIN 
+      LEFT JOIN 
         care_data c ON o.caretypeid = c.id
-    LEFT JOIN 
-        pair p ON o.id = p.order_id
-     LEFT JOIN 
-        member m ON p.nanny_id = m.id
-    LEFT JOIN 
-        nanny n ON p.nanny_id = n.id
-     LEFT JOIN 
+      LEFT JOIN 
+        main_pair mp ON o.id = mp.order_id
+      LEFT JOIN 
+        member m ON mp.nanny_id = m.id
+      LEFT JOIN 
+        nanny n ON mp.nanny_id = n.id
+      LEFT JOIN 
         kyc_info k ON n.kycid::bigint = k.id
-    WHERE 
-        o.id = $1
+      LEFT JOIN 
+        order_status os ON os.order_id = o.id
+      WHERE 
+        o.id = $1;
       `;
       
       const result = await client.query(query, [id]);

@@ -189,7 +189,7 @@ const ApplicationPage = () => {
   const [fileNameBack, setFileNameBack] = useState(""); // 新增狀態以存儲檔案名稱
 
   const handleLastClick = () => {
-    router.back(); // 替换 '/next-page' 为你想要跳转的路径
+    router.back("/parent/verify/verifyOnly"); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   const fetchKycData = async () => {

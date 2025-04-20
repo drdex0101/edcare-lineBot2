@@ -73,47 +73,25 @@ const OrderCarousel = ({
     }
   };
 
-  const [isInitialized, setIsInitialized] = useState(false); // 新增這一行
+  const hasInitialized = useRef(false); // ✅ 不會觸發 re-render
 
   useEffect(() => {
-    if (!orderList || orderList.length === 0) {
-      setCurrentOrder(null);
-      setBabyInfo(null);
-      setIsShow(false);
-      setOrderId(null);
-      return;
-    }
-
-    // 初始化時才設定第一筆為預設頁
-    if (!isInitialized && orderList.length > 0) {
+    if (orderList && orderList.length > 0 && !hasInitialized.current) {
       setOrderCurrentPage(1);
-      setIsInitialized(true);
-      return; // 等下次再進入這 useEffect，才會抓 currentOrder
+      hasInitialized.current = true; // ✅ 不會觸發 render，不會進入循環
     }
-
+  }, [orderList]);
+  
+  useEffect(() => {
     const index = Math.max(orderCurrentPage - 1, 0);
     const current = orderCurrentPage === 0 ? null : orderList[index];
-
+  
     setCurrentOrder(current);
     setBabyInfo(current);
     setIsShow(current?.isshow ?? false);
-    setOrderId(orderCurrentPage > 0 ? current?.id : null);
-
-    console.log("🚀 orderCurrentPage updated:", orderCurrentPage);
+    setOrderId(orderCurrentPage === 0 ? null : current?.id);
   }, [orderCurrentPage, orderList]);
-
-  // Using an array for mapping
-  const weekdayArray = [
-    "",
-    "星期一",
-    "星期二",
-    "星期三",
-    "星期四",
-    "星期五",
-    "星期六",
-    "星期日",
-  ];
-
+  
   const handlePreviousClick = () => {
     if (orderCurrentPage > 1) {
       setOrderCurrentPage((prev) => prev - 1);
@@ -145,7 +123,7 @@ const OrderCarousel = ({
   };
 
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+    <div style={{ display: "flex", alignItems: "center", gap: "10px",width:"100%",padding:"0 10px" }}>
       <button
         className="left-arrow"
         onClick={() => handlePreviousClick()}
@@ -182,7 +160,7 @@ const OrderCarousel = ({
         <div
           key={orderCurrentPage}
           className="order-item"
-          style={{ minWidth: "100%", position: "relative" }}
+          style={{ minWidth: "80%", position: "relative" }}
         >
           <img
             src={currentOrder?.image || "/orderCreate.png"}
