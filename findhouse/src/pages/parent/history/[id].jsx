@@ -49,11 +49,11 @@ export default function HistoryId() {
   };
 
   const orderStatusSteps = [
-    { key: "create", label: "媒合中" },
-    { key: "matchByParent" || "matchByNanny", label: "預約中" },
-    { key: "signing", label: "簽約中" },
-    { key: "onGoing", label: "合約履行中" },
-    { key: "finish", label: "已完成" },
+    { key: "create", label: "媒合中" }, //都沒有pair
+    { key: "matchByParent" || "matchByNanny", label: "預約中" }, //有一個以上的pair
+    { key: "signing", label: "簽約中" }, //有一個以上的pair的status是signing
+    { key: "onGoing", label: "合約履行中" }, //有一個以上的pair的status是onGoing
+    { key: "finish", label: "已完成" }, //有一個以上的pair的status是finish
   ];
 
   const careTime = [
@@ -66,14 +66,16 @@ export default function HistoryId() {
   let currentStatus = orderInfo?.status || "create";
 
   // 找到目前 status 在列表中的索引
-  let currentIndex = orderStatusSteps.findIndex((step) => step.key === currentStatus);
+  let currentIndex = orderStatusSteps.findIndex(
+    (step) => step.key === currentStatus
+  );
   // 如果找不到，就預設為第一個狀態 "媒合中"
   if (currentIndex === -1) {
     currentIndex = 0;
   }
   // Function to get the label for a given care_time key
   const getCareTimeLabel = (careTimeKey) => {
-    const careTimeItem = careTime.find(item => item.key === careTimeKey);
+    const careTimeItem = careTime.find((item) => item.key === careTimeKey);
     return careTimeItem ? careTimeItem.label : "無資料";
   };
 
@@ -87,32 +89,30 @@ export default function HistoryId() {
       4: "星期四",
       5: "星期五",
       6: "星期六",
-      7: "星期日"
+      7: "星期日",
     };
 
     // Handle both array and string inputs
-    const weekdayArray = Array.isArray(weekdays) 
-      ? weekdays 
-      : weekdays.split(",").map(day => day.trim());
+    const weekdayArray = Array.isArray(weekdays)
+      ? weekdays
+      : weekdays.split(",").map((day) => day.trim());
 
-    return weekdayArray
-      .map(day => weekdayMap[day])
-      .join(", ");
+    return weekdayArray.map((day) => weekdayMap[day]).join(", ");
   };
 
   const styles = {
     loadingContainer: {
-      position: 'fixed',
+      position: "fixed",
       top: 0,
       left: 0,
       right: 0,
       bottom: 0,
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: 'rgba(255, 255, 255, 0.9)',  // 半透明白色背景
-      zIndex: 9999  // 確保在最上層
-    }
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "rgba(255, 255, 255, 0.9)", // 半透明白色背景
+      zIndex: 9999, // 確保在最上層
+    },
   };
 
   return (
@@ -158,26 +158,27 @@ export default function HistoryId() {
                   建立時間：{orderInfo.created_ts.slice(0, 10)}
                 </span>
                 <div className="about-baby-img-layout">
-                  <div className={`order-icon ${orderInfo.gender === "female" ? "female" : "male"}`}>
-                      <img
-                        src={"/orderCreate.png"}
-                        alt="Nanny Icon"
-                      />
+                  <div
+                    className={`order-icon ${orderInfo.gender === "female" ? "female" : "male"}`}
+                  >
+                    <img src={"/orderCreate.png"} alt="Nanny Icon" />
                   </div>
                   <span>{orderInfo.nickname}</span>
                 </div>
                 <span className="sub-title-font">
                   托育方式：
                   {orderInfo.care_type
-                      ? orderInfo.care_type === "suddenly"
-                        ? "臨時托育"
-                        : "長期托育"
+                    ? orderInfo.care_type === "suddenly"
+                      ? "臨時托育"
+                      : "長期托育"
                     : "無資料"}
                 </span>
                 <span className="sub-title-font">
                   托育時間：
                   {orderInfo.care_type === "suddenly"
-                    ? getCareTimeLabel(orderInfo.start_time) + " ~ " + getCareTimeLabel(orderInfo.end_time)
+                    ? getCareTimeLabel(orderInfo.start_time) +
+                      " ~ " +
+                      getCareTimeLabel(orderInfo.end_time)
                     : getCareTimeLabel(orderInfo.care_time)}
                 </span>
                 <span className="sub-title-font">
@@ -209,26 +210,31 @@ export default function HistoryId() {
               <span className="title-font">訂單狀態</span>
               <div className="status-process-layout">
                 {orderStatusSteps.map((step, index) => (
-                  <div key={step.key} className={index <= currentIndex ? "status-process-on" : "status-process-off"}>
-                    <span className="status-process-font-on">
-                      {step.label}
-                    </span>
+                  <div
+                    key={step.key}
+                    className={
+                      index <= currentIndex
+                        ? "status-process-on"
+                        : "status-process-off"
+                    }
+                  >
+                    <span className="status-process-font-on">{step.label}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            {orderInfo && (
+            {orderInfo && orderInfo.status === "onGoing" && (
               <div className="about-nanny">
                 <span className="title-font">托育人員</span>
                 <div className="about-nanny-font-layout">
                   <span className="sub-title-font">
-                    保母姓名：{nannyInfo?.name ? nannyInfo?.name[0] + "保母" : "無"}
+                    保母姓名：{nannyInfo?.name ?? "無資料"}
                   </span>
                   <span className="sub-title-font">
                     配對時間：
-                    {orderInfo
-                      ? orderInfo?.created_time?.slice(0, 10)
+                    {orderInfo?.created_time
+                      ? orderInfo.created_time.slice(0, 10)
                       : "無資料"}
                   </span>
                 </div>

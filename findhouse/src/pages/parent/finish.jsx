@@ -103,8 +103,8 @@ const ApplicationPage = () => {
                   </div>
                 ) : (
                   <div className="flexColumn">
-                    <span className="outlineTitle">您的資料尚未完成，</span>
-                    <span className="outlineTitle">請先繼續資料填寫。</span>
+                    <span className="outlineTitle">未完成身份驗證，</span>
+                    <span className="outlineTitle">僅提供瀏覽頁面。</span>
                   </div>
                 )}
                 {isMember && haveKyc && haveOrder ? (
@@ -154,7 +154,7 @@ const ApplicationPage = () => {
                 <div className="flexColumnSecond">
                   <span className="secondTitle">我需要完成哪些步驟？</span>
                   <span className="secondSubTitle">
-                    除了完整填寫資料外，您還需要驗證您的手機號碼，送出資料後可進行驗證流程。
+                      您已完成所有資料填寫，請耐心等待客服人員驗證。
                   </span>
                 </div>
                 <div className="flexColumnSecond">
@@ -163,15 +163,9 @@ const ApplicationPage = () => {
                   審核時間為上班日的 8:30~17:30，通常需要 2~3 天。我們會主動以電話聯絡您，確認您的身分並完成審核程序，請留意來電喔！
                   </span>
                 </div>
-                <div className="flexColumnSecond">
-                  <span className="secondTitle">我可以修改資料嗎？</span>
-                  <span className="secondSubTitle">
-                  可以的，您送出資料後，可以在此頁進入修改申請資料頁面，若您有修改身份驗證，必須重新驗證。
-                  </span>
-                </div>
               </div>
               {isMember && haveKyc && haveOrder ? (
-                <button style={styles.goToLink} onClick={handleGoToLink}>前往查看平台保母</button>
+                <button style={styles.goToLink} onClick={handleGoToLink}>查看育兒資源</button>
               ) : (
                 <button style={styles.goToLink} onClick={handleClick}>點我繼續填寫資料</button>
               )}

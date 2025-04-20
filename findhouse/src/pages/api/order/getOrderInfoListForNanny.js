@@ -16,11 +16,42 @@ export default async function handler(req, res) {
   }
 
   const { page = 1, pageSize = 10, keywords, sort, locations } = req.query;
+  // Step 1: 取出 userId
   const token = req.cookies.authToken;
   const payload = await verifyToken(token);
   const userId = payload.userId;
 
-  console.log("locations:", locations);
+  if (!userId) {
+    return res
+      .status(400)
+      .json({ success: false, message: "ID parameter is required" });
+  }
+
+  // Step 2: 查出 memberId 與 nannyId
+  const memberResult = await pool.query(
+    "SELECT id FROM member WHERE line_id = $1",
+    [userId]
+  );
+  const memberId = memberResult.rows[0]?.id;
+
+  if (!memberId) {
+    return res
+      .status(404)
+      .json({ success: false, message: "No member found for user" });
+  }
+
+  const nannyResult = await pool.query(
+    "SELECT id FROM nanny WHERE memberid = $1",
+    [memberId]
+  );
+  const nannyId = nannyResult.rows[0]?.id;
+
+  if (!nannyId) {
+    return res
+      .status(404)
+      .json({ success: false, message: "No nanny found for member" });
+  }
+
 
   if (!userId) {
     return res
@@ -44,7 +75,6 @@ export default async function handler(req, res) {
   try {
     const client = await pool.connect();
     const locationArray = locations ? locations.split(",") : null;
-    console.log("locationArray:", locationArray);
     const query = `
        SELECT 
         o.id,
@@ -85,6 +115,11 @@ export default async function handler(req, res) {
             AND o.status = 'create'
             AND ($5::varchar[] IS NULL OR c.location && $5::varchar[])
             and o.isshow = true
+            AND o.id NOT IN (
+                SELECT p.order_id
+                FROM pair p
+                WHERE p.nanny_id = $6
+            )
         ORDER BY 
             $4
         OFFSET 
@@ -98,7 +133,8 @@ export default async function handler(req, res) {
       limit,
       keywords,
       orderByClause,
-      locationArray
+      locationArray,
+      nannyId
     ]);
 
     client.release();

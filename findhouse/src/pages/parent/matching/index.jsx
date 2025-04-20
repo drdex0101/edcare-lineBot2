@@ -17,6 +17,7 @@ export default function HistoryPage() {
   };
 
   const [imgUrls, setImgUrls] = useState({});
+  const [imgUrlsMatching, setImgUrlsMatching] = useState({});
 
   // 透過 useEffect，只在 signingList 變動時才載入圖片
   useEffect(() => {
@@ -30,6 +31,18 @@ export default function HistoryPage() {
       }
     });
   }, [signingList]);
+
+  useEffect(() => {
+    matchingList.forEach(async (avatar) => {
+      if (avatar.uploadid) {
+        const url = await getImgUrl(avatar.uploadid);
+        setImgUrlsMatching(prev => ({ ...prev, [avatar.uploadid]: url }));
+      }
+      else {
+        setImgUrlsMatching(prev => ({ ...prev, [avatar.uploadid]: "/nannyIcon.jpg" }));
+      }
+    });
+  }, [matchingList]);
 
   const getImgUrl = async (id) => {
     const response = await fetch(`/api/base/getImgUrl?id=${id}`);
@@ -101,7 +114,7 @@ export default function HistoryPage() {
           <div className="avatar-container">
             {matchingList.map((avatar) => (
               <div className="avatar" key={avatar.id} onClick={() => {router.push(`/parent/matching/pair/${avatar.nanny_id}`); setOrderId(avatar.order_id)}}>
-                <img src={"/nannyIcon.jpg" || getImgUrl(avatar.uploadid)} alt="avatar" className="avatar-img" />
+                <img className="avatar-img" src={avatar.uploadid ? (imgUrlsMatching[avatar.uploadid] || "/nannyIcon.jpg") : "/nannyIcon.jpg"} />
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <span className="avatar-name">{avatar.name[0] + "保母"}</span>
                   <svg

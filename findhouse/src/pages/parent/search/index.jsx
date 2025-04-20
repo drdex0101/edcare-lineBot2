@@ -51,11 +51,11 @@ export default function HistoryPage() {
   };
 
 
-  const fetchNannyInfoList = async (page, pageSize = 5, keywords="",locations=[],sort="time") => {
+  const fetchNannyInfoList = async (page, pageSize = 5, keywords="",locations=[],sort="time",orderId=null) => {
     setIsLoading(true); // Set loading state to true while fetching data
     try {
       const response = await fetch(
-        `/api/nanny/getNannyInfoList?page=${page}&pageSize=${pageSize}&locations=${locations}&sort=${sort}&keyword=${keywords}`,
+        `/api/nanny/getNannyInfoList?page=${page}&pageSize=${pageSize}&locations=${locations}&sort=${sort}&keyword=${keywords}&orderId=${orderId}`,
         {
           method: "GET",
           headers: {
@@ -94,7 +94,7 @@ export default function HistoryPage() {
   };
 
   const handleFetchClick = () => {
-    fetchNannyInfoList(page, pageSize, keywords);
+    fetchNannyInfoList(page, pageSize, keywords, [], "time", orderId);
     fetchOrderInfo();
   };
 
@@ -156,7 +156,7 @@ export default function HistoryPage() {
       try {
         setIsLoading(true);
         if (!isCancelled) {
-          await fetchNannyInfoList(page-1, pageSize, keywords);
+          await fetchNannyInfoList(page-1, pageSize, keywords, [], "time", orderId);
           await fetchOrderInfo();
           setIsLoading(true);
           if (page >0) {
@@ -175,6 +175,7 @@ export default function HistoryPage() {
       isCancelled = true; // 在組件卸載時取消請求
     };
   }, [page,keywords]); // 監聽關鍵依賴變數
+  
 
   const handleNextClick = () => {
     if (!haveKyc) {
@@ -197,7 +198,6 @@ export default function HistoryPage() {
   const handleFilterChange = (region, locations, sorts) => {
     setSelectedRegion(region);
     setSelectedSort(sorts);
-    console.log(locations,'filter');
     fetchNannyInfoList(currentPage, pageSize, keywords,locations,sorts);
   };
 
