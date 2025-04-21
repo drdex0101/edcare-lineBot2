@@ -67,7 +67,7 @@ export default async function handler(req, res) {
         WHEN EXISTS (SELECT 1 FROM pair p WHERE p.order_id = o.id AND p.status = 'finish') THEN 'finish'
         WHEN EXISTS (SELECT 1 FROM pair p WHERE p.order_id = o.id AND p.status IN ('matchByParent', 'matchByNanny')) THEN 'match'
         ELSE 'create'
-    END AS pair_status,
+    END AS status,
 
     COUNT(*) OVER() AS totalCount
 

@@ -47,7 +47,8 @@
     width: 100%;
     display: flex;
     height: 85px;
-    padding: 28.5px 38.5px 27.5px 39.5px;
+    padding: 28.5px 39.5px 28.5px 39.5px;
+    margin-left: 10px;
     border: 2px dashed var(---Primary-Container, #F3CCD4);
     background: var(---SurfaceContainer-Lowest, #FFF);
 }
@@ -71,8 +72,8 @@
 
 .order-item {
     display: flex;
-    width: 218px;
     align-items: center;
+    width: 312px;
     gap: 15px;
     justify-content: space-between;
 }
@@ -152,7 +153,7 @@
     color: var(---Surface-Black-25, #252525);
     /* Line/medium/8pt */
     font-family: "LINE Seed JP_TTF";
-    font-size: 8px;
+    font-size: 10px;
     font-style: normal;
     font-weight: 400;
     line-height: normal;

@@ -176,10 +176,10 @@ export default function HistoryId() {
                 <span className="sub-title-font">
                   托育時間：
                   {orderInfo.care_type === "suddenly"
-                    ? getCareTimeLabel(orderInfo.start_time) +
+                    ? (orderInfo.start_time) +
                       " ~ " +
-                      getCareTimeLabel(orderInfo.end_time)
-                    : getCareTimeLabel(orderInfo.care_time)}
+                      (orderInfo.end_time)
+                    : (orderInfo.care_time)}
                 </span>
                 <span className="sub-title-font">
                   托育日期：
