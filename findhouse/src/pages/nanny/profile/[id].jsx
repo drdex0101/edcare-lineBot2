@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import ServiceSchedule from "../../../components/base/ServiceSchedule";
-import CalendarRangePicker from "../../../components/base/CalendarRangePicker";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import RatingComponent from "../../../components/nanny/rating";

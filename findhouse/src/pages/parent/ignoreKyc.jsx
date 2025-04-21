@@ -55,7 +55,7 @@ const ApplicationPage = () => {
   }, [isMember, haveKyc, haveOrder]);
 
   const handleClick = () => {
-    router.push("/parent/search");
+    router.push("/parent/verify/");
   };
 
   return (

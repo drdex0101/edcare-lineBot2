@@ -51,8 +51,11 @@ export default function HistoryPage() {
   };
 
 
-  const fetchNannyInfoList = async (page, pageSize = 5, keywords="",locations=[],sort="time",orderId=null) => {
+  const fetchNannyInfoList = async (page, pageSize = 5, keywords="",locations=[],sort="time",orderId=orderId) => {
     setIsLoading(true); // Set loading state to true while fetching data
+    if (orderId == null) {
+      orderId = "";
+    }
     try {
       const response = await fetch(
         `/api/nanny/getNannyInfoList?page=${page}&pageSize=${pageSize}&locations=${locations}&sort=${sort}&keyword=${keywords}&orderId=${orderId}`,
@@ -111,6 +114,10 @@ export default function HistoryPage() {
 
       if (!response.ok) {
         throw new Error(`Network response was not ok: ${response.statusText}`);
+      }
+
+      if (!orderId) {
+        setOrderId(data.orders[0].id);
       }
 
       const data = await response.json();

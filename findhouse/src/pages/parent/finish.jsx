@@ -58,7 +58,7 @@ const ApplicationPage = () => {
     if (!isMember) {
       router.push("/parent/apply");
     } else if (!haveKyc) {
-      router.push("/parent/upload");
+      router.push("/parent/verify");
     } else if (!haveOrder) {
       router.push("/parent/create");
     }
@@ -167,7 +167,9 @@ const ApplicationPage = () => {
               {isMember && haveKyc && haveOrder ? (
                 <button style={styles.goToLink} onClick={handleGoToLink}>查看育兒資源</button>
               ) : (
-                <button style={styles.goToLink} onClick={handleClick}>點我繼續填寫資料</button>
+                <>
+                  <button style={styles.goToLink} onClick={handleClick}>點我繼續填寫資料</button>
+                </>
               )}
             </div>
           </div>

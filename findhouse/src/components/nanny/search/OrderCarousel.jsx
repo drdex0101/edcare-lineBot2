@@ -15,7 +15,6 @@ const OrderCarousel = ({
   const { babyInfo, setBabyInfo } = useStore();
   const { careData, setCareData } = useStore();
   const { orderId, setOrderId } = useStore();
-  const [currentIsShow, setCurrentIsShow] = useState(true);
 
   const [orderCurrentPage, setOrderCurrentPage] = useState(0);
 
@@ -123,7 +122,7 @@ const OrderCarousel = ({
   };
 
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: "10px",width:"100%",padding:"0 10px" }}>
+    <div style={{ display: "flex", alignItems: "center", width:"100%",padding:"0 10px" }}>
       <button
         className="left-arrow"
         onClick={() => handlePreviousClick()}
@@ -195,8 +194,7 @@ const OrderCarousel = ({
                     日期:{(currentOrder?.start_date ?? "").slice(0, 10)}
                   </span>
                   <span className="time-text">
-                    時間:{(currentOrder?.start_time ?? "").slice(0, 10)}~
-                    {(currentOrder?.end_time ?? "").slice(0, 10)}
+                  時間: {careData?.start_time ?? "--"} ~ {careData?.end_time ?? "--"}
                   </span>
                 </>
               ) : (
