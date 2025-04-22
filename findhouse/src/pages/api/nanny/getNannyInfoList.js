@@ -1,11 +1,17 @@
-import getClient from '../../../utils/getClient';
+import getClient from "../../../utils/getClient";
 export default async function handler(req, res) {
-  if (req.method === 'GET') {
-    const { pageSize = 5, index = 0,locations,keyword,sort,orderId } = req.query; // Default values if not provided
+  if (req.method === "GET") {
+    const {
+      pageSize = 5,
+      index = 0,
+      locations,
+      keyword,
+      sort,
+      orderId,
+    } = req.query; // Default values if not provided
 
     // Ensure index is non-negative
     const safeIndex = Math.max(0, parseInt(req.query.page, 10) || 0);
-
 
     const client = getClient();
 
@@ -17,11 +23,16 @@ export default async function handler(req, res) {
       const totalCountResult = await client.query(totalCountQuery);
 
       // Convert locations string to an array
-      const locationsArray = locations ? locations.split(',') : [];
+      const locationsArray = locations ? locations.split(",") : [];
 
-      let excludeNannySql = '';
-      let queryParams = [locationsArray.length ? locationsArray : null, keyword, pageSize, safeIndex * pageSize];
-      if (orderId && orderId !== 'null') {
+      let excludeNannySql = "";
+      let queryParams = [
+        locationsArray.length ? locationsArray : null,
+        keyword,
+        pageSize,
+        safeIndex * pageSize,
+      ];
+      if (orderId && orderId !== "null") {
         excludeNannySql = `
           AND n.id NOT IN (
             SELECT p.nanny_id FROM pair p WHERE p.order_id = $5 AND p.status = 'onGoing'
@@ -30,11 +41,11 @@ export default async function handler(req, res) {
       }
 
       // Determine the order by clause based on the sort parameter
-      let orderByClause = '';
-      if (sort === 'time') {
-        orderByClause = 'ORDER BY n.created_ts DESC';
-      } else if (sort === 'rating') {
-        orderByClause = 'ORDER BY n.score DESC';
+      let orderByClause = "";
+      if (sort === "time") {
+        orderByClause = "ORDER BY n.created_ts DESC";
+      } else if (sort === "rating") {
+        orderByClause = "ORDER BY n.score DESC";
       }
 
       // Query to get the paginated results
@@ -60,21 +71,21 @@ export default async function handler(req, res) {
   LIMIT $3 OFFSET $4;
 `;
 
-      const result = await client.query(query, [locationsArray.length ? locationsArray : null, keyword, pageSize, safeIndex * pageSize,orderId]);
+      const result = await client.query(query, queryParams); // <-- 改這一行
 
-      console.log('Nannies retrieved successfully:', result.rows);
-      return res.status(200).json({ 
-        success: true, 
-        nannies: result.rows, 
+      console.log("Nannies retrieved successfully:", result.rows);
+      return res.status(200).json({
+        success: true,
+        nannies: result.rows,
         totalCount: totalCountResult.rows[0].count, // Total count of records in the current result
-        pageCount: result.rowCount // Count of records in the current page
+        pageCount: result.rowCount, // Count of records in the current page
       });
     } catch (error) {
-      console.error('Database error:', error);
-      res.status(500).json({ error: 'Database error' });
+      console.error("Database error:", error);
+      res.status(500).json({ error: "Database error" });
     }
   } else {
-    res.setHeader('Allow', ['GET']);
+    res.setHeader("Allow", ["GET"]);
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }

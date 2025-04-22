@@ -10,6 +10,7 @@ const OrderCarousel = ({
   isShow,
   haveKyc,
   setOpenKycModal,
+  onSelectOrder
 }) => {
   const router = useRouter();
   const { babyInfo, setBabyInfo } = useStore();
@@ -88,7 +89,10 @@ const OrderCarousel = ({
     setCurrentOrder(current);
     setBabyInfo(current);
     setIsShow(current?.isshow ?? false);
-    setOrderId(orderCurrentPage === 0 ? null : current?.id);
+    //setOrderId(orderCurrentPage === 0 ? 0 : current?.id);
+    if (current?.id) {
+      onSelectOrder(current.id); // ✅ 呼叫父層函式
+    }
   }, [orderCurrentPage, orderList]);
   
   const handlePreviousClick = () => {
@@ -99,9 +103,7 @@ const OrderCarousel = ({
       setCurrentOrder(orderList[0]);
       setBabyInfo(orderList[0]);
       setIsShow(orderList[0]?.isshow);
-      setOrderId(null); // 如果是新增小孩，orderId 設為 null
     }
-    console.log("previous", orderCurrentPage);
   };
 
   const handleNextClick = () => {
@@ -122,7 +124,7 @@ const OrderCarousel = ({
   };
 
   return (
-    <div style={{ display: "flex", alignItems: "center", width:"100%",padding:"0 10px" }}>
+    <div style={{ display: "flex", alignItems: "center", width:"100%",padding:"0 10px",gap:"10px" }}>
       <button
         className="left-arrow"
         onClick={() => handlePreviousClick()}
@@ -159,7 +161,6 @@ const OrderCarousel = ({
         <div
           key={orderCurrentPage}
           className="order-item"
-          style={{ minWidth: "80%", position: "relative" }}
         >
           <img
             src={currentOrder?.image || "/orderCreate.png"}

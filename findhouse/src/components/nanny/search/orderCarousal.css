@@ -73,7 +73,7 @@
 .order-item {
     display: flex;
     align-items: center;
-    width: 312px;
+    width: 100%;
     gap: 15px;
     justify-content: space-between;
 }
