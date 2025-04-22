@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef } from "react";
 import "./matching.css";
 import "./profile.css";
 import Pagination from "../../../components/base/pagenation";
@@ -56,6 +56,7 @@ export default function HistoryPage() {
     if (orderId == null) {
       orderId = "";
     }
+    console.log("[fetchNannyInfoList] orderId:", orderId);
     try {
       const response = await fetch(
         `/api/nanny/getNannyInfoList?page=${page}&pageSize=${pageSize}&locations=${locations}&sort=${sort}&keyword=${keywords}&orderId=${orderId}`,
@@ -116,14 +117,10 @@ export default function HistoryPage() {
         throw new Error(`Network response was not ok: ${response.statusText}`);
       }
 
-      if (!orderId) {
-        setOrderId(data.orders[0].id);
-      }
-
       const data = await response.json();
+
       if (data.orders.length > 0) {
         setOrderInfo(data.orders);
-        //setOrderId(data.orders[0].id);
         setItem(data.orders[0]);
         setCurrentOrderCareType(data.orders[0].choosetype);
         const careTypeResponse = await fetch(
@@ -164,7 +161,7 @@ export default function HistoryPage() {
         setIsLoading(true);
         if (!isCancelled) {
           await fetchNannyInfoList(page-1, pageSize, keywords, [], "time", orderId);
-          await fetchOrderInfo();
+          const fetchedOrders = await fetchOrderInfo();  // 取得回傳的資料
           setIsLoading(true);
           if (page >0) {
             setIsShow(orderInfo.isShow);
@@ -182,7 +179,7 @@ export default function HistoryPage() {
       isCancelled = true; // 在組件卸載時取消請求
     };
   }, [page,keywords]); // 監聽關鍵依賴變數
-  
+
 
   const handleNextClick = () => {
     if (!haveKyc) {
@@ -216,7 +213,7 @@ export default function HistoryPage() {
         <>
           <div className="matching-body-header-background">
             <div style={styles.header}>
-              <OrderCarousel orderList={orderInfo} handleNextClick={handleNextClick} setIsShow={setIsShow} isShow={isShow} setOpenKycModal={setOpenKycModal} haveKyc={haveKyc}/>
+              <OrderCarousel orderList={orderInfo} handleNextClick={handleNextClick} setIsShow={setIsShow} isShow={isShow} setOpenKycModal={setOpenKycModal} haveKyc={haveKyc} onSelectOrder={(id) => {setOrderId(id); console.log("orderId", orderId)}}/>
             </div>
           </div>
           {openKycModal && (
