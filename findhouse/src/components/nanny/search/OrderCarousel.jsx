@@ -134,6 +134,7 @@ const OrderCarousel = ({
           cursor: orderCurrentPage <= 0 ? "not-allowed" : "pointer",
           background: "transparent",
           border: "none",
+          marginLeft: "15px",
         }}
       >
         <svg
@@ -258,6 +259,7 @@ const OrderCarousel = ({
             orderCurrentPage >= orderList.length ? "not-allowed" : "pointer",
           background: "transparent",
           border: "none",
+          marginRight: "25px",
         }}
       >
         <svg

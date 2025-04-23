@@ -434,7 +434,7 @@ const ApplicationPage = () => {
               </div>
               <div style={{ ...styles.componentLayout, borderBottom: "none" }}>
               <div style={{display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center"}}>
-                  <span>可配合保母外出 ex：(公園散步、戶外活動...)</span>
+                  <span>可配合保母外出 (ex：公園散步、戶外活動)</span>
                 </div>
                 <FormGroup>
                   <FormControlLabel
