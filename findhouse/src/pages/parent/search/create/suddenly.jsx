@@ -147,23 +147,48 @@ const ApplicationPage = () => {
   }, [startTime, endTime]);
 
   const handleDateChange = (range) => {
-    const selected = new Date(range.startDate);
+    const startDate = new Date(range.startDate);
+    const endDate = range.endDate ? new Date(range.endDate) : null;
+  
+    // 建立今天 + 3 天 的最小日期（local time）
     const minDate = new Date();
+    minDate.setHours(0, 0, 0, 0);
     minDate.setDate(minDate.getDate() + 3);
-
-    if (selected < minDate) {
+  
+    // 清掉時間再比（變成 00:00:00）
+    const normalizedStart = new Date(startDate);
+    normalizedStart.setHours(0, 0, 0, 0);
+  
+    const normalizedEnd = endDate ? new Date(endDate) : null;
+    if (normalizedEnd) normalizedEnd.setHours(0, 0, 0, 0);
+  
+    // 驗證 startDate
+    if (normalizedStart < minDate) {
       Swal.fire({
         icon: "error",
-        title: "日期錯誤",
-        text: "請選擇三天後的日期",
+        title: "開始日期錯誤",
+        text: "請選擇三天後的開始日期",
       });
       return;
     }
+  
+    // 驗證 endDate（若有）
+    if (normalizedEnd && normalizedEnd < minDate) {
+      Swal.fire({
+        icon: "error",
+        title: "結束日期錯誤",
+        text: "請選擇三天後的結束日期",
+      });
+      return;
+    }
+  
+    // ✅ 保留原始日期物件，不轉字串
     setSelectedRange({
-      startDate: range.startDate || new Date().toISOString().split("T")[0],
-      endDate: range.endDate || null,
+      startDate: range.startDate,
+      endDate: range.endDate,
     });
   };
+  
   useEffect(() => {
     const parsedData = useStore.getState().careData;
     console.log("storedCareData", parsedData);

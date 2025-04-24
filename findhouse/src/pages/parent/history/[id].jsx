@@ -50,7 +50,7 @@ export default function HistoryId() {
 
   const orderStatusSteps = [
     { key: "create", label: "媒合中" }, //都沒有pair
-    { key: "matchByParent" || "matchByNanny", label: "預約中" }, //有一個以上的pair
+    { key: "match", label: "預約中" }, //有一個以上的pair
     { key: "signing", label: "簽約中" }, //有一個以上的pair的status是signing
     { key: "onGoing", label: "合約履行中" }, //有一個以上的pair的status是onGoing
     { key: "finish", label: "已完成" }, //有一個以上的pair的status是finish
@@ -64,11 +64,18 @@ export default function HistoryId() {
 
   // 確保 orderInfo 存在
   let currentStatus = orderInfo?.status || "create";
+  console.log("currentStatus", currentStatus);
+
+  // 把多個狀態合併為統一邏輯
+if (currentStatus === "matchByParent" || currentStatus === "matchByNanny") {
+  currentStatus = "match";
+}
 
   // 找到目前 status 在列表中的索引
   let currentIndex = orderStatusSteps.findIndex(
     (step) => step.key === currentStatus
   );
+  console.log("currentIndex", currentIndex);
   // 如果找不到，就預設為第一個狀態 "媒合中"
   if (currentIndex === -1) {
     currentIndex = 0;
