@@ -65,6 +65,8 @@ export default async function handler(req, res) {
         c.end_date,
         c.location,
         c.care_type,
+        c.start_time,
+        c.end_time,
         COUNT(*) OVER() AS totalCount
         FROM 
             orderinfo o
