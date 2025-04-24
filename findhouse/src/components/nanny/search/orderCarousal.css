@@ -113,6 +113,7 @@
     justify-content: center;
     align-items: center;
     gap: 10px;
+    min-width: 42px;
     border-radius: 20px;
     background: linear-gradient(90deg, #FBC2EB 0%, #A6C1EE 100%);
     color: var(---Outline-OnSurfaceVariant, #221E47);
@@ -128,6 +129,7 @@
 .scenario {
     display: flex;
     padding: 1px 5px;
+    min-width: 44px;
     justify-content: center;
     align-items: center;
     gap: 10px;

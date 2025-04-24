@@ -89,9 +89,11 @@ const OrderCarousel = ({
     setCurrentOrder(current);
     setBabyInfo(current);
     setIsShow(current?.isshow ?? false);
-    //setOrderId(orderCurrentPage === 0 ? 0 : current?.id);
     if (current?.id) {
       onSelectOrder(current.id); // ✅ 呼叫父層函式
+    }
+    else{
+      setOrderId(null)
     }
   }, [orderCurrentPage, orderList]);
   
@@ -104,6 +106,7 @@ const OrderCarousel = ({
       setBabyInfo(orderList[0]);
       setIsShow(orderList[0]?.isshow);
     }
+    console.log("pre", orderCurrentPage);
   };
 
   const handleNextClick = () => {
