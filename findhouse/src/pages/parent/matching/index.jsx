@@ -115,15 +115,15 @@ export default function HistoryPage() {
             {matchingList.map((avatar) => (
               <div className="avatar" key={avatar.id} onClick={() => {router.push(`/parent/matching/pair/${avatar.nanny_id}`); setOrderId(avatar.order_id)}}>
                 <img className="avatar-img" src={avatar.uploadid ? (imgUrlsMatching[avatar.uploadid] || "/nannyIcon.jpg") : "/nannyIcon.jpg"} />
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <span className="avatar-name">{avatar.name[0] + "保母"}</span>
-                  <img src="/icon/mother.png" alt="mother" style={{width: "24px", height: "24px"}}/>
+                <div style={{ display: "flex", alignItems: "center",heught:'20px',justifyContent:"center" }}>
+                  <img src="/icon/mother.png" alt="mother" style={{width: "24px", height: "24px",justifyContent:"center"}}/>
+                    <span className="avatar-name">{avatar.name[0] + "保母"}</span>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center",justifyContent:"center" }}>
+                    <img src="/icon/baby.svg" alt="baby" />
+                    <span className="avatar-name">{avatar.nickname}</span>
+                  </div>
                 </div>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <span className="avatar-name">{avatar.nickname}</span>
-                  <img src="/icon/baby.svg" alt="baby" />
-                </div>
-              </div>
             ))}
           </div>
         </div>

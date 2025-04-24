@@ -74,9 +74,12 @@ export default async function handler(req, res) {
             nanny n ON o.nannyid = n.id
         LEFT JOIN 
             kyc_info k ON n.kycid = k.id
+        LEFT JOIN 
+            pair p ON p.order_id = o.id
         WHERE 
             o.parentLineId = $1
             AND ($4::text IS NULL OR o.nickname ILIKE '%' || $4::text || '%')
+            AND (p.status IS NULL OR p.status != 'signing')  -- 修改這裡
         ORDER BY 
             $5
         OFFSET 
