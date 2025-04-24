@@ -65,6 +65,8 @@ export default async function handler(req, res) {
         c.end_date,
         c.location,
         c.care_type,
+        c.start_time,
+        c.end_time,
         COUNT(*) OVER() AS totalCount
         FROM 
             orderinfo o
@@ -79,7 +81,7 @@ export default async function handler(req, res) {
         WHERE 
             o.parentLineId = $1
             AND ($4::text IS NULL OR o.nickname ILIKE '%' || $4::text || '%')
-            AND (p.status IS NULL OR p.status != 'signing')  -- 修改這裡
+            AND (p.status IS NULL OR p.status != 'onGoing')  -- 修改這裡
         ORDER BY 
             $5
         OFFSET 

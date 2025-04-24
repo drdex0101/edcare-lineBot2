@@ -196,15 +196,15 @@ const OrderCarousel = ({
               {currentOrder?.care_type === "suddenly" ? (
                 <>
                   <span className="time-text">
-                    日期:{(currentOrder?.start_date ?? "").slice(0, 10)}
+                    日期: {(currentOrder?.start_date ?? "").slice(0, 10)}
                   </span>
                   <span className="time-text">
-                  時間: {careData?.start_time ?? "--"} ~ {careData?.end_time ?? "--"}
+                  時間: {currentOrder?.start_time ?? "--"} ~ {currentOrder?.end_time ?? "--"}
                   </span>
                 </>
               ) : (
                 <span className="time-text">
-                  {(currentOrder?.start_date ?? "").slice(0, 10)}~
+                  {(currentOrder?.start_date ?? "").slice(0, 10)}<br/>~
                   {(currentOrder?.end_date ?? "").slice(0, 10)}
                 </span>
               )}
