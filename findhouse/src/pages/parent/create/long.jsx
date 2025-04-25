@@ -157,12 +157,11 @@ const ApplicationPage = () => {
       return;
     }
   
-    // 驗證 endDate（若有）
-    if (normalizedEnd && normalizedEnd < minDate) {
+    if (endDate < startDate) {
       Swal.fire({
         icon: "error",
-        title: "結束日期錯誤",
-        text: "請選擇三天後的結束日期",
+        title: "日期錯誤",
+        text: "結束日期不能小於開始日期",
       });
       return;
     }
