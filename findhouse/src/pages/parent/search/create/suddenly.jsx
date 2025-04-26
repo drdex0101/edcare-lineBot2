@@ -188,7 +188,7 @@ const ApplicationPage = () => {
       endDate: range.endDate,
     });
   };
-  
+
   useEffect(() => {
     const parsedData = useStore.getState().careData;
     console.log("storedCareData", parsedData);
@@ -321,8 +321,10 @@ const ApplicationPage = () => {
                       backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
                     }}
                   >
-                    {Array.from({ length: 24 }).map((_, i) => {
-                      const time = `${String(i).padStart(2, "0")}:00`;
+                    {Array.from({ length: 48 }).map((_, i) => {
+                      const hour = Math.floor(i / 2);
+                      const minute = i % 2 === 0 ? "00" : "30";
+                      const time = `${String(hour).padStart(2, "0")}:${minute}`;
                       return (
                         <MenuItem key={time} value={time}>
                           {time}
@@ -357,8 +359,10 @@ const ApplicationPage = () => {
                       backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
                     }}
                   >
-                    {Array.from({ length: 24 }).map((_, i) => {
-                      const time = `${String(i).padStart(2, "0")}:00`;
+                    {Array.from({ length: 48 }).map((_, i) => {
+                      const hour = Math.floor(i / 2);
+                      const minute = i % 2 === 0 ? "00" : "30";
+                      const time = `${String(hour).padStart(2, "0")}:${minute}`;
                       return (
                         <MenuItem key={time} value={time}>
                           {time}
