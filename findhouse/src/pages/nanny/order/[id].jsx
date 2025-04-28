@@ -434,7 +434,7 @@ export default function ProfilePage() {
           <div className="tab-content">
             <span className="tab-tile">托育方式</span>
             <span className="tab-subTitle">
-              {orderInfo.choosetype === "suddenly" ? "臨時托育" : "長期托育"}
+              {orderInfo.care_type === "suddenly" ? "臨時托育" : "長期托育"}
             </span>
           </div>
           <svg
@@ -501,7 +501,7 @@ export default function ProfilePage() {
             }}
           >
             <div className="iconNav">
-              {["1", "2", "3", "4", "5", "6"].map((number) => (
+              {["2", "3", "4", "5", "6"].map((number) => (
                 <div
                   key={number}
                   style={{

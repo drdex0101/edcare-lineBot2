@@ -23,9 +23,12 @@ export default function ProfilePage() {
   const [age, setAge] = useState(0);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isPaired, setIsPaired] = useState(false);
+  const [signingCount, setSigningCount] = useState(0);
 
   const isPair = async () => {
-    const response = await fetch(`/api/pair/isPair?nanny_id=${id}&&order_id=${orderId}`);
+    const response = await fetch(
+      `/api/pair/isPair?nanny_id=${id}&&order_id=${orderId}`
+    );
     const data = await response.json();
     console.log("data", data);
     if (data.orders?.length > 0) {
@@ -59,9 +62,17 @@ export default function ProfilePage() {
     setCurrentImageIndex(index);
   };
 
+  const fetchSigningCount = async () => {
+    if (!id) return; // 防止 id 還沒準備好就去 call
+    const response = await fetch(`/api/pair/getListForNanny?page=1&pageSize=50&status=signing&nanny_id=${id}`);
+    const data = await response.json();
+    console.log("data", data.totalCount);
+    setSigningCount(data.totalCount || 0);
+  };
+
   const getIsFavorite = async () => {
     const response = await fetch(
-      `/api/favorite/getIsFavorite?itemId=${id}&&type=${"parent"}`,
+      `/api/favorite/getIsFavorite?itemId=${id}&&type=${"parent"}`
     );
     const data = await response.json();
     console.log("data", data.favorite.length);
@@ -84,13 +95,14 @@ export default function ProfilePage() {
     let ageYears = today.getFullYear() - birthday.getFullYear(); // 計算年數
     let ageMonths = today.getMonth() - birthday.getMonth(); // 計算月數
     if (ageMonths < 0) {
-        ageYears--;
+      ageYears--;
     }
-    return `${ageYears}歲`;
-  }
+    return `${ageYears}`;
+  };
 
   useEffect(() => {
     getIsMember();
+    fetchSigningCount();
     const fetchNannyInfo = async () => {
       setIsLoading(true);
       if (!router.isReady) return; // 等待路由準備就緒
@@ -113,7 +125,7 @@ export default function ProfilePage() {
         }
         if (data.nannies[0].uploadid) {
           const response3 = await fetch(
-            `/api/base/getImgUrl?id=${data.nannies[0].uploadid}`,
+            `/api/base/getImgUrl?id=${data.nannies[0].uploadid}`
           );
           const data3 = await response3.json();
           setIconUrl(data3.url);
@@ -137,7 +149,7 @@ export default function ProfilePage() {
 
   const renderLocation = (location) => {
     let parsed = location;
-    console.log(location)
+    console.log(location);
     if (typeof location === "string") {
       try {
         parsed = JSON.parse(location);
@@ -358,10 +370,10 @@ export default function ProfilePage() {
   const handleBookingClick = () => {
     if (isPaired || isMatching) {
       Swal.fire({
-        icon: 'error',
-        title: '已經配對請回保母搜尋頁面',
+        icon: "error",
+        title: "已經配對請回保母搜尋頁面",
       });
-      return
+      return;
     }
     setIsModalOpen(true);
   };
@@ -372,15 +384,15 @@ export default function ProfilePage() {
     if (orderId == null) {
       setIsModalOpen(false);
       Swal.fire({
-        icon: 'error',
-        title: '請先建立訂單。',
+        icon: "error",
+        title: "請先建立訂單。",
       });
     }
     if (kycId == 0) {
       setIsModalOpen(false);
       Swal.fire({
-        icon: 'error',
-        title: '請先填寫kyc。',
+        icon: "error",
+        title: "請先填寫kyc。",
       });
       return;
     }
@@ -395,11 +407,10 @@ export default function ProfilePage() {
     if (response.ok) {
       setIsBookingModalOpen(true);
       setIsMatching(true);
-    }
-    else {
+    } else {
       Swal.fire({
-        icon: 'error',
-        title: '已經建立配對，請選擇另一位',
+        icon: "error",
+        title: "已經建立配對，請選擇另一位",
       });
     }
   };
@@ -412,32 +423,41 @@ export default function ProfilePage() {
     if (!isOpen) return null;
 
     return (
-      <div 
+      <div
         style={{
-          position: 'fixed',
+          position: "fixed",
           top: 0,
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.8)',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
+          backgroundColor: "rgba(0, 0, 0, 0.8)",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
           zIndex: 1000,
-          cursor: 'pointer',
+          cursor: "pointer",
         }}
         onClick={onClose}
       >
-        <div style={{ padding: '20px', maxWidth: '90vw', maxHeight: '90vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <img 
-            src={src} 
-            alt="Preview" 
+        <div
+          style={{
+            padding: "20px",
+            maxWidth: "90vw",
+            maxHeight: "90vh",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <img
+            src={src}
+            alt="Preview"
             style={{
-              maxWidth: '100%',
-              maxHeight: '90vh',
-              objectFit: 'contain',
-              borderRadius: '8px',
-              cursor: 'default',
+              maxWidth: "100%",
+              maxHeight: "90vh",
+              objectFit: "contain",
+              borderRadius: "8px",
+              cursor: "default",
             }}
             onClick={(e) => e.stopPropagation()}
           />
@@ -448,32 +468,32 @@ export default function ProfilePage() {
 
   const styles = {
     previewOverlay: {
-      position: 'fixed',
+      position: "fixed",
       top: 0,
       left: 0,
       right: 0,
       bottom: 0,
-      backgroundColor: 'rgba(0, 0, 0, 0.8)',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
+      backgroundColor: "rgba(0, 0, 0, 0.8)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
       zIndex: 1000,
-      cursor: 'pointer',
+      cursor: "pointer",
     },
     previewContainer: {
-      padding: '20px',
-      maxWidth: '90vw',
-      maxHeight: '90vh',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
+      padding: "20px",
+      maxWidth: "90vw",
+      maxHeight: "90vh",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
     },
     previewImage: {
-      maxWidth: '100%',
-      maxHeight: '90vh',
-      objectFit: 'contain',
-      borderRadius: '8px',
-      cursor: 'default',
+      maxWidth: "100%",
+      maxHeight: "90vh",
+      objectFit: "contain",
+      borderRadius: "8px",
+      cursor: "default",
     },
   };
 
@@ -523,14 +543,14 @@ export default function ProfilePage() {
         </svg>
       </div>
       <div className="profileSection">
-        <img 
-          className="profilePic" 
-          src={iconUrl || "/nannyIcon.jpg"} 
-          alt="Profile" 
+        <img
+          className="profilePic"
+          src={iconUrl || "/nannyIcon.jpg"}
+          alt="Profile"
           onClick={() => setIsPreviewOpen(true)}
-          style={{ cursor: 'pointer' }}
+          style={{ cursor: "pointer" }}
         />{" "}
-        <ImagePreview 
+        <ImagePreview
           src={iconUrl || "/nannyIcon.jpg"}
           isOpen={isPreviewOpen}
           onClose={() => setIsPreviewOpen(false)}
@@ -542,63 +562,52 @@ export default function ProfilePage() {
         <div className="profile-section">
           <div className="part">
             <span className="part-title">經驗</span>
-            <span className="part-subTitle">{nannyInfo.experienment|| "未填寫"}</span>
+            <span className="part-subTitle">
+              {calculateAge(nannyInfo.experienment) || "未填寫"}年
+            </span>
           </div>
           <div className="part">
             <span className="part-title">年紀</span>
-            <span className="part-subTitle">{age || "未填寫"}</span>
+            <span className="part-subTitle">{calculateAge(nannyInfo.birthday) || "未填寫"}歲</span>
           </div>
           <div className="part">
-            <span className="part-title">托育人數</span>
-            <span className="part-subTitle">{nannyInfo.kidcount || 0}</span>
+            <span className="part-title">已托育人數</span>
+            <span className="part-subTitle">{signingCount}</span>
           </div>
         </div>
         {/* Tabs */}
-        <div className={`${nannyInfo.care_type === "suddenly" ? "tabs-suddenly" : "tabs"}`}>
+        <div
+          className={`${nannyInfo.care_type === "suddenly" ? "tabs-suddenly" : "tabs"}`}
+        >
           <div className="tab-content">
-            <span className={`${nannyInfo.care_type === "suddenly" ? "tab-tile-suddenly" : "tab-tile"}`}>托育方式</span>
-            <span className="tab-subTitle">
-              {nannyInfo.care_type === "suddenly"
-                ? "臨時托育"
-                : nannyInfo.care_time === "night"
-                  ? "夜間托育"
-                  : nannyInfo.care_time === "allDay"
-                    ? "全天托育"
-                    : nannyInfo.care_time === "morning"
-                      ? "日間托育"
-                      : "未填寫"}
+            <span
+              className={`${nannyInfo.care_type === "suddenly" ? "tab-tile-suddenly" : "tab-tile"}`}
+            >
+              托育情境
             </span>
-          </div>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="2"
-            height="62"
-            viewBox="0 0 2 62"
-            fill="none"
-          >
-            <path
-              d="M1 61L1 1"
-              stroke="#FCF7F7"
-              stroke-width="2"
-              stroke-linecap="round"
-            />
-          </svg>
-          <div className="tab-content">
-          <span className={`${nannyInfo.care_type === "suddenly" ? "tab-tile-suddenly" : "tab-tile"}`}>托育情境</span>
             <span className="tab-subTitle">
-              {nannyInfo.scenario === "home"
-                ? "在宅托育"
-                : nannyInfo.scenario === "infantCareCenter"
-                  ? "定點托育"
-                  : nannyInfo.scenario === "toHome"
-                    ? "到宅托育"
-                    : "未填寫"}
+              {Array.isArray(nannyInfo.way) && nannyInfo.way.length > 0
+                ? nannyInfo.way
+                    .map((w) =>
+                      w === "home"
+                        ? "在宅托育"
+                        : w === "infantCareCenter"
+                          ? "定點托育"
+                          : w === "toHome"
+                            ? "到宅托育"
+                            : "未填寫"
+                    )
+                    .join(" / ") // 中間用斜線連起來
+                : "未填寫"}
             </span>
           </div>
         </div>
         <div className="profile-location">
           <span className="location-subTitle">
-            {renderLocation(nannyInfo.servicelocation)}
+            在宅托育地點：<br/>{renderLocation(nannyInfo.location)}
+          </span>
+          <span className="location-subTitle">
+            到宅托育地點：<br/>{renderLocation(nannyInfo.servicelocation)}
           </span>
         </div>
         {/* 圖片輪播區域 */}
@@ -648,7 +657,7 @@ export default function ProfilePage() {
             }}
           >
             <div className="iconNav">
-              {[ "2", "3", "4"].map((number) => (
+              {["2", "3", "4"].map((number) => (
                 <div
                   key={number}
                   style={{
@@ -674,7 +683,7 @@ export default function ProfilePage() {
                   </span>
                 </div>
               ))}
-              {[ "5", "6"].map((number) => (
+              {["5", "6"].map((number) => (
                 <div
                   key={number}
                   style={{
@@ -703,13 +712,13 @@ export default function ProfilePage() {
             </div>
           </div>
           <div>
-            <div style={{ backgroundColor: "#F8ECEC"}}>
+            <div style={{ backgroundColor: "#F8ECEC" }}>
               <div className="introSection">
                 <div className="notesSection">
                   <span className="imgFont">保母自介</span>
                   {nannyInfo.introduction}
                 </div>
-                <button className="submitButton" onClick={handleBookingClick} >
+                <button className="submitButton" onClick={handleBookingClick}>
                   + 馬上預約
                 </button>
               </div>
@@ -787,7 +796,9 @@ export default function ProfilePage() {
             </button>
             <span className="bookingFont">預約成功！等待保母回覆...</span>
             <img src="/review.png" alt="check" />
-            <button className="bookingBtn" onClick={toSearch}>點我前往查看保母</button>
+            <button className="bookingBtn" onClick={toSearch}>
+              點我前往查看保母
+            </button>
           </div>
         </div>
       )}

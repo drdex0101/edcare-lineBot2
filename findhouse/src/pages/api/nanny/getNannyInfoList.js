@@ -51,16 +51,14 @@ export default async function handler(req, res) {
       // Query to get the paginated results
       const query = `
   SELECT 
-    n.id, n.memberId, n.experienment, n.age, n.kidCount, n.way, n.scenario, 
+    n.id, n.memberId, n.experienment, n.age, n.kidCount, n.way, 
     n.environmentPic, n.serviceLocation, n.introduction, n.service, 
     n.score, n.isShow, n.location, n.kycId, n.uploadId, n.created_ts,
     m.account, u.upload_url,
-    c.weekdays, c.care_time, c.scenario, c.start_date, c.end_date, c.location,
     k.name as kyc_name
   FROM nanny n
   LEFT JOIN member m ON n.memberId = m.id::VARCHAR
   LEFT JOIN upload u ON n.uploadId = u.id
-  LEFT JOIN care_data c ON n.care_type_id = c.id
   LEFT JOIN kyc_info k ON n.kycid = k.id
   WHERE 
     ($1::varchar[] IS NULL OR n.serviceLocation && $1::varchar[])

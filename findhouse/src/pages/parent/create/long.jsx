@@ -157,7 +157,7 @@ const ApplicationPage = () => {
       return;
     }
   
-    if (endDate < startDate) {
+    if (normalizedEnd && normalizedEnd < normalizedStart) {
       Swal.fire({
         icon: "error",
         title: "日期錯誤",

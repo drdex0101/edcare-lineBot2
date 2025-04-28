@@ -61,7 +61,14 @@ export default async function handler(req, res) {
         o.caretypeid,
         n.score,
         c.scenario,
-        p.order_id,
+        CASE
+          WHEN EXISTS (SELECT 1 FROM pair p WHERE p.order_id = o.id AND p.status = 'onGoing') THEN 'onGoing'
+          WHEN EXISTS (SELECT 1 FROM pair p WHERE p.order_id = o.id AND p.status = 'signing') THEN 'signing'
+          WHEN EXISTS (SELECT 1 FROM pair p WHERE p.order_id = o.id AND p.status = 'finish') THEN 'finish'
+          WHEN EXISTS (SELECT 1 FROM pair p WHERE p.order_id = o.id AND p.status IN ('matchByParent')) THEN 'matchByParent'
+          WHEN EXISTS (SELECT 1 FROM pair p WHERE p.order_id = o.id AND p.status IN ('matchByNanny')) THEN 'matchByNanny'
+          ELSE 'create'
+        END AS status,
         COUNT(*) OVER() AS totalCount
       FROM 
         pair p

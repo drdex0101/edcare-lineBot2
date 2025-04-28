@@ -12,6 +12,12 @@ import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import Loading from "../../../components/base/Loading";
 import Swal from "sweetalert2";
 import "../css/profile.css";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
+import "dayjs/locale/zh-tw"; // or 'zh-cn' 根據你想要用的語系
+dayjs.locale("zh-tw"); // 設定為繁體中文
 
 const ApplicationPage = () => {
   const router = useRouter();
@@ -33,7 +39,7 @@ const ApplicationPage = () => {
   const [uploadedEnvironmentImages, setUploadedEnvironmentImages] = useState(
     []
   ); // State to track uploaded images
-  const [selectedCareType, setSelectedCareType] = useState(null);
+  const [selectedCareType, setSelectedCareType] = useState([]);
   const [address, setAddress] = useState("");
   const [introduction, setIntroduction] = useState("");
   const [selectedAddress, setSelectedAddress] = useState([]);
@@ -42,6 +48,10 @@ const ApplicationPage = () => {
   const { memberId, setMemberId } = useStore();
   const [kyc_id, setKyc_id] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [selectedDistrict, setSelectedDistrict] = useState([]);
+  const [selectedArea, setSelectedArea] = useState("");
+  const [selectedDate, setSelectedDate] = useState(null);
+  const maxSelectableDate = dayjs().subtract(12, "year");
 
   useEffect(() => {
     if (nannyInfo?.service) {
@@ -102,35 +112,26 @@ const ApplicationPage = () => {
   const handleNextClick = async () => {
     const nannyData = {
       memberId: memberId,
-      experienment: nannyInfo ? nannyInfo.experienment : null,
-      age: nannyInfo ? nannyInfo.age : null,
-      kidCount: nannyInfo ? nannyInfo.kidcount : null,
-      way: careData?.care_type,
-      scenario: careData?.care_type === "suddenly" ? "home" : selectedCareType,
+      area: selectedArea,
       environmentPic: uploadedImages,
-      serviceLocation:
-        careData?.care_type === "suddenly"
-          ? ['']
-          : selectedCareType === "home"
-          ? [address]
-          : selectedAddress,
+      way: selectedCareType,
+      serviceLocation: [selectedAddress],
       service: Object.keys(switchStates).filter((key) => switchStates[key]),
-      score: nannyInfo ? nannyInfo.score : "",
       isShow: true,
-      location: [address],
+      location: [selectedDistrict],
+      address: address,
       kycId: kyc_id ? kyc_id : null,
       introduction: introduction,
-      nannyId: nannyInfo ? nannyInfo.nanny_id : null,
-      careTypeId: careData.id,
       uploadId: headIcon,
+      experience: selectedDate,
     };
 
     // 必填欄位列表
     const requiredFields = {
-      scenario: "托育情境",
       serviceLocation: "服務地點",
       introduction: "自我介紹",
       uploadId: "個人照",
+      area: "雲林縣社會服務處單位",
     };
 
     // 檢查是否有未填寫的欄位
@@ -268,7 +269,15 @@ const ApplicationPage = () => {
   };
 
   const handleCareTypeChange = (e) => {
-    setSelectedCareType(e.target.value);
+    const { value } = e.target;
+
+    if (selectedCareType?.includes(value)) {
+      // 已經有了，就取消選取
+      setSelectedCareType(selectedCareType.filter((item) => item !== value));
+    } else {
+      // 沒有，就新增
+      setSelectedCareType([...(selectedCareType || []), value]);
+    }
   };
 
   const handleAddressChange = (event) => {
@@ -292,7 +301,7 @@ const ApplicationPage = () => {
       3: "製作副食品",
       4: "可遠端查看育兒情形",
       5: "可配合不使用3C育兒",
-      6: "可配合家長外出",
+      6: "可配合保母外出，備註：公園散步",
     };
     return labels[num];
   };
@@ -414,176 +423,358 @@ const ApplicationPage = () => {
             </label>
           </div>
 
-          <div style={styles.checkBoxLayout}>
-            {careData?.care_type === "longTern" && (
-              <>
-              <input
-                  type="radio"
+          <FormControl required fullWidth margin="normal">
+            <InputLabel id="district-label">雲林縣社會服務處單位</InputLabel>
+            <Select
+              labelId="district-label"
+              value={selectedArea}
+              onChange={(e) => setSelectedArea(e.target.value)}
+              label="雲林縣社會服務處單位"
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 24 * 7, // 控制選單高度
+                    overflowY: "auto", // 啟用滾動條
+                  },
+                },
+              }}
+              sx={{
+                alignSelf: "stretch",
+                borderRadius: "8px",
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor: selectedArea.length ? "E3838E" : "red",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: selectedAddress.length ? "#E3838E" : "red",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: selectedArea.length ? "#E3838E" : "red",
+                  },
+                },
+                backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
+              }}
+            >
+              {["山線居托中心", "海線居托中心"].map((district) => (
+                <MenuItem key={district} value={district}>
+                  {district}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              label="領證日期*"
+              value={selectedDate}
+              onChange={(newValue) => setSelectedDate(newValue)}
+              renderInput={(params) => <TextField {...params} />}
+              views={["year", "month", "day"]}
+              disableFuture
+              required
+              InputProps={{
+                sx: {
+                  padding: "0px 16px",
+                  borderRadius: "8px",
+                  backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
+                },
+              }}
+              sx={{
+                alignSelf: "stretch",
+                borderRadius: "8px",
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor: "var(--OutLine-OutLine, #78726D)",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "#E3838E",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#E3838E",
+                  },
+                },
+                backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
+              }}
+            />
+          </LocalizationProvider>
+          <div style={styles.careTypeLayout}>
+            <div style={styles.careTypeLayoutItem}>
+              <div style={styles.careTypeFont}>
+                <input
+                  type="checkbox"
                   name="careType"
                   value="home"
-                  checked={selectedCareType === "home"}
+                  checked={selectedCareType.includes("home")}
                   onChange={handleCareTypeChange}
                   style={{
                     ...styles.radioButton,
-                    ...(selectedCareType === "home" &&
+                    ...(selectedCareType.includes("home") &&
                       styles.radioButtonChecked),
                   }}
                 />
                 在宅托育
+              </div>
+              {selectedCareType?.includes("home") && (
+                <>
+                  {/* 固定顯示 雲林縣 */}
+                  <TextField
+                    disabled
+                    label="縣市"
+                    value="雲林縣"
+                    variant="outlined"
+                    InputProps={{
+                      sx: {
+                        padding: "0px 16px",
+                        borderRadius: "8px",
+                        backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
+                      },
+                    }}
+                    sx={{
+                      alignSelf: "stretch",
+                      borderRadius: "8px",
+                      "& .MuiOutlinedInput-root": {
+                        "& fieldset": {
+                          borderColor: "var(--OutLine-OutLine, #78726D)",
+                        },
+                        "&:hover fieldset": {
+                          borderColor: "#E3838E",
+                        },
+                        "&.Mui-focused fieldset": {
+                          borderColor: "#E3838E",
+                        },
+                      },
+                    }}
+                  />
+
+                  {/* 選擇地區（像斗六、虎尾、土庫等等） */}
+                  <FormControl required fullWidth margin="normal">
+                    <InputLabel id="district-label">地區</InputLabel>
+                    <Select
+                      labelId="district-label"
+                      value={selectedDistrict}
+                      onChange={(e) => setSelectedDistrict(e.target.value)}
+                      label="地區"
+                      MenuProps={{
+                        PaperProps: {
+                          style: {
+                            maxHeight: 24 * 7, // 控制選單高度
+                            overflowY: "auto", // 啟用滾動條
+                          },
+                        },
+                      }}
+                      sx={{
+                        alignSelf: "stretch",
+                        borderRadius: "8px",
+                        "& .MuiOutlinedInput-root": {
+                          "& fieldset": {
+                            borderColor: selectedAddress.length
+                              ? "E3838E"
+                              : "red",
+                          },
+                          "&:hover fieldset": {
+                            borderColor: selectedAddress.length
+                              ? "#E3838E"
+                              : "red",
+                          },
+                          "&.Mui-focused fieldset": {
+                            borderColor: selectedAddress.length
+                              ? "#E3838E"
+                              : "red",
+                          },
+                        },
+                        backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
+                      }}
+                    >
+                      {[
+                        "斗六",
+                        "斗南",
+                        "林內",
+                        "古坑",
+                        "莿桐",
+                        "虎尾",
+                        "西螺",
+                        "二崙",
+                        "土庫",
+                        "大埤",
+                        "北港",
+                        "元長",
+                        "四湖",
+                        "水林",
+                        "口湖",
+                        "麥寮",
+                        "崙背",
+                        "褒忠",
+                        "東勢",
+                        "台西",
+                      ].map((district) => (
+                        <MenuItem key={district} value={district}>
+                          {district}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+
+                  {/* 自填詳細地址 */}
+                  <TextField
+                    required
+                    id="address-detail"
+                    label="詳細地址（街道、門牌）"
+                    variant="outlined"
+                    value={address}
+                    onChange={handleAddressChange}
+                    error={!address} // 如果 address 為空，則顯示錯誤
+                    helperText={!address ? "請輸入詳細地址" : ""}
+                    InputProps={{
+                      sx: {
+                        padding: "0px 16px",
+                        borderRadius: "8px",
+                        backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
+                      },
+                    }}
+                    sx={{
+                      alignSelf: "stretch",
+                      borderRadius: "8px",
+                      "& .MuiOutlinedInput-root": {
+                        "& fieldset": {
+                          borderColor: address
+                            ? "var(--OutLine-OutLine, #78726D)"
+                            : "red",
+                        },
+                        "&:hover fieldset": {
+                          borderColor: address ? "#E3838E" : "red",
+                        },
+                        "&.Mui-focused fieldset": {
+                          borderColor: address ? "#E3838E" : "red",
+                        },
+                      },
+                    }}
+                  />
+                </>
+              )}
+            </div>
+
+            <div style={styles.careTypeLayoutItem}>
+              <div style={styles.careTypeFont}>
                 <input
-                  type="radio"
+                  type="checkbox"
                   name="careType"
                   value="toHome"
-                  checked={selectedCareType === "toHome"}
+                  checked={selectedCareType.includes("toHome")}
                   onChange={handleCareTypeChange}
                   style={{
                     ...styles.radioButton,
-                    ...(selectedCareType === "toHome" &&
+                    ...(selectedCareType.includes("toHome") &&
                       styles.radioButtonChecked),
                   }}
                 />
                 到宅托育
-              </>
-            )}
+              </div>
+              {selectedCareType.includes("toHome") && (
+                <FormControl
+                  error={!selectedAddress.length}
+                  style={{ width: "100%" }}
+                >
+                  <InputLabel id="address-label">托育地區</InputLabel>
+                  <Select
+                    required
+                    labelId="address-label"
+                    id="address-select"
+                    label="定點選擇"
+                    multiple
+                    value={selectedAddress}
+                    onChange={(e) => {
+                      const newValue = e.target.value;
+                      if (newValue.length > 5) {
+                        Swal.fire({
+                          icon: "error",
+                          title: "超過選擇上限",
+                          text: "最多只能選擇5個托育地區",
+                          confirmButtonText: "確定",
+                        });
+                        return;
+                      }
+                      setSelectedAddress(newValue);
+                    }}
+                    MenuProps={{
+                      PaperProps: {
+                        style: {
+                          maxHeight: 24 * 7, // 控制選單高度
+                          overflowY: "auto", // 啟用滾動條
+                        },
+                      },
+                    }}
+                    sx={{
+                      alignSelf: "stretch",
+                      borderRadius: "8px",
+                      "& .MuiOutlinedInput-root": {
+                        "& fieldset": {
+                          borderColor: selectedAddress.length
+                            ? "E3838E"
+                            : "red",
+                        },
+                        "&:hover fieldset": {
+                          borderColor: selectedAddress.length
+                            ? "#E3838E"
+                            : "red",
+                        },
+                        "&.Mui-focused fieldset": {
+                          borderColor: selectedAddress.length
+                            ? "#E3838E"
+                            : "red",
+                        },
+                      },
+                      backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
+                    }}
+                  >
+                    {[
+                      "斗六",
+                      "斗南",
+                      "林內",
+                      "古坑",
+                      "莿桐",
+                      "虎尾",
+                      "西螺",
+                      "二崙",
+                      "土庫",
+                      "大埤",
+                      "北港",
+                      "元長",
+                      "四湖",
+                      "水林",
+                      "口湖",
+                      "麥寮",
+                      "崙背",
+                      "褒忠",
+                      "東勢",
+                      "台西",
+                    ].map((location) => (
+                      <MenuItem
+                        key={location}
+                        value={location}
+                        sx={{
+                          color: "#410002",
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "flex-start",
+                          alignItems: "flex-start",
+                        }}
+                      >
+                        <span style={styles.addressName}>{location}</span>
+                      </MenuItem>
+                    ))}
+                  </Select>
+                  {!selectedAddress.length && (
+                    <span style={{ color: "red", fontSize: "12px" }}>
+                      請選擇托育地區
+                    </span>
+                  )}
+                </FormControl>
+              )}
+            </div>
           </div>
 
           <div style={styles.buttonLayout}>
-            {(careData?.care_type === "suddenly" || selectedCareType === "home") && (
-              <TextField
-                required
-                id="address"
-                label="服務地址"
-                variant="outlined"
-                value={address}
-                onChange={handleAddressChange}
-                error={!address} // 如果 address 為空，則顯示錯誤
-                helperText={!address ? "請輸入服務地址" : ""}
-                InputProps={{
-                  sx: {
-                    padding: "0px 16px",
-                    borderRadius: "8px",
-                    backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
-                  },
-                }}
-                sx={{
-                  alignSelf: "stretch",
-                  borderRadius: "8px",
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": {
-                      borderColor: address
-                        ? "var(--OutLine-OutLine, #78726D)"
-                        : "red",
-                    },
-                    "&:hover fieldset": {
-                      borderColor: address ? "#E3838E" : "red",
-                    },
-                    "&.Mui-focused fieldset": {
-                      borderColor: address ? "#E3838E" : "red",
-                    },
-                  },
-                }}
-              />
-            )}
-
-            {/* 托育地區選擇 */}
-            {selectedCareType === "toHome" && (
-              <FormControl
-                error={!selectedAddress.length}
-                style={{ width: "100%" }}
-              >
-                <InputLabel id="address-label">托育地區</InputLabel>
-                <Select
-                  required
-                  labelId="address-label"
-                  id="address-select"
-                  label="定點選擇"
-                  multiple
-                  value={selectedAddress}
-                  onChange={(e) => {
-                    const newValue = e.target.value;
-                    if (newValue.length > 5) {
-                      Swal.fire({
-                        icon: "error",
-                        title: "超過選擇上限",
-                        text: "最多只能選擇5個托育地區",
-                        confirmButtonText: "確定",
-                      });
-                      return;
-                    }
-                    setSelectedAddress(newValue);
-                  }}
-                  MenuProps={{
-                    PaperProps: {
-                      style: {
-                        maxHeight: 24 * 7, // 控制選單高度
-                        overflowY: "auto", // 啟用滾動條
-                      },
-                    },
-                  }}
-                  sx={{
-                    alignSelf: "stretch",
-                    borderRadius: "8px",
-                    "& .MuiOutlinedInput-root": {
-                      "& fieldset": {
-                        borderColor: selectedAddress.length ? "E3838E" : "red",
-                      },
-                      "&:hover fieldset": {
-                        borderColor: selectedAddress.length ? "#E3838E" : "red",
-                      },
-                      "&.Mui-focused fieldset": {
-                        borderColor: selectedAddress.length ? "#E3838E" : "red",
-                      },
-                    },
-                    backgroundColor: "var(--SurfaceContainer-Lowest, #FFF)",
-                  }}
-                >
-                  {[
-                    "斗六",
-                    "斗南",
-                    "林內",
-                    "古坑",
-                    "莿桐",
-                    "虎尾",
-                    "西螺",
-                    "二崙",
-                    "土庫",
-                    "大埤",
-                    "北港",
-                    "元長",
-                    "四湖",
-                    "水林",
-                    "口湖",
-                    "麥寮",
-                    "崙背",
-                    "褒忠",
-                    "東勢",
-                    "台西",
-                  ].map((location) => (
-                    <MenuItem
-                      key={location}
-                      value={location}
-                      sx={{
-                        color: "#410002",
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "flex-start",
-                        alignItems: "flex-start",
-                      }}
-                    >
-                      <span style={styles.addressName}>{location}</span>
-                    </MenuItem>
-                  ))}
-                </Select>
-                {!selectedAddress.length && (
-                  <span style={{ color: "red", fontSize: "12px" }}>
-                    請選擇托育地區
-                  </span>
-                )}
-              </FormControl>
-            )}
-
             <div style={styles.hopeLayout}>
-              {[1, 2, 3, 4, 5, 6].map((num) => (
+              {[2, 3, 4, 5, 6].map((num) => (
                 <div key={num} style={styles.componentLayout}>
                   <span>{getLabel(num)}</span>
                   <FormGroup>
@@ -628,11 +819,7 @@ const ApplicationPage = () => {
                   >
                     {uploadedEnvironmentImages.length > 0 ? (
                       <img
-                        src={
-                          uploadedEnvironmentImages[
-                            currentImageIndex
-                          ]
-                        }
+                        src={uploadedEnvironmentImages[currentImageIndex]}
                         alt="Latest uploaded environment"
                         style={{
                           width: "100%",
@@ -646,19 +833,19 @@ const ApplicationPage = () => {
                   </label>
                   <span
                     style={styles.imgCountLayout}
-                  >{`${currentImageIndex+1 }/6`}</span>
+                  >{`${currentImageIndex + 1}/6`}</span>
                 </div>
                 {uploadedEnvironmentImages.length > 0 && (
                   <div className="dotsContainer">
                     {uploadedEnvironmentImages.map((_, index) => (
-                    <span
-                      key={index}
-                      className={`dot ${index === currentImageIndex ? "active" : ""}`}
-                      onClick={() => handleDotClick(index)}
-                    ></span>
-                  ))}
-                </div>
-              )}
+                      <span
+                        key={index}
+                        className={`dot ${index === currentImageIndex ? "active" : ""}`}
+                        onClick={() => handleDotClick(index)}
+                      ></span>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -726,6 +913,28 @@ const ApplicationPage = () => {
 };
 
 const styles = {
+  careTypeFont: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    gap: "10px",
+  },
+  careTypeLayout: {
+    display: "flex",
+    alignItems: "flex-start",
+    flexDirection: "column",
+    width: "100%",
+    gap: "10px",
+  },
+  careTypeLayoutItem: {
+    display: "flex",
+    alignItems: "flex-start",
+    flexDirection: "column",
+    width: "100%",
+    gap: "10px",
+  },
+
   environmentLayout: {
     height: "177px",
     alignSelf: "stretch",
@@ -754,7 +963,8 @@ const styles = {
   checkBoxLayout: {
     display: "flex",
     height: "40px",
-    alignItems: "center",
+    alignItems: "flex-start",
+    flexDirection: "column",
     gap: "31px",
     alignSelf: "stretch",
   },
@@ -857,9 +1067,9 @@ const styles = {
   buttonLayout: {
     display: "flex",
     flexDirection: "column",
-    gap: "10px",
     gap: "24px",
     width: "100%",
+    marginTop: "28px",
     marginBottom: "28px",
   },
   imgLayout: {
@@ -936,6 +1146,7 @@ const styles = {
     paddingRight: "35px",
     paddingTop: "20px",
     borderRadius: "40px 0px 0px 0px", // 左上、右上、右下、左下的圓角
+    gap: "10px",
   },
   rollerLayout: {
     display: "flex",
