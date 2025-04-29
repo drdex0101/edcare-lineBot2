@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import ServiceSchedule from "../../../components/base/ServiceSchedule";
-import CalendarRangePicker from "../../../components/base/CalendarRangePicker";
+import ServiceSchedule from "../../../../components/base/ServiceSchedule";
+import CalendarRangePicker from "../../../../components/base/CalendarRangePicker";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import "../css/profile.css";
-import "./order.css";
-import Loading from "../../../components/base/Loading";
-import useStore from "../../../lib/store";
+import "../../css/profile.css";
+import "../../order/order.css";
+import Loading from "../../../../components/base/Loading";
+import useStore from "../../../../lib/store";
 import Swal from "sweetalert2";
 export default function ProfilePage() {
   const router = useRouter();
@@ -536,15 +536,6 @@ export default function ProfilePage() {
                   <span className="imgFont">托育理念</span>
                   <span>{orderInfo.intro}</span>
                 </div>
-              </div>
-              <div style={{backgroundColor:"#F3CCD4",display:"flex", justifyContent:"center", alignItems:"center"}}>
-                  <button
-                    className="submitButton"
-                    onClick={handleBookingClick}
-                  disabled={isMatching}
-                >
-                    + 馬上預約
-                  </button>
               </div>
             </div>
           </div>
