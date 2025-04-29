@@ -59,18 +59,12 @@ export default async function handler(req, res) {
           nanny.kycId, 
           nanny.uploadId, 
           nanny.created_ts,
+          nanny.area,
+          nanny.address,
           k.name,
-          k.birthday,
-          c.weekdays,
-          c.care_time,
-          c.start_date ,
-          c.end_date,
-          c.location,
-          nanny.scenario,
-          c.care_type
+          k.birthday
         FROM nanny
         LEFT JOIN kyc_info k ON nanny.kycid = k.id
-        LEFT JOIN care_data c ON nanny.care_type_id = c.id
         WHERE nanny.memberId = $1;
       `;
       const result = await client.query(query, [memberId]);

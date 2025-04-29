@@ -29,6 +29,10 @@ const ApplicationPage = () => {
     }
   };
 
+  const handleGoToLink = () => {
+    router.push("/nanny/search");
+  };
+
   useEffect(() => {
     const fetchAllData = async () => {
       setIsLoading(true);
@@ -137,24 +141,18 @@ const ApplicationPage = () => {
                 <div className="flexColumnSecond">
                   <span className="secondTitle">我需要完成哪些步驟？</span>
                   <span className="secondSubTitle">
-                    除了完整填寫資料外，您還需要驗證您的手機號碼，送出資料後可進行驗證流程。
+                      您已完成所有資料填寫，請耐心等待客服人員驗證。
                   </span>
                 </div>
                 <div className="flexColumnSecond">
                   <span className="secondTitle">什麼時候會通過審核？</span>
                   <span className="secondSubTitle">
-                    審核時間約2~3天的時間，我們會撥電話給您做身分確認與審核。
-                  </span>
-                </div>
-                <div className="flexColumnSecond">
-                  <span className="secondTitle">我可以修改資料嗎？</span>
-                  <span className="secondSubTitle">
-                  可以的，您送出資料後，可以在此頁進入修改申請資料頁面，若您有修改身份驗證，必須重新驗證。
+                  審核時間為上班日的 8:30~17:30，通常需要 2~3 天。我們會主動以電話聯絡您，確認您的身分並完成審核程序，請留意來電喔！
                   </span>
                 </div>
               </div>
               {isMember && haveKyc && haveNanny ? (
-                <></>
+                <button style={styles.goToLink} onClick={handleGoToLink}>查看育兒資源</button>
               ) : (
                 <button style={styles.goToLink} onClick={handleClick}>點我繼續填寫資料</button>
               )}

@@ -160,7 +160,8 @@ const ApplicationPage = () => {
       return;
     }
   
-    if (endDate < startDate) {
+    // ⭐ 這邊新增判斷：只有 endDate 存在時才比對 startDate 跟 endDate
+    if (normalizedEnd && normalizedEnd < normalizedStart) {
       Swal.fire({
         icon: "error",
         title: "日期錯誤",

@@ -131,7 +131,7 @@ export default function HistoryPage() {
               name={item.nickname}
               way={item.choosetype}
               scene={item.scenario}
-              orderId={item.order_id}
+              orderId={item.id}
               createdTime={item.created_ts}
               status={item.status}
               handleClick={handleClick}

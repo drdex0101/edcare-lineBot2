@@ -1,24 +1,26 @@
 CREATE TABLE nanny (
     id BIGSERIAL PRIMARY KEY,
     memberId VARCHAR,
-    experienment BIGINT, -- 經驗年數
+    experienment TIMESTAMP, -- 經驗年數
     age BIGINT,
     kidCount BIGINT, -- 可接受照顧小孩數量
-    way VARCHAR, -- 托育方式
-    scenario TEXT, -- 托育情境
+    way VARCHAR [], -- 托育方式
     environmentPic VARCHAR[], -- 環境照片，使用陣列儲存多張照片的URL
-    serviceLocation VARCHAR[], -- 服務地點
+    serviceLocation VARCHAR[], -- 到宅托育地區
     introduction VARCHAR, -- 自我介紹
     service VARCHAR[], -- 服務項目，使用陣列儲存多個服務
     score VARCHAR, -- 評分，例如 4.85
     isShow BOOLEAN DEFAULT true, -- 是否顯示
-    location VARCHAR[],
+    location VARCHAR[], -- 在宅托育地區
     kycId BIGINT , 
     uploadId BIGINT , 
     created_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     update_ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    suddenly_id VARCHAR(50),
-    long_tern_id VARCHAR(50)
+    address VARCHAR,
+    is_paired BOOLEAN DEFAULT False,
+    care_type_id BIGINT,
+    area VARCHAR,
 );
 ALTER TABLE nanny ADD COLUMN care_type_id BIGINT; 
 alter table nanny add column is_paired BOOLEAN DEFAULT False;
+alter table nanny add column address VARCHAR;

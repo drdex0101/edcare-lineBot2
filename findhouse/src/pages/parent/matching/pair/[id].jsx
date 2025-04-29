@@ -340,32 +340,41 @@ export default function ProfilePage() {
     if (!isOpen) return null;
 
     return (
-      <div 
+      <div
         style={{
-          position: 'fixed',
+          position: "fixed",
           top: 0,
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.8)',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
+          backgroundColor: "rgba(0, 0, 0, 0.8)",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
           zIndex: 1000,
-          cursor: 'pointer',
+          cursor: "pointer",
         }}
         onClick={onClose}
       >
-        <div style={{ padding: '20px', maxWidth: '90vw', maxHeight: '90vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <img 
-            src={src} 
-            alt="Preview" 
+        <div
+          style={{
+            padding: "20px",
+            maxWidth: "90vw",
+            maxHeight: "90vh",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <img
+            src={src}
+            alt="Preview"
             style={{
-              maxWidth: '100%',
-              maxHeight: '90vh',
-              objectFit: 'contain',
-              borderRadius: '8px',
-              cursor: 'default',
+              maxWidth: "100%",
+              maxHeight: "90vh",
+              objectFit: "contain",
+              borderRadius: "8px",
+              cursor: "default",
             }}
             onClick={(e) => e.stopPropagation()}
           />
@@ -424,14 +433,14 @@ export default function ProfilePage() {
         </svg>
       </div>
       <div className="profileSection">
-      <img 
-          className="profilePic" 
-          src={iconUrl || "/nannyIcon.jpg"} 
-          alt="Profile" 
+        <img
+          className="profilePic"
+          src={iconUrl || "/nannyIcon.jpg"}
+          alt="Profile"
           onClick={() => setIsPreviewOpen(true)}
-          style={{ cursor: 'pointer' }}
+          style={{ cursor: "pointer" }}
         />{" "}
-        <ImagePreview 
+        <ImagePreview
           src={iconUrl || "/nannyIcon.jpg"}
           isOpen={isPreviewOpen}
           onClose={() => setIsPreviewOpen(false)}
@@ -547,7 +556,6 @@ export default function ProfilePage() {
               </div>
             )}
         </div>
-
         {/* Icon Navigation */}
         <div style={{ backgroundColor: "#fff", border: "none" }}>
           <div
@@ -596,9 +604,13 @@ export default function ProfilePage() {
             </div>
           </div>
           <div className="buttonLayout">
-              <button className="appoveButton" onClick={handlApproval}>媒合</button>
-              <button className="rejectButton" onClick={handlReject}>拒絕</button>
-            </div>
+            <button className="appoveButton" onClick={handlApproval}>
+              媒合
+            </button>
+            <button className="rejectButton" onClick={handlReject}>
+              拒絕
+            </button>
+          </div>
         </div>
       </div>
 

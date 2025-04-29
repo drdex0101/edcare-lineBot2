@@ -55,7 +55,6 @@ export default function ProfilePage() {
       `/api/favorite/getIsFavorite?itemId=${id}&&type=${"nanny"}`,
     );
     const data = await response.json();
-    console.log("data.favorite.length", data.favorite.length);
     if (data.favorite.length > 0) {
       setIsFavorite(true);
     }
@@ -510,7 +509,7 @@ export default function ProfilePage() {
             }}
           >
             <div className="iconNav">
-              {["1", "2", "3", "4", "5", "6"].map((number) => (
+              {[ "2", "3", "4", "5", "6"].map((number) => (
                 <div
                   key={number}
                   style={{
@@ -548,91 +547,14 @@ export default function ProfilePage() {
               </div>
             </div>
           </div>
-        </div>
-        <div
-          className="buttonLayout"
-          style={{
-            position: "absolute",
-            top: `${500 + offset}px`,
-            left: "50%",
-            transform: "translateX(-50%)",
-            gap: "10px",
-          }}
-        >
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            width="78" 
-            height="76" 
-            viewBox="0 0 78 76" 
-            fill="none"
-            style={{
-              opacity: isDisabled ? 0.5 : 1,
-              pointerEvents: isDisabled ? 'none' : 'auto',
-              cursor: isDisabled ? 'not-allowed' : 'pointer'
-            }}
-          >
-            <path 
-              d="M77.25 68V23.0588C77.25 21.078 76.4663 19.1775 75.0701 17.7724L60.1065 2.71355C58.6986 1.29672 56.7838 0.5 54.7864 0.5H8.75C4.60787 0.5 1.25 3.85786 1.25 8V52.1795C1.25 54.1613 2.0344 56.0625 3.43182 57.4678L19.1637 73.2884C20.5714 74.704 22.4855 75.5 24.4819 75.5H69.75C73.8921 75.5 77.25 72.1421 77.25 68Z" 
-              fill={isDisabled ? "#CCCCCC" : "#F5E5E5"} 
-              fillOpacity="0.8" 
-              stroke={isDisabled ? "#CCCCCC" : "#F3CCD4"} 
-            />
-            <image 
-              href="/icon/reject.svg" 
-              x="24" 
-              y="24" 
-              width="30" 
-              height="30" 
-              onClick={!isDisabled ? handlReject : undefined}
-              style={{ opacity: isDisabled ? 0.5 : 1 }}
-            />
-          </svg>
-
-          <svg xmlns="http://www.w3.org/2000/svg" width="56" height="65" viewBox="0 0 56 65" fill="none">
-            <path d="M22.6564 61.8784L3.42644 43.7484C1.978 42.3828 1.16481 40.5303 1.16604 38.5991L1.17355 26.8226C1.17477 24.8944 1.98777 23.0455 3.43394 21.682L23.4296 2.83016C26.4434 -0.0113071 31.3299 -0.0113093 34.3437 2.83016L53.2013 20.6091C54.6504 21.9753 55.4636 23.8288 55.4617 25.761L55.4489 38.2446C55.4469 40.1719 54.634 42.0197 53.1885 43.3825L33.5705 61.8784C30.5567 64.7198 25.6702 64.7198 22.6564 61.8784Z" fill="#F5E5E5" fill-opacity="0.8" stroke="#F3CCD4" />
-
-            <g onClick={handleSvgClick} style={{ cursor: "pointer" }}>
-              <svg x="18" y="25" width="20" height="18" viewBox="0 0 20 18" fill="none">
-                <path
-                  d="M10 4.15428C8 -0.540161 1 -0.0401611 1 5.95987C1 11.9599 10 16.9601 10 16.9601C10 16.9601 19 11.9599 19 5.95987C19 -0.0401611 12 -0.540161 10 4.15428Z"
-                  stroke="#E3838E"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  fill={isFavorite ? "#E3838E" : "none"} // 控制填充顏色
-                />
-              </svg>
-            </g>
-          </svg>
-
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            width="78" 
-            height="76" 
-            viewBox="0 0 78 76" 
-            fill="none"
-            style={{
-              opacity: isDisabled ? 0.5 : 1,
-              pointerEvents: isDisabled ? 'none' : 'auto',
-              cursor: isDisabled ? 'not-allowed' : 'pointer'
-            }}
-          >
-            <path 
-              d="M0.75 68V23.0588C0.75 21.078 1.53366 19.1775 2.9299 17.7724L17.8935 2.71355C19.3014 1.29672 21.2162 0.5 23.2136 0.5H69.25C73.3921 0.5 76.75 3.85786 76.75 8V52.1795C76.75 54.1613 75.9656 56.0625 74.5682 57.4678L58.8363 73.2884C57.4286 74.704 55.5145 75.5 53.5181 75.5H8.25C4.10787 75.5 0.75 72.1421 0.75 68Z" 
-              fill={isDisabled ? "#CCCCCC" : "#F5E5E5"} 
-              fillOpacity="0.8" 
-              stroke={isDisabled ? "#CCCCCC" : "#F3CCD4"} 
-            />
-            <image 
-              href="/icon/approve.svg" 
-              x="24" 
-              y="24" 
-              width="30" 
-              height="30" 
-              onClick={!isDisabled ? handlApproval : undefined}
-              style={{ opacity: isDisabled ? 0.5 : 1 }}
-            />
-          </svg>
+          <div className="buttonLayout">
+            <button className="appoveButton" onClick={handlApproval}>
+              媒合
+            </button>
+            <button className="rejectButton" onClick={handlReject}>
+              拒絕
+            </button>
+          </div>
         </div>
       </div>
 

@@ -4,12 +4,9 @@ export default async function handler(req, res) {
   if (req.method === 'PATCH') {
     console.log('req.body', req.body);
     const { 
-      memberId,          // 用作 memberId
-      experienment,
-      age,
-      kidCount,
+      memberId,
+      area,
       way,
-      scenario,
       environmentPic,
       serviceLocation,
       introduction,
@@ -17,11 +14,11 @@ export default async function handler(req, res) {
       score,
       isShow,
       location,
+      address,
       kycId,
       uploadId,
       nannyId,
-      suddenlyId,
-      longTermId
+      experience,
     } = req.body;
 
     const client = new Client({
@@ -31,6 +28,14 @@ export default async function handler(req, res) {
       },
     });
 
+    const safeArray = (v) => {
+      if (!v) return null;
+      if (Array.isArray(v)) {
+        return `{${v.map((item) => `"${item}"`).join(',')}}`;
+      }
+      return v;
+    };
+
     try {
       await client.connect();
 
@@ -38,45 +43,39 @@ export default async function handler(req, res) {
         UPDATE  nanny 
         SET
           memberId = $1,
-          experienment = $2,
-          age = $3,
-          kidCount = $4,
-          way = $5,
-          scenario = $6,
-          environmentPic = $7,
-          serviceLocation = $8,
-          introduction = $9,
-          service = $10,
-          score = $11,
-          isShow = $12,
-          location = $13,
-          kycid = $14,
-          uploadId = $15,
-          suddenly_id = $16,
-          long_tern_id = $17,
+          area = $2,
+          way = $3,
+          environmentPic = $4,
+          serviceLocation = $5,
+          introduction = $6,
+          service = $7,
+          score = $8,
+          isShow = $9,
+          location = $10,
+          address = $11,
+          kycId = $12,
+          uploadId = $13,
+          experienment = $15,
           created_ts = NOW()
-        WHERE id = $18
+        WHERE id = $14
         RETURNING *;
       `;
       const values = [
         memberId,        // memberId
-        experienment,
-        age,
-        kidCount,
-        way,
-        scenario,
-        environmentPic,
-        serviceLocation,
+        area,
+        safeArray(way),
+        safeArray(environmentPic),
+        safeArray(serviceLocation),
         introduction,
         service,
         score,
         isShow,
-        location,
+        safeArray(location),
+        address,
         kycId,
         uploadId,
-        suddenlyId,
-        longTermId,
-        nannyId
+        nannyId,
+        experience,
       ];
       const result = await client.query(query, values);
       console.log('values', values);

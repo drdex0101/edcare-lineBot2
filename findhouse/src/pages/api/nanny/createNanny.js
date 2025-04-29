@@ -1,15 +1,17 @@
 import getClient from '../../../utils/getClient';
 import { verifyToken } from '../../../utils/jwtUtils';
+
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     console.log('req.body', req.body);
-    const { 
+
+    const {
       memberId,
+      area,
       experienment,
       age,
       kidCount,
       way,
-      scenario,
       environmentPic,
       serviceLocation,
       introduction,
@@ -17,9 +19,10 @@ export default async function handler(req, res) {
       score,
       isShow,
       location,
+      address,
       kycId,
       uploadId,
-      careTypeId
+      careTypeId,
     } = req.body;
 
     const client = getClient();
@@ -27,43 +30,74 @@ export default async function handler(req, res) {
     const payload = await verifyToken(token);
     const userId = payload.userId;
 
+    const safeArray = (v) => {
+      if (!v) return null;
+      if (Array.isArray(v)) {
+        return `{${v.map((item) => `"${item}"`).join(',')}}`;
+      }
+      return v;
+    };
+    
+
     try {
       await client.connect();
 
+      // ⭐ 重點：如果是 Array 或 Object 自動轉成 JSON 字串
+      const safeValue = (v) =>
+        v && (Array.isArray(v) || typeof v === 'object') ? JSON.stringify(v) : v;
+
       const query = `
         INSERT INTO nanny (
-          memberId, experienment,
-          age, kidCount, way, scenario, environmentPic,
-          serviceLocation, introduction, service, score, isShow,
-          location, kycid, uploadId, care_type_id, created_ts
+          memberid,
+          area,
+          experienment,
+          age,
+          kidcount,
+          way,
+          environmentpic,
+          servicelocation,
+          introduction,
+          service,
+          score,
+          isshow,
+          location,
+          address,
+          kycid,
+          uploadid,
+          care_type_id,
+          created_ts
         )
         VALUES (
           $1, $2, $3, $4, $5,
           $6, $7, $8, $9, $10,
-          $11, $12, $13, $14, $15, $16,
-          NOW()
+          $11, $12, $13, $14, $15,
+          $16, $17,NOW()
         )
         RETURNING *;
       `;
-      console.log(query);
+
       const values = [
-        memberId,       // memberId
+        memberId,
+        area,
         experienment,
         age,
         kidCount,
-        way,
-        scenario,
-        environmentPic,
-        serviceLocation,
+        safeArray(way),
+        safeArray(environmentPic),
+        safeArray(serviceLocation),
         introduction,
-        service,
+        safeArray(service),
         score,
         isShow,
-        location,
+        safeArray(location),
+        address,
         kycId,
         uploadId,
         careTypeId
       ];
+
+      console.log('Executing query:', query);
+
       const result = await client.query(query, values);
 
       console.log('Nanny created successfully:', result.rows[0]);
@@ -71,9 +105,7 @@ export default async function handler(req, res) {
     } catch (error) {
       console.error('Database error:', error);
       res.status(500).json({ error: 'Database error' });
-    } finally {
-      client.release();
-    }
+    } 
   } else {
     res.setHeader('Allow', ['POST']);
     res.status(405).end(`Method ${req.method} Not Allowed`);

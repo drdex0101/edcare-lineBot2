@@ -175,7 +175,7 @@ const ApplicationPage = () => {
             richMenuId: "richmenu-e2577cc1b2bd4a59ad7fe9c3b99605ba",
           }),
         });
-        router.push("/nanny/create/choose");
+        router.push("/nanny/create/nannyInfo");
       }
     } catch (error) {
       setIsLoading(false);
@@ -350,6 +350,7 @@ const ApplicationPage = () => {
             <div style={styles.roller}></div>
           </div>
           <span style={styles.subTitle}>身分驗證</span>
+          <span>進行身份驗證需要上傳身分證，如不慎關閉畫面資料不會緩存</span>
           <Box
             component="form"
             sx={{

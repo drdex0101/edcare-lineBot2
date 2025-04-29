@@ -1,40 +1,31 @@
 import React, { useState } from "react";
+import ServiceSchedule from "../../../../components/base/ServiceSchedule";
+import CalendarRangePicker from "../../../../components/base/CalendarRangePicker";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import RatingComponent from "../../../components/nanny/rating";
-import "../css/profile.css";
-import Loading from "../../../components/base/Loading";
-import useStore from "../../../lib/store";
+import "../../css/profile.css";
+import "../../order/order.css";
+import Loading from "../../../../components/base/Loading";
+import useStore from "../../../../lib/store";
 import Swal from "sweetalert2";
-
 export default function ProfilePage() {
   const router = useRouter();
   const { id } = router.query;
   const { orderId } = useStore();
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [nannyInfo, setNannyInfo] = useState({});
+  const [orderInfo, setOrderInfo] = useState({});
   const [urls, setUrls] = useState([]);
-  const [iconUrl, setIconUrl] = useState("/nannyIcon.jpg");
+  const [iconUrl, setIconUrl] = useState("/orderCreate.png");
   const [isLoading, setIsLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(false);
-  const [isMatching, setIsMatching] = useState(false);
-  const [kycId, setKycId] = useState(0);
   const [age, setAge] = useState(0);
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [isPaired, setIsPaired] = useState(false);
-  const [signingCount, setSigningCount] = useState(0);
+  const [isMatching, setIsMatching] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedRange, setSelectedRange] = React.useState({
+    startDate: null,
+    endDate: null,
+  });
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
 
-  const isPair = async () => {
-    const response = await fetch(
-      `/api/pair/isPair?nanny_id=${id}&&order_id=${orderId}`
-    );
-    const data = await response.json();
-    console.log("data", data);
-    if (data.orders?.length > 0) {
-      setIsPaired(true);
-    }
-  };
+  const [isFavorite, setIsFavorite] = useState(null);
 
   const handleSvgClick = async () => {
     try {
@@ -43,129 +34,105 @@ export default function ProfilePage() {
         await fetch(`/api/favorite/deleteFavorite`, {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ itemId: id, type: "parent" }),
+          body: JSON.stringify({ itemId: id, type: "nanny" }),
         });
       } else {
         setIsFavorite(true);
         await fetch(`/api/favorite/createFavorite`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ itemId: id, type: "parent" }),
+          body: JSON.stringify({ itemId: id, type: "nanny" }),
         });
       }
     } catch (error) {
       console.error("Error handling favorite:", error);
     }
   };
-  // 處理點擊圓點來跳轉到對應圖片
-  const handleDotClick = (index) => {
-    setCurrentImageIndex(index);
-  };
-
-  const fetchSigningCount = async () => {
-    if (!id) return; // 防止 id 還沒準備好就去 call
-    const response = await fetch(`/api/pair/getListForNanny?page=1&pageSize=50&status=signing&nanny_id=${id}`);
-    const data = await response.json();
-    console.log("data", data.totalCount);
-    setSigningCount(data.totalCount || 0);
-  };
 
   const getIsFavorite = async () => {
     const response = await fetch(
-      `/api/favorite/getIsFavorite?itemId=${id}&&type=${"parent"}`
+      `/api/favorite/getIsFavorite?itemId=${id}&&type=${"nanny"}`
     );
     const data = await response.json();
-    console.log("data", data.favorite.length);
     if (data.favorite.length > 0) {
       setIsFavorite(true);
     }
   };
 
-  const getIsMember = async () => {
-    const response = await fetch(`/api/member/isMemberExist`);
-    const data = await response.json();
-    console.log("data", data);
-    setKycId(data.member.kyc_id);
+  const parseEditDate = (dateString) => {
+    if (!dateString) return null;
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const day = date.getDate().toString().padStart(2, "0");
+    const formattedDate = `${year}-${month}-${day}`;
+    return formattedDate;
   };
-
   const calculateAge = (birthdayString) => {
     const birthday = new Date(birthdayString); // 轉換生日為 Date 物件
     const today = new Date(); // 取得當前日期
 
     let ageYears = today.getFullYear() - birthday.getFullYear(); // 計算年數
     let ageMonths = today.getMonth() - birthday.getMonth(); // 計算月數
+    if (today.getDate() < birthday.getDate()) {
+      ageMonths--;
+    }
     if (ageMonths < 0) {
       ageYears--;
+      ageMonths += 12;
     }
-    return `${ageYears}`;
+    if (ageYears < 1) {
+      return `${ageMonths}個月`;
+    }
+
+    return `${ageYears}歲${ageMonths}個月`;
   };
 
   useEffect(() => {
-    getIsMember();
-    fetchSigningCount();
-    const fetchNannyInfo = async () => {
+    const fetchOrderInfo = async () => {
       setIsLoading(true);
       if (!router.isReady) return; // 等待路由準備就緒
       if (!id) return;
 
       try {
-        const response = await fetch(`/api/nanny/getNannyInfo?id=${id}`);
+        const response = await fetch(`/api/order/getOrderInfoById?id=${id}`);
         const data = await response.json();
-        setNannyInfo(data.nannies[0]);
-
+        setAge(calculateAge(data.orders[0].birthday));
+        setOrderInfo(data.orders[0]);
         // 如果有環境照片，則獲取每張照片的URL
-        if (data.nannies[0].environmentpic.length > 0) {
-          for (const picId of data.nannies[0].environmentpic) {
+        if (
+          data.orders[0].environmentpic &&
+          data.orders[0].environmentpic.length > 0
+        ) {
+          for (const picId of data.orders[0].environmentpic) {
             const response2 = await fetch(`/api/base/getImgUrl?id=${picId}`);
             const data2 = await response2.json();
             console.log("data2", data2.url);
             urls.push(data2.url);
-            console.log("urls", urls);
           }
         }
-        if (data.nannies[0].uploadid) {
+        if (data.orders[0].uploadid) {
           const response3 = await fetch(
-            `/api/base/getImgUrl?id=${data.nannies[0].uploadid}`
+            `/api/base/getImgUrl?id=${data.orders[0].uploadid}`
           );
           const data3 = await response3.json();
           setIconUrl(data3.url);
         }
+        if (data.orders[0].choosetype === "suddenly") {
+          setSelectedRange({
+            startDate: parseEditDate(data.orders[0].suddenly_start_date) || "", // 確保不是 `undefined`
+            endDate: parseEditDate(data.orders[0].suddenly_end_date) || "",
+          });
+        }
         getIsFavorite();
+        setIsLoading(false);
       } catch (error) {
         console.error("Failed to fetch nanny info:", error);
       }
-      setIsLoading(false);
     };
 
-    fetchNannyInfo();
+    fetchOrderInfo();
   }, [id, router.isReady]); // 添加 router.isReady 作為依賴
-
-  useEffect(() => {
-    if (nannyInfo?.id && nannyInfo?.birthday) {
-      setAge(calculateAge(nannyInfo.birthday));
-      isPair();
-    }
-  }, [nannyInfo]);
-
-  const renderLocation = (location) => {
-    let parsed = location;
-    console.log(location);
-    if (typeof location === "string") {
-      try {
-        parsed = JSON.parse(location);
-      } catch (e) {
-        parsed = [];
-      }
-    }
-
-    return Array.isArray(parsed) && parsed.length > 0
-      ? parsed.join("、")
-      : "未填寫";
-  };
-
-  const toSearch = () => {
-    router.push("/parent/search");
-  };
 
   const serviceNames = {
     1: "可接送小朋友",
@@ -173,7 +140,7 @@ export default function ProfilePage() {
     3: "製作副食品",
     4: "可配合不使用3C育兒",
     5: "寶寶衣物清洗",
-    6: "可配合保母外出",
+    6: "可配合家長外出",
   };
 
   const icons = {
@@ -368,41 +335,18 @@ export default function ProfilePage() {
   };
 
   const handleBookingClick = () => {
-    if (isPaired || isMatching) {
-      Swal.fire({
-        icon: "error",
-        title: "已經配對請回保母搜尋頁面",
-      });
-      return;
-    }
     setIsModalOpen(true);
   };
 
-  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
-
   const handleBooking = async () => {
-    if (orderId == null) {
-      setIsModalOpen(false);
-      Swal.fire({
-        icon: "error",
-        title: "請先建立訂單。",
-      });
-    }
-    if (kycId == 0) {
-      setIsModalOpen(false);
-      Swal.fire({
-        icon: "error",
-        title: "請先填寫kyc。",
-      });
-      return;
-    }
     const response = await fetch(`/api/pair/create`, {
       method: "POST",
-      body: JSON.stringify({ id, orderId, status: "matchByParent" }),
+      body: JSON.stringify({ id: 0, orderId: id, status: "matchByNanny" }),
       headers: {
         "Content-Type": "application/json",
       },
     });
+    const data = await response.json();
     setIsModalOpen(false);
     if (response.ok) {
       setIsBookingModalOpen(true);
@@ -414,87 +358,14 @@ export default function ProfilePage() {
       });
     }
   };
+
+  const toSearch = () => {
+    router.push("/nanny/search");
+  };
+
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setIsBookingModalOpen(false);
-  };
-
-  const ImagePreview = ({ src, isOpen, onClose }) => {
-    if (!isOpen) return null;
-
-    return (
-      <div
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: "rgba(0, 0, 0, 0.8)",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          zIndex: 1000,
-          cursor: "pointer",
-        }}
-        onClick={onClose}
-      >
-        <div
-          style={{
-            padding: "20px",
-            maxWidth: "90vw",
-            maxHeight: "90vh",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <img
-            src={src}
-            alt="Preview"
-            style={{
-              maxWidth: "100%",
-              maxHeight: "90vh",
-              objectFit: "contain",
-              borderRadius: "8px",
-              cursor: "default",
-            }}
-            onClick={(e) => e.stopPropagation()}
-          />
-        </div>
-      </div>
-    );
-  };
-
-  const styles = {
-    previewOverlay: {
-      position: "fixed",
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: "rgba(0, 0, 0, 0.8)",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      zIndex: 1000,
-      cursor: "pointer",
-    },
-    previewContainer: {
-      padding: "20px",
-      maxWidth: "90vw",
-      maxHeight: "90vh",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    previewImage: {
-      maxWidth: "100%",
-      maxHeight: "90vh",
-      objectFit: "contain",
-      borderRadius: "8px",
-      cursor: "default",
-    },
   };
 
   return (
@@ -543,109 +414,82 @@ export default function ProfilePage() {
         </svg>
       </div>
       <div className="profileSection">
-        <img
-          className="profilePic"
-          src={iconUrl || "/nannyIcon.jpg"}
-          alt="Profile"
-          onClick={() => setIsPreviewOpen(true)}
-          style={{ cursor: "pointer" }}
-        />{" "}
-        <ImagePreview
-          src={iconUrl || "/nannyIcon.jpg"}
-          isOpen={isPreviewOpen}
-          onClose={() => setIsPreviewOpen(false)}
-        />
-        <h2 className="profileName">{nannyInfo.name?.[0]}保母</h2>
-        <div className="rating">
-          <RatingComponent score={nannyInfo.score} />
-        </div>
+        <img className="profilePic" src={iconUrl} alt="Profile" />{" "}
+        {/* 頭貼圓形 */}
+        <h2 className="profileName">{orderInfo.nickname}</h2>
         <div className="profile-section">
           <div className="part">
-            <span className="part-title">經驗</span>
-            <span className="part-subTitle">
-              {calculateAge(nannyInfo.experienment) || "未填寫"}年
-            </span>
-          </div>
-          <div className="part">
             <span className="part-title">年紀</span>
-            <span className="part-subTitle">{calculateAge(nannyInfo.birthday) || "未填寫"}歲</span>
+            <span className="part-subTitle">{age}</span>
           </div>
           <div className="part">
-            <span className="part-title">已托育人數</span>
-            <span className="part-subTitle">{signingCount}</span>
+            <span className="part-title">性別</span>
+            <span className="part-subTitle">
+              {orderInfo.gender === "male" ? "男" : "女"}
+            </span>
           </div>
         </div>
         {/* Tabs */}
-        <div
-          className={`${nannyInfo.care_type === "suddenly" ? "tabs-suddenly" : "tabs"}`}
-        >
-          <div className="tab-content">
-            <span
-              className={`${nannyInfo.care_type === "suddenly" ? "tab-tile-suddenly" : "tab-tile"}`}
-            >
-              托育情境
-            </span>
+        <div className="order-tabs">
+          <div className="order-tab-content">
+            <span className="tab-tile">托育方式</span>
             <span className="tab-subTitle">
-              {Array.isArray(nannyInfo.way) && nannyInfo.way.length > 0
-                ? nannyInfo.way
-                    .map((w) =>
-                      w === "home"
-                        ? "在宅托育"
-                        : w === "infantCareCenter"
-                          ? "定點托育"
-                          : w === "toHome"
-                            ? "到宅托育"
-                            : "未填寫"
-                    )
-                    .join(" / ") // 中間用斜線連起來
-                : "未填寫"}
+              {orderInfo.care_type === "suddenly" ? "臨時托育" : "長期托育"}
+            </span>
+          </div>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="2"
+            height="62"
+            viewBox="0 0 2 62"
+            fill="none"
+          >
+            <path
+              d="M1 61L1 1"
+              stroke="#FCF7F7"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+          </svg>
+          <div className="order-tab-content">
+            <span className="tab-tile">托育情境</span>
+            <span className="tab-subTitle">
+              {orderInfo?.scenario === "home"
+                ? "在宅托育"
+                : orderInfo?.scenario === "infantCareCenter"
+                  ? "定點托育"
+                  : orderInfo?.scenario === "toHome"
+                    ? "到宅托育"
+                    : "未填寫"}
             </span>
           </div>
         </div>
         <div className="profile-location">
           <span className="location-subTitle">
-            在宅托育地點：<br/>{renderLocation(nannyInfo.location)}
-          </span>
-          <span className="location-subTitle">
-            到宅托育地點：<br/>{renderLocation(nannyInfo.servicelocation)}
+            {Array.isArray(orderInfo.location) && orderInfo.location.length > 0
+              ? orderInfo.location.join("、")
+              : "未填寫"}
           </span>
         </div>
-        {/* 圖片輪播區域 */}
-        <div className="imageSection">
-          <span className="imgFont">托育環境</span>
-          <div className="carousel">
-            <img
-              src={urls[currentImageIndex]}
-              alt={`圖片 ${currentImageIndex + 1}`}
-              className="carouselImage"
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
-            />
-            <div
-              style={{
-                width: "100%",
-                display: "flex",
-                alignItems: "flex-end",
-                justifyContent: "flex-end",
+        <div
+          style={{ width: "100%", marginBottom: "14px", padding: "10px 40px" }}
+        >
+          {orderInfo.choosetype === "longTern" && (
+            <ServiceSchedule
+              weekdays={orderInfo.weekdays}
+              care_time={orderInfo.care_time}
+            ></ServiceSchedule>
+          )}
+          {orderInfo.choosetype === "suddenly" && (
+            <CalendarRangePicker
+              startDate={orderInfo.start_date}
+              endDate={orderInfo.end_date}
+              locale="zh-TW"
+              styles={{
+                calendar: { maxWidth: "400px" },
+                day: { width: "50px", height: "50px" },
               }}
-            >
-              <div className="imageCounter">
-                {nannyInfo.environmentpic
-                  ? `${currentImageIndex + 1}/${nannyInfo.environmentpic.length}`
-                  : "0/0"}
-              </div>
-            </div>
-          </div>
-          {/* 圓點指示器 */}
-          {nannyInfo.environmentpic && nannyInfo.environmentpic.length > 0 && (
-            <div className="dotsContainer">
-              {nannyInfo.environmentpic.map((_, index) => (
-                <span
-                  key={index}
-                  className={`dot ${index === currentImageIndex ? "active" : ""}`}
-                  onClick={() => handleDotClick(index)}
-                ></span>
-              ))}
-            </div>
+            />
           )}
         </div>
         {/* Icon Navigation */}
@@ -657,7 +501,7 @@ export default function ProfilePage() {
             }}
           >
             <div className="iconNav">
-              {["2", "3", "4"].map((number) => (
+              {["2", "3", "4", "5", "6"].map((number) => (
                 <div
                   key={number}
                   style={{
@@ -670,40 +514,14 @@ export default function ProfilePage() {
                   }}
                 >
                   <div
-                    className={`iconStyle ${nannyInfo.service?.includes(number) ? "active" : "inactive"}`}
+                    className={`iconStyle ${orderInfo.hope?.includes(number) ? "active" : "inactive"}`}
                   >
-                    {nannyInfo.service?.includes(number)
+                    {orderInfo.hope?.includes(number)
                       ? icons[number].active
                       : icons[number].default}
                   </div>
                   <span
-                    className={`fontSpan ${nannyInfo.service?.includes(number) ? "active" : "inactive"}`}
-                  >
-                    {serviceNames[number]}
-                  </span>
-                </div>
-              ))}
-              {["5", "6"].map((number) => (
-                <div
-                  key={number}
-                  style={{
-                    display: "flex",
-                    width: "48px",
-                    height: "76px",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    gap: "12px",
-                  }}
-                >
-                  <div
-                    className={`iconStyle ${nannyInfo.service?.includes(number) ? "active" : "inactive"}`}
-                  >
-                    {nannyInfo.service?.includes(number)
-                      ? icons[number].active
-                      : icons[number].default}
-                  </div>
-                  <span
-                    className={`fontSpan ${nannyInfo.service?.includes(number) ? "active" : "inactive"}`}
+                    className={`fontSpan ${orderInfo.hope?.includes(number) ? "active" : "inactive"}`}
                   >
                     {serviceNames[number]}
                   </span>
@@ -715,12 +533,9 @@ export default function ProfilePage() {
             <div style={{ backgroundColor: "#F8ECEC" }}>
               <div className="introSection">
                 <div className="notesSection">
-                  <span className="imgFont">保母自介</span>
-                  {nannyInfo.introduction}
+                  <span className="imgFont">托育理念</span>
+                  <span>{orderInfo.intro}</span>
                 </div>
-                <button className="submitButton" onClick={handleBookingClick}>
-                  + 馬上預約
-                </button>
               </div>
             </div>
           </div>
@@ -751,7 +566,7 @@ export default function ProfilePage() {
                 </defs>
               </svg>
             </button>
-            <span className="modalTitle">確認向此保母發送托育服務需求</span>
+            <span className="modalTitle">確認向此家長發送托育服務需求</span>
             <div
               style={{
                 display: "flex",
@@ -794,10 +609,10 @@ export default function ProfilePage() {
                 </defs>
               </svg>
             </button>
-            <span className="bookingFont">預約成功！等待保母回覆...</span>
+            <span className="bookingFont">預約成功！等待家長回覆...</span>
             <img src="/review.png" alt="check" />
             <button className="bookingBtn" onClick={toSearch}>
-              點我前往查看保母
+              點我前往查看回覆
             </button>
           </div>
         </div>

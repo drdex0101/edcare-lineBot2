@@ -165,7 +165,7 @@
 
 .nanny-layout {
     display: flex;
-    max-width: 330px;
+    width: 100%;
     height: 70px;
     padding: 6px 8.333px 4px 8px;
     justify-content: center;

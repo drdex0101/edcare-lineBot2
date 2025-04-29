@@ -160,7 +160,7 @@ export default function HistoryPage() {
             ) : (
               <>
                 {signingList.map((avatar) => (
-                  <div className="nanny-layout" key={avatar.id}>
+                  <div className="nanny-layout" key={avatar.id} onClick={() => {router.push(`/nanny/matching/signing/${avatar.order_id}`); setOrderId(avatar.order_id)}}>
                     <div className="nanny-avatar">
                       <img
                         src={"/orderCreate.png"}
