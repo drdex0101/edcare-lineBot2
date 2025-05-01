@@ -1134,13 +1134,13 @@ const styles = {
     borderRadius: "100px",
     border: "1px solid #EBEBEB",
     background: "#FBFBFB",
+    marginRight:'20px'
   },
   rollerLayout: {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
     gap: "30px",
-    marginRight: "10px",
   },
   roller: {
     width: "42px",

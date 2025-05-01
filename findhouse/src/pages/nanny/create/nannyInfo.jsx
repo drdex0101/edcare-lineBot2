@@ -383,7 +383,6 @@ const ApplicationPage = () => {
             <input
               type="file"
               accept="image/*"
-              capture="environment"
               onChange={handleFileChange}
               style={{ display: "none" }}
               id="file-input"
@@ -807,7 +806,6 @@ const ApplicationPage = () => {
                   <input
                     type="file"
                     accept="image/*"
-                    capture="environment"
                     multiple
                     onChange={handleEnvironmentImageChange}
                     style={{ display: "none" }}

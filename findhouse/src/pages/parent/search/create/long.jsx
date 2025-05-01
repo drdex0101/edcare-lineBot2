@@ -138,19 +138,18 @@ const ApplicationPage = () => {
     const startDate = new Date(range.startDate);
     const endDate = range.endDate ? new Date(range.endDate) : null;
   
-    // 建立今天 + 3 天 的最小日期（local time）
+    // 設定三天後的 00:00 作為最小可選日期
     const minDate = new Date();
-    minDate.setHours(0, 0, 0, 0);
     minDate.setDate(minDate.getDate() + 3);
+    minDate.setHours(0, 0, 0, 0);
   
-    // 清掉時間再比（變成 00:00:00）
+    // 正規化選取日期
     const normalizedStart = new Date(startDate);
     normalizedStart.setHours(0, 0, 0, 0);
   
     const normalizedEnd = endDate ? new Date(endDate) : null;
     if (normalizedEnd) normalizedEnd.setHours(0, 0, 0, 0);
   
-    // 驗證 startDate
     if (normalizedStart < minDate) {
       Swal.fire({
         icon: "error",
@@ -160,7 +159,6 @@ const ApplicationPage = () => {
       return;
     }
   
-    // ⭐ 這邊新增判斷：只有 endDate 存在時才比對 startDate 跟 endDate
     if (normalizedEnd && normalizedEnd < normalizedStart) {
       Swal.fire({
         icon: "error",
@@ -170,12 +168,12 @@ const ApplicationPage = () => {
       return;
     }
   
-    // ✅ 保留原始日期物件，不轉字串
     setSelectedRange({
       startDate: range.startDate,
       endDate: range.endDate,
     });
   };
+  
 
   const [selectedDays, setSelectedDays] = useState([]);
 

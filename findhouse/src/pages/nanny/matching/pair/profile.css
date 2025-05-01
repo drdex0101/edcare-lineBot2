@@ -54,8 +54,7 @@ background: #FFF;
   border: 1px solid var(---Primary-Container, #F3CCD4);
   background: var(---SurfaceContainer-Lowest, #FFF);
   color: var(---Primary-Primary, #E3838E);
-  text-align: center;
-
+  text-align: left;
   /* Line/bold/14pt */
   font-family: "LINE Seed JP_TTF";
   font-size: 14px;

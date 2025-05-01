@@ -130,7 +130,7 @@ export default function HistoryPage() {
         <div className="matching-body-layoff-content-background">
           <div className="matching-body-layoff-content">
               <span className="matching-body-layoff-content-title">
-                已配對，待社工聯繫...
+              已配對，待中心聯繫...
               </span>
             {totalCount === 0 ? (
               <div className="space-layout">
