@@ -344,6 +344,7 @@ export default function ProfilePage() {
     });
     const data = await response.json();
     setIsModalOpen(false);
+    setIsBookingModalOpen(true);
     setIsMatching(true);
   };
 
@@ -359,7 +360,7 @@ export default function ProfilePage() {
     const data = await response.json();
     setIsModalOpen(false);
     setIsMatching(true);
-    
+    setIsBookingModalOpen(true);
   };
 
   useEffect(() => {
@@ -372,7 +373,7 @@ export default function ProfilePage() {
   }, []);
 
   const toMatching = () => {
-    router.push("/nanny/search");
+    router.push("/nanny/matching");
   };
 
   const handleCloseModal = () => {
