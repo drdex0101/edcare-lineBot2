@@ -395,7 +395,7 @@ const ApplicationPage = () => {
             <div style={styles.roller}></div>
           </div>
           <div style={styles.titleLayout}>
-            <span style={styles.subTitle}>托育資料填寫</span>
+            <span style={styles.subTitle}>保母資料填寫</span>
           </div>
 
           <div style={styles.iconLayout}>
@@ -524,6 +524,7 @@ const ApplicationPage = () => {
           </LocalizationProvider>
 
           <div style={styles.careTypeLayout}>
+            <span style={styles.smallTitle}>居家式托育服務登記地址(可複選)</span>
             <div style={styles.careTypeLayoutItem}>
               <div style={styles.careTypeFont}>
                 <input
