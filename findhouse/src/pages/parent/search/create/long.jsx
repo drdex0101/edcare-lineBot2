@@ -159,15 +159,6 @@ const ApplicationPage = () => {
       return;
     }
   
-    if (normalizedEnd && normalizedEnd < normalizedStart) {
-      Swal.fire({
-        icon: "error",
-        title: "日期錯誤",
-        text: "結束日期不能小於開始日期",
-      });
-      return;
-    }
-  
     setSelectedRange({
       startDate: range.startDate,
       endDate: range.endDate,
