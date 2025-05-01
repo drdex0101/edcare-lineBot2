@@ -14,7 +14,7 @@ export default function ProfilePage() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [orderInfo, setOrderInfo] = useState({});
   const [urls, setUrls] = useState([]);
-  const [iconUrl, setIconUrl] = useState("/assets/images/resource/error.png");
+  const [iconUrl, setIconUrl] = useState("/orderCreate.png");
   const [isLoading, setIsLoading] = useState(true);
   const [age, setAge] = useState(0);
   const [isMatching, setIsMatching] = useState(false);

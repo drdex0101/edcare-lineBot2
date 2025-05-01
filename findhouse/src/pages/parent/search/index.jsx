@@ -46,12 +46,11 @@ export default function HistoryPage() {
   };
 
   const handlePageChange = (newPage) => {
-    alert(newPage);
     setPage(newPage);
   };
 
 
-  const fetchNannyInfoList = async (page, pageSize = 5, keywords="",locations=[],sort="time",orderId=orderId) => {
+  const fetchNannyInfoList = async (page, pageSize = 5, keywords="",locations=[],sort="time", orderId) => {
     setIsLoading(true); // Set loading state to true while fetching data
     if (orderId == null) {
       orderId = "";
