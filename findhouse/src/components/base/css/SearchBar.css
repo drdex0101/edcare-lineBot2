@@ -18,14 +18,15 @@
   .filter-button-search {
     display: flex;
     height: 40px;
+    width: 100%;
     padding: 8px 52px 8px 12px;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: space-between;
     gap: 8px;
     border-radius: 100px;
     border: 1px solid #EBEBEB;
-    background: #FBFBFB;
-    color: #999;
+    background: #E3838E;
+    color: #fff;
     /* Line/medium/16pt */
     font-family: "LINE Seed JP_TTF";
     font-size: 16px;
@@ -188,7 +189,6 @@
   .filter-footer {
     display: flex;
     padding: 8px 16px;
-    flex-direction: column;
     justify-content: center;
     align-items: flex-end;
     align-self: stretch;

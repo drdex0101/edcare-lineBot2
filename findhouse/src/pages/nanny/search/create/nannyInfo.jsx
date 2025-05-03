@@ -214,7 +214,7 @@ const ApplicationPage = () => {
   };
 
   const handleLastClick = () => {
-    router.back(); // 替换 '/next-page' 为你想要跳转的路径
+    router.back("/nanny/search"); // 替换 '/next-page' 为你想要跳转的路径
   };
 
   const handleFileChange = (e) => {
@@ -832,7 +832,7 @@ const ApplicationPage = () => {
                 <div style={styles.titleLayout}>
                   <span style={styles.smallTitle}>上傳托育環境照</span>
                   <span style={styles.noticeTitle}>
-                    僅提供家長能更快認識保母。
+                    僅提供家長能更快認識保母。請上傳橫式照片避免照片分割
                   </span>
                 </div>
                 <div style={styles.imgCount}>

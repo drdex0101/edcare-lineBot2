@@ -386,16 +386,8 @@ export default function HistoryPage() {
                     </div>
                   </div>
                   <span style={styles.headSubTitle}>
-                    在宅托育地點:
-                    {nannyProfile?.location
-                      .map((location) => location)
-                      .join("、")}
-                  </span>
-                  <span style={styles.headSubTitle}>
-                    到宅托育地點:
-                    {nannyProfile?.servicelocation
-                      .map((location) => location)
-                      .join("、")}
+                  社會服務處單位: <br/>
+                    {nannyProfile?.area}
                   </span>
                 </div>
                 {!isShow && (

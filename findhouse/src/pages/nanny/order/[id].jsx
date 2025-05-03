@@ -466,9 +466,15 @@ export default function ProfilePage() {
         </div>
         <div className="profile-location">
           <span className="location-subTitle">
-            {Array.isArray(orderInfo.location) && orderInfo.location.length > 0
+            托育地區:<br/>{Array.isArray(orderInfo.location) && orderInfo.location.length > 0
               ? orderInfo.location.join("、")
               : "未填寫"}
+          </span>
+          <span className="location-subTitle">
+            托育時間:<br/>
+            {orderInfo.care_type==="longTern"
+            ? orderInfo.start_date.slice(0, 10) + "~" + orderInfo.end_date.slice(0, 10)
+            : orderInfo.start_time + "~" + orderInfo.end_time}
           </span>
         </div>
         <div
