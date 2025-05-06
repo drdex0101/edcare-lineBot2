@@ -447,7 +447,7 @@ const ApplicationPage = () => {
                       }}
                     >
                       <MenuItem
-                        value="虎尾親子館-雲林縣斗六市保庄里3鄰建興路27-10號"
+                        value="虎尾親子館-雲林縣虎尾鎮光明路70號"
                         sx={{
                           color: "#410002",
                           display: "flex",
@@ -459,7 +459,7 @@ const ApplicationPage = () => {
                         <span style={styles.addressName}>虎尾親子館-</span>
                         <div style={styles.informationLayout}>
                           <span style={styles.address}>
-                            雲林縣斗六市保庄里3鄰建興路27-10號
+                          雲林縣虎尾鎮光明路70號
                           </span>
                           <div style={styles.serviceLayout}>
                             <div style={styles.serviceFontLayout}>
@@ -607,7 +607,7 @@ const ApplicationPage = () => {
                         </div>
                       </MenuItem>
                       <MenuItem
-                        value="麥寮親子館-雲林縣台西鄉民生路52號"
+                        value="麥寮親子館-雲林縣麥寮鄉後安222-39號"
                         sx={{
                           color: "#410002",
                           display: "flex",
@@ -619,7 +619,7 @@ const ApplicationPage = () => {
                         <span style={styles.addressName}>麥寮親子館-</span>
                         <div style={styles.informationLayout}>
                           <span style={styles.address}>
-                          雲林縣台西鄉民生路52號
+                          雲林縣麥寮鄉後安222-39號
                           </span>
                           <div style={styles.serviceLayout}>
                             <div style={styles.serviceFontLayout}>

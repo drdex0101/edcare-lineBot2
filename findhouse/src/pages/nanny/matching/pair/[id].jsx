@@ -138,7 +138,7 @@ export default function ProfilePage() {
     3: "製作副食品",
     4: "可配合不使用3C育兒",
     5: "寶寶衣物清洗",
-    6: "可配合家長外出",
+    6: "可配合保母外出",
   };
 
   const icons = {
@@ -583,7 +583,7 @@ export default function ProfilePage() {
                 </defs>
               </svg>
             </button>
-            <span className="bookingFont">預約成功！等待管理員媒合...</span>
+            <span className="bookingFont">預約成功！等待管理員聯絡...</span>
             <img src="/review.png" alt="check" />
             <button className="bookingBtn" onClick={toMatching}>點我前往查看回覆</button>
           </div>

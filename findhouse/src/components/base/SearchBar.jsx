@@ -11,10 +11,10 @@ export default function FilterButton({
 }) {
   const [isFilterOpen, setIsFilterOpen] = useState(false); // 控制篩選框顯示
   const [selectedLocations, setSelectedLocations] = useState(
-    propSelectedLocations || [],
+    propSelectedLocations || []
   ); // 已選地區
   const [selectedRegion, setSelectedRegion] = useState(
-    propSelectedRegion || "",
+    propSelectedRegion || ""
   ); // 當前選擇的區域
   const [selectedSort, setSelectedSort] = useState(propSelectedSort || "time"); // 預設為 "time"
   const filterPopupRef = useRef(null);
@@ -31,6 +31,13 @@ export default function FilterButton({
   const handleChange = () => {
     onChange(selectedRegion, selectedLocations, selectedSort);
     setIsFilterOpen(false);
+  };
+
+  const handleReset = () => {
+    setSelectedLocations([]);
+    setSelectedRegion("");
+    setSelectedSort("time");
+    handleChange();
   };
 
   // 監聽 props 變更，確保 state 更新
@@ -154,6 +161,30 @@ export default function FilterButton({
             <button
               className="filter-button-search"
               onClick={() => {
+                handleReset();
+              }}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M21.5 2v6h-6" />
+                <path d="M2.5 22v-6h6" />
+                <path d="M2 12a10 10 0 0 1 18.1 -4.2L21.5 2" />
+                <path d="M22 12a10 10 0 0 1 -18.1 4.2L2.5 22" />
+              </svg>
+              重置
+            </button>
+            <button
+              className="filter-button-search"
+              onClick={() => {
                 handleChange();
               }}
             >
@@ -166,7 +197,7 @@ export default function FilterButton({
               >
                 <path
                   d="M8.94286 3C10.519 3 12.0306 3.62612 13.1451 4.74062C14.2596 5.85512 14.8857 7.36671 14.8857 8.94286C14.8857 10.4149 14.3463 11.768 13.4594 12.8103L13.7063 13.0571H14.4286L19 17.6286L17.6286 19L13.0571 14.4286V13.7063L12.8103 13.4594C11.768 14.3463 10.4149 14.8857 8.94286 14.8857C7.36671 14.8857 5.85512 14.2596 4.74062 13.1451C3.62612 12.0306 3 10.519 3 8.94286C3 7.36671 3.62612 5.85512 4.74062 4.74062C5.85512 3.62612 7.36671 3 8.94286 3V3ZM8.94286 4.82857C6.65714 4.82857 4.82857 6.65714 4.82857 8.94286C4.82857 11.2286 6.65714 13.0571 8.94286 13.0571C11.2286 13.0571 13.0571 11.2286 13.0571 8.94286C13.0571 6.65714 11.2286 4.82857 8.94286 4.82857Z"
-                  fill="#999999"
+                  fill="#fff"
                 />
               </svg>
               搜尋
