@@ -8,7 +8,7 @@ export default async function handler(req, res) {
     const {
       memberId,
       area,
-      experienment,
+      experience,
       age,
       kidCount,
       way,
@@ -79,7 +79,7 @@ export default async function handler(req, res) {
       const values = [
         memberId,
         area,
-        experienment,
+        experience,
         age,
         kidCount,
         safeArray(way),

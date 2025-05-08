@@ -80,7 +80,7 @@ export default function FilterButton({
   };
 
   return (
-    <div className="filter-container">
+    <div>
       <button
         ref={filterButtonRef}
         className="filter-button"
@@ -146,14 +146,14 @@ export default function FilterButton({
               className={`filter-sort-font ${selectedSort === "time" ? "" : "filter-sort-font-none"}`}
               onClick={() => toggleSort("time")}
             >
-              上架時間（新 ⭢ 舊）
+              上架時間（新到舊）
             </div>
             {from !== "nanny" && (
               <div
                 className={`filter-sort-font ${selectedSort === "rating" ? "" : "filter-sort-font-none"}`}
                 onClick={() => toggleSort("rating")}
               >
-                保母評價( 5 ⭢ 0 )
+                保母評價(高到低)
               </div>
             )}
           </div>

@@ -65,7 +65,7 @@ export default function SearchBarSortOnly({ onChange }) {
               onClick={() => toggleSort("time")}
               onChange={() => toggleSort("time")}
             >
-              上架時間（新 ⭢ 舊）
+              上架時間（新到舊）
             </div>
           </div>
           <div className="filter-footer">

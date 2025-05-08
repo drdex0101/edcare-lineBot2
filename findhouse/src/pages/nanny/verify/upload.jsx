@@ -590,7 +590,7 @@ const ApplicationPage = () => {
             />
             <TextField
               id="welfareCertNo"
-              label="居家式托育服務登記書號"
+              label="居家式托育服務登記書號(證書上的發文字號)"
               value={formData.welfareCertNo}
               onChange={handleInputChange}
               variant="outlined"

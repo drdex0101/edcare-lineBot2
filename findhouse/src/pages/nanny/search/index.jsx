@@ -525,14 +525,14 @@ export default function HistoryPage() {
                         value={keywords}
                         onChange={handleChange}
                       />
-                    </div>
-                    <SearchBar
+                      <SearchBar
                       keyword={keywords}
                       setKeyword={setKeywords}
                       onChange={handleFilterChange}
                       from={"nanny"}
                       setSelectedLocations={setSelectedLocations}
                     />
+                    </div>
                   </div>
                   <div style={styles.titleLayout}></div>
                 </div>
@@ -564,9 +564,9 @@ export default function HistoryPage() {
                       <div style={styles.searchTypeLayout}>
                         <span style={styles.searchFont}>
                           {selectedSort === "time"
-                            ? "上架時間（新 ⭢ 舊）"
+                            ? "上架時間（新到舊）"
                             : selectedSort === "rating"
-                              ? "保母評價(5 ⭢ 0)"
+                              ? "保母評價 (高到低)"
                               : ""}
                         </span>
                       </div>
@@ -1119,8 +1119,9 @@ const styles = {
   },
   searchInput: {
     display: "flex",
-    padding: "8px 52px 8px 12px",
+    padding: "8px 12px 8px 12px",
     alignItems: "center",
+    justifyContent: "space-between",
     gap: "8px",
     flex: "1 0 0",
     borderRadius: "100px",

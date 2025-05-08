@@ -600,7 +600,9 @@ const ApplicationPage = () => {
               <span style={styles.mainCode}>證件照正面</span>
               <input
                 type="file"
+                accept="image/*"
                 onChange={handleFileChange}
+                capture="environment"
                 style={{ display: "none" }}
                 id="file-upload"
               />
@@ -675,6 +677,8 @@ const ApplicationPage = () => {
               <span style={styles.mainCode}>證件照反面</span>
               <input
                 type="file"
+                capture="environment"
+                accept="image/*"
                 onChange={handleFileChangeBack}
                 style={{ display: "none" }}
                 id="file-backend"

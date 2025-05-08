@@ -21,7 +21,9 @@
 .matching-body-header{
     display: flex;
     height: 97px;
-    padding: 30px 124px;
+    padding: 30px 24px;
+    gap: 10px;
+    justify-content: center;
     align-items: center;
     background-color: #FFFF;
     border-radius: 0px 0 30px 0;

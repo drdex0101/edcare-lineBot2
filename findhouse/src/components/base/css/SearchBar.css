@@ -6,7 +6,7 @@
     align-items: center;
     justify-content: center;
     position: absolute;
-    right: 30px ;
+    right: 70px ;
   }
 
   .filter-search-container {
@@ -47,8 +47,8 @@
   
   .filter-popup {
     position: absolute;
-    top: 50px;
-    right: 0;
+    top: 230px;
+    right: 40px;
     min-width: 310px;
     background: #fff;
     border: 1px solid #ddd;
